@@ -16,10 +16,14 @@ class UserSeeder extends Seeder
         // Hapus semua user demo jika sudah ada
         User::whereIn('email', [
             'admin@kossmart.com',
+            'superadmin@kossmart.com',
             'user@kossmart.com',
             'john@kossmart.com',
             'jane@kossmart.com',
             'bob@kossmart.com',
+            'alice@kossmart.com', 
+            'charlie@kossmart.com',
+            'test@kossmart.com',
         ])->delete();
 
         // Admin Utama

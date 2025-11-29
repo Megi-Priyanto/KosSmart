@@ -27,13 +27,13 @@ class UserController extends Controller
             });
         }
         
-        // Filter by role
-        if ($request->filled('role')) {
+        // Filter by role (FIXED)
+        if ($request->role !== null && $request->role !== '') {
             $query->where('role', $request->role);
         }
         
         // Paginate results
-        $users = $query->latest()->paginate(10)->withQueryString();
+       $users = $query->orderBy('id', 'asc')->paginate(10)->withQueryString(); 
         
         return view('admin.users.index', compact('users'));
     }

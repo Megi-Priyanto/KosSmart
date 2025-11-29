@@ -1,24 +1,439 @@
 <?php
+// app/Http/Controllers/Admin/BillingController.php
 
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Billing;
+use App\Models\Rent;
+use App\Models\Room;
+use App\Models\User;
+use App\Models\Payment;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 
 class BillingController extends Controller
 {
-    public function index()
+    /**
+     * Display a listing of billings
+     */
+    public function index(Request $request)
     {
-        return view('admin.billing.index');
+        $query = Billing::with(['user', 'room', 'latestPayment']);
+
+        // Search
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->whereHas('user', function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                    ->orWhere('email', 'like', "%{$search}%");
+            })->orWhereHas('room', function ($q) use ($search) {
+                $q->where('room_number', 'like', "%{$search}%");
+            });
+        }
+
+        // Filter by status
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        // Filter by month
+        if ($request->filled('month')) {
+            $query->where('billing_month', $request->month);
+        }
+
+        // Filter by year
+        if ($request->filled('year')) {
+            $query->where('billing_year', $request->year);
+        }
+
+        // Filter by user
+        if ($request->filled('user_id')) {
+            $query->where('user_id', $request->user_id);
+        }
+
+        // Sort
+        $sortBy = $request->get('sort', 'due_date');
+        $sortOrder = $request->get('order', 'desc');
+        $query->orderBy($sortBy, $sortOrder);
+
+        $billings = $query->paginate(15)->withQueryString();
+
+        // Statistics
+        $stats = [
+            'total' => Billing::count(),
+            'unpaid' => Billing::unpaid()->count(),
+            'overdue' => Billing::overdue()->count(),
+            'pending' => Billing::pending()->count(),
+            'paid' => Billing::paid()->count(),
+            'total_unpaid_amount' => Billing::whereIn('status', ['unpaid', 'overdue'])->sum('total_amount'),
+            'total_paid_amount' => Billing::paid()->sum('total_amount'),
+        ];
+
+        // Data for filters
+        $users = User::where('role', 'user')
+            ->whereHas('rents', function ($q) {
+                $q->where('status', 'active');
+            })
+            ->orderBy('name')
+            ->get();
+
+        $years = Billing::select('billing_year')
+            ->distinct()
+            ->orderBy('billing_year', 'desc')
+            ->pluck('billing_year');
+
+        return view('admin.billing.index', compact('billings', 'stats', 'users', 'years'));
     }
 
+    /**
+     * Show form to create billing
+     */
     public function create()
     {
-        return view('admin.billing.create');
+        // Get active tenants
+        $activeRents = Rent::with(['user', 'room'])
+            ->where('status', 'active')
+            ->get();
+
+        return view('admin.billing.create', compact('activeRents'));
     }
 
+    /**
+     * Store a newly created billing
+     */
     public function store(Request $request)
     {
-        // logika menyimpan tagihan
+        $validated = $request->validate([
+            'rent_id' => 'required|exists:rents,id',
+            'billing_month' => 'required|integer|between:1,12',
+            'billing_year' => 'required|integer|min:2024',
+            'rent_amount' => 'required|numeric|min:0',
+            'electricity_cost' => 'nullable|numeric|min:0',
+            'water_cost' => 'nullable|numeric|min:0',
+            'maintenance_cost' => 'nullable|numeric|min:0',
+            'other_costs' => 'nullable|numeric|min:0',
+            'other_costs_description' => 'nullable|string|max:500',
+            'discount' => 'nullable|numeric|min:0',
+            'due_date' => 'required|date|after_or_equal:today',
+            'admin_notes' => 'nullable|string|max:1000',
+        ]);
+
+        try {
+            DB::beginTransaction();
+
+            $rent = Rent::with(['user', 'room'])->findOrFail($validated['rent_id']);
+
+            // Check duplicate
+            $exists = Billing::where('rent_id', $rent->id)
+                ->where('billing_year', $validated['billing_year'])
+                ->where('billing_month', $validated['billing_month'])
+                ->exists();
+
+            if ($exists) {
+                return back()->with('error', 'Tagihan untuk periode ini sudah ada!')->withInput();
+            }
+
+            // Create billing
+            $billing = new Billing();
+            $billing->rent_id = $rent->id;
+            $billing->user_id = $rent->user_id;
+            $billing->room_id = $rent->room_id;
+            $billing->billing_month = $validated['billing_month'];
+            $billing->billing_year = $validated['billing_year'];
+            $billing->billing_period = Carbon::create($validated['billing_year'], $validated['billing_month'])->format('Y-m');
+
+            $billing->rent_amount = $validated['rent_amount'];
+            $billing->electricity_cost = $validated['electricity_cost'] ?? 0;
+            $billing->water_cost = $validated['water_cost'] ?? 0;
+            $billing->maintenance_cost = $validated['maintenance_cost'] ?? 0;
+            $billing->other_costs = $validated['other_costs'] ?? 0;
+            $billing->other_costs_description = $validated['other_costs_description'];
+            $billing->discount = $validated['discount'] ?? 0;
+
+            $billing->calculateTotal();
+
+            $billing->due_date = $validated['due_date'];
+            $billing->admin_notes = $validated['admin_notes'];
+            $billing->status = 'unpaid';
+
+            $billing->save();
+
+            DB::commit();
+
+            return redirect()->route('admin.billing.index')
+                ->with('success', 'Tagihan berhasil dibuat untuk ' . $rent->user->name);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return back()->with('error', 'Gagal membuat tagihan: ' . $e->getMessage())->withInput();
+        }
+    }
+
+    /**
+     * Display the specified billing
+     */
+    public function show(Billing $billing)
+    {
+        $billing->load(['user', 'room', 'rent', 'payments.verifier']);
+
+        return view('admin.billing.show', compact('billing'));
+    }
+
+    /**
+     * Show form to edit billing
+     */
+    public function edit(Billing $billing)
+    {
+        // Only allow edit if not paid
+        if ($billing->status === 'paid') {
+            return back()->with('error', 'Tagihan yang sudah lunas tidak dapat diedit');
+        }
+
+        $billing->load(['rent.user', 'rent.room']);
+
+        return view('admin.billing.edit', compact('billing'));
+    }
+
+    /**
+     * Update the specified billing
+     */
+    public function update(Request $request, Billing $billing)
+    {
+        if ($billing->status === 'paid') {
+            return back()->with('error', 'Tagihan yang sudah lunas tidak dapat diedit');
+        }
+
+        $validated = $request->validate([
+            'rent_amount' => 'required|numeric|min:0',
+            'electricity_cost' => 'nullable|numeric|min:0',
+            'water_cost' => 'nullable|numeric|min:0',
+            'maintenance_cost' => 'nullable|numeric|min:0',
+            'other_costs' => 'nullable|numeric|min:0',
+            'other_costs_description' => 'nullable|string|max:500',
+            'discount' => 'nullable|numeric|min:0',
+            'due_date' => 'required|date',
+            'admin_notes' => 'nullable|string|max:1000',
+        ]);
+
+        try {
+            DB::beginTransaction();
+
+            // Update basic fields
+            $billing->rent_amount = $validated['rent_amount'];
+            $billing->electricity_cost = $validated['electricity_cost'] ?? 0;
+            $billing->water_cost = $validated['water_cost'] ?? 0;
+            $billing->maintenance_cost = $validated['maintenance_cost'] ?? 0;
+            $billing->other_costs = $validated['other_costs'] ?? 0;
+            $billing->other_costs_description = $validated['other_costs_description'];
+            $billing->discount = $validated['discount'] ?? 0;
+            $billing->due_date = $validated['due_date'];
+            $billing->admin_notes = $validated['admin_notes'];
+
+            // Hitung ulang total biaya
+            $billing->calculateTotal();
+
+            /**
+             * LOGIKA PERBAIKAN STATUS
+             * Jika due_date > hari ini → status harus "unpaid"
+             * Jika due_date < hari ini → status harus "overdue"
+             * (kecuali status sudah paid)
+             */
+            if ($billing->status !== 'paid') {
+                if ($billing->due_date->isFuture()) {
+                    $billing->status = 'unpaid';
+                } elseif ($billing->due_date->isPast()) {
+                    $billing->status = 'overdue';
+                }
+            }
+
+            $billing->save();
+
+            DB::commit();
+
+            return redirect()->route('admin.billing.show', $billing)
+                ->with('success', 'Tagihan berhasil diperbarui');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return back()->with('error', 'Gagal memperbarui tagihan: ' . $e->getMessage())->withInput();
+        }
+    }
+
+    /**
+     * Remove the specified billing
+     */
+    public function destroy(Billing $billing)
+    {
+        if ($billing->status === 'paid') {
+            return back()->with('error', 'Tagihan yang sudah lunas tidak dapat dihapus');
+        }
+
+        if ($billing->payments()->exists()) {
+            return back()->with('error', 'Tagihan dengan riwayat pembayaran tidak dapat dihapus');
+        }
+
+        try {
+            $billingPeriod = $billing->formatted_period;
+            $userName = $billing->user->name;
+
+            $billing->delete();
+
+            return redirect()->route('admin.billing.index')
+                ->with('success', "Tagihan {$billingPeriod} untuk {$userName} berhasil dihapus");
+        } catch (\Exception $e) {
+            return back()->with('error', 'Gagal menghapus tagihan: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Verify payment
+     */
+    public function verifyPayment(Request $request, Payment $payment)
+    {
+        $validated = $request->validate([
+            'action' => 'required|in:confirm,reject',
+            'rejection_reason' => 'required_if:action,reject|string|max:500',
+        ]);
+
+        try {
+            DB::beginTransaction();
+
+            if ($validated['action'] === 'confirm') {
+                // Confirm payment
+                $payment->update([
+                    'status' => 'confirmed',
+                    'verified_by' => auth()->id(),
+                    'verified_at' => now(),
+                ]);
+
+                // Mark billing as paid
+                $payment->billing->markAsPaid();
+
+                $message = 'Pembayaran berhasil dikonfirmasi';
+            } else {
+                // Reject payment
+                $payment->update([
+                    'status' => 'rejected',
+                    'verified_by' => auth()->id(),
+                    'verified_at' => now(),
+                    'rejection_reason' => $validated['rejection_reason'],
+                ]);
+
+                // Set billing back to unpaid
+                $payment->billing->update(['status' => 'unpaid']);
+
+                $message = 'Pembayaran ditolak';
+            }
+
+            DB::commit();
+
+            return back()->with('success', $message);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return back()->with('error', 'Gagal memverifikasi pembayaran: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Manual mark as paid
+     */
+    public function markAsPaid(Billing $billing)
+    {
+        if ($billing->status === 'paid') {
+            return back()->with('error', 'Tagihan sudah lunas');
+        }
+
+        try {
+            DB::beginTransaction();
+
+            // Create manual payment record
+            Payment::create([
+                'user_id' => $billing->user_id,
+                'billing_id' => $billing->id,
+                'amount' => $billing->total_amount,
+                'payment_method' => 'cash',
+                'status' => 'confirmed',
+                'payment_date' => now(),
+                'notes' => 'Pembayaran tunai - dicatat oleh admin',
+                'verified_by' => auth()->id(),
+                'verified_at' => now(),
+            ]);
+
+            $billing->markAsPaid();
+
+            DB::commit();
+
+            return back()->with('success', 'Tagihan berhasil ditandai lunas');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return back()->with('error', 'Gagal menandai tagihan: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Bulk generate billings for all active tenants
+     */
+    public function bulkGenerate(Request $request)
+    {
+        $validated = $request->validate([
+            'billing_month' => 'required|integer|between:1,12',
+            'billing_year' => 'required|integer|min:2024',
+            'due_date' => 'required|date|after_or_equal:today',
+        ]);
+
+        try {
+            DB::beginTransaction();
+
+            $activeRents = Rent::with(['user', 'room'])
+                ->where('status', 'active')
+                ->get();
+
+            $created = 0;
+            $skipped = 0;
+
+            foreach ($activeRents as $rent) {
+                // Check if already exists
+                $exists = Billing::where('rent_id', $rent->id)
+                    ->where('billing_year', $validated['billing_year'])
+                    ->where('billing_month', $validated['billing_month'])
+                    ->exists();
+
+                if ($exists) {
+                    $skipped++;
+                    continue;
+                }
+
+                // Create billing
+                $billing = new Billing();
+                $billing->rent_id = $rent->id;
+                $billing->user_id = $rent->user_id;
+                $billing->room_id = $rent->room_id;
+                $billing->billing_month = $validated['billing_month'];
+                $billing->billing_year = $validated['billing_year'];
+                $billing->billing_period = Carbon::create($validated['billing_year'], $validated['billing_month'])->format('Y-m');
+
+                $billing->rent_amount = $rent->room->price;
+                $billing->electricity_cost = 0;
+                $billing->water_cost = 0;
+                $billing->maintenance_cost = 0;
+                $billing->other_costs = 0;
+                $billing->discount = 0;
+
+                $billing->calculateTotal();
+
+                $billing->due_date = $validated['due_date'];
+                $billing->status = 'unpaid';
+
+                $billing->save();
+                $created++;
+            }
+
+            DB::commit();
+
+            return back()->with('success', "Berhasil membuat {$created} tagihan. {$skipped} dilewati (sudah ada).");
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return back()->with('error', 'Gagal membuat tagihan massal: ' . $e->getMessage());
+        }
     }
 }

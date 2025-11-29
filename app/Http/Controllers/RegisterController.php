@@ -130,7 +130,7 @@ class RegisterController extends Controller
     public function verificationNotice()
     {
         if (Auth::check() && Auth::user()->hasVerifiedEmail()) {
-            return redirect()->route('dashboard');
+            return redirect()->route('user.dashboard');
         }
         
         return view('auth.verify-email');

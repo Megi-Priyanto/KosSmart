@@ -4,8 +4,10 @@ use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 
-// Tambahkan import middleware custom kamu di sini
+// Tambahkan import middleware custom
 use App\Http\Middleware\RoleMiddleware;
+use App\Http\Middleware\CheckHasRoom;
+use App\Http\Middleware\CheckNoRoom;
 use App\Http\Middleware\TrustProxies;
 use App\Http\Middleware\PreventRequestsDuringMaintenance;
 use App\Http\Middleware\TrimStrings;
@@ -21,7 +23,7 @@ return Application::configure(basePath: dirname(__DIR__))
 
     ->withMiddleware(function (Middleware $middleware): void {
         /**
-         * 🌍 Global middleware — dijalankan pada setiap request.
+         * Global middleware — dijalankan pada setiap request.
          * (pindahan dari $middleware di Kernel.php)
          */
         $middleware->use([
@@ -33,11 +35,13 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
 
         /**
-         * 🧩 Middleware alias — digunakan di route.
+         * Middleware alias — digunakan di route.
          * Contoh: Route::get('/admin', ...)->middleware('role:admin');
          */
         $middleware->alias([
             'role' => RoleMiddleware::class,
+            'no.room' => CheckNoRoom::class,
+            'has.room' => CheckHasRoom::class,
         ]);
     })
 

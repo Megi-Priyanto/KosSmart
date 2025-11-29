@@ -6,16 +6,26 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use App\Models\Rent;
+use App\Models\Billing;
+use App\Models\Payment;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+
+/**
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Payment[] $payments
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Billing[] $billings
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Rent[] $rents
+ *
+ * @method bool hasActiveRoom()
+ * @method \App\Models\Rent|null activeRent()
+ * @method \App\Models\Billing|null currentBilling()
+ */
+
 
 class User extends Authenticatable implements MustVerifyEmail
 {
     use HasFactory, Notifiable;
 
-    /**
-     * Kolom yang bisa diisi secara massal
-     *
-     * @var array<int, string>
-     */
     protected $fillable = [
         'name',
         'email',
@@ -24,21 +34,11 @@ class User extends Authenticatable implements MustVerifyEmail
         'role',
     ];
 
-    /**
-     * Kolom yang harus disembunyikan saat serialisasi
-     *
-     * @var array<int, string>
-     */
     protected $hidden = [
         'password',
         'remember_token',
     ];
 
-    /**
-     * Kolom yang harus dikonversi ke tipe data tertentu
-     *
-     * @return array<string, string>
-     */
     protected function casts(): array
     {
         return [
@@ -47,17 +47,74 @@ class User extends Authenticatable implements MustVerifyEmail
         ];
     }
 
+    // ========================================
+    // TAMBAHKAN KODE DI BAWAH INI (RELASI BARU)
+    // ========================================
+    
     /**
-     * Mengecek apakah user sudah verifikasi email
+     * Relasi: User memiliki banyak rents (riwayat sewa)
      */
+    public function rents(): HasMany
+    {
+        return $this->hasMany(Rent::class);
+    }
+    
+    /**
+     * Relasi: User memiliki banyak pembayaran
+     */
+    public function payments(): HasMany
+    {
+        return $this->hasMany(Payment::class);
+    }
+    
+    /**
+     * Relasi: User memiliki banyak tagihan
+     */
+    public function billings(): HasMany
+    {
+        return $this->hasMany(Billing::class);
+    }
+    
+    /**
+     * Helper: Cek apakah user sedang menyewa kamar
+     */
+    public function hasActiveRoom(): bool
+    {
+        return $this->rents()
+            ->where('status', 'active')
+            ->whereNull('end_date')
+            ->exists();
+    }
+    
+    /**
+     * Helper: Ambil rent aktif user saat ini
+     */
+    public function activeRent(): ?Rent
+    {
+        return $this->rents()
+            ->with('room')
+            ->where('status', 'active')
+            ->whereNull('end_date')
+            ->first();
+    }
+    
+    /**
+     * Helper: Ambil tagihan bulan ini
+     */
+    public function currentBilling()
+    {
+        return $this->billings()
+            ->where('billing_year', now()->year)
+            ->where('billing_month', now()->month)
+            ->first();
+    }
+
+    // Method lama tetap ada (hasVerifiedEmail, markEmailAsVerified, dll)
     public function hasVerifiedEmail()
     {
         return ! is_null($this->email_verified_at);
     }
 
-    /**
-     * Tandai email user sebagai sudah diverifikasi
-     */
     public function markEmailAsVerified()
     {
         return $this->forceFill([
@@ -65,17 +122,11 @@ class User extends Authenticatable implements MustVerifyEmail
         ])->save();
     }
 
-    /**
-     * Ambil alamat email untuk verifikasi
-     */
     public function getEmailForVerification()
     {
         return $this->email;
     }
 
-    /**
-     *  Cek apakah user punya role tertentu
-     */
     public function hasRole(string $role): bool
     {
         return $this->role === $role;

@@ -6,10 +6,59 @@
 
 @section('content')
 
+<!-- Alert Booking Pending -->
+@if(isset($pendingBookingsCount) && $pendingBookingsCount > 0)
+<div class="mb-6 bg-yellow-50 border-l-4 border-yellow-500 p-6 rounded-lg">
+    <div class="flex items-start">
+        <svg class="w-6 h-6 text-yellow-500 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+        </svg>
+        <div class="flex-1">
+            <h3 class="font-bold text-yellow-800 mb-2">⚠️ Ada {{ $pendingBookingsCount }} Booking Menunggu Persetujuan!</h3>
+            <p class="text-sm text-yellow-700 mb-3">
+                Segera proses booking berikut untuk memberikan konfirmasi kepada calon penyewa.
+            </p>
+            
+            @if(isset($pendingBookings) && $pendingBookings->count() > 0)
+            <div class="space-y-2 mb-3">
+                @foreach($pendingBookings as $booking)
+                <div class="flex items-center justify-between p-2 bg-white rounded">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-8 h-8 bg-yellow-100 rounded-full flex items-center justify-center">
+                            <span class="text-xs font-bold text-yellow-700">{{ $booking->room->room_number }}</span>
+                        </div>
+                        <div>
+                            <p class="text-sm font-medium text-gray-800">{{ $booking->user->name }}</p>
+                            <p class="text-xs text-gray-500">{{ $booking->created_at->diffForHumans() }}</p>
+                        </div>
+                    </div>
+                    <a href="{{ route('admin.bookings.show', $booking) }}" 
+                       class="text-sm text-purple-600 hover:text-purple-700 font-medium">
+                        Proses →
+                    </a>
+                </div>
+                @endforeach
+            </div>
+            @endif
+            
+            <a href="{{ route('admin.bookings.index') }}" 
+               class="inline-flex items-center text-sm font-medium text-yellow-700 hover:text-yellow-900">
+                Lihat Semua Booking Pending
+                <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                </svg>
+            </a>
+        </div>
+    </div>
+</div>
+@endif
+
 <!-- Statistics Cards -->
 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+
     <!-- Total User -->
-    <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-200">
+    <a href="{{ route('admin.users.index') }}" 
+       class="bg-white rounded-xl shadow-sm p-6 border border-gray-200 block hover:bg-gray-50 transition cursor-pointer">
         <div class="flex items-center justify-between">
             <div>
                 <p class="text-gray-600 text-sm font-medium">Total User</p>
@@ -18,14 +67,17 @@
             </div>
             <div class="bg-blue-100 p-3 rounded-lg">
                 <svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z">
+                    </path>
                 </svg>
             </div>
         </div>
-    </div>
-    
+    </a>
+
     <!-- Total Kamar -->
-    <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-200">
+    <a href="{{ route('admin.kos.index') }}" 
+       class="bg-white rounded-xl shadow-sm p-6 border border-gray-200 block hover:bg-gray-50 transition cursor-pointer">
         <div class="flex items-center justify-between">
             <div>
                 <p class="text-gray-600 text-sm font-medium">Total Kamar</p>
@@ -34,14 +86,17 @@
             </div>
             <div class="bg-purple-100 p-3 rounded-lg">
                 <svg class="w-8 h-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4">
+                    </path>
                 </svg>
             </div>
         </div>
-    </div>
-    
-    <!-- Pendapatan Bulan Ini -->
-    <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-200">
+    </a>
+
+    <!-- Pendapatan -->
+    <a href="{{ route('admin.reports.index') }}" 
+       class="bg-white rounded-xl shadow-sm p-6 border border-gray-200 block hover:bg-gray-50 transition cursor-pointer">
         <div class="flex items-center justify-between">
             <div>
                 <p class="text-gray-600 text-sm font-medium">Pendapatan</p>
@@ -50,14 +105,17 @@
             </div>
             <div class="bg-green-100 p-3 rounded-lg">
                 <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z">
+                    </path>
                 </svg>
             </div>
         </div>
-    </div>
-    
+    </a>
+
     <!-- Tagihan Pending -->
-    <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-200">
+    <a href="{{ route('admin.billing.index') }}" 
+       class="bg-white rounded-xl shadow-sm p-6 border border-gray-200 block hover:bg-gray-50 transition cursor-pointer">
         <div class="flex items-center justify-between">
             <div>
                 <p class="text-gray-600 text-sm font-medium">Tagihan Pending</p>
@@ -66,11 +124,14 @@
             </div>
             <div class="bg-orange-100 p-3 rounded-lg">
                 <svg class="w-8 h-8 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z">
+                    </path>
                 </svg>
             </div>
         </div>
-    </div>
+    </a>
+
 </div>
 
 <!-- Charts & Tables Row -->

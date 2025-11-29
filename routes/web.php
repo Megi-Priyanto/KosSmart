@@ -4,12 +4,18 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\ForgotPasswordController;
 use App\Http\Controllers\ResetPasswordController;
-use App\Http\Controllers\Admin\UserController;
-use App\Http\Controllers\Admin\KosController;
-use App\Http\Controllers\Admin\BillingController;
-use App\Http\Controllers\Admin\SettingController;
+use App\Http\Controllers\User\UserDashboardController;
+use App\Http\Controllers\User\RoomSelectionController;
+use App\Http\Controllers\User\BookingController;
 use App\Http\Controllers\User\PaymentController;
+use App\Http\Controllers\Admin\KosInfoController;
+use App\Http\Controllers\Admin\RoomController as AdminRoomController;
+use App\Http\Controllers\Admin\RoomStatusController;
+use App\Http\Controllers\Admin\AdminDashboardController;
+use App\Http\Controllers\Admin\BookingManagementController;
+use App\Http\Controllers\User\UserProfileController;
 use Illuminate\Support\Facades\Route;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -49,75 +55,155 @@ Route::middleware('guest')->group(function () {
 // ==============================
 // VERIFIKASI EMAIL
 // ==============================
-Route::get('/email/verify', [RegisterController::class, 'verificationNotice'])
-    ->middleware('auth')
-    ->name('verification.notice');
-
-Route::get('/email/verify/{id}/{hash}', [RegisterController::class, 'verifyEmail'])
-    ->middleware(['signed'])
-    ->name('verification.verify');
-
-Route::post('/email/verification-notification', [RegisterController::class, 'resendVerification'])
-    ->middleware(['auth', 'throttle:3,1'])
-    ->name('verification.resend');
+Route::middleware('auth')->group(function () {
+    Route::get('/email/verify', [RegisterController::class, 'verificationNotice'])
+        ->name('verification.notice');
+    
+    Route::get('/email/verify/{id}/{hash}', [RegisterController::class, 'verifyEmail'])
+        ->middleware('signed')
+        ->name('verification.verify');
+    
+    Route::post('/email/verification-notification', [RegisterController::class, 'resendVerification'])
+        ->middleware('throttle:3,1')
+        ->name('verification.resend');
+});
 
 // ==============================
-// ROUTE UNTUK USER LOGIN & VERIFIED
+// LOGOUT — HARUS DI LUAR ROLE
 // ==============================
-Route::middleware(['auth', 'verified'])->group(function () {
-    // Dashboard umum
-    Route::get('/dashboard', function () {
-        return view('dashboard');
-    })->name('dashboard');
-
-    // Logout
+Route::middleware('auth')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 });
 
 // ==============================
-// HALAMAN PENDING VERIFIKASI
+// ROUTE UNTUK USER LOGIN & VERIFIED
 // ==============================
-Route::middleware('auth')->group(function () {
-    Route::get('/email/verify/pending', function () {
-        return view('auth.verify-email');
-    })->name('verification.pending');
+Route::middleware(['auth', 'verified', 'role:user'])->group(function () {
+
+    // Dashboard User (cek otomatis apakah punya kamar atau tidak)
+    Route::get('/user/dashboard', [UserDashboardController::class, 'index'])
+        ->name('user.dashboard');
+
+    // ==============================
+    // UNTUK USER YANG BELUM PUNYA KAMAR
+    // ==============================
+    Route::middleware('no.room')->group(function () {
+        Route::get('/user/rooms', [RoomSelectionController::class, 'index'])
+            ->name('user.rooms.index');
+
+        Route::get('/user/rooms/{room}', [RoomSelectionController::class, 'show'])
+            ->name('user.rooms.show');
+
+        Route::get('/user/rooms/{room}/booking', [BookingController::class, 'create'])
+            ->name('user.booking.create');
+
+        Route::post('/user/rooms/{room}/booking', [BookingController::class, 'store'])
+            ->name('user.booking.store');
+
+        Route::get('/user/booking/status', [BookingController::class, 'status'])
+        ->name('user.booking.status');
+    });
+
+    // ==============================
+    // UNTUK USER YANG SUDAH PUNYA KAMAR
+    // ==============================
+    Route::middleware('has.room')->group(function () {
+        // Route::get('/user/billings', [PaymentController::class, 'billings'])
+        //     ->name('user.billings');
+
+        Route::get('/user/payments', [PaymentController::class, 'index'])
+            ->name('user.payments');
+
+        // Route::get('/user/billings/{billing}/pay', [PaymentController::class, 'pay'])
+        //     ->name('user.billing.pay');
+        // Route::post('/user/billings/{billing}/pay', [PaymentController::class, 'processPayment'])
+        //     ->name('user.billing.process');
+
+        // Billing Management
+        Route::controller(\App\Http\Controllers\User\UserBillingController::class)->group(function () {
+            Route::get('/billing', 'index')->name('user.billing.index');
+            Route::get('/billing/{billing}', 'show')->name('user.billing.show');
+            Route::get('/billing/{billing}/pay', 'paymentForm')->name('user.billing.pay');
+            Route::post('/billing/{billing}/pay', 'submitPayment')->name('user.billing.submit-payment');
+            Route::get('/payment-history', 'paymentHistory')->name('user.payment.history');
+        });
+    });
+
+    // Profil User
+    Route::get('/user/profile', [UserProfileController::class, 'index'])->name('user.profile');
+    Route::put('/user/profile', [UserProfileController::class, 'update'])->name('user.profile.update');
+    Route::put('/user/profile/password', [UserProfileController::class, 'updatePassword'])->name('user.profile.password');
+    Route::delete('/user/profile', [UserProfileController::class, 'destroy'])->name('user.profile.delete');
 });
 
 // ==============================
-// ROUTE BERDASARKAN ROLE
+// ROUTE UNTUK ADMIN
 // ==============================
-
-// Hanya untuk admin
 Route::middleware(['auth', 'verified', 'role:admin'])
     ->prefix('admin')
     ->name('admin.')
     ->group(function () {
-        Route::get('/dashboard', function () {
-            return view('admin.dashboard'); // resources/views/admin/dashboard.blade.php
-        })->name('dashboard');
 
-        Route::resource('users', UserController::class);
-        Route::resource('kos', KosController::class);
-        Route::resource('billing', BillingController::class);
+        // Dashboard
+        Route::get('/dashboard', [AdminDashboardController::class, 'index'])
+            ->name('dashboard');
+
+        // Kelola Info Kos
+        Route::controller(KosInfoController::class)->group(function () {
+            Route::get('/kos', 'index')->name('kos.index');
+            Route::get('/kos/create', 'create')->name('kos.create');
+            Route::post('/kos', 'store')->name('kos.store');
+            Route::get('/kos/edit', 'edit')->name('kos.edit');
+            Route::put('/kos', 'update')->name('kos.update');
+        });
+        
+        // Kelola Kamar
+        Route::resource('rooms', AdminRoomController::class)->names([
+            'index' => 'rooms.index',
+            'create' => 'rooms.create',
+            'store' => 'rooms.store',
+            'show' => 'rooms.show',
+            'edit' => 'rooms.edit',
+            'update' => 'rooms.update',
+            'destroy' => 'rooms.destroy',
+        ]);
+        
+        // Update Status Kamar
+        Route::put('/rooms/{room}/status', [RoomStatusController::class, 'update'])
+            ->name('rooms.status.update');
+        Route::post('/rooms/bulk-status', [RoomStatusController::class, 'bulkUpdate'])
+            ->name('rooms.status.bulk');
+
+        Route::resource('users', \App\Http\Controllers\Admin\UserController::class);
+        Route::resource('kos', \App\Http\Controllers\Admin\RoomController::class);
+        Route::resource('billing', \App\Http\Controllers\Admin\BillingController::class);
         Route::resource('reports', \App\Http\Controllers\Admin\ReportController::class);
-        Route::get('/settings', [SettingController::class, 'index'])->name('settings.index');
+        Route::get('/settings', [\App\Http\Controllers\Admin\SettingController::class, 'index'])
+            ->name('settings.index');
+
+        // Booking Management
+        Route::controller(BookingManagementController::class)->group(function () {
+            Route::get('/bookings', 'index')->name('bookings.index');
+            Route::get('/bookings/{booking}', 'show')->name('bookings.show');
+            Route::post('/bookings/{booking}/approve', 'approve')->name('bookings.approve');
+            Route::post('/bookings/{booking}/reject', 'reject')->name('bookings.reject');
+        });
+
+        // Billing Management
+        Route::controller(\App\Http\Controllers\Admin\BillingController::class)->group(function () {
+            Route::get('/billing', 'index')->name('billing.index');
+            Route::get('/billing/create', 'create')->name('billing.create');
+            Route::post('/billing', 'store')->name('billing.store');
+            Route::get('/billing/{billing}', 'show')->name('billing.show');
+            Route::get('/billing/{billing}/edit', 'edit')->name('billing.edit');
+            Route::put('/billing/{billing}', 'update')->name('billing.update');
+            Route::delete('/billing/{billing}', 'destroy')->name('billing.destroy');
+
+            // Payment verification
+            Route::post('/billing/payment/{payment}/verify', 'verifyPayment')->name('billing.payment.verify');
+            Route::post('/billing/{billing}/mark-paid', 'markAsPaid')->name('billing.mark-paid');
+
+            // Bulk generate tagihan
+            Route::post('/billing/bulk-generate', 'bulkGenerate')->name('billing.bulk-generate');
+        });
     });
-
-// Hanya untuk user biasa
-Route::middleware(['auth', 'verified', 'role:user'])->group(function () {
-    // Dashboard user
-    Route::get('/user/dashboard', function () {
-        return view('user.dashboard'); // buat file resources/views/user/dashboard.blade.php
-    })->name('user.dashboard');
-
-    Route::get('/payments', function () {
-        return view('user.payments'); // buat file resources/views/user/payments.blade.php
-    })->name('payments');
-
-    // Profil user
-    Route::get('/user/profile', function () {
-        return view('user.profile'); // buat file resources/views/user/profile.blade.php
-    })->name('user.profile');
-
-    Route::get('/user/payments', [PaymentController::class, 'index'])->name('user.payments');
-});
