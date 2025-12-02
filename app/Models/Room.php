@@ -137,4 +137,9 @@ class Room extends Model
     {
         $this->increment('view_count');
     }
+
+    public function billings()
+    {
+        return $this->hasMany(Billing::class, 'room_id');
+    }
 }

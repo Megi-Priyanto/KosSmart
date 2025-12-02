@@ -171,7 +171,7 @@
                     type="submit" 
                     class="btn-primary w-full text-white font-semibold py-3 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2"
                 >
-                    Masuk ke Dashboard
+                    Masuk
                 </button>
             </form>
             

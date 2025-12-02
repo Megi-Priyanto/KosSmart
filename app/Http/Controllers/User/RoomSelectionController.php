@@ -56,6 +56,8 @@ class RoomSelectionController extends Controller
             ->limit(3)
             ->get();
 
-        return view('user.rooms.show', compact('room', 'relatedRooms'));
+        $kosInfo = \App\Models\KosInfo::first();
+
+        return view('user.rooms.show', compact('room', 'relatedRooms', 'kosInfo'));
     }
 }

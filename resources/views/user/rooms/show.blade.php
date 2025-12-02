@@ -107,7 +107,7 @@
                 <script>
                 function imageGallery() {
                     return {
-                        images: @json($room->images),
+                        images: @json($images),
                         currentIndex: 0,
                         next() {
                             this.currentIndex = (this.currentIndex + 1) % this.images.length;
@@ -187,7 +187,9 @@
             
             <!-- Facilities -->
             @php
-                $facilities = json_decode($room->facilities, true);
+                $facilities = is_array($room->facilities) 
+                    ? $room->facilities 
+                    : json_decode($room->facilities, true);
             @endphp
 
             @if(!empty($facilities))
@@ -207,62 +209,90 @@
             @endif
         </div>
         
-        <!-- Kos Info -->
-        @if($room->kosInfo)
-        <div class="bg-gradient-to-br from-purple-50 to-indigo-50 rounded-xl border border-purple-200 p-6">
-            <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center">
-                <svg class="w-6 h-6 mr-2 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
-                </svg>
-                Tentang Kos
-            </h3>
-            
-            <div class="space-y-3">
-                <div>
-                    <p class="text-2xl font-bold text-gray-800 mb-1">{{ $room->kosInfo->name }}</p>
-                    <p class="text-gray-600">{{ $room->kosInfo->full_address }}</p>
-                </div>
-                
-                <div class="grid grid-cols-2 gap-4 pt-3">
-                    <div>
-                        <p class="text-sm text-gray-600">Telepon</p>
-                        <p class="font-semibold text-gray-800">{{ $room->kosInfo->phone }}</p>
-                    </div>
-                    @if($room->kosInfo->whatsapp)
-                    <div>
-                        <p class="text-sm text-gray-600">WhatsApp</p>
-                        <p class="font-semibold text-gray-800">{{ $room->kosInfo->whatsapp }}</p>
-                    </div>
-                    @endif
-                </div>
-                
-                @if($room->kosInfo->general_facilities && count($room->kosInfo->general_facilities) > 0)
-                <div class="pt-3 border-t border-purple-200">
-                    <p class="text-sm font-medium text-gray-700 mb-2">Fasilitas Umum:</p>
-                    <div class="flex flex-wrap gap-2">
-                        @foreach($room->kosInfo->general_facilities as $facility)
+        @if($kosInfo)
+<div class="bg-gradient-to-br from-purple-50 to-indigo-50 rounded-xl border border-purple-200 p-6">
+
+    <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center">
+        <svg class="w-6 h-6 mr-2 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+        </svg>
+        Tentang Kos
+    </h3>
+
+    <div class="space-y-3">
+        <div>
+            <p class="text-2xl font-bold text-gray-800 mb-1">{{ $kosInfo->name }}</p>
+            <p class="text-gray-600">{{ $kosInfo->full_address }}</p>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4 pt-3">
+            <div>
+                <p class="text-sm text-gray-600">Telepon</p>
+                <p class="font-semibold text-gray-800">{{ $kosInfo->phone }}</p>
+            </div>
+
+            @if($kosInfo->whatsapp)
+            <div>
+                <p class="text-sm text-gray-600">WhatsApp</p>
+                <p class="font-semibold text-gray-800">{{ $kosInfo->whatsapp }}</p>
+            </div>
+            @endif
+        </div>
+
+        @php
+            $generalFacilities = $kosInfo->general_facilities;
+
+            if (is_string($generalFacilities)) {
+                $decoded = json_decode($generalFacilities, true);
+                if (json_last_error() === JSON_ERROR_NONE) {
+                    $generalFacilities = $decoded;
+                } else {
+                    $generalFacilities = array_filter(array_map('trim', explode(',', $generalFacilities)));
+                }
+            }
+        @endphp
+
+        @if(!empty($generalFacilities))
+            <div class="pt-3 border-t border-purple-200">
+                <p class="text-sm font-medium text-gray-700 mb-2">Fasilitas Umum:</p>
+                <div class="flex flex-wrap gap-2">
+                    @foreach($generalFacilities as $facility)
                         <span class="px-3 py-1 bg-white text-purple-700 rounded-full text-sm">{{ $facility }}</span>
-                        @endforeach
+                    @endforeach
+                </div>
+            </div>
+        @endif
+
+        @php
+            $rules = $kosInfo->rules;
+
+            if (is_string($rules)) {
+                $decoded = json_decode($rules, true);
+                if (json_last_error() === JSON_ERROR_NONE) {
+                    $rules = $decoded;
+                } else {
+                    $rules = array_filter(array_map('trim', explode(',', $rules)));
+                }
+            }
+                @endphp
+        
+                @if(!empty($rules))
+                    <div class="pt-3 border-t border-purple-200">
+                        <p class="text-sm font-medium text-gray-700 mb-2">Peraturan Kos:</p>
+                        <ul class="space-y-1">
+                            @foreach(array_slice($rules, 0, 10) as $rule)
+                                <li class="flex items-start text-sm text-gray-700">
+                                    <svg class="w-4 h-4 text-orange-500 mr-2 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                    </svg>
+                                    {{ $rule }}
+                                </li>
+                            @endforeach
+                        </ul>
                     </div>
-                </div>
-                @endif
-                
-                @if($room->kosInfo->rules && count($room->kosInfo->rules) > 0)
-                <div class="pt-3 border-t border-purple-200">
-                    <p class="text-sm font-medium text-gray-700 mb-2">Peraturan Kos:</p>
-                    <ul class="space-y-1">
-                        @foreach(array_slice($room->kosInfo->rules, 0, 3) as $rule)
-                        <li class="flex items-start text-sm text-gray-700">
-                            <svg class="w-4 h-4 text-orange-500 mr-2 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                            </svg>
-                            {{ $rule }}
-                        </li>
-                        @endforeach
-                    </ul>
-                </div>
                 @endif
             </div>
+        
         </div>
         @endif
         
@@ -359,11 +389,13 @@
         </div>
         
         <!-- Contact Info -->
-        @if($room->kosInfo)
+        @if($kosInfo)
         <div class="bg-gradient-to-br from-purple-600 to-indigo-700 rounded-xl shadow-lg p-6 text-white">
             <h3 class="text-lg font-bold mb-4">Hubungi Kami</h3>
-            
+        
             <div class="space-y-3">
+            
+                <!-- Alamat -->
                 <div class="flex items-start">
                     <svg class="w-5 h-5 mr-3 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
@@ -371,51 +403,58 @@
                     </svg>
                     <div>
                         <p class="text-purple-100 text-sm">Alamat</p>
-                        <p class="font-medium">{{ $room->kosInfo->address }}</p>
-                        <p class="text-sm">{{ $room->kosInfo->city }}, {{ $room->kosInfo->province }}</p>
+                        <p class="font-medium">{{ $kosInfo->alamat }}</p>
+                        <p class="text-sm">{{ $kosInfo->city }}, {{ $kosInfo->province }}</p>
                     </div>
                 </div>
-                
+            
+                <!-- Telepon -->
                 <div class="flex items-start">
                     <svg class="w-5 h-5 mr-3 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path>
                     </svg>
                     <div>
                         <p class="text-purple-100 text-sm">Telepon</p>
-                        <p class="font-medium">{{ $room->kosInfo->phone }}</p>
+                        <p class="font-medium">{{ $kosInfo->phone ?? 'Tidak tersedia' }}</p>
                     </div>
                 </div>
-                
-                @if($room->kosInfo->email)
+            
+                <!-- Email -->
+                @if($kosInfo->email)
                 <div class="flex items-start">
                     <svg class="w-5 h-5 mr-3 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
                     </svg>
                     <div>
                         <p class="text-purple-100 text-sm">Email</p>
-                        <p class="font-medium">{{ $room->kosInfo->email }}</p>
+                        <p class="font-medium">{{ $kosInfo->email }}</p>
                     </div>
                 </div>
                 @endif
-                
-                @if($room->kosInfo->checkin_time && $room->kosInfo->checkout_time)
+            
+                <!-- Check-in & Check-out -->
                 <div class="pt-3 border-t border-purple-400">
-                    <div class="grid grid-cols-2 gap-3">
+                    <div class="grid grid-cols-1 gap-3">
                         <div>
                             <p class="text-purple-100 text-sm">Check-in</p>
-                            <p class="font-medium">{{ $room->kosInfo->checkin_time->format('H:i') }} WIB</p>
+                            <p class="font-medium">
+                                Buka mulai pukul <strong>06.00</strong> s/d <strong>22.00 WIB</strong>
+                            </p>
                         </div>
+                    
                         <div>
                             <p class="text-purple-100 text-sm">Check-out</p>
-                            <p class="font-medium">{{ $room->kosInfo->checkout_time->format('H:i') }} WIB</p>
+                            <p class="font-medium">
+                                Bebas kapan saja (tanpa batasan waktu)
+                            </p>
                         </div>
                     </div>
                 </div>
-                @endif
+            
             </div>
         </div>
         @endif
-        
+                
         <!-- Share & Save -->
         <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
             <h3 class="text-lg font-bold text-gray-800 mb-4">Bagikan Kamar Ini</h3>

@@ -18,6 +18,19 @@ class AuthController extends Controller
         // Jika sudah login, arahkan sesuai role
         if (Auth::check()) {
             $user = Auth::user();
+            
+            // Cek apakah email sudah diverifikasi
+            if (is_null($user->email_verified_at)) {
+                // Simpan email di session untuk verifikasi
+                session(['verification_email' => $user->email]);
+                
+                // Logout user yang belum verified
+                Auth::logout();
+                
+                return redirect()->route('verification.otp.form')
+                    ->with('info', 'Silakan verifikasi email Anda terlebih dahulu.');
+            }
+            
             if ($user->role === 'admin') {
                 return redirect()->route('admin.dashboard');
             } else {
@@ -55,12 +68,24 @@ class AuthController extends Controller
 
         // Cek kredensial
         if (Auth::attempt($credentials, $request->filled('remember'))) {
+            $user = Auth::user();
+            
+            // Cek apakah email sudah diverifikasi
+            if (is_null($user->email_verified_at)) {
+                // Simpan email di session
+                session(['verification_email' => $user->email]);
+                
+                // Logout user yang belum verified
+                Auth::logout();
+                
+                return redirect()->route('verification.otp.form')
+                    ->with('info', 'Email Anda belum diverifikasi. Silakan verifikasi terlebih dahulu.');
+            }
+            
             $request->session()->regenerate();
             RateLimiter::clear($throttleKey);
 
-            $user = Auth::user();
-
-            // 🔹 Redirect sesuai role
+            // Redirect sesuai role
             if ($user->role === 'admin') {
                 return redirect()->route('admin.dashboard')->with('success', 'Selamat datang Admin!');
             } else {

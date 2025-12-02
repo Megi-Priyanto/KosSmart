@@ -38,19 +38,30 @@
             </div>
             
             @if($kosInfo->general_facilities)
-            <div class="flex flex-wrap gap-2">
-                @php
-                    $facilities = is_array($kosInfo->general_facilities)
-                        ? $kosInfo->general_facilities
-                        : explode(',', $kosInfo->general_facilities);
+                <div class="flex flex-wrap gap-2">
+                    @php
+                        // Jika value JSON, decode
+                        if (is_string($kosInfo->general_facilities) && str_starts_with(trim($kosInfo->general_facilities), '[')) {
+                            $facilities = json_decode($kosInfo->general_facilities, true);
+                        } 
+                        // Jika CSV, pisahkan dengan koma
+                        elseif (is_string($kosInfo->general_facilities)) {
+                            $facilities = array_map('trim', explode(',', $kosInfo->general_facilities));
+                        } 
+                        // Jika array langsung
+                        else {
+                            $facilities = $kosInfo->general_facilities;
+                        }
                     @endphp
-                                
+
                     @foreach(array_slice($facilities, 0, 5) as $facility)
-                                
-                <span class="px-2 py-1 bg-white bg-opacity-20 rounded-full text-xs">{{ $facility }}</span>
-                @endforeach
-            </div>
+                        <span class="px-2 py-1 bg-white bg-opacity-20 rounded-full text-xs">
+                            {{ $facility }}
+                        </span>
+                    @endforeach
+                </div>
             @endif
+            
         </div>
     </div>
 </div>
@@ -90,9 +101,9 @@
             <label class="block text-sm font-medium text-gray-700 mb-2">Harga Max</label>
             <select name="max_price" class="w-full border border-gray-300 rounded-lg px-4 py-2">
                 <option value="">Tanpa Batas</option>
-                <option value="1000000" {{ request('max_price') == '1000000' ? 'selected' : '' }}>< Rp 1.000.000</option>
-                <option value="1500000" {{ request('max_price') == '1500000' ? 'selected' : '' }}>< Rp 1.500.000</option>
-                <option value="2000000" {{ request('max_price') == '2000000' ? 'selected' : '' }}>< Rp 2.000.000</option>
+                <option value="1000000" {{ request('max_price') == '1000000' ? 'selected' : '' }}> Rp 1.000.000</option>
+                <option value="1500000" {{ request('max_price') == '1500000' ? 'selected' : '' }}> Rp 1.500.000</option>
+                <option value="2000000" {{ request('max_price') == '2000000' ? 'selected' : '' }}> Rp 2.000.000</option>
             </select>
         </div>
         
@@ -130,8 +141,16 @@
             
             @if($room->facilities)
             <div class="flex flex-wrap gap-2 mb-4">
-                @foreach(array_slice(is_array($room->facilities) ? $room->facilities : explode(',', $room->facilities), 0, 3) as $facility)
-                <span class="px-2 py-1 bg-purple-50 text-purple-600 text-xs rounded-full">{{ $facility }}</span>
+                @php
+                    $facilities = is_array($room->facilities)
+                        ? $room->facilities
+                        : json_decode($room->facilities, true);
+                @endphp
+
+                @foreach(array_slice($facilities ?? [], 0, 3) as $facility)
+                    <span class="px-2 py-1 bg-purple-50 text-purple-600 text-xs rounded-full">
+                        {{ $facility }}
+                    </span>
                 @endforeach
             </div>
             @endif

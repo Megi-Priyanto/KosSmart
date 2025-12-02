@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\RegisterController;
+use App\Http\Controllers\OtpVerificationController;
 use App\Http\Controllers\ForgotPasswordController;
 use App\Http\Controllers\ResetPasswordController;
 use App\Http\Controllers\User\UserDashboardController;
@@ -53,23 +54,26 @@ Route::middleware('guest')->group(function () {
 });
 
 // ==============================
-// VERIFIKASI EMAIL
+// VERIFIKASI EMAIL DENGAN OTP
 // ==============================
-Route::middleware('auth')->group(function () {
-    Route::get('/email/verify', [RegisterController::class, 'verificationNotice'])
-        ->name('verification.notice');
+Route::prefix('verification')->name('verification.')->group(function () {
+    // Halaman input OTP (tidak perlu auth, karena user baru register)
+    Route::get('/otp', [OtpVerificationController::class, 'showOtpForm'])
+        ->name('otp.form');
     
-    Route::get('/email/verify/{id}/{hash}', [RegisterController::class, 'verifyEmail'])
-        ->middleware('signed')
-        ->name('verification.verify');
+    // Proses verifikasi OTP
+    Route::post('/otp/verify', [OtpVerificationController::class, 'verifyOtp'])
+        ->middleware('throttle:5,1') // Max 5 attempts per minute
+        ->name('otp.verify');
     
-    Route::post('/email/verification-notification', [RegisterController::class, 'resendVerification'])
-        ->middleware('throttle:3,1')
-        ->name('verification.resend');
+    // Kirim ulang OTP
+    Route::post('/otp/resend', [OtpVerificationController::class, 'resendOtp'])
+        ->middleware('throttle:3,2') // Max 3 attempts per 2 minutes
+        ->name('otp.resend');
 });
 
 // ==============================
-// LOGOUT — HARUS DI LUAR ROLE
+// LOGOUT – HARUS DI LUAR ROLE
 // ==============================
 Route::middleware('auth')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
@@ -101,23 +105,15 @@ Route::middleware(['auth', 'verified', 'role:user'])->group(function () {
             ->name('user.booking.store');
 
         Route::get('/user/booking/status', [BookingController::class, 'status'])
-        ->name('user.booking.status');
+            ->name('user.booking.status');
     });
 
     // ==============================
     // UNTUK USER YANG SUDAH PUNYA KAMAR
     // ==============================
     Route::middleware('has.room')->group(function () {
-        // Route::get('/user/billings', [PaymentController::class, 'billings'])
-        //     ->name('user.billings');
-
         Route::get('/user/payments', [PaymentController::class, 'index'])
             ->name('user.payments');
-
-        // Route::get('/user/billings/{billing}/pay', [PaymentController::class, 'pay'])
-        //     ->name('user.billing.pay');
-        // Route::post('/user/billings/{billing}/pay', [PaymentController::class, 'processPayment'])
-        //     ->name('user.billing.process');
 
         // Billing Management
         Route::controller(\App\Http\Controllers\User\UserBillingController::class)->group(function () {
@@ -156,7 +152,7 @@ Route::middleware(['auth', 'verified', 'role:admin'])
             Route::get('/kos/edit', 'edit')->name('kos.edit');
             Route::put('/kos', 'update')->name('kos.update');
         });
-        
+
         // Kelola Kamar
         Route::resource('rooms', AdminRoomController::class)->names([
             'index' => 'rooms.index',
@@ -167,7 +163,7 @@ Route::middleware(['auth', 'verified', 'role:admin'])
             'update' => 'rooms.update',
             'destroy' => 'rooms.destroy',
         ]);
-        
+
         // Update Status Kamar
         Route::put('/rooms/{room}/status', [RoomStatusController::class, 'update'])
             ->name('rooms.status.update');
@@ -177,7 +173,6 @@ Route::middleware(['auth', 'verified', 'role:admin'])
         Route::resource('users', \App\Http\Controllers\Admin\UserController::class);
         Route::resource('kos', \App\Http\Controllers\Admin\RoomController::class);
         Route::resource('billing', \App\Http\Controllers\Admin\BillingController::class);
-        Route::resource('reports', \App\Http\Controllers\Admin\ReportController::class);
         Route::get('/settings', [\App\Http\Controllers\Admin\SettingController::class, 'index'])
             ->name('settings.index');
 
@@ -205,5 +200,14 @@ Route::middleware(['auth', 'verified', 'role:admin'])
 
             // Bulk generate tagihan
             Route::post('/billing/bulk-generate', 'bulkGenerate')->name('billing.bulk-generate');
+        });
+
+        // Laporan
+        Route::controller(\App\Http\Controllers\Admin\ReportController::class)->group(function () {
+            Route::get('/reports', 'index')->name('reports.index');
+            Route::get('/reports/export-pdf', 'exportPdf')->name('reports.export-pdf');
+            Route::get('/reports/export-excel', 'exportExcel')->name('reports.export-excel');
+            Route::get('/reports/payments', 'paymentReport')->name('reports.payments');
+            Route::get('/reports/financial', 'financialSummary')->name('reports.financial');
         });
     });

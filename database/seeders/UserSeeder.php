@@ -17,13 +17,9 @@ class UserSeeder extends Seeder
         User::whereIn('email', [
             'admin@kossmart.com',
             'superadmin@kossmart.com',
-            'user@kossmart.com',
-            'john@kossmart.com',
-            'jane@kossmart.com',
-            'bob@kossmart.com',
-            'alice@kossmart.com', 
-            'charlie@kossmart.com',
-            'test@kossmart.com',
+            'septri@kossmart.com',
+            'megi@kossmart.com',
+
         ])->delete();
 
         // Admin Utama
@@ -48,8 +44,8 @@ class UserSeeder extends Seeder
 
         // User Biasa 1
         User::create([
-            'name' => 'John Doe',
-            'email' => 'john@kossmart.com',
+            'name' => 'Septri',
+            'email' => 'septri@kossmart.com',
             'phone' => '081234567892',
             'password' => Hash::make('password123'),
             'role' => 'user',
@@ -58,49 +54,9 @@ class UserSeeder extends Seeder
 
         // User Biasa 2
         User::create([
-            'name' => 'Jane Smith',
-            'email' => 'jane@kossmart.com',
+            'name' => 'Megi OXZ',
+            'email' => 'megi@kossmart.com',
             'phone' => '081234567893',
-            'password' => Hash::make('password123'),
-            'role' => 'user',
-            'email_verified_at' => now(),
-        ]);
-
-        // User Biasa 3
-        User::create([
-            'name' => 'Bob Wilson',
-            'email' => 'bob@kossmart.com',
-            'phone' => '081234567894',
-            'password' => Hash::make('password123'),
-            'role' => 'user',
-            'email_verified_at' => now(),
-        ]);
-
-        // User Biasa 4 (Belum Verifikasi Email)
-        User::create([
-            'name' => 'Alice Johnson',
-            'email' => 'alice@kossmart.com',
-            'phone' => '081234567895',
-            'password' => Hash::make('password123'),
-            'role' => 'user',
-            'email_verified_at' => null, // Belum verifikasi
-        ]);
-
-        // User Biasa 5 (Tanpa Telepon)
-        User::create([
-            'name' => 'Charlie Brown',
-            'email' => 'charlie@kossmart.com',
-            'phone' => null,
-            'password' => Hash::make('password123'),
-            'role' => 'user',
-            'email_verified_at' => now(),
-        ]);
-
-        // User untuk Testing
-        User::create([
-            'name' => 'Test User',
-            'email' => 'test@kossmart.com',
-            'phone' => '081234567896',
             'password' => Hash::make('password123'),
             'role' => 'user',
             'email_verified_at' => now(),
@@ -115,10 +71,10 @@ class UserSeeder extends Seeder
         $this->command->info('  Password: password123');
         $this->command->info('');
         $this->command->info('User:');
-        $this->command->info('  Email: john@kossmart.com');
+        $this->command->info('  Email: megi@kossmart.com');
         $this->command->info('  Password: password123');
         $this->command->info('-----------------------------------');
         $this->command->info('');
-        $this->command->info(' Total: 8 users (2 admin, 6 user)');
+        $this->command->info(' Total: 4 users (2 admin, 2 user)');
     }
 }
