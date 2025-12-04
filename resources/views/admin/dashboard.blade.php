@@ -63,7 +63,7 @@
             <div>
                 <p class="text-gray-600 text-sm font-medium">Total User</p>
                 <p class="text-3xl font-bold text-gray-800 mt-2">{{ $totalUsers ?? 24 }}</p>
-                <p class="text-sm text-green-600 mt-1">↑ +3 bulan ini</p>
+                <p class="text-sm text-green-600 mt-1">↑ +{{ $newUsersThisMonth }} bulan ini</p>
             </div>
             <div class="bg-blue-100 p-3 rounded-lg">
                 <svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -101,7 +101,7 @@
             <div>
                 <p class="text-gray-600 text-sm font-medium">Pendapatan</p>
                 <p class="text-3xl font-bold text-gray-800 mt-2">Rp {{ number_format($monthlyIncome ?? 36000000) }}</p>
-                <p class="text-sm text-green-600 mt-1">↑ +12% dari bulan lalu</p>
+                <p class="text-sm text-green-600 mt-1">↑ {{ $incomeChangePercent }}% dari bulan lalu</p>
             </div>
             <div class="bg-green-100 p-3 rounded-lg">
                 <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -113,23 +113,47 @@
         </div>
     </a>
 
-    <!-- Tagihan Pending -->
+     <!-- Tagihan Pending -->
     <a href="{{ route('admin.billing.index') }}" 
-       class="bg-white rounded-xl shadow-sm p-6 border border-gray-200 block hover:bg-gray-50 transition cursor-pointer">
+        class="bg-white rounded-xl shadow-sm p-6 border border-gray-200 block hover:bg-gray-50 transition cursor-pointer">
+
         <div class="flex items-center justify-between">
             <div>
                 <p class="text-gray-600 text-sm font-medium">Tagihan Pending</p>
-                <p class="text-3xl font-bold text-gray-800 mt-2">{{ $pendingBills ?? 5 }}</p>
-                <p class="text-sm text-orange-600 mt-1">⚠ Perlu follow up</p>
+
+                <!-- Total pending -->
+                <p class="text-3xl font-bold text-gray-800 mt-2">{{ $pendingBills }}</p>
+
+                <!-- Growth naik/turun -->
+                @if ($pendingGrowth > 0)
+                    <p class="text-sm text-red-600 mt-1">
+                        ↑ {{ $pendingGrowth }}% lebih banyak dari bulan lalu
+                    </p>
+                @elseif ($pendingGrowth < 0)
+                    <p class="text-sm text-green-600 mt-1">
+                        ↓ {{ abs($pendingGrowth) }}% lebih sedikit dari bulan lalu
+                    </p>
+                @else
+                    <p class="text-sm text-gray-500 mt-1">
+                        Tidak ada perubahan dari bulan lalu
+                    </p>
+                @endif
+
+                <!-- Info tambahan -->
+                <p class="text-xs text-gray-500 mt-1">
+                    Bulan ini: {{ $pendingBillsThisMonth }} |
+                    Bulan lalu: {{ $pendingBillsLastMonth }}
+                </p>
             </div>
+
             <div class="bg-orange-100 p-3 rounded-lg">
                 <svg class="w-8 h-8 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z">
-                    </path>
+                          d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
             </div>
         </div>
+
     </a>
 
 </div>
@@ -142,7 +166,7 @@
         <div class="p-6 border-b border-gray-200">
             <div class="flex items-center justify-between">
                 <h2 class="text-lg font-bold text-gray-800">User Terbaru</h2>
-                <a href="#" class="text-sm text-purple-600 hover:text-purple-700 font-medium">
+                <a href="{{ route('admin.users.index') }}" class="text-sm text-purple-600 hover:text-purple-700 font-medium">
                     Lihat Semua →
                 </a>
             </div>
@@ -181,46 +205,44 @@
         </div>
         <div class="p-6">
             <div class="space-y-4">
-                <!-- Sample Activities -->
+            
+                @forelse($activities as $activity)
                 <div class="flex items-start space-x-3">
-                    <div class="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
-                        <svg class="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+
+                    <!-- Icon berdasarkan tipe activity -->
+                    @php
+                        $iconColor = [
+                            'payment' => 'green',
+                            'user' => 'blue',
+                            'room' => 'purple',
+                            'booking' => 'yellow'
+                        ][$activity->type] ?? 'gray';
+                    @endphp
+
+                    <div class="w-8 h-8 bg-{{ $iconColor }}-100 rounded-full flex items-center justify-center flex-shrink-0">
+                        <svg class="w-4 h-4 text-{{ $iconColor }}-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z">
+                            </path>
                         </svg>
                     </div>
-                    <div class="flex-1">
-                        <p class="text-sm text-gray-800"><span class="font-semibold">John Doe</span> telah membayar tagihan bulan Januari</p>
-                        <p class="text-xs text-gray-500 mt-1">2 jam yang lalu</p>
-                    </div>
-                </div>
                 
-                <div class="flex items-start space-x-3">
-                    <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
-                        <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path>
-                        </svg>
-                    </div>
                     <div class="flex-1">
-                        <p class="text-sm text-gray-800">User baru <span class="font-semibold">Jane Smith</span> bergabung</p>
-                        <p class="text-xs text-gray-500 mt-1">5 jam yang lalu</p>
+                        <p class="text-sm text-gray-800">
+                            {!! $activity->message !!}
+                        </p>
+                        <p class="text-xs text-gray-500 mt-1">
+                            {{ $activity->created_at->diffForHumans() }}
+                        </p>
                     </div>
                 </div>
-                
-                <div class="flex items-start space-x-3">
-                    <div class="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center flex-shrink-0">
-                        <svg class="w-4 h-4 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
-                        </svg>
-                    </div>
-                    <div class="flex-1">
-                        <p class="text-sm text-gray-800">Kamar 101 berhasil ditambahkan</p>
-                        <p class="text-xs text-gray-500 mt-1">1 hari yang lalu</p>
-                    </div>
-                </div>
+                @empty
+                    <p class="text-gray-500 text-center py-4">Belum ada aktivitas terbaru</p>
+                @endforelse
+            
             </div>
         </div>
     </div>
-    
 </div>
 
 <!-- Quick Actions -->

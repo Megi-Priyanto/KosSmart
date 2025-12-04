@@ -125,48 +125,67 @@
 
 <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
     @foreach($rooms as $room)
-    <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-lg transition-all">
-        <div class="h-48 bg-gradient-to-br from-purple-400 to-indigo-500 relative">
-            <div class="absolute top-4 left-4">
-                <span class="bg-white px-3 py-1 rounded-full text-xs font-semibold">{{ ucfirst($room->type) }}</span>
-            </div>
-            <div class="absolute top-4 right-4 bg-green-500 text-white px-3 py-1 rounded-full text-xs font-semibold">
-                Tersedia
-            </div>
-        </div>
-        
-        <div class="p-6">
-            <h3 class="text-lg font-bold text-gray-800 mb-2">Kamar {{ $room->room_number }}</h3>
-            <p class="text-sm text-gray-600 mb-3">{{ $room->floor }} • {{ $room->size }} m²</p>
-            
-            @if($room->facilities)
-            <div class="flex flex-wrap gap-2 mb-4">
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-lg transition-all">
+            <div class="h-48 w-full relative overflow-hidden">
                 @php
-                    $facilities = is_array($room->facilities)
-                        ? $room->facilities
-                        : json_decode($room->facilities, true);
+                    $images = is_array($room->images) ? $room->images : json_decode($room->images, true);
+                    $firstImage = $images[0] ?? null;
                 @endphp
 
-                @foreach(array_slice($facilities ?? [], 0, 3) as $facility)
-                    <span class="px-2 py-1 bg-purple-50 text-purple-600 text-xs rounded-full">
-                        {{ $facility }}
-                    </span>
-                @endforeach
-            </div>
-            @endif
+                @if($firstImage)
+                    <img 
+                        src="{{ asset('storage/' . $firstImage) }}" 
+                        class="w-full h-full object-cover object-center"
+                        alt="Foto Kamar {{ $room->room_number }}">
+
+                @else
+                    <!-- Jika tidak ada gambar -->
+                    <div class="w-full h-full bg-gradient-to-br from-purple-400 to-indigo-500"></div>
+                @endif
             
-            <div class="flex items-center justify-between mb-4">
-                <div>
-                    <p class="text-2xl font-bold text-purple-600">Rp {{ number_format($room->price, 0, ',', '.') }}</p>
-                    <p class="text-xs text-gray-500">/bulan</p>
+                <div class="absolute top-4 left-4">
+                    <span class="bg-white px-3 py-1 rounded-full text-xs font-semibold">
+                        {{ ucfirst($room->type) }}
+                    </span>
+                </div>
+            
+                <div class="absolute top-4 right-4 bg-green-500 text-white px-3 py-1 rounded-full text-xs font-semibold">
+                    Tersedia
                 </div>
             </div>
-            
-            <a href="{{ route('user.rooms.show', $room->id) }}" class="block w-full text-center bg-purple-600 text-white py-2 rounded-lg hover:bg-purple-700">
-                Lihat Detail
-            </a>
+        
+            <div class="p-6">
+                <h3 class="text-lg font-bold text-gray-800 mb-2">Kamar {{ $room->room_number }}</h3>
+                <p class="text-sm text-gray-600 mb-3">{{ $room->floor }} • {{ $room->size }} m²</p>
+                
+                @if($room->facilities)
+                <div class="flex flex-wrap gap-2 mb-4">
+                    @php
+                        $facilities = is_array($room->facilities)
+                            ? $room->facilities
+                            : json_decode($room->facilities, true);
+                    @endphp
+    
+                    @foreach(array_slice($facilities ?? [], 0, 3) as $facility)
+                        <span class="px-2 py-1 bg-purple-50 text-purple-600 text-xs rounded-full">
+                            {{ $facility }}
+                        </span>
+                    @endforeach
+                </div>
+                @endif
+                
+                <div class="flex items-center justify-between mb-4">
+                    <div>
+                        <p class="text-2xl font-bold text-purple-600">Rp {{ number_format($room->price, 0, ',', '.') }}</p>
+                        <p class="text-xs text-gray-500">/bulan</p>
+                    </div>
+                </div>
+                
+                <a href="{{ route('user.rooms.show', $room->id) }}" class="block w-full text-center bg-purple-600 text-white py-2 rounded-lg hover:bg-purple-700">
+                    Lihat Detail
+                </a>
+            </div>
         </div>
-    </div>
     @endforeach
 </div>
 

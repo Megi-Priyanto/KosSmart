@@ -4,6 +4,7 @@ namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
 use App\Models\Room;
+use App\Models\KosInfo;
 use Illuminate\Http\Request;
 
 class RoomSelectionController extends Controller
@@ -11,6 +12,7 @@ class RoomSelectionController extends Controller
     /**
      * Tampilkan daftar kamar kosong
      */
+
     public function index(Request $request)
     {
         $query = Room::with('kosInfo')->available();
@@ -35,9 +37,23 @@ class RoomSelectionController extends Controller
         $types = Room::select('type')->distinct()->pluck('type');
         $floors = Room::select('floor')->distinct()->orderBy('floor')->pluck('floor');
 
-        $kosInfo = \App\Models\KosInfo::first(); // ← TAMBAH
+        // Ambil kos info beserta relasi rooms
+        $kosInfo = KosInfo::with('rooms')->first();
 
-        return view('user.rooms.index', compact('rooms', 'types', 'floors', 'kosInfo'));
+        // Hitung total kamar dan tersedia
+        $totalRooms = $kosInfo->rooms->count();
+        $availableRooms = $kosInfo->rooms->filter(function ($room) {
+            return $room->isAvailable();
+        })->count();
+
+        return view('user.rooms.index', compact(
+            'rooms',
+            'types',
+            'floors',
+            'kosInfo',
+            'totalRooms',
+            'availableRooms'
+        ));
     }
 
     public function show(Room $room)

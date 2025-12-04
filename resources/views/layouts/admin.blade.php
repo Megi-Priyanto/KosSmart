@@ -107,11 +107,22 @@
                 
                 <!-- Tagihan -->
                 <a href="{{ route('admin.billing.index') }}" 
-                   class="flex items-center space-x-3 p-3 rounded-lg hover:bg-purple-600 transition-colors {{ request()->routeIs('admin.billing.*') ? 'bg-purple-600' : '' }}">
+                    class="flex items-center space-x-3 p-3 rounded-lg hover:bg-purple-600 transition-colors {{ request()->routeIs('admin.billing.*') ? 'bg-purple-600' : '' }}">
+
                     <svg class="w-6 h-6 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/>
                     </svg>
-                    <span x-show="sidebarOpen">Tagihan</span>
+                
+                    <div class="flex justify-between items-center flex-1" x-show="sidebarOpen">
+                        <span>Tagihan</span>
+                    
+                        @if($todayNotifications > 0)
+                            <span class="px-2 py-1 bg-red-600 text-white rounded-full text-xs">
+                                {{ $todayNotifications }}
+                            </span>
+                        @endif
+                    </div>
                 </a>
 
                 <!-- Laporan -->

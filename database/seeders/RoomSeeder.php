@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Room;
+use App\Models\KosInfo;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
@@ -10,10 +11,12 @@ class RoomSeeder extends Seeder
 {
     public function run(): void
     {
-        // Matikan foreign key agar bisa truncate
         DB::statement('SET FOREIGN_KEY_CHECKS=0;');
         Room::truncate();
         DB::statement('SET FOREIGN_KEY_CHECKS=1;');
+
+        // Ambil ID kos yang benar (pasti 1)
+        $kosId = KosInfo::first()->id;
 
         $rooms = [
             // Lantai 1 - Putra
@@ -24,9 +27,10 @@ class RoomSeeder extends Seeder
                 'size' => 12.00,
                 'price' => 1200000,
                 'description' => 'Kamar nyaman di lantai 1 dengan fasilitas lengkap',
-                'facilities' => json_encode(['AC', 'WiFi', 'Kamar Mandi Dalam', 'Lemari']),
-                'images' => json_encode([]),
+                'facilities' => ['AC', 'WiFi', 'Kamar Mandi Dalam', 'Lemari'],
+                'images' => [],
                 'status' => 'available',
+                'kos_info_id' => $kosId,
             ],
             [
                 'room_number' => '102',
@@ -35,9 +39,10 @@ class RoomSeeder extends Seeder
                 'size' => 12.00,
                 'price' => 1200000,
                 'description' => 'Kamar strategis dekat lobby',
-                'facilities' => json_encode(['AC', 'WiFi', 'Kamar Mandi Dalam']),
-                'images' => json_encode([]),
+                'facilities' => ['AC', 'WiFi', 'Kamar Mandi Dalam'],
+                'images' => [],
                 'status' => 'available',
+                'kos_info_id' => $kosId,
             ],
             [
                 'room_number' => '103',
@@ -46,9 +51,10 @@ class RoomSeeder extends Seeder
                 'size' => 9.00,
                 'price' => 1000000,
                 'description' => 'Kamar ekonomis dengan fasilitas standar',
-                'facilities' => json_encode(['WiFi', 'Kamar Mandi Luar']),
-                'images' => json_encode([]),
+                'facilities' => ['WiFi', 'Kamar Mandi Luar'],
+                'images' => [],
                 'status' => 'available',
+                'kos_info_id' => $kosId,
             ],
 
             // Lantai 2 - Putri
@@ -59,9 +65,10 @@ class RoomSeeder extends Seeder
                 'size' => 12.00,
                 'price' => 1300000,
                 'description' => 'Kamar khusus putri dengan keamanan 24 jam',
-                'facilities' => json_encode(['AC', 'WiFi', 'Kamar Mandi Dalam', 'Lemari', 'Meja Rias']),
-                'images' => json_encode([]),
+                'facilities' => ['AC', 'WiFi', 'Kamar Mandi Dalam', 'Lemari', 'Meja Rias'],
+                'images' => [],
                 'status' => 'available',
+                'kos_info_id' => $kosId,
             ],
             [
                 'room_number' => '202',
@@ -70,9 +77,10 @@ class RoomSeeder extends Seeder
                 'size' => 15.00,
                 'price' => 1500000,
                 'description' => 'Kamar luas dengan balkon',
-                'facilities' => json_encode(['AC', 'WiFi', 'Kamar Mandi Dalam', 'Lemari', 'Balkon']),
-                'images' => json_encode([]),
+                'facilities' => ['AC', 'WiFi', 'Kamar Mandi Dalam', 'Lemari', 'Balkon'],
+                'images' => [],
                 'status' => 'available',
+                'kos_info_id' => $kosId,
             ],
             [
                 'room_number' => '203',
@@ -81,9 +89,10 @@ class RoomSeeder extends Seeder
                 'size' => 12.00,
                 'price' => 1300000,
                 'description' => 'Kamar dengan view taman',
-                'facilities' => json_encode(['AC', 'WiFi', 'Kamar Mandi Dalam']),
-                'images' => json_encode([]),
+                'facilities' => ['AC', 'WiFi', 'Kamar Mandi Dalam'],
+                'images' => [],
                 'status' => 'available',
+                'kos_info_id' => $kosId,
             ],
 
             // Lantai 3 - Campur
@@ -94,9 +103,10 @@ class RoomSeeder extends Seeder
                 'size' => 16.00,
                 'price' => 1800000,
                 'description' => 'Kamar premium dengan fasilitas terlengkap',
-                'facilities' => json_encode(['AC', 'WiFi', 'Kamar Mandi Dalam', 'Lemari', 'Balkon', 'Water Heater']),
-                'images' => json_encode([]),
+                'facilities' => ['AC', 'WiFi', 'Kamar Mandi Dalam', 'Lemari', 'Balkon', 'Water Heater'],
+                'images' => [],
                 'status' => 'available',
+                'kos_info_id' => $kosId,
             ],
             [
                 'room_number' => '302',
@@ -105,9 +115,10 @@ class RoomSeeder extends Seeder
                 'size' => 16.00,
                 'price' => 1800000,
                 'description' => 'Kamar premium lantai atas',
-                'facilities' => json_encode(['AC', 'WiFi', 'Kamar Mandi Dalam', 'Lemari', 'Balkon', 'Water Heater']),
-                'images' => json_encode([]),
+                'facilities' => ['AC', 'WiFi', 'Kamar Mandi Dalam', 'Lemari', 'Balkon', 'Water Heater'],
+                'images' => [],
                 'status' => 'available',
+                'kos_info_id' => $kosId,
             ],
             [
                 'room_number' => '303',
@@ -116,9 +127,10 @@ class RoomSeeder extends Seeder
                 'size' => 12.00,
                 'price' => 1400000,
                 'description' => 'Kamar standar lantai 3',
-                'facilities' => json_encode(['AC', 'WiFi', 'Kamar Mandi Dalam', 'Lemari']),
-                'images' => json_encode([]),
+                'facilities' => ['AC', 'WiFi', 'Kamar Mandi Dalam', 'Lemari'],
+                'images' => [],
                 'status' => 'available',
+                'kos_info_id' => $kosId,
             ],
         ];
 

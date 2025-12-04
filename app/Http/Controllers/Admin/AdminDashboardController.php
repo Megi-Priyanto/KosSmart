@@ -6,48 +6,126 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Models\Room;
 use App\Models\Rent;
+use App\Models\Billing;
+use App\Models\Notification;
 use Illuminate\Http\Request;
 
 class AdminDashboardController extends Controller
 {
     public function index()
     {
+        // ==========================
+        // STATISTIK USER
+        // ==========================
         $totalUsers = User::where('role', 'user')->count();
-        $totalRooms = Room::count();
-        $occupiedRooms = Room::where('status', 'occupied')->count();
-        $availableRooms = Room::where('status', 'available')->count();
-        $maintenanceRooms = Room::where('status', 'maintenance')->count();
-        $monthlyIncome = 36000000;
-        $pendingBills = 5;
 
+        // jumlah user baru bulan ini
+        $newUsersThisMonth = User::where('role', 'user')
+            ->whereMonth('created_at', now()->month)
+            ->whereYear('created_at', now()->year)
+            ->count();
+
+        // info kos
         $recentUsers = User::where('role', 'user')
             ->latest()
             ->take(5)
             ->get();
 
+        // ==========================
+        // STATISTIK KAMAR
+        // ==========================
+        $totalRooms = Room::count();
+        $occupiedRooms = Room::where('status', 'occupied')->count();
+        $availableRooms = Room::where('status', 'available')->count();
+        $maintenanceRooms = Room::where('status', 'maintenance')->count();
+
+        // ==========================
+        // STATISTIK PENDAPATAN REAL
+        // ==========================
+
+        // pendapatan bulan ini
+        $monthlyIncome = Billing::where('status', 'paid')
+            ->whereMonth('created_at', now()->month)
+            ->whereYear('created_at', now()->year)
+            ->sum('total_amount');
+
+        // pendapatan bulan lalu
+        $lastMonthIncome = Billing::where('status', 'paid')
+            ->whereMonth('created_at', now()->subMonth()->month)
+            ->whereYear('created_at', now()->subMonth()->year)
+            ->sum('total_amount');
+
+        // hitung % naik/turun
+        $incomeChangePercent = $lastMonthIncome > 0
+            ? round((($monthlyIncome - $lastMonthIncome) / $lastMonthIncome) * 100)
+            : 0;
+
+        // ==========================
+        // TAGIHAN PENDING REAL
+        // ==========================
+        $pendingBills = Billing::where('status', 'pending')->count();
+
+        $pendingBillsThisMonth = Billing::where('status', 'pending')
+            ->whereMonth('created_at', now()->month)
+            ->whereYear('created_at', now()->year)
+            ->count();
+
+        $pendingBillsLastMonth = Billing::where('status', 'pending')
+            ->whereMonth('created_at', now()->subMonth()->month)
+            ->whereYear('created_at', now()->subMonth()->year)
+            ->count();
+
+        // hitung growth / kenaikan
+        $pendingGrowth = $pendingBillsLastMonth > 0
+            ? round((($pendingBillsThisMonth - $pendingBillsLastMonth) / $pendingBillsLastMonth) * 100)
+            : 0;
+
+        // ==========================
+        // INFO KOS
+        // ==========================
         $kosInfo = \App\Models\KosInfo::first();
-        
-        // TAMBAHKAN INI - Pending bookings untuk notifikasi
+
+        // ==========================
+        // BOOKING PENDING (UNTUK BANNER)
+        // ==========================
         $pendingBookings = Rent::where('status', 'pending')
             ->with(['user', 'room'])
             ->latest()
             ->take(5)
             ->get();
-            
+
         $pendingBookingsCount = Rent::where('status', 'pending')->count();
+
+        // ==========================
+        // NOTIFIKASI / AKTIVITAS TERBARU
+        // ==========================
+        $activities = Notification::with('user')
+            ->latest()
+            ->take(7)
+            ->get();
+
+        $todayNotifications = Notification::where('status', 'pending')->count();
 
         return view('admin.dashboard', compact(
             'totalUsers',
+            'newUsersThisMonth',
             'totalRooms',
             'occupiedRooms',
             'availableRooms',
             'maintenanceRooms',
             'monthlyIncome',
+            'lastMonthIncome',
+            'incomeChangePercent',
             'pendingBills',
+            'pendingBillsThisMonth',
+            'pendingBillsLastMonth',
+            'pendingGrowth',
             'recentUsers',
             'kosInfo',
             'pendingBookings',
-            'pendingBookingsCount'
+            'pendingBookingsCount',
+            'todayNotifications',
+            'activities'
         ));
     }
 }

@@ -87,11 +87,8 @@ class RoomController extends Controller
     {
         $data = $request->validated();
 
-        // Set kos_info_id
-        $kosInfo = KosInfo::first();
-        if ($kosInfo) {
-            $data['kos_info_id'] = $kosInfo->id;
-        }
+        // FIX: Wajib assign kos_info_id dari data pertama
+        $data['kos_info_id'] = KosInfo::first()->id;
 
         // Handle image upload
         if ($request->hasFile('images')) {
@@ -139,20 +136,27 @@ class RoomController extends Controller
 
         // Handle new image upload
         if ($request->hasFile('images')) {
+
             $newImages = $this->imageService->uploadMultiple(
                 $request->file('images'),
                 'rooms'
             );
 
-            // Merge dengan gambar lama
-            $existingImages = $room->images ?? [];
+            $existingImages = is_array($room->images)
+                ? $room->images
+                : json_decode($room->images ?? '[]', true);
+
             $data['images'] = array_merge($existingImages, $newImages);
         }
 
         // Handle image removal
         if ($request->has('remove_images')) {
+
             $removeIndices = $request->input('remove_images', []);
-            $existingImages = $room->images ?? [];
+
+            $existingImages = is_array($room->images)
+                ? $room->images
+                : json_decode($room->images ?? '[]', true);
 
             foreach ($removeIndices as $index) {
                 if (isset($existingImages[$index])) {

@@ -49,4 +49,8 @@ return Application::configure(basePath: dirname(__DIR__))
         // Di sini bisa ditambah custom handler error kalau diperlukan
     })
 
+    ->withProviders([
+        App\Providers\ViewServiceProvider::class,
+    ])
+
     ->create();

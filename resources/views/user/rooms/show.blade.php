@@ -47,7 +47,7 @@
         <!-- Image Gallery -->
         <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
             @php
-                $images = json_decode($room->images, true);
+                $images = $room->images;
             @endphp
 
             @if(!empty($images))
@@ -210,72 +210,70 @@
         </div>
         
         @if($kosInfo)
-<div class="bg-gradient-to-br from-purple-50 to-indigo-50 rounded-xl border border-purple-200 p-6">
-
-    <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center">
-        <svg class="w-6 h-6 mr-2 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
-        </svg>
-        Tentang Kos
-    </h3>
-
-    <div class="space-y-3">
-        <div>
-            <p class="text-2xl font-bold text-gray-800 mb-1">{{ $kosInfo->name }}</p>
-            <p class="text-gray-600">{{ $kosInfo->full_address }}</p>
-        </div>
-
-        <div class="grid grid-cols-2 gap-4 pt-3">
-            <div>
-                <p class="text-sm text-gray-600">Telepon</p>
-                <p class="font-semibold text-gray-800">{{ $kosInfo->phone }}</p>
-            </div>
-
-            @if($kosInfo->whatsapp)
-            <div>
-                <p class="text-sm text-gray-600">WhatsApp</p>
-                <p class="font-semibold text-gray-800">{{ $kosInfo->whatsapp }}</p>
-            </div>
-            @endif
-        </div>
-
-        @php
-            $generalFacilities = $kosInfo->general_facilities;
-
-            if (is_string($generalFacilities)) {
-                $decoded = json_decode($generalFacilities, true);
-                if (json_last_error() === JSON_ERROR_NONE) {
-                    $generalFacilities = $decoded;
-                } else {
-                    $generalFacilities = array_filter(array_map('trim', explode(',', $generalFacilities)));
-                }
-            }
-        @endphp
-
-        @if(!empty($generalFacilities))
-            <div class="pt-3 border-t border-purple-200">
-                <p class="text-sm font-medium text-gray-700 mb-2">Fasilitas Umum:</p>
-                <div class="flex flex-wrap gap-2">
-                    @foreach($generalFacilities as $facility)
-                        <span class="px-3 py-1 bg-white text-purple-700 rounded-full text-sm">{{ $facility }}</span>
-                    @endforeach
+        <div class="bg-gradient-to-br from-purple-50 to-indigo-50 rounded-xl border border-purple-200 p-6">
+            <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center">
+                <svg class="w-6 h-6 mr-2 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                </svg>
+                Tentang Kos
+            </h3>
+            <div class="space-y-3">
+                <div>
+                    <p class="text-2xl font-bold text-gray-800 mb-1">{{ $kosInfo->name }}</p>
+                    <p class="text-gray-600">{{ $kosInfo->full_address }}</p>
                 </div>
-            </div>
-        @endif
 
-        @php
-            $rules = $kosInfo->rules;
+                <div class="grid grid-cols-2 gap-4 pt-3">
+                    <div>
+                        <p class="text-sm text-gray-600">Telepon</p>
+                        <p class="font-semibold text-gray-800">{{ $kosInfo->phone }}</p>
+                    </div>
 
-            if (is_string($rules)) {
-                $decoded = json_decode($rules, true);
-                if (json_last_error() === JSON_ERROR_NONE) {
-                    $rules = $decoded;
-                } else {
-                    $rules = array_filter(array_map('trim', explode(',', $rules)));
-                }
-            }
+                    @if($kosInfo->whatsapp)
+                    <div>
+                        <p class="text-sm text-gray-600">WhatsApp</p>
+                        <p class="font-semibold text-gray-800">{{ $kosInfo->whatsapp }}</p>
+                    </div>
+                    @endif
+                </div>
+
+                @php
+                    $generalFacilities = $kosInfo->general_facilities;
+
+                    if (is_string($generalFacilities)) {
+                        $decoded = json_decode($generalFacilities, true);
+                        if (json_last_error() === JSON_ERROR_NONE) {
+                            $generalFacilities = $decoded;
+                        } else {
+                            $generalFacilities = array_filter(array_map('trim', explode(',', $generalFacilities)));
+                        }
+                    }
                 @endphp
-        
+
+                @if(!empty($generalFacilities))
+                    <div class="pt-3 border-t border-purple-200">
+                        <p class="text-sm font-medium text-gray-700 mb-2">Fasilitas Umum:</p>
+                        <div class="flex flex-wrap gap-2">
+                            @foreach($generalFacilities as $facility)
+                                <span class="px-3 py-1 bg-white text-purple-700 rounded-full text-sm">{{ $facility }}</span>
+                            @endforeach
+                        </div>
+                    </div>
+                @endif
+
+                @php
+                    $rules = $kosInfo->rules;
+
+                    if (is_string($rules)) {
+                        $decoded = json_decode($rules, true);
+                        if (json_last_error() === JSON_ERROR_NONE) {
+                            $rules = $decoded;
+                        } else {
+                            $rules = array_filter(array_map('trim', explode(',', $rules)));
+                        }
+                    }
+                @endphp
+
                 @if(!empty($rules))
                     <div class="pt-3 border-t border-purple-200">
                         <p class="text-sm font-medium text-gray-700 mb-2">Peraturan Kos:</p>
@@ -292,7 +290,6 @@
                     </div>
                 @endif
             </div>
-        
         </div>
         @endif
         
@@ -307,7 +304,7 @@
                    class="block group">
                     <div class="bg-gray-50 rounded-lg overflow-hidden hover:shadow-lg transition-all">
                         @php
-                            $relatedImages = json_decode($relatedRoom->images, true);
+                            $images = $room->images;
                         @endphp
 
                         @if(!empty($relatedImages))

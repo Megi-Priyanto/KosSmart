@@ -15,6 +15,7 @@ use App\Http\Controllers\Admin\RoomStatusController;
 use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Admin\BookingManagementController;
 use App\Http\Controllers\User\UserProfileController;
+use App\Http\Controllers\Admin\NotificationController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -60,12 +61,12 @@ Route::prefix('verification')->name('verification.')->group(function () {
     // Halaman input OTP (tidak perlu auth, karena user baru register)
     Route::get('/otp', [OtpVerificationController::class, 'showOtpForm'])
         ->name('otp.form');
-    
+
     // Proses verifikasi OTP
     Route::post('/otp/verify', [OtpVerificationController::class, 'verifyOtp'])
         ->middleware('throttle:5,1') // Max 5 attempts per minute
         ->name('otp.verify');
-    
+
     // Kirim ulang OTP
     Route::post('/otp/resend', [OtpVerificationController::class, 'resendOtp'])
         ->middleware('throttle:3,2') // Max 3 attempts per 2 minutes
@@ -149,9 +150,14 @@ Route::middleware(['auth', 'verified', 'role:admin'])
             Route::get('/kos', 'index')->name('kos.index');
             Route::get('/kos/create', 'create')->name('kos.create');
             Route::post('/kos', 'store')->name('kos.store');
-            Route::get('/kos/edit', 'edit')->name('kos.edit');
-            Route::put('/kos', 'update')->name('kos.update');
+        
+            Route::get('/kos/{id}', 'show')->name('kos-info.show');           // <= TAMBAH
+            Route::get('/kos/{id}/edit', 'edit')->name('kos-info.edit');       // <= FIX
+            Route::put('/kos/{id}', 'update')->name('kos.update');             // <= FIX
+            Route::delete('/kos/{id}', 'destroy')->name('kos-info.destroy');   // <= OPTIONAL
         });
+
+        Route::patch('/kos/{id}/toggle-apply', [KosInfoController::class, 'toggleApply']) ->name('kos-info.toggle-apply');
 
         // Kelola Kamar
         Route::resource('rooms', AdminRoomController::class)->names([
@@ -171,7 +177,6 @@ Route::middleware(['auth', 'verified', 'role:admin'])
             ->name('rooms.status.bulk');
 
         Route::resource('users', \App\Http\Controllers\Admin\UserController::class);
-        Route::resource('kos', \App\Http\Controllers\Admin\RoomController::class);
         Route::resource('billing', \App\Http\Controllers\Admin\BillingController::class);
         Route::get('/settings', [\App\Http\Controllers\Admin\SettingController::class, 'index'])
             ->name('settings.index');
@@ -209,5 +214,12 @@ Route::middleware(['auth', 'verified', 'role:admin'])
             Route::get('/reports/export-excel', 'exportExcel')->name('reports.export-excel');
             Route::get('/reports/payments', 'paymentReport')->name('reports.payments');
             Route::get('/reports/financial', 'financialSummary')->name('reports.financial');
+        });
+
+        // Notification Admin
+        Route::controller(NotificationController::class)->group(function () {
+            Route::get('/notifications', 'index')->name('notifications');
+            Route::get('/notifications/{notification}', 'detail')->name('notifications.detail');
+            Route::post('/notifications/item/{item}/process', 'processItem')->name('notifications.process');
         });
     });
