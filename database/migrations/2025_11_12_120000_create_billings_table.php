@@ -15,8 +15,13 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
             $table->foreignId('room_id')->constrained('rooms')->cascadeOnDelete();
 
+            // Tambahan untuk DP & Pelunasan
+            $table->enum('tipe', ['dp', 'pelunasan', 'bulanan']);
+            $table->decimal('jumlah', 12, 2)->nullable();
+            $table->string('keterangan')->nullable();
+
             // Informasi Periode
-            $table->string('billing_period'); // "2025-01" atau "Januari 2025"
+            $table->string('billing_period');
             $table->integer('billing_year');
             $table->integer('billing_month');
 
@@ -37,7 +42,7 @@ return new class extends Migration
             $table->date('due_date');
             $table->date('paid_date')->nullable();
             $table->enum('status', ['unpaid', 'pending', 'paid', 'overdue'])
-                  ->default('unpaid');
+                ->default('unpaid');
 
             // Catatan
             $table->text('admin_notes')->nullable();
@@ -52,7 +57,7 @@ return new class extends Migration
             $table->index('due_date');
 
             // Unique: per rent hanya boleh ada 1 billing per bulan
-            $table->unique(['rent_id', 'billing_year', 'billing_month']);
+            $table->unique(['rent_id', 'billing_year', 'billing_month', 'tipe']);
         });
     }
 

@@ -349,7 +349,7 @@
                         </div>
                         <div class="ml-3">
                             <p class="text-sm font-medium text-green-600">Pembayaran Lunas</p>
-                            <p class="text-xs text-gray-500">{{ $billing->paid_date->format('d M Y') }}</p>
+                            {{ $billing->paid_date ? $billing->paid_date->format('d M Y') : '-' }}
                         </div>
                     </div>
                     @endif

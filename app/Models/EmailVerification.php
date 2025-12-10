@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\OtpVerificationMail;
 
+
 class EmailVerification extends Model
 {
     use HasFactory;

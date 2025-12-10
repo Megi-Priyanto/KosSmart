@@ -21,12 +21,5 @@ class DatabaseSeeder extends Seeder
         KosInfoSeeder::class,
         RoomSeeder::class,
         ]);
-
-        // User::factory(10)->create();
-
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
-        ]);
     }
 }

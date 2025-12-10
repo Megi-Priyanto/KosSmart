@@ -8,10 +8,11 @@ use App\Models\User;
 use App\Models\Room;
 use App\Models\Billing;
 
+
 class Rent extends Model
 {
     use HasFactory;
-    
+
     protected $fillable = [
         'user_id',
         'room_id',
@@ -22,14 +23,14 @@ class Rent extends Model
         'status',
         'notes',
     ];
-    
+
     protected $casts = [
         'start_date' => 'date',
         'end_date' => 'date',
         'deposit_paid' => 'decimal:2',
         'monthly_rent' => 'decimal:2',
     ];
-    
+
     /**
      * Relasi: Rent belongs to User
      */
@@ -37,7 +38,7 @@ class Rent extends Model
     {
         return $this->belongsTo(User::class);
     }
-    
+
     /**
      * Relasi: Rent belongs to Room
      */
@@ -45,12 +46,17 @@ class Rent extends Model
     {
         return $this->belongsTo(Room::class);
     }
-    
+
     /**
      * Relasi: Rent memiliki banyak billings
      */
     public function billings()
     {
         return $this->hasMany(Billing::class);
+    }
+
+    public function notificationItems()
+    {
+        return $this->hasMany(NotificationItem::class);
     }
 }

@@ -9,22 +9,30 @@ use Illuminate\Support\Str;
 
 class ImageUploadService
 {
+    /**
+     * Upload single image
+     */
     public function uploadSingle(UploadedFile $file, string $directory = 'rooms', int $maxWidth = 1200): string
     {
+        // Generate unique filename
         $filename = Str::random(20) . '_' . time() . '.' . $file->getClientOriginalExtension();
         $path = "{$directory}/{$filename}";
         
+        // Store the file
         Storage::disk('public')->put($path, file_get_contents($file));
         
         return $path;
     }
     
+    /**
+     * Upload multiple images
+     */
     public function uploadMultiple(array $files, string $directory = 'rooms'): array
     {
         $paths = [];
         
         foreach ($files as $file) {
-            if ($file instanceof UploadedFile) {
+            if ($file instanceof UploadedFile && $file->isValid()) {
                 $paths[] = $this->uploadSingle($file, $directory);
             }
         }
@@ -32,6 +40,9 @@ class ImageUploadService
         return $paths;
     }
     
+    /**
+     * Delete single image
+     */
     public function delete(string $path): bool
     {
         if (Storage::disk('public')->exists($path)) {
@@ -41,13 +52,21 @@ class ImageUploadService
         return false;
     }
     
+    /**
+     * Delete multiple images
+     */
     public function deleteMultiple(array $paths): void
     {
         foreach ($paths as $path) {
-            $this->delete($path);
+            if (!empty($path)) {
+                $this->delete($path);
+            }
         }
     }
     
+    /**
+     * Replace old images with new ones
+     */
     public function replace(?array $oldPaths, array $newFiles, string $directory = 'rooms'): array
     {
         if ($oldPaths) {
@@ -55,5 +74,21 @@ class ImageUploadService
         }
         
         return $this->uploadMultiple($newFiles, $directory);
+    }
+    
+    /**
+     * Get full URL of image
+     */
+    public function getUrl(string $path): string
+    {
+        return Storage::disk('public')->url($path);
+    }
+    
+    /**
+     * Check if file exists
+     */
+    public function exists(string $path): bool
+    {
+        return Storage::disk('public')->exists($path);
     }
 }

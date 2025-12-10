@@ -25,8 +25,8 @@ return new class extends Migration
             $table->foreignId('rent_id')->constrained()->onDelete('cascade');
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->foreignId('room_id')->constrained()->onDelete('cascade');
-            $table->date('due_date'); // tanggal jatuh tempo
-            $table->enum('status', ['pending', 'processed'])->default('pending');
+            $table->date('due_date'); 
+            $table->enum('status', ['pending', 'read'])->default('pending');
             $table->timestamps();
         });
     }
@@ -36,6 +36,8 @@ return new class extends Migration
      */
     public function down(): void
     {
+        // urutan harus DIBALIK
+        Schema::dropIfExists('notification_items');
         Schema::dropIfExists('notifications');
     }
 };

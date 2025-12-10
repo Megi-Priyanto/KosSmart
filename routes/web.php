@@ -150,14 +150,13 @@ Route::middleware(['auth', 'verified', 'role:admin'])
             Route::get('/kos', 'index')->name('kos.index');
             Route::get('/kos/create', 'create')->name('kos.create');
             Route::post('/kos', 'store')->name('kos.store');
-        
-            Route::get('/kos/{id}', 'show')->name('kos-info.show');           // <= TAMBAH
-            Route::get('/kos/{id}/edit', 'edit')->name('kos-info.edit');       // <= FIX
-            Route::put('/kos/{id}', 'update')->name('kos.update');             // <= FIX
-            Route::delete('/kos/{id}', 'destroy')->name('kos-info.destroy');   // <= OPTIONAL
+            Route::get('/kos/edit', 'edit')->name('kos.edit');
+            Route::put('/kos', 'update')->name('kos.update');
         });
 
-        Route::patch('/kos/{id}/toggle-apply', [KosInfoController::class, 'toggleApply']) ->name('kos-info.toggle-apply');
+        Route::patch('/kos/{id}/toggle-apply', [KosInfoController::class, 'toggleApply'])
+    ->name('kos-info.toggle-apply');
+
 
         // Kelola Kamar
         Route::resource('rooms', AdminRoomController::class)->names([

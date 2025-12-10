@@ -41,39 +41,6 @@
                             <span class="text-sm font-semibold text-gray-900">Rp {{ number_format($billing->rent_amount, 0, ',', '.') }}</span>
                         </div>
 
-                        @if($billing->electricity_cost > 0)
-                        <div class="flex justify-between items-center py-2">
-                            <span class="text-sm text-gray-600">Listrik</span>
-                            <span class="text-sm font-semibold text-gray-900">Rp {{ number_format($billing->electricity_cost, 0, ',', '.') }}</span>
-                        </div>
-                        @endif
-
-                        @if($billing->water_cost > 0)
-                        <div class="flex justify-between items-center py-2">
-                            <span class="text-sm text-gray-600">Air</span>
-                            <span class="text-sm font-semibold text-gray-900">Rp {{ number_format($billing->water_cost, 0, ',', '.') }}</span>
-                        </div>
-                        @endif
-
-                        @if($billing->maintenance_cost > 0)
-                        <div class="flex justify-between items-center py-2">
-                            <span class="text-sm text-gray-600">Maintenance</span>
-                            <span class="text-sm font-semibold text-gray-900">Rp {{ number_format($billing->maintenance_cost, 0, ',', '.') }}</span>
-                        </div>
-                        @endif
-
-                        @if($billing->other_costs > 0)
-                        <div class="flex justify-between items-center py-2">
-                            <span class="text-sm text-gray-600">
-                                Biaya Lain-lain
-                                @if($billing->other_costs_description)
-                                    <span class="block text-xs text-gray-500">{{ $billing->other_costs_description }}</span>
-                                @endif
-                            </span>
-                            <span class="text-sm font-semibold text-gray-900">Rp {{ number_format($billing->other_costs, 0, ',', '.') }}</span>
-                        </div>
-                        @endif
-
                         <div class="flex justify-between items-center py-2 border-t border-gray-200">
                             <span class="text-sm font-medium text-gray-700">Subtotal</span>
                             <span class="text-sm font-semibold text-gray-900">Rp {{ number_format($billing->subtotal, 0, ',', '.') }}</span>

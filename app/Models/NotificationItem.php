@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
+
 class NotificationItem extends Model
 {
     protected $fillable = [
@@ -11,6 +12,9 @@ class NotificationItem extends Model
         'rent_id',
         'user_id',
         'room_id',
+        'tipe',
+        'jumlah',
+        'keterangan',
         'due_date',
         'status',
     ];
@@ -18,6 +22,11 @@ class NotificationItem extends Model
     public function notification()
     {
         return $this->belongsTo(Notification::class);
+    }
+
+    public function billing()
+    {
+        return $this->belongsTo(Billing::class);
     }
 
     public function rent()

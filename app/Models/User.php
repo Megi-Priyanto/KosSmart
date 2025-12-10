@@ -21,7 +21,6 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @method \App\Models\Billing|null currentBilling()
  */
 
-
 class User extends Authenticatable implements MustVerifyEmail
 {
     use HasFactory, Notifiable;

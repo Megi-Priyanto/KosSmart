@@ -67,4 +67,27 @@ class NotificationController extends Controller
 
         return back()->with('success', 'Tagihan berhasil diproses');
     }
+
+    public function createDpNotification($booking)
+    {
+        // Buat kepala notifikasi
+        $notification = \App\Models\Notification::create([
+            'title' => 'Tagihan Pelunasan',
+            'description' => 'Anda memiliki tagihan pelunasan sisa pembayaran kamar.',
+            'notification_date' => now(), // WAJIB! untuk fix error
+            'status' => 'pending',
+        ]);
+
+        // Tambahkan item detail
+        \App\Models\NotificationItem::create([
+            'notification_id' => $notification->id,
+            'rent_id' => $booking->id,
+            'user_id' => $booking->user_id,
+            'room_id' => $booking->room_id,
+            'due_date' => now()->addDays(5),  // WAJIB! tidak boleh null
+            'status' => 'pending',
+        ]);
+
+        return true;
+    }
 }

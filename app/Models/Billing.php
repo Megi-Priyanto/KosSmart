@@ -16,6 +16,9 @@ class Billing extends Model
         'rent_id',
         'user_id',
         'room_id',
+        'tipe',
+        'jumlah',
+        'keterangan',
         'billing_period',
         'billing_year',
         'billing_month',
@@ -186,13 +189,6 @@ class Billing extends Model
         $this->update(['status' => 'pending']);
     }
 
-    public function checkOverdue(): void
-    {
-        if ($this->status !== 'paid' && $this->due_date->isPast()) {
-            $this->update(['status' => 'overdue']);
-        }
-    }
-
     protected static function booted()
     {
         static::retrieved(function ($billing) {
@@ -202,7 +198,6 @@ class Billing extends Model
 
     public function autoUpdateOverdueStatus()
     {
-        // Jika due_date NULL -> jangan apa-apa
         if (empty($this->due_date)) {
             return;
         }

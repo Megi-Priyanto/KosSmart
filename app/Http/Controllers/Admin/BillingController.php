@@ -11,6 +11,8 @@ use App\Models\User;
 use App\Models\Payment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use App\Models\Notification;
+use App\Models\NotificationItem;
 use Carbon\Carbon;
 
 class BillingController extends Controller
@@ -83,6 +85,9 @@ class BillingController extends Controller
             ->distinct()
             ->orderBy('billing_year', 'desc')
             ->pluck('billing_year');
+
+        \App\Models\NotificationItem::where('status', 'pending')
+            ->update(['status' => 'read']);
 
         return view('admin.billing.index', compact('billings', 'stats', 'users', 'years'));
     }

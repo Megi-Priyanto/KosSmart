@@ -21,7 +21,7 @@ class RoomController extends Controller
     }
 
     /**
-     * Display a listing of rooms (admin)
+     * Display a listing of rooms
      */
     public function index(Request $request)
     {
@@ -54,12 +54,12 @@ class RoomController extends Controller
 
         $rooms = $query->paginate(15)->withQueryString();
 
-        // Data untuk filter
+        // Data for filters
         $types = Room::select('type')->distinct()->pluck('type');
         $floors = Room::select('floor')->distinct()->orderBy('floor')->pluck('floor');
         $statuses = ['available', 'occupied', 'maintenance'];
 
-        // Statistik
+        // Statistics
         $stats = [
             'total' => Room::count(),
             'available' => Room::where('status', 'available')->count(),
@@ -75,9 +75,7 @@ class RoomController extends Controller
      */
     public function create()
     {
-        $kosInfo = KosInfo::first();
-
-        return view('admin.rooms.create', compact('kosInfo'));
+        return view('admin.rooms.create');
     }
 
     /**
@@ -87,21 +85,23 @@ class RoomController extends Controller
     {
         $data = $request->validated();
 
-        // FIX: Wajib assign kos_info_id dari data pertama
+        // Assign kos_info_id from first KosInfo
         $data['kos_info_id'] = KosInfo::first()->id;
 
-        // Handle image upload
+        // Handle multiple images upload
         if ($request->hasFile('images')) {
             $data['images'] = $this->imageService->uploadMultiple(
                 $request->file('images'),
                 'rooms'
             );
+        } else {
+            $data['images'] = [];
         }
 
-        Room::create($data);
+        $room = Room::create($data);
 
         return redirect()->route('admin.rooms.index')
-            ->with('success', 'Kamar berhasil ditambahkan');
+            ->with('success', "Kamar {$room->room_number} berhasil ditambahkan dengan " . count($data['images']) . " foto");
     }
 
     /**
@@ -134,44 +134,70 @@ class RoomController extends Controller
     {
         $data = $request->validated();
 
+        // Get existing images
+        $existingImages = is_array($room->images) 
+            ? $room->images 
+            : (json_decode($room->images ?? '[]', true) ?? []);
+
+        $deletedCount = 0;
+        $addedCount = 0;
+
+        // Handle image removal first
+        if ($request->has('remove_images')) {
+            $removeIndices = $request->input('remove_images', []);
+            
+            foreach ($removeIndices as $index) {
+                if (isset($existingImages[$index])) {
+                    // Delete from storage
+                    $this->imageService->delete($existingImages[$index]);
+                    unset($existingImages[$index]);
+                    $deletedCount++;
+                }
+            }
+            
+            // Reindex array
+            $existingImages = array_values($existingImages);
+        }
+
         // Handle new image upload
         if ($request->hasFile('images')) {
-
             $newImages = $this->imageService->uploadMultiple(
                 $request->file('images'),
                 'rooms'
             );
-
-            $existingImages = is_array($room->images)
-                ? $room->images
-                : json_decode($room->images ?? '[]', true);
-
-            $data['images'] = array_merge($existingImages, $newImages);
-        }
-
-        // Handle image removal
-        if ($request->has('remove_images')) {
-
-            $removeIndices = $request->input('remove_images', []);
-
-            $existingImages = is_array($room->images)
-                ? $room->images
-                : json_decode($room->images ?? '[]', true);
-
-            foreach ($removeIndices as $index) {
-                if (isset($existingImages[$index])) {
-                    $this->imageService->delete($existingImages[$index]);
-                    unset($existingImages[$index]);
-                }
+            
+            $addedCount = count($newImages);
+            
+            // Merge with existing images
+            $existingImages = array_merge($existingImages, $newImages);
+            
+            // Limit to 10 images max
+            if (count($existingImages) > 10) {
+                // Remove excess images and delete from storage
+                $excessImages = array_slice($existingImages, 10);
+                $this->imageService->deleteMultiple($excessImages);
+                $existingImages = array_slice($existingImages, 0, 10);
             }
-
-            $data['images'] = array_values($existingImages);
         }
+
+        $data['images'] = $existingImages;
 
         $room->update($data);
 
+        $message = "Data kamar {$room->room_number} berhasil diperbarui";
+        if ($deletedCount > 0) {
+            $message .= " ({$deletedCount} foto dihapus";
+            if ($addedCount > 0) {
+                $message .= ", {$addedCount} foto ditambahkan)";
+            } else {
+                $message .= ")";
+            }
+        } elseif ($addedCount > 0) {
+            $message .= " ({$addedCount} foto ditambahkan)";
+        }
+
         return redirect()->route('admin.rooms.index')
-            ->with('success', 'Data kamar berhasil diperbarui');
+            ->with('success', $message);
     }
 
     /**
@@ -179,20 +205,24 @@ class RoomController extends Controller
      */
     public function destroy(Room $room)
     {
-        // Cek apakah kamar sedang disewa
+        // Check if room is currently rented
         if ($room->currentRent()->exists()) {
-            return back()->with('error', 'Kamar tidak dapat dihapus karena sedang disewa');
+            return back()->with('error', 'Kamar tidak dapat dihapus karena sedang disewa oleh ' . $room->currentRent->user->name);
         }
 
-        // Delete images
-        if ($room->images) {
-            $this->imageService->deleteMultiple($room->images);
+        // Delete all images
+        if (!empty($room->images)) {
+            $images = is_array($room->images) 
+                ? $room->images 
+                : json_decode($room->images ?? '[]', true);
+            
+            $this->imageService->deleteMultiple($images);
         }
 
         $roomNumber = $room->room_number;
         $room->delete();
 
         return redirect()->route('admin.rooms.index')
-            ->with('success', "Kamar {$roomNumber} berhasil dihapus");
+            ->with('success', "Kamar {$roomNumber} dan semua foto terkait berhasil dihapus");
     }
 }

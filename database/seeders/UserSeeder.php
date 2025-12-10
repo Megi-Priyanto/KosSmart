@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\User;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
 class UserSeeder extends Seeder
@@ -13,14 +14,11 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
-        // Hapus semua user demo jika sudah ada
-        User::whereIn('email', [
-            'admin@kossmart.com',
-            'superadmin@kossmart.com',
-            'septri@kossmart.com',
-            'megi@kossmart.com',
+        // Hapus semua user
+        User::query()->delete();
 
-        ])->delete();
+        // Reset auto increment users
+        DB::statement('ALTER TABLE users AUTO_INCREMENT = 1;');
 
         // Admin Utama
         User::create([
