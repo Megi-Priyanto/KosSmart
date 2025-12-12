@@ -108,18 +108,25 @@
                 <!-- Tagihan -->
                 <a href="{{ route('admin.billing.index') }}" 
                     class="flex items-center space-x-3 p-3 rounded-lg hover:bg-purple-600 transition-colors {{ request()->routeIs('admin.billing.*') ? 'bg-purple-600' : '' }}">
-
+                            
                     <svg class="w-6 h-6 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/>
                     </svg>
                 
+                    @php
+                        // Hitung jumlah tagihan overdue / unread
+                        $unreadBilling = \App\Models\Notification::where('type', 'billing')
+                                        ->where('status', 'unread')
+                                        ->count();
+                    @endphp
+                
                     <div class="flex justify-between items-center flex-1" x-show="sidebarOpen">
                         <span>Tagihan</span>
                     
-                        @if($todayNotifications > 0)
+                        @if($unreadBilling > 0)
                             <span class="px-2 py-1 bg-red-600 text-white rounded-full text-xs">
-                                {{ $todayNotifications }}
+                                {{ $unreadBilling }}
                             </span>
                         @endif
                     </div>
@@ -193,18 +200,20 @@
                     
                     <!-- Right Actions -->
                     <div class="flex items-center space-x-4">
-                        <!-- Notifications -->
+                    
+                        <!-- Notifications Booking -->
                         <div x-data="{ open: false }" class="relative">
                             <button @click="open = !open" class="p-2 text-gray-600 hover:bg-gray-100 rounded-lg relative">
                                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                           d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
                                 </svg>
+                            
                                 @php
                                     $notifCount = \App\Models\Rent::where('status', 'pending')->count();
                                 @endphp
                                 @if($notifCount > 0)
-                                <span class="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
+                                    <span class="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
                                 @endif
                             </button>
                         
@@ -217,7 +226,7 @@
                                 <div class="p-3 border-b text-sm font-semibold bg-gray-50">
                                     Notifikasi Booking
                                     @if($notifCount > 0)
-                                    <span class="text-red-500">({{ $notifCount }} pending)</span>
+                                        <span class="text-red-500">({{ $notifCount }} pending)</span>
                                     @endif
                                 </div>
                             
@@ -231,39 +240,87 @@
                                     @endphp
 
                                     @forelse($pendingBookings as $booking)
-                                    <a href="{{ route('admin.bookings.show', $booking) }}" 
-                                       class="block p-3 hover:bg-gray-50 border-b border-gray-100">
-                                        <div class="flex items-start">
-                                            <div class="flex-shrink-0 w-10 h-10 bg-yellow-100 rounded-full flex items-center justify-center">
-                                                <svg class="w-5 h-5 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                                </svg>
+                                        <a href="{{ route('admin.bookings.show', $booking) }}" 
+                                           class="block p-3 hover:bg-gray-50 border-b border-gray-100">
+                                            <div class="flex items-start">
+                                                <div class="flex-shrink-0 w-10 h-10 bg-yellow-100 rounded-full flex items-center justify-center">
+                                                    <svg class="w-5 h-5 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                            d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                                    </svg>
+                                                </div>
+                                                <div class="ml-3 flex-1">
+                                                    <p class="text-sm font-medium text-gray-900">Booking Baru</p>
+                                                    <p class="text-xs text-gray-600">{{ $booking->user->name }} - Kamar {{ $booking->room->room_number }}</p>
+                                                    <p class="text-xs text-gray-500 mt-1">{{ $booking->created_at->diffForHumans() }}</p>
+                                                </div>
                                             </div>
-                                            <div class="ml-3 flex-1">
-                                                <p class="text-sm font-medium text-gray-900">Booking Baru</p>
-                                                <p class="text-xs text-gray-600">{{ $booking->user->name }} - Kamar {{ $booking->room->room_number }}</p>
-                                                <p class="text-xs text-gray-500 mt-1">{{ $booking->created_at->diffForHumans() }}</p>
-                                            </div>
-                                        </div>
-                                    </a>
+                                        </a>
                                     @empty
-                                    <div class="p-4 text-sm text-gray-600 text-center">
-                                        Tidak ada booking pending
-                                    </div>
+                                        <div class="p-4 text-sm text-gray-600 text-center">
+                                            Tidak ada booking pending
+                                        </div>
                                     @endforelse
                                 </div>
-
+                            
                                 @if($pendingBookings->count() > 0)
-                                <div class="p-3 bg-gray-50 border-t">
-                                    <a href="{{ route('admin.bookings.index') }}" 
-                                       class="text-sm text-purple-600 hover:text-purple-700 font-medium">
-                                        Lihat Semua Booking →
-                                    </a>
-                                </div>
+                                    <div class="p-3 bg-gray-50 border-t">
+                                        <a href="{{ route('admin.bookings.index') }}" 
+                                           class="text-sm text-purple-600 hover:text-purple-700 font-medium">
+                                            Lihat Semua Booking →
+                                        </a>
+                                    </div>
                                 @endif
                             </div>
                         </div>
+                    
+                        <!-- Billing Notifications (TAGIHAN OVERDUE) -->
+                        <div x-data="{ open: false }" class="relative ml-4">
+                            <button @click="open = !open" class="p-2 text-gray-600 hover:bg-gray-100 rounded-lg relative">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                          d="M9 12h6m-3 -3v6m-9 3h18a2 2 0 002 -2v-12a2 2 0 00-2 -2h-18a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                </svg>
+                            
+                                @if(isset($overdueNotifications) && $overdueNotifications->count() > 0)
+                                    <span class="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
+                                @endif
+                            </button>
                         
+                            <!-- Dropdown -->
+                            <div
+                                x-show="open"
+                                @click.away="open = false"
+                                x-transition
+                                class="absolute right-0 mt-2 w-80 bg-white shadow-lg rounded-lg overflow-hidden border border-gray-200 z-50">
+                        
+                                <div class="p-3 border-b text-sm font-semibold bg-gray-50">
+                                    Notifikasi Tagihan Overdue
+                                </div>
+                            
+                                <div class="max-h-96 overflow-y-auto">
+                                    @forelse($overdueNotifications as $notif)
+                                        <div class="p-3 border-b hover:bg-gray-50">
+                                            <p class="text-sm font-bold text-red-600">
+                                                {{ $notif->data['title'] ?? 'Tagihan Overdue' }}
+                                            </p>
+                                            <p class="text-xs text-gray-600">
+                                                {{ $notif->data['message'] ?? '' }}
+                                            </p>
+                                            <p class="text-xs text-gray-400 mt-1">
+                                                {{ $notif->created_at->diffForHumans() }}
+                                            </p>
+                                        </div>
+                                    @empty
+                                        <div class="p-4 text-sm text-gray-600 text-center">
+                                            Tidak ada tagihan overdue
+                                        </div>
+                                    @endforelse
+                                </div>
+                            </div>
+                        </div>
+                    
+                    
                         <!-- Logout -->
                         <form action="{{ route('logout') }}" method="POST">
                             @csrf
@@ -271,6 +328,7 @@
                                 Keluar
                             </button>
                         </form>
+                    
                     </div>
                 </div>
             </header>

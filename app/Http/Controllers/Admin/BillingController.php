@@ -86,9 +86,6 @@ class BillingController extends Controller
             ->orderBy('billing_year', 'desc')
             ->pluck('billing_year');
 
-        \App\Models\NotificationItem::where('status', 'pending')
-            ->update(['status' => 'read']);
-
         return view('admin.billing.index', compact('billings', 'stats', 'users', 'years'));
     }
 
@@ -118,8 +115,6 @@ class BillingController extends Controller
             'electricity_cost' => 'nullable|numeric|min:0',
             'water_cost' => 'nullable|numeric|min:0',
             'maintenance_cost' => 'nullable|numeric|min:0',
-            'other_costs' => 'nullable|numeric|min:0',
-            'other_costs_description' => 'nullable|string|max:500',
             'discount' => 'nullable|numeric|min:0',
             'due_date' => 'required|date|after_or_equal:today',
             'admin_notes' => 'nullable|string|max:1000',
@@ -153,8 +148,8 @@ class BillingController extends Controller
             $billing->electricity_cost = $validated['electricity_cost'] ?? 0;
             $billing->water_cost = $validated['water_cost'] ?? 0;
             $billing->maintenance_cost = $validated['maintenance_cost'] ?? 0;
-            $billing->other_costs = $validated['other_costs'] ?? 0;
-            $billing->other_costs_description = $validated['other_costs_description'];
+            $billing->other_costs = 0;
+            $billing->other_costs_description = null;
             $billing->discount = $validated['discount'] ?? 0;
 
             $billing->calculateTotal();
@@ -214,8 +209,6 @@ class BillingController extends Controller
             'electricity_cost' => 'nullable|numeric|min:0',
             'water_cost' => 'nullable|numeric|min:0',
             'maintenance_cost' => 'nullable|numeric|min:0',
-            'other_costs' => 'nullable|numeric|min:0',
-            'other_costs_description' => 'nullable|string|max:500',
             'discount' => 'nullable|numeric|min:0',
             'due_date' => 'required|date',
             'admin_notes' => 'nullable|string|max:1000',
@@ -229,8 +222,8 @@ class BillingController extends Controller
             $billing->electricity_cost = $validated['electricity_cost'] ?? 0;
             $billing->water_cost = $validated['water_cost'] ?? 0;
             $billing->maintenance_cost = $validated['maintenance_cost'] ?? 0;
-            $billing->other_costs = $validated['other_costs'] ?? 0;
-            $billing->other_costs_description = $validated['other_costs_description'];
+            $billing->other_costs = 0;
+            $billing->other_costs_description = null;
             $billing->discount = $validated['discount'] ?? 0;
             $billing->due_date = $validated['due_date'];
             $billing->admin_notes = $validated['admin_notes'];
@@ -313,6 +306,11 @@ class BillingController extends Controller
 
                 // Mark billing as paid
                 $payment->billing->markAsPaid();
+
+                Notification::where('type', 'billing')
+                    ->where('billing_id', $payment->billing_id)
+                    ->update(['status' => 'read']);
+
 
                 $message = 'Pembayaran berhasil dikonfirmasi';
             } else {

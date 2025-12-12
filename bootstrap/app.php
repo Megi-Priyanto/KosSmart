@@ -14,6 +14,8 @@ use App\Http\Middleware\TrimStrings;
 use Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull;
 use Illuminate\Http\Middleware\HandleCors;
 
+use Illuminate\Console\Scheduling\Schedule; // <-- WAJIB DITAMBAHKAN
+
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
         web: __DIR__ . '/../routes/web.php',
@@ -22,10 +24,6 @@ return Application::configure(basePath: dirname(__DIR__))
     )
 
     ->withMiddleware(function (Middleware $middleware): void {
-        /**
-         * Global middleware — dijalankan pada setiap request.
-         * (pindahan dari $middleware di Kernel.php)
-         */
         $middleware->use([
             TrustProxies::class,
             HandleCors::class,
@@ -34,10 +32,6 @@ return Application::configure(basePath: dirname(__DIR__))
             ConvertEmptyStringsToNull::class,
         ]);
 
-        /**
-         * Middleware alias — digunakan di route.
-         * Contoh: Route::get('/admin', ...)->middleware('role:admin');
-         */
         $middleware->alias([
             'role' => RoleMiddleware::class,
             'no.room' => CheckNoRoom::class,
@@ -46,11 +40,25 @@ return Application::configure(basePath: dirname(__DIR__))
     })
 
     ->withExceptions(function (Exceptions $exceptions): void {
-        // Di sini bisa ditambah custom handler error kalau diperlukan
+        //
     })
 
     ->withProviders([
         App\Providers\ViewServiceProvider::class,
     ])
+
+    ->withCommands([
+        App\Console\Commands\CheckRentDueCommand::class,
+        App\Console\Commands\CheckOverdueBilling::class,
+        App\Console\Commands\GenerateMonthlyBilling::class,
+    ])
+
+    ->withSchedule(function (Schedule $schedule) {
+        // Generate tagihan bulanan setiap awal bulan
+        $schedule->command(\App\Console\Commands\GenerateMonthlyBilling::class)->monthly();
+
+        // Cek tagihan jatuh tempo setiap hari jam 00:00
+        $schedule->command(\App\Console\Commands\CheckOverdueBilling::class)->daily();
+    })
 
     ->create();

@@ -19,13 +19,11 @@ class AdminDashboardController extends Controller
         // ==========================
         $totalUsers = User::where('role', 'user')->count();
 
-        // jumlah user baru bulan ini
         $newUsersThisMonth = User::where('role', 'user')
             ->whereMonth('created_at', now()->month)
             ->whereYear('created_at', now()->year)
             ->count();
 
-        // info kos
         $recentUsers = User::where('role', 'user')
             ->latest()
             ->take(5)
@@ -40,28 +38,24 @@ class AdminDashboardController extends Controller
         $maintenanceRooms = Room::where('status', 'maintenance')->count();
 
         // ==========================
-        // STATISTIK PENDAPATAN REAL
+        // STATISTIK PENDAPATAN
         // ==========================
-
-        // pendapatan bulan ini
         $monthlyIncome = Billing::where('status', 'paid')
             ->whereMonth('created_at', now()->month)
             ->whereYear('created_at', now()->year)
             ->sum('total_amount');
 
-        // pendapatan bulan lalu
         $lastMonthIncome = Billing::where('status', 'paid')
             ->whereMonth('created_at', now()->subMonth()->month)
             ->whereYear('created_at', now()->subMonth()->year)
             ->sum('total_amount');
 
-        // hitung % naik/turun
         $incomeChangePercent = $lastMonthIncome > 0
             ? round((($monthlyIncome - $lastMonthIncome) / $lastMonthIncome) * 100)
             : 0;
 
         // ==========================
-        // TAGIHAN PENDING REAL
+        // TAGIHAN PENDING
         // ==========================
         $pendingBills = Billing::where('status', 'pending')->count();
 
@@ -75,7 +69,6 @@ class AdminDashboardController extends Controller
             ->whereYear('created_at', now()->subMonth()->year)
             ->count();
 
-        // hitung growth / kenaikan
         $pendingGrowth = $pendingBillsLastMonth > 0
             ? round((($pendingBillsThisMonth - $pendingBillsLastMonth) / $pendingBillsLastMonth) * 100)
             : 0;
@@ -86,7 +79,7 @@ class AdminDashboardController extends Controller
         $kosInfo = \App\Models\KosInfo::first();
 
         // ==========================
-        // BOOKING PENDING (UNTUK BANNER)
+        // BOOKING PENDING
         // ==========================
         $pendingBookings = Rent::where('status', 'pending')
             ->with(['user', 'room'])
@@ -97,7 +90,7 @@ class AdminDashboardController extends Controller
         $pendingBookingsCount = Rent::where('status', 'pending')->count();
 
         // ==========================
-        // NOTIFIKASI / AKTIVITAS TERBARU
+        // NOTIFIKASI BARU
         // ==========================
         $activities = Notification::with('user')
             ->latest()
@@ -105,6 +98,21 @@ class AdminDashboardController extends Controller
             ->get();
 
         $todayNotifications = Notification::where('status', 'pending')->count();
+
+        $notifications = Notification::where('user_id', auth()->id())
+            ->where('status', 'pending')
+            ->orderBy('created_at', 'desc')
+            ->take(10)
+            ->get();
+
+        // ==========================
+        // FIX UTAMA (UNTUK BLADE)
+        // ==========================
+        $overdueNotifications = Notification::where('status', 'pending')
+            ->whereNotNull('due_date')
+            ->latest()
+            ->take(10)
+            ->get();
 
         return view('admin.dashboard', compact(
             'totalUsers',
@@ -125,7 +133,9 @@ class AdminDashboardController extends Controller
             'pendingBookings',
             'pendingBookingsCount',
             'todayNotifications',
-            'activities'
+            'activities',
+            'notifications',
+            'overdueNotifications'
         ));
     }
 }

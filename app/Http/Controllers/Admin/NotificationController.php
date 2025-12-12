@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Notification;
-use App\Models\NotificationItem;
 use App\Models\Billing;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -13,8 +12,12 @@ class NotificationController extends Controller
 {
     public function index()
     {
-        $notifications = Notification::where('status', 'pending')
-            ->orderBy('notification_date', 'desc')
+        // ➤ Tambahkan ini agar pending berubah jadi read
+        \App\Models\Notification::where('status', 'pending')
+            ->update(['status' => 'read']);
+
+        // Ambil notifikasi yang masih pending atau read
+        $notifications = Notification::orderBy('created_at', 'desc')
             ->get();
 
         return view('admin.notifications.index', compact('notifications'));
@@ -22,47 +25,36 @@ class NotificationController extends Controller
 
     public function detail(Notification $notification)
     {
-        $items = $notification->items()->where('status', 'pending')->get();
-
-        return view('admin.notifications.detail', compact('notification', 'items'));
+        return view('admin.notifications.detail', compact('notification'));
     }
 
-    public function processItem(NotificationItem $item)
+    public function process(Notification $notification)
     {
-        DB::transaction(function () use ($item) {
+        DB::transaction(function () use ($notification) {
 
-            // Cek apakah tagihan sudah ada
-            $exists = Billing::where('rent_id', $item->rent_id)
+            // Cek apakah tagihan sudah ada untuk bulan ini
+            $exists = Billing::where('rent_id', $notification->rent_id)
                 ->where('billing_month', now()->month)
                 ->where('billing_year', now()->year)
                 ->exists();
 
             if (!$exists) {
                 Billing::create([
-                    'rent_id' => $item->rent_id,
-                    'user_id' => $item->user_id,
-                    'room_id' => $item->room_id,
+                    'rent_id' => $notification->rent_id,
+                    'user_id' => $notification->user_id,
+                    'room_id' => $notification->room_id,
                     'billing_month' => now()->month,
                     'billing_year' => now()->year,
                     'billing_period' => now()->format('Y-m'),
-                    'rent_amount' => $item->rent->monthly_rent,
+                    'rent_amount' => $notification->rent->monthly_rent,
                     'due_date' => now()->addDays(3),
                     'status' => 'unpaid',
-                    'total_amount' => $item->rent->monthly_rent,
+                    'total_amount' => $notification->rent->monthly_rent,
                 ]);
             }
 
-            // Update status item
-            $item->update(['status' => 'processed']);
-
-            // Jika semua item selesai → notifikasi selesai
-            $remaining = NotificationItem::where('notification_id', $item->notification_id)
-                ->where('status', 'pending')
-                ->count();
-
-            if ($remaining == 0) {
-                $item->notification->update(['status' => 'processed']);
-            }
+            // Update status notifikasi
+            $notification->update(['status' => 'processed']);
         });
 
         return back()->with('success', 'Tagihan berhasil diproses');
@@ -70,22 +62,16 @@ class NotificationController extends Controller
 
     public function createDpNotification($booking)
     {
-        // Buat kepala notifikasi
-        $notification = \App\Models\Notification::create([
+        Notification::create([
             'title' => 'Tagihan Pelunasan',
-            'description' => 'Anda memiliki tagihan pelunasan sisa pembayaran kamar.',
-            'notification_date' => now(), // WAJIB! untuk fix error
+            'notification_date' => now(),
             'status' => 'pending',
-        ]);
 
-        // Tambahkan item detail
-        \App\Models\NotificationItem::create([
-            'notification_id' => $notification->id,
+            // kolom baru pada single-table
             'rent_id' => $booking->id,
             'user_id' => $booking->user_id,
             'room_id' => $booking->room_id,
-            'due_date' => now()->addDays(5),  // WAJIB! tidak boleh null
-            'status' => 'pending',
+            'due_date' => now()->addDays(5),
         ]);
 
         return true;

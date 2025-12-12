@@ -55,8 +55,8 @@ class Rent extends Model
         return $this->hasMany(Billing::class);
     }
 
-    public function notificationItems()
+    public function notifications()
     {
-        return $this->hasMany(NotificationItem::class);
+        return $this->hasMany(Notification::class);
     }
 }

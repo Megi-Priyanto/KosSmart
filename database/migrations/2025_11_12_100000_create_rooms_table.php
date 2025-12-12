@@ -12,7 +12,10 @@ return new class extends Migration
             $table->id();
 
             // Relasi kos
-            $table->foreignId('kos_info_id')->nullable()->constrained('kos_info')->nullOnDelete();
+            $table->foreignId('kos_info_id')
+                  ->nullable()
+                  ->constrained('kos_info')
+                  ->nullOnDelete();
 
             // Data kamar
             $table->string('room_number')->unique();
@@ -24,8 +27,21 @@ return new class extends Migration
             $table->decimal('size', 8, 2)->nullable();
             $table->boolean('has_window')->default(true);
 
-            // Harga + fasilitas
-            $table->decimal('price', 10, 2);
+            /*
+             |---------------------------------------------
+             |   SISTEM SEWA (Bulanan / Tahunan)
+             |---------------------------------------------
+            */
+            $table->enum('billing_cycle', ['monthly', 'yearly'])
+                  ->default('monthly');
+
+            $table->decimal('price', 10, 2) // digunakan untuk harga bulanan
+                  ->nullable();
+
+            $table->decimal('yearly_price', 10, 2)
+                  ->nullable(); // digunakan jika billing_cycle = yearly
+
+            // Fasilitas tambahan & foto
             $table->json('facilities')->nullable();
             $table->json('images')->nullable();
 
@@ -34,17 +50,34 @@ return new class extends Migration
             $table->text('notes')->nullable();
 
             // Status & perawatan
-            $table->enum('status', ['available', 'occupied', 'maintenance'])->default('available');
+            $table->enum('status', ['available', 'occupied', 'maintenance'])
+                  ->default('available');
+
             $table->date('last_maintenance')->nullable();
 
             // Tracking
             $table->integer('view_count')->default(0);
 
+            /*
+             |---------------------------------------------
+             |   FITUR NOTIFIKASI (disatukan)
+             |---------------------------------------------
+            */
+            $table->string('notification_title')
+                  ->default('Notifikasi Tagihan Jatuh Tempo');
+
+            $table->date('notification_date')->nullable();
+
+            $table->enum('notification_status', ['pending', 'sent'])
+                  ->default('pending');
+
+            // Waktu tabel
             $table->timestamps();
 
             // Index
             $table->index(['status', 'type']);
             $table->index('floor');
+            $table->index('notification_status');
         });
     }
 
