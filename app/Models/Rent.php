@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use App\Models\User;
 use App\Models\Room;
 use App\Models\Billing;
-
+use Carbon\Carbon;
 
 class Rent extends Model
 {
@@ -58,5 +58,29 @@ class Rent extends Model
     public function notifications()
     {
         return $this->hasMany(Notification::class);
+    }
+
+    public function getDurationHumanAttribute()
+    {
+        $start = Carbon::parse($this->start_date);
+        $now = now();
+
+        $diff = $start->diff($now);
+
+        $parts = [];
+
+        if ($diff->d > 0) {
+            $parts[] = $diff->d . ' hari';
+        }
+
+        if ($diff->h > 0) {
+            $parts[] = $diff->h . ' jam';
+        }
+
+        if ($diff->i > 0) {
+            $parts[] = $diff->i . ' menit';
+        }
+
+        return count($parts) ? implode(' ', $parts) : 'Baru mulai';
     }
 }

@@ -94,7 +94,7 @@
                 <!-- Harga -->
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-2">
-                        Harga Sewa/Bulan (Rp) <span class="text-red-500">*</span>
+                        Harga Sewa (Rp) <span class="text-red-500">*</span>
                     </label>
                     <input type="number" name="price" value="{{ old('price') }}" min="0"
                            class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-purple-500 focus:border-transparent @error('price') border-red-500 @enderror"
@@ -102,6 +102,24 @@
                     @error('price')
                     <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                     @enderror
+                </div>
+                
+                <!-- Jenis Sewa -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                        Jenis Sewa <span class="text-red-500">*</span>
+                    </label>
+                    <select name="jenis_sewa" 
+                            class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-purple-500 focus:border-transparent @error('jenis_sewa') border-red-500 @enderror"
+                            required>
+                        <option value="">Pilih Jenis Sewa</option>
+                        <option value="bulan" {{ old('jenis_sewa', 'bulan') == 'bulan' ? 'selected' : '' }}>Per Bulan</option>
+                        <option value="tahun" {{ old('jenis_sewa') == 'tahun' ? 'selected' : '' }}>Per Tahun</option>
+                    </select>
+                    @error('jenis_sewa')
+                    <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                    @enderror
+                    <p class="text-xs text-gray-500 mt-1">Pilih periode sewa untuk kamar ini</p>
                 </div>
             </div>
             
@@ -432,19 +450,17 @@ function roomForm() {
             const files = event.target.files;
             this.selectedFiles = files;
             
-            // Limit to 10 images
             const maxFiles = Math.min(files.length, 10);
             
             if (files.length > 10) {
-                alert('⚠️ Maksimal 10 gambar!\nHanya 10 gambar pertama yang akan diupload.');
+                alert('Maksimal 10 gambar!\nHanya 10 gambar pertama yang akan diupload.');
             }
             
             for (let i = 0; i < maxFiles; i++) {
                 const file = files[i];
                 
-                // Validate file size (5MB)
                 if (file.size > 5120 * 1024) {
-                    alert(`❌ File "${file.name}" terlalu besar!\nMaksimal 5MB per file.`);
+                    alert(`File "${file.name}" terlalu besar!\nMaksimal 5MB per file.`);
                     continue;
                 }
                 
@@ -459,8 +475,6 @@ function roomForm() {
         removePreview(index) {
             this.imagePreviews.splice(index, 1);
             
-            // Note: Cannot modify FileList directly
-            // User needs to re-select files if they want different ones
             if (this.imagePreviews.length === 0) {
                 document.getElementById('images-input').value = '';
             }

@@ -18,7 +18,6 @@ use App\Http\Controllers\User\UserProfileController;
 use App\Http\Controllers\Admin\NotificationController;
 use Illuminate\Support\Facades\Route;
 
-
 /*
 |--------------------------------------------------------------------------
 | Web Routes - KosSmart
@@ -155,7 +154,7 @@ Route::middleware(['auth', 'verified', 'role:admin'])
         });
 
         Route::patch('/kos/{id}/toggle-apply', [KosInfoController::class, 'toggleApply'])
-    ->name('kos-info.toggle-apply');
+            ->name('kos-info.toggle-apply');
 
 
         // Kelola Kamar

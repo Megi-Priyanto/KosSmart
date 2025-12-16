@@ -308,9 +308,8 @@ class BillingController extends Controller
                 $payment->billing->markAsPaid();
 
                 Notification::where('type', 'billing')
-                    ->where('billing_id', $payment->billing_id)
+                    ->where('rent_id', $payment->billing->rent_id)
                     ->update(['status' => 'read']);
-
 
                 $message = 'Pembayaran berhasil dikonfirmasi';
             } else {

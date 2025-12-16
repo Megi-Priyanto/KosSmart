@@ -150,8 +150,17 @@
                 </div>
                 
                 <div>
-                    <label class="text-sm text-gray-600">Harga/Bulan</label>
-                    <p class="font-semibold text-purple-600">Rp {{ number_format($room->price, 0, ',', '.') }}</p>
+                    <label class="text-sm text-gray-600">Harga</label>
+                    <p class="font-semibold text-purple-600">{{ $room->formatted_price }}</p>
+                </div>
+                
+                <div>
+                    <label class="text-sm text-gray-600">Jenis Sewa</label>
+                    <p class="font-semibold text-gray-800">
+                        <span class="px-2 py-1 bg-indigo-100 text-indigo-700 rounded-full text-xs">
+                            {{ $room->jenis_sewa_label }}
+                        </span>
+                    </p>
                 </div>
                 
                 <div>

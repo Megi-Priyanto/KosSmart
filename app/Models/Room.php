@@ -6,7 +6,6 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use App\Models\Rent;
 
-
 class Room extends Model
 {
     use HasFactory;
@@ -20,6 +19,7 @@ class Room extends Model
         'size',
         'has_window',
         'price',
+        'jenis_sewa',
         'description',
         'notes',
         'facilities',
@@ -132,6 +132,28 @@ class Room extends Model
             'maintenance' => 'Maintenance',
             default => 'Unknown',
         };
+    }
+
+    /**
+     * Helper: Get formatted jenis sewa label
+     */
+    public function getJenisSewaLabelAttribute(): string
+    {
+        return match ($this->jenis_sewa) {
+            'bulan' => 'Per Bulan',
+            'tahun' => 'Per Tahun',
+            default => 'Per Bulan',
+        };
+    }
+
+    /**
+     * Helper: Get formatted price with period
+     */
+    public function getFormattedPriceAttribute(): string
+    {
+        $price = 'Rp ' . number_format($this->price, 0, ',', '.');
+        $period = $this->jenis_sewa === 'tahun' ? '/tahun' : '/bulan';
+        return $price . ' ' . $period;
     }
 
     public function incrementViewCount(): void

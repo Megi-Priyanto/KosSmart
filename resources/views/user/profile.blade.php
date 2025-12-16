@@ -8,7 +8,10 @@
     
     <!-- Header -->
     <div class="mb-8">
-        <h1 class="text-3xl font-bold text-gray-800 mb-2">👤 Profil Saya</h1>
+        <h1 class="text-3xl font-bold text-gray-800 mb-2 flex items-center gap-2">
+            <i class="fa-solid fa-user text-purple-600"></i>
+            Profil Saya
+        </h1>
         <p class="text-gray-600">Kelola informasi profil dan keamanan akun Anda</p>
     </div>
     
@@ -83,7 +86,9 @@
                     </div>
                     <div class="flex justify-between items-center">
                         <span class="text-sm text-gray-600">Lama Menyewa</span>
-                        <span class="font-semibold text-gray-800">{{ $activeRent->start_date->diffInMonths(now()) }} bulan</span>
+                        <span class="font-semibold text-gray-800">
+                            {{ $activeRent->duration_human }}
+                        </span>
                     </div>
                     <div class="flex justify-between items-center">
                         <span class="text-sm text-gray-600">Total Pembayaran</span>
@@ -145,7 +150,7 @@
                             
                             @if(!Auth::user()->email_verified_at)
                             <div class="mt-2 p-2 bg-yellow-50 border border-yellow-200 rounded text-sm text-yellow-700">
-                                ⚠️ Email belum diverifikasi. 
+                                Email belum diverifikasi. 
                                 <a href="{{ route('verification.notice') }}" class="underline font-medium">Verifikasi sekarang</a>
                             </div>
                             @endif
@@ -314,7 +319,7 @@
             
             <!-- Danger Zone -->
             <div class="bg-red-50 border border-red-200 rounded-xl p-6">
-                <h3 class="text-lg font-bold text-red-800 mb-2">⚠️ Zona Berbahaya</h3>
+                <h3 class="text-lg font-bold text-red-800 mb-2">Zona Berbahaya</h3>
                 <p class="text-sm text-red-700 mb-4">
                     Tindakan di bawah ini bersifat permanen dan tidak dapat dibatalkan.
                 </p>
@@ -334,7 +339,7 @@
 <!-- Delete Confirmation Modal -->
 <div id="deleteModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
     <div class="bg-white rounded-xl max-w-md w-full p-6">
-        <h3 class="text-xl font-bold text-red-600 mb-4">⚠️ Konfirmasi Hapus Akun</h3>
+        <h3 class="text-xl font-bold text-red-600 mb-4">Konfirmasi Hapus Akun</h3>
         <p class="text-gray-700 mb-6">
             Apakah Anda yakin ingin menghapus akun? Semua data Anda akan dihapus secara permanen dan tidak dapat dipulihkan.
         </p>

@@ -4,12 +4,71 @@
 
 @section('content')
 
-<!-- Welcome Card -->
-<div class="bg-gradient-to-r from-purple-600 to-indigo-600 rounded-2xl p-8 text-white mb-8">
-    <h1 class="text-3xl font-bold mb-2">Selamat Datang Kembali, {{ Auth::user()->name }}! 👋</h1>
-    <p class="text-purple-100">
-        Kamar {{ $activeRent->room->room_number ?? 'N/A' }} • {{ $activeRent->room->floor ?? 'N/A' }}
-    </p>
+<div id="dashboardCarousel"
+     class="carousel slide mb-8 rounded-2xl overflow-hidden"
+     data-bs-ride="carousel"
+     data-bs-interval="4000">
+
+    <!-- Indicators -->
+    <div class="carousel-indicators">
+        <button type="button" data-bs-target="#dashboardCarousel" data-bs-slide-to="0" class="active"></button>
+        <button type="button" data-bs-target="#dashboardCarousel" data-bs-slide-to="1"></button>
+        <button type="button" data-bs-target="#dashboardCarousel" data-bs-slide-to="2"></button>
+    </div>
+
+    <!-- Slides -->
+    <div class="carousel-inner">
+
+        <!-- Slide 1 -->
+        <div class="carousel-item active">
+            <img src="{{ asset('images/image1.jpg') }}"
+                 class="d-block w-100"
+                 style="height:450px; object-fit:cover;">
+            <div class="carousel-caption text-start">
+                <h2 class="text-3xl font-bold">
+                    Selamat Datang Kembali, {{ Auth::user()->name }}!
+                </h2>
+                <p>
+                    Kamar {{ $activeRent->room->room_number ?? 'N/A' }}
+                    • {{ $activeRent->room->floor ?? 'N/A' }}
+                </p>
+            </div>
+        </div>
+
+        <!-- Slide 2 -->
+        <div class="carousel-item">
+            <img src="{{ asset('images/image2.jpg') }}"
+                 class="d-block w-100"
+                 style="height:450px; object-fit:cover;">
+            <div class="carousel-caption text-start">
+                <h2 class="text-3xl font-bold">Hunian Nyaman & Aman</h2>
+                <p>Nikmati fasilitas terbaik KosSmart</p>
+            </div>
+        </div>
+
+        <!-- Slide 3 -->
+        <div class="carousel-item">
+            <img src="{{ asset('images/image3.jpg') }}"
+                 class="d-block w-100"
+                 style="height:450px; object-fit:cover;">
+            <div class="carousel-caption text-start">
+                <h2 class="text-3xl font-bold">Pembayaran Mudah</h2>
+                <p>Kelola tagihan langsung dari dashboard</p>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Controls -->
+    <button class="carousel-control-prev" type="button"
+            data-bs-target="#dashboardCarousel" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon"></span>
+    </button>
+
+    <button class="carousel-control-next" type="button"
+            data-bs-target="#dashboardCarousel" data-bs-slide="next">
+        <span class="carousel-control-next-icon"></span>
+    </button>
 </div>
 
 <!-- Info Cards Row -->
@@ -90,20 +149,6 @@
                     <span class="text-gray-600">Sewa Kamar</span>
                     <span class="font-medium text-gray-800">Rp {{ number_format($currentBill->rent_amount, 0, ',', '.') }}</span>
                 </div>
-                <div class="flex justify-between text-sm">
-                    <span class="text-gray-600">Listrik</span>
-                    <span class="font-medium text-gray-800">Rp {{ number_format($currentBill->electricity, 0, ',', '.') }}</span>
-                </div>
-                <div class="flex justify-between text-sm">
-                    <span class="text-gray-600">Air</span>
-                    <span class="font-medium text-gray-800">Rp {{ number_format($currentBill->water, 0, ',', '.') }}</span>
-                </div>
-                @if($currentBill->other_charges > 0)
-                <div class="flex justify-between text-sm">
-                    <span class="text-gray-600">Lain-lain</span>
-                    <span class="font-medium text-gray-800">Rp {{ number_format($currentBill->other_charges, 0, ',', '.') }}</span>
-                </div>
-                @endif
                 <div class="border-t border-gray-200 pt-3 flex justify-between font-bold">
                     <span class="text-gray-800">Total</span>
                     <span class="text-purple-600">Rp {{ number_format($currentBill->total_amount, 0, ',', '.') }}</span>

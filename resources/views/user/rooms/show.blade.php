@@ -140,7 +140,7 @@
                 </div>
                 <div class="text-right">
                     <p class="text-3xl font-bold text-purple-600">Rp {{ number_format($room->price, 0, ',', '.') }}</p>
-                    <p class="text-sm text-gray-500">per bulan</p>
+                    <p class="text-sm text-gray-500">{{ $room->jenis_sewa === 'tahun' ? 'per tahun' : 'per bulan' }}</p>
                 </div>
             </div>
             
@@ -164,6 +164,16 @@
                     </div>
                     <p class="text-sm text-gray-600">Tipe</p>
                     <p class="font-semibold text-gray-800">{{ ucfirst($room->type) }}</p>
+                </div>
+
+                <div class="text-center">
+                    <div class="bg-indigo-100 w-12 h-12 rounded-lg flex items-center justify-center mx-auto mb-2">
+                        <svg class="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                        </svg>
+                    </div>
+                    <p class="text-sm text-gray-600">Jenis Sewa</p>
+                    <p class="font-semibold text-gray-800">{{ $room->jenis_sewa_label }}</p>
                 </div>
                 
                 <div class="text-center">
@@ -339,9 +349,10 @@
             <div class="mb-6">
                 <div class="flex items-center justify-between mb-2">
                     <span class="text-gray-600">Harga Sewa</span>
-                    <span class="text-sm text-gray-500">per bulan</span>
+                    <span class="text-sm text-gray-500">{{ $room->jenis_sewa_label }}</span>
                 </div>
                 <p class="text-4xl font-bold text-purple-600">Rp {{ number_format($room->price, 0, ',', '.') }}</p>
+                <p class="text-sm text-gray-500 mt-1">{{ $room->jenis_sewa === 'tahun' ? 'Dibayar per tahun' : 'Dibayar per bulan' }}</p>
             </div>
             
             <div class="space-y-3 mb-6">

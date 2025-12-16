@@ -12,7 +12,6 @@ class NotificationController extends Controller
 {
     public function index()
     {
-        // ➤ Tambahkan ini agar pending berubah jadi read
         \App\Models\Notification::where('status', 'pending')
             ->update(['status' => 'read']);
 

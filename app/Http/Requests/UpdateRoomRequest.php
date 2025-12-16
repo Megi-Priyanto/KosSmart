@@ -27,20 +27,29 @@ class UpdateRoomRequest extends FormRequest
             'capacity' => 'required|integer|min:1|max:10',
             'size' => 'nullable|numeric|min:0',
             'has_window' => 'boolean',
+
+            // Harga
             'price' => 'required|numeric|min:0',
+
+            // Jenis Sewa
+            'jenis_sewa' => 'required|in:bulan,tahun',
+
             'description' => 'nullable|string',
             'notes' => 'nullable|string',
+
+            // Fasilitas
             'facilities' => 'nullable|array',
             'facilities.*' => 'string',
-            
-            // Multiple images validation
+
+            // Upload gambar
             'images' => 'nullable|array|max:10',
             'images.*' => 'image|mimes:jpeg,png,jpg|max:5120',
-            
-            // For removing images
+
+            // Remove images
             'remove_images' => 'nullable|array',
             'remove_images.*' => 'integer',
-            
+
+            // Status
             'status' => 'required|in:available,occupied,maintenance',
             'last_maintenance' => 'nullable|date',
         ];
@@ -53,6 +62,11 @@ class UpdateRoomRequest extends FormRequest
             'room_number.unique' => 'Nomor kamar sudah digunakan',
             'type.required' => 'Tipe kamar wajib dipilih',
             'price.required' => 'Harga sewa wajib diisi',
+
+            // Pesan error jenis sewa
+            'jenis_sewa.required' => 'Jenis sewa wajib dipilih',
+            'jenis_sewa.in' => 'Jenis sewa harus /bulan atau /tahun',
+
             'images.max' => 'Maksimal 10 gambar yang dapat diupload',
             'images.*.image' => 'File harus berupa gambar',
             'images.*.mimes' => 'Format gambar harus JPG, JPEG, atau PNG',

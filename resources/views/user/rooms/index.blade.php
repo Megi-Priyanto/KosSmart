@@ -6,8 +6,23 @@
 
 <!-- Page Header -->
 <div class="mb-8">
-    <h1 class="text-3xl font-bold text-gray-800 mb-2">🏠 Cari Kamar</h1>
-    <p class="text-gray-600">Temukan kamar yang sesuai dengan kebutuhan Anda</p>
+    <!-- Judul -->
+    <div class="flex items-center gap-3 mb-1">
+        <svg class="w-8 h-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6">
+            </path>
+        </svg>
+
+        <span class="text-xl font-bold text-gray-800">
+            Cari Kamar
+        </span>
+    </div>
+
+    <!-- Deskripsi -->
+    <p class="text-gray-600">
+        Temukan kamar yang sesuai dengan kebutuhan Anda
+    </p>
 </div>
 
 <!-- Kos Info Card -->
@@ -55,9 +70,9 @@
                     @endphp
 
                     @foreach(array_slice($facilities, 0, 5) as $facility)
-                        <span class="px-2 py-1 bg-white bg-opacity-20 rounded-full text-xs">
-                            {{ $facility }}
-                        </span>
+                        <span class="px-3 py-1 bg-white text-purple-700 font-semibold rounded-full text-xs shadow">
+                        {{ $facility }}
+                    </span>
                     @endforeach
                 </div>
             @endif
@@ -177,7 +192,7 @@
                 <div class="flex items-center justify-between mb-4">
                     <div>
                         <p class="text-2xl font-bold text-purple-600">Rp {{ number_format($room->price, 0, ',', '.') }}</p>
-                        <p class="text-xs text-gray-500">/bulan</p>
+                        <p class="text-xs text-gray-500">{{ $room->jenis_sewa === 'tahun' ? '/tahun' : '/bulan' }}</p>
                     </div>
                 </div>
                 

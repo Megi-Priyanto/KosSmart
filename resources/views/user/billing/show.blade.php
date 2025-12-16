@@ -71,7 +71,7 @@
                             <p class="text-xs text-gray-500 mb-1">Jatuh Tempo</p>
                             <p class="text-sm font-medium text-gray-900">{{ $billing->due_date->format('d M Y') }}</p>
                             @if($billing->is_overdue && $billing->status !== 'paid')
-                                <p class="text-xs text-red-600 mt-1 font-semibold">⚠️ Terlambat {{ abs($billing->days_until_due) }} hari</p>
+                                <p class="text-xs text-red-600 mt-1 font-semibold">Terlambat {{ abs($billing->days_until_due) }} hari</p>
                             @elseif($billing->status !== 'paid')
                                 <p class="text-xs text-gray-500 mt-1">{{ $billing->days_until_due }} hari lagi</p>
                             @endif
@@ -143,7 +143,7 @@
                                 @if($payment->status === 'pending')
                                 <div class="mt-3 p-3 bg-yellow-50 border-l-4 border-yellow-400 rounded">
                                     <p class="text-sm text-yellow-800">
-                                        <span class="font-semibold">⏳ Menunggu Verifikasi</span><br>
+                                        <span class="font-semibold">Menunggu Verifikasi</span><br>
                                         Pembayaran Anda sedang diproses oleh admin. Harap tunggu konfirmasi.
                                     </p>
                                 </div>
@@ -189,7 +189,7 @@
                     @if($billing->is_overdue)
                     <div class="p-3 bg-red-50 border-l-4 border-red-500 rounded mb-4">
                         <p class="text-sm text-red-800">
-                            <span class="font-semibold">⚠️ Tagihan Terlambat</span><br>
+                            <span class="font-semibold">Tagihan Terlambat</span><br>
                             Segera lakukan pembayaran untuk menghindari denda.
                         </p>
                     </div>
@@ -197,7 +197,7 @@
 
                     <a href="{{ route('user.billing.pay', $billing) }}" 
                        class="block w-full px-4 py-3 bg-green-600 text-white text-center rounded-lg hover:bg-green-700 transition-colors font-semibold">
-                        💳 Bayar Sekarang
+                        Bayar Sekarang
                     </a>
 
                     <div class="text-xs text-gray-600 text-center">
@@ -219,7 +219,7 @@
 
             <!-- Payment Info Box -->
             <div class="bg-blue-50 border border-blue-200 rounded-lg p-6">
-                <h4 class="text-sm font-semibold text-blue-900 mb-3">ℹ️ Informasi Pembayaran</h4>
+                <h4 class="text-sm font-semibold text-blue-900 mb-3">ℹInformasi Pembayaran</h4>
                 <ul class="space-y-2 text-sm text-blue-800">
                     <li class="flex items-start">
                         <svg class="w-4 h-4 mr-2 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">

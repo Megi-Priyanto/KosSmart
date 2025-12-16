@@ -275,7 +275,7 @@
 
     <!-- Instructions -->
     <div class="bg-blue-50 border border-blue-200 rounded-lg p-6">
-        <h3 class="text-lg font-semibold text-blue-900 mb-4">📋 Panduan Pembayaran</h3>
+        <h3 class="text-lg font-semibold text-blue-900 mb-4">Panduan Pembayaran</h3>
         <ol class="space-y-2 text-sm text-blue-800">
             <li class="flex items-start">
                 <span class="font-bold mr-2">1.</span>

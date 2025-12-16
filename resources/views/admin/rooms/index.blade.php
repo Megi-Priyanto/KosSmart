@@ -208,6 +208,14 @@
                         Rp {{ number_format($room->price, 0, ',', '.') }}
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="text-sm text-gray-900">
+                            <span class="font-semibold">Rp {{ number_format($room->price, 0, ',', '.') }}</span>
+                        </div>
+                        <div class="text-xs text-gray-500">
+                            {{ $room->jenis_sewa_label }}
+                        </div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
                         <span class="px-2 py-1 text-xs font-semibold rounded-full
                             @if($room->status == 'available') bg-green-100 text-green-700
                             @elseif($room->status == 'occupied') bg-blue-100 text-blue-700

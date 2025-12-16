@@ -91,7 +91,7 @@
                 <!-- Harga -->
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-2">
-                        Harga Sewa/Bulan (Rp) <span class="text-red-500">*</span>
+                        Harga Sewa (Rp) <span class="text-red-500">*</span>
                     </label>
                     <input type="number" name="price" value="{{ old('price', $room->price) }}" min="0"
                            class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-purple-500 focus:border-transparent @error('price') border-red-500 @enderror"
@@ -99,6 +99,24 @@
                     @error('price')
                     <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                     @enderror
+                </div>
+                
+                <!-- Jenis Sewa-->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                        Jenis Sewa <span class="text-red-500">*</span>
+                    </label>
+                    <select name="jenis_sewa" 
+                            class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-purple-500 focus:border-transparent @error('jenis_sewa') border-red-500 @enderror"
+                            required>
+                        <option value="">Pilih Jenis Sewa</option>
+                        <option value="bulan" {{ old('jenis_sewa', $room->jenis_sewa) == 'bulan' ? 'selected' : '' }}>Per Bulan</option>
+                        <option value="tahun" {{ old('jenis_sewa', $room->jenis_sewa) == 'tahun' ? 'selected' : '' }}>Per Tahun</option>
+                    </select>
+                    @error('jenis_sewa')
+                    <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                    @enderror
+                    <p class="text-xs text-gray-500 mt-1">💡 Periode sewa saat ini: <strong>{{ $room->jenis_sewa_label }}</strong></p>
                 </div>
             </div>
             

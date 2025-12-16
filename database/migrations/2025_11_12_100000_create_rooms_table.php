@@ -23,6 +23,10 @@ return new class extends Migration
             $table->string('type'); // putra/putri/campur
             $table->integer('capacity')->default(1);
 
+            // Jenis sewa kamar (ditambahkan)
+            $table->enum('jenis_sewa', ['bulan', 'tahun'])
+                  ->default('bulan');
+
             // Fasilitas fisik
             $table->decimal('size', 8, 2)->nullable();
             $table->boolean('has_window')->default(true);
@@ -32,14 +36,15 @@ return new class extends Migration
              |   SISTEM SEWA (Bulanan / Tahunan)
              |---------------------------------------------
             */
+            // dipertahankan karena sudah ada
             $table->enum('billing_cycle', ['monthly', 'yearly'])
                   ->default('monthly');
 
-            $table->decimal('price', 10, 2) // digunakan untuk harga bulanan
-                  ->nullable();
+            $table->decimal('price', 10, 2)
+                  ->nullable(); // harga bulanan
 
             $table->decimal('yearly_price', 10, 2)
-                  ->nullable(); // digunakan jika billing_cycle = yearly
+                  ->nullable(); // harga tahunan jika perlu
 
             // Fasilitas tambahan & foto
             $table->json('facilities')->nullable();
@@ -60,7 +65,7 @@ return new class extends Migration
 
             /*
              |---------------------------------------------
-             |   FITUR NOTIFIKASI (disatukan)
+             |   FITUR NOTIFIKASI
              |---------------------------------------------
             */
             $table->string('notification_title')

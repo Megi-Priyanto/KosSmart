@@ -26,6 +26,7 @@ class RoomSeeder extends Seeder
                 'type' => 'putra',
                 'size' => 12.00,
                 'price' => 1200000,
+                'jenis_sewa' => 'bulan', 
                 'description' => 'Kamar nyaman di lantai 1 dengan fasilitas lengkap',
                 'facilities' => ['AC', 'WiFi', 'Kamar Mandi Dalam', 'Lemari'],
                 'images' => [],
@@ -38,6 +39,7 @@ class RoomSeeder extends Seeder
                 'type' => 'putra',
                 'size' => 12.00,
                 'price' => 1200000,
+                'jenis_sewa' => 'bulan',
                 'description' => 'Kamar strategis dekat lobby',
                 'facilities' => ['AC', 'WiFi', 'Kamar Mandi Dalam'],
                 'images' => [],
@@ -50,6 +52,7 @@ class RoomSeeder extends Seeder
                 'type' => 'putra',
                 'size' => 9.00,
                 'price' => 1000000,
+                'jenis_sewa' => 'bulan',
                 'description' => 'Kamar ekonomis dengan fasilitas standar',
                 'facilities' => ['WiFi', 'Kamar Mandi Luar'],
                 'images' => [],
@@ -64,6 +67,7 @@ class RoomSeeder extends Seeder
                 'type' => 'putri',
                 'size' => 12.00,
                 'price' => 1300000,
+                'jenis_sewa' => 'bulan', 
                 'description' => 'Kamar khusus putri dengan keamanan 24 jam',
                 'facilities' => ['AC', 'WiFi', 'Kamar Mandi Dalam', 'Lemari', 'Meja Rias'],
                 'images' => [],
@@ -76,6 +80,7 @@ class RoomSeeder extends Seeder
                 'type' => 'putri',
                 'size' => 15.00,
                 'price' => 1500000,
+                'jenis_sewa' => 'bulan',
                 'description' => 'Kamar luas dengan balkon',
                 'facilities' => ['AC', 'WiFi', 'Kamar Mandi Dalam', 'Lemari', 'Balkon'],
                 'images' => [],
@@ -88,6 +93,7 @@ class RoomSeeder extends Seeder
                 'type' => 'putri',
                 'size' => 12.00,
                 'price' => 1300000,
+                'jenis_sewa' => 'bulan',
                 'description' => 'Kamar dengan view taman',
                 'facilities' => ['AC', 'WiFi', 'Kamar Mandi Dalam'],
                 'images' => [],
@@ -101,8 +107,9 @@ class RoomSeeder extends Seeder
                 'floor' => 'Lantai 3',
                 'type' => 'campur',
                 'size' => 16.00,
-                'price' => 1800000,
-                'description' => 'Kamar premium dengan fasilitas terlengkap',
+                'price' => 18000000,
+                'jenis_sewa' => 'tahun',
+                'description' => 'Kamar premium dengan fasilitas terlengkap (SEWA TAHUNAN)',
                 'facilities' => ['AC', 'WiFi', 'Kamar Mandi Dalam', 'Lemari', 'Balkon', 'Water Heater'],
                 'images' => [],
                 'status' => 'available',
@@ -114,6 +121,7 @@ class RoomSeeder extends Seeder
                 'type' => 'campur',
                 'size' => 16.00,
                 'price' => 1800000,
+                'jenis_sewa' => 'bulan',
                 'description' => 'Kamar premium lantai atas',
                 'facilities' => ['AC', 'WiFi', 'Kamar Mandi Dalam', 'Lemari', 'Balkon', 'Water Heater'],
                 'images' => [],
@@ -126,6 +134,7 @@ class RoomSeeder extends Seeder
                 'type' => 'campur',
                 'size' => 12.00,
                 'price' => 1400000,
+                'jenis_sewa' => 'bulan',
                 'description' => 'Kamar standar lantai 3',
                 'facilities' => ['AC', 'WiFi', 'Kamar Mandi Dalam', 'Lemari'],
                 'images' => [],
@@ -138,6 +147,6 @@ class RoomSeeder extends Seeder
             Room::create($room);
         }
 
-        $this->command->info(' Berhasil membuat 9 data kamar sample.');
+        $this->command->info(' Berhasil membuat 9 data kamar sample dengan jenis sewa.');
     }
 }

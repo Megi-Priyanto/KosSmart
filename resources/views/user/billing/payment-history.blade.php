@@ -69,7 +69,7 @@
                         @if($payment->status === 'pending')
                         <div class="p-3 bg-yellow-50 border-l-4 border-yellow-400 rounded">
                             <p class="text-sm text-yellow-800">
-                                <span class="font-semibold">⏳ Menunggu Verifikasi</span><br>
+                                <span class="font-semibold">Menunggu Verifikasi</span><br>
                                 Pembayaran Anda sedang diproses oleh admin.
                             </p>
                         </div>
