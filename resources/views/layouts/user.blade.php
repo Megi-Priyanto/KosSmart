@@ -47,25 +47,26 @@
             <div class="flex justify-between h-16">
                 
                 <!-- Logo -->
-                <div class="flex items-center space-x-3">
-                    <svg class="w-8 h-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
-                    </svg>
+                <a href="{{ route('user.dashboard') }}"
+                   class="flex items-center space-x-3">
+                    <img src="{{ asset('images/logo.png') }}"
+                        class="w-9 h-9 rounded-full object-cover">
+
                     <span class="text-xl font-bold text-gray-800">KosSmart</span>
-                </div>
+                </a>
 
                 <!-- Menu Desktop -->
                 <div class="hidden md:flex items-center space-x-6">
                     <a href="{{ route('user.dashboard') }}" 
-                       class="text-sm font-medium {{ request()->routeIs('user.dashboard') ? 'text-purple-600' : 'text-gray-600 hover:text-purple-600' }}">
+                       class="text-sm font-medium {{ request()->routeIs('user.dashboard') ? 'text-yellow-500' : 'text-gray-600 hover:text-yellow-500' }}">
                         Home
                     </a>
                     <a href="{{ route('user.payments') }}" 
-                       class="text-sm font-medium {{ request()->routeIs('user.payments') ? 'text-purple-600' : 'text-gray-600 hover:text-purple-600' }}">
+                       class="text-sm font-medium {{ request()->routeIs('user.payments') ? 'text-yellow-500' : 'text-gray-600 hover:text-yellow-500' }}">
                         Pembayaran
                     </a>
                     <a href="{{ route('user.profile') }}" 
-                       class="text-sm font-medium {{ request()->routeIs('user.profile') ? 'text-purple-600' : 'text-gray-600 hover:text-purple-600' }}">
+                       class="text-sm font-medium {{ request()->routeIs('user.profile') ? 'text-yellow-500' : 'text-gray-600 hover:text-yellow-500' }}">
                         Profil
                     </a>
                 </div>
@@ -75,7 +76,7 @@
                     <div class="relative">
                         <button @click="dropdownOpen = !dropdownOpen" 
                                 class="flex items-center space-x-2 text-sm text-gray-600 hover:text-gray-800">
-                            <div class="w-8 h-8 bg-purple-600 rounded-full flex items-center justify-center">
+                            <div class="w-8 h-8 bg-yellow-500 rounded-full flex items-center justify-center">
                                 <span class="text-white text-xs font-bold">{{ substr(Auth::user()->name, 0, 2) }}</span>
                             </div>
                             <span class="hidden md:block font-medium">{{ Auth::user()->name }}</span>
@@ -88,7 +89,7 @@
                         <div x-show="dropdownOpen" @click.away="dropdownOpen=false" x-transition
                              class="absolute right-0 mt-2 w-48 bg-white shadow-lg rounded-lg border border-gray-200 py-2">
                             <a href="{{ route('user.profile') }}" 
-                               class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                               class="block px-4 py-2 text-sm text-gray-700 hover:bg-yellow-50">
                                 Profil Saya
                             </a>
                             <hr class="my-2">
@@ -149,21 +150,21 @@
         
             <!-- Dashboard -->
             <a href="/user/dashboard" 
-               class="flex flex-col items-center text-xs {{ Request::is('user/dashboard') ? 'text-blue-600 font-semibold' : '' }}">
+               class="flex flex-col items-center text-xs {{ Request::is('user/dashboard') ? 'text-yellow-500 font-semibold' : '' }}">
                <i class="fa-solid fa-house text-xl"></i>
                 <span class="mb-1">Home</span>
             </a>
         
             <!-- Pembayaran -->
             <a href="/user/pembayaran" 
-               class="flex flex-col items-center text-xs {{ Request::is('user/pembayaran') ? 'text-blue-600 font-semibold' : '' }}">
+               class="flex flex-col items-center text-xs {{ Request::is('user/pembayaran') ? 'text-yellow-500 font-semibold' : '' }}">
                <i class="fa-solid fa-money-bill-wave text-xl"></i>
                 <span class="mb-1">Pembayaran</span>
             </a>
         
             <!-- Profil -->
             <a href="/user/profile" 
-               class="flex flex-col items-center text-xs {{ Request::is('user/profile') ? 'text-blue-600 font-semibold' : '' }}">
+               class="flex flex-col items-center text-xs {{ Request::is('user/profile') ? 'text-yellow-500 font-semibold' : '' }}">
                 <i class="fa-solid fa-user text-xl"></i>
                 <span class="mb-1">Profil</span>
             </a>

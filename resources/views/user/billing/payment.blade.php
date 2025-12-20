@@ -7,7 +7,7 @@
 
     <!-- Back Button -->
     <a href="{{ route('user.billing.show', $billing) }}" 
-       class="inline-flex items-center text-sm text-purple-600 hover:text-purple-800">
+       class="inline-flex items-center text-sm text-yellow-600 hover:text-yellow-800">
         <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
         </svg>
@@ -15,29 +15,29 @@
     </a>
 
     <!-- Billing Summary -->
-    <div class="bg-gradient-to-r from-purple-600 to-purple-800 rounded-lg shadow-lg p-8 text-white">
+    <div class="bg-gradient-to-r from-yellow-600 to-yellow-800 rounded-lg shadow-lg p-8 text-white">
         <div class="flex items-center justify-between mb-6">
             <div>
                 <h1 class="text-3xl font-bold mb-2">{{ $billing->formatted_period }}</h1>
-                <p class="text-purple-200">Kamar {{ $billing->room->room_number }}</p>
+                <p class="text-yellow-200">Kamar {{ $billing->room->room_number }}</p>
             </div>
             <div class="text-right">
-                <p class="text-sm text-purple-200 mb-1">Total Tagihan</p>
+                <p class="text-sm text-yellow-200 mb-1">Total Tagihan</p>
                 <p class="text-4xl font-bold">Rp {{ number_format($billing->total_amount, 0, ',', '.') }}</p>
             </div>
         </div>
 
-        <div class="grid grid-cols-3 gap-4 pt-6 border-t border-purple-500">
+        <div class="grid grid-cols-3 gap-4 pt-6 border-t border-yellow-500">
             <div>
-                <p class="text-sm text-purple-200 mb-1">Status</p>
+                <p class="text-sm text-yellow-200 mb-1">Status</p>
                 <p class="font-semibold">{{ $billing->status_label }}</p>
             </div>
             <div>
-                <p class="text-sm text-purple-200 mb-1">Jatuh Tempo</p>
+                <p class="text-sm text-yellow-200 mb-1">Jatuh Tempo</p>
                 <p class="font-semibold">{{ $billing->due_date->format('d M Y') }}</p>
             </div>
             <div>
-                <p class="text-sm text-purple-200 mb-1">
+                <p class="text-sm text-yellow-200 mb-1">
                     @if($billing->is_overdue)
                         Keterlambatan
                     @else
@@ -77,7 +77,7 @@
                     </div>
                 </div>
                 <p class="text-xs text-yellow-600 mt-3">
-                    💡 Anda dapat mengirim bukti pembayaran baru jika diperlukan
+                    Anda dapat mengirim bukti pembayaran baru jika diperlukan
                 </p>
             </div>
         </div>
@@ -91,10 +91,10 @@
           x-data="paymentForm()">
         @csrf
 
-        <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200 hover:border-yellow-400 transition overflow-hidden">
             
             <!-- Form Header -->
-            <div class="p-6 border-b border-gray-200 bg-gray-50">
+            <div class="p-6 border-b border-gray-200 bg-gray-50 hover:border-yellow-400 transition">
                 <h2 class="text-xl font-bold text-gray-900">Form Pembayaran</h2>
                 <p class="text-sm text-gray-600 mt-1">Isi data pembayaran dan upload bukti transfer</p>
             </div>
@@ -116,7 +116,7 @@
                                required 
                                min="0" 
                                step="0.01"
-                               class="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 text-lg font-semibold @error('amount') border-red-500 @enderror">
+                               class="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 text-lg font-semibold @error('amount') border-red-500 @enderror">
                     </div>
                     @error('amount')
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
@@ -137,7 +137,7 @@
                            value="{{ old('payment_date', now()->format('Y-m-d')) }}" 
                            required 
                            max="{{ now()->format('Y-m-d') }}"
-                           class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 @error('payment_date') border-red-500 @enderror">
+                           class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 @error('payment_date') border-red-500 @enderror">
                     @error('payment_date')
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                     @endif
@@ -149,46 +149,46 @@
                         Metode Pembayaran *
                     </label>
                     <div class="grid grid-cols-3 gap-3">
-                        <label class="relative flex flex-col items-center p-4 border-2 border-gray-300 rounded-lg cursor-pointer hover:border-purple-500 transition-colors"
-                               :class="paymentMethod === 'transfer' ? 'border-purple-500 bg-purple-50' : ''">
+                        <label class="relative flex flex-col items-center p-4 border-2 border-gray-300 rounded-lg cursor-pointer hover:border-yellow-500 transition-colors"
+                               :class="paymentMethod === 'transfer' ? 'border-yellow-500 bg-yellow-50' : ''">
                             <input type="radio" 
                                    name="payment_method" 
                                    value="transfer" 
                                    x-model="paymentMethod"
                                    required 
                                    class="sr-only">
-                            <svg class="w-8 h-8 mb-2" :class="paymentMethod === 'transfer' ? 'text-purple-600' : 'text-gray-400'" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg class="w-8 h-8 mb-2" :class="paymentMethod === 'transfer' ? 'text-yellow-600' : 'text-gray-400'" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path>
                             </svg>
-                            <span class="text-sm font-medium" :class="paymentMethod === 'transfer' ? 'text-purple-600' : 'text-gray-700'">Transfer Bank</span>
+                            <span class="text-sm font-medium" :class="paymentMethod === 'transfer' ? 'text-yellow-600' : 'text-gray-700'">Transfer Bank</span>
                         </label>
 
-                        <label class="relative flex flex-col items-center p-4 border-2 border-gray-300 rounded-lg cursor-pointer hover:border-purple-500 transition-colors"
-                               :class="paymentMethod === 'e-wallet' ? 'border-purple-500 bg-purple-50' : ''">
+                        <label class="relative flex flex-col items-center p-4 border-2 border-gray-300 rounded-lg cursor-pointer hover:border-yellow-500 transition-colors"
+                               :class="paymentMethod === 'e-wallet' ? 'border-yellow-500 bg-yellow-50' : ''">
                             <input type="radio" 
                                    name="payment_method" 
                                    value="e-wallet" 
                                    x-model="paymentMethod"
                                    required 
                                    class="sr-only">
-                            <svg class="w-8 h-8 mb-2" :class="paymentMethod === 'e-wallet' ? 'text-purple-600' : 'text-gray-400'" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg class="w-8 h-8 mb-2" :class="paymentMethod === 'e-wallet' ? 'text-yellow-600' : 'text-gray-400'" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
                             </svg>
-                            <span class="text-sm font-medium" :class="paymentMethod === 'e-wallet' ? 'text-purple-600' : 'text-gray-700'">E-Wallet</span>
+                            <span class="text-sm font-medium" :class="paymentMethod === 'e-wallet' ? 'text-yellow-600' : 'text-gray-700'">E-Wallet</span>
                         </label>
 
-                        <label class="relative flex flex-col items-center p-4 border-2 border-gray-300 rounded-lg cursor-pointer hover:border-purple-500 transition-colors"
-                               :class="paymentMethod === 'cash' ? 'border-purple-500 bg-purple-50' : ''">
+                        <label class="relative flex flex-col items-center p-4 border-2 border-gray-300 rounded-lg cursor-pointer hover:border-yellow-500 transition-colors"
+                               :class="paymentMethod === 'cash' ? 'border-yellow-500 bg-yellow-50' : ''">
                             <input type="radio" 
                                    name="payment_method" 
                                    value="cash" 
                                    x-model="paymentMethod"
                                    required 
                                    class="sr-only">
-                            <svg class="w-8 h-8 mb-2" :class="paymentMethod === 'cash' ? 'text-purple-600' : 'text-gray-400'" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg class="w-8 h-8 mb-2" :class="paymentMethod === 'cash' ? 'text-yellow-600' : 'text-gray-400'" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"></path>
                             </svg>
-                            <span class="text-sm font-medium" :class="paymentMethod === 'cash' ? 'text-purple-600' : 'text-gray-700'">Tunai</span>
+                            <span class="text-sm font-medium" :class="paymentMethod === 'cash' ? 'text-yellow-600' : 'text-gray-700'">Tunai</span>
                         </label>
                     </div>
                     @error('payment_method')
@@ -201,11 +201,11 @@
                     <label class="block text-sm font-medium text-gray-700 mb-2">
                         Bukti Pembayaran * <span class="text-xs text-gray-500">(JPG, PNG max 5MB)</span>
                     </label>
-                    <div class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-purple-500 transition-colors"
+                    <div class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-yellow-500 transition-colors"
                          @dragover.prevent="isDragging = true"
                          @dragleave.prevent="isDragging = false"
                          @drop.prevent="handleDrop($event)"
-                         :class="isDragging ? 'border-purple-500 bg-purple-50' : ''">
+                         :class="isDragging ? 'border-yellow-500 bg-yellow-50' : ''">
                         
                         <input type="file" 
                                name="payment_proof" 
@@ -220,7 +220,7 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
                             </svg>
                             <label for="payment_proof" class="cursor-pointer">
-                                <span class="text-purple-600 hover:text-purple-700 font-medium">Klik untuk upload</span>
+                                <span class="text-yellow-600 hover:text-yellow-700 font-medium">Klik untuk upload</span>
                                 <span class="text-gray-600"> atau drag & drop</span>
                             </label>
                             <p class="text-xs text-gray-500 mt-2">Format: JPG, PNG (Max 5MB)</p>
@@ -251,7 +251,7 @@
                     <textarea name="notes" 
                               rows="3" 
                               placeholder="Tambahkan catatan jika diperlukan..."
-                              class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500">{{ old('notes') }}</textarea>
+                              class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500">{{ old('notes') }}</textarea>
                 </div>
 
             </div>
@@ -264,7 +264,7 @@
                         Batal
                     </a>
                     <button type="submit" 
-                            class="flex-1 px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors font-semibold">
+                            class="flex-1 px-6 py-3 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700 transition-colors font-semibold">
                         Kirim Pembayaran
                     </button>
                 </div>
@@ -274,7 +274,7 @@
     </form>
 
     <!-- Instructions -->
-    <div class="bg-blue-50 border border-blue-200 rounded-lg p-6">
+    <div class="bg-blue-50 border border-gray-200 rounded-lg p-6 hover:border-yellow-400 transition">
         <h3 class="text-lg font-semibold text-blue-900 mb-4">Panduan Pembayaran</h3>
         <ol class="space-y-2 text-sm text-blue-800">
             <li class="flex items-start">

@@ -6,7 +6,7 @@
 
 <!-- Page Header -->
 <div class="mb-8">
-    <h1 class="text-3xl font-bold text-gray-800 mb-2">🏠 Cari Kos</h1>
+    <h1 class="text-3xl font-bold text-gray-800 mb-2">Cari Kos</h1>
     <p class="text-gray-600">Temukan kos yang sesuai dengan kebutuhan Anda</p>
 </div>
 

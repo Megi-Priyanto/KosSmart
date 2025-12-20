@@ -15,7 +15,9 @@ class RoomSelectionController extends Controller
 
     public function index(Request $request)
     {
-        $query = Room::with('kosInfo')->available();
+        $query = Room::with(['kosInfo' => function ($q) {
+            $q->where('is_active', true);
+        }])->available();
 
         if ($request->filled('type')) {
             $query->ofType($request->type);
@@ -38,13 +40,19 @@ class RoomSelectionController extends Controller
         $floors = Room::select('floor')->distinct()->orderBy('floor')->pluck('floor');
 
         // Ambil kos info beserta relasi rooms
-        $kosInfo = KosInfo::with('rooms')->first();
+        $kosInfo = KosInfo::where('is_active', true)
+            ->with('rooms')
+            ->first();
 
-        // Hitung total kamar dan tersedia
-        $totalRooms = $kosInfo->rooms->count();
-        $availableRooms = $kosInfo->rooms->filter(function ($room) {
-            return $room->isAvailable();
-        })->count();
+        $totalRooms = 0;
+        $availableRooms = 0;
+
+        if ($kosInfo) {
+            $totalRooms = $kosInfo->rooms->count();
+            $availableRooms = $kosInfo->rooms
+                ->filter(fn($room) => $room->isAvailable())
+                ->count();
+        }
 
         return view('user.rooms.index', compact(
             'rooms',
@@ -58,22 +66,42 @@ class RoomSelectionController extends Controller
 
     public function show(Room $room)
     {
+        // Cek ketersediaan kamar
         if (!$room->isAvailable()) {
             return redirect()->route('user.rooms.index')
                 ->with('error', 'Kamar tidak tersedia');
         }
 
+        // Tambah view count
         $room->incrementViewCount();
-        $room->load('kosInfo');
 
-        $relatedRooms = Room::available()
+        // Load kosInfo yang AKTIF saja
+        $room->load([
+            'kosInfo' => function ($q) {
+                $q->where('is_active', true);
+            }
+        ]);
+
+        // kos belum aktif → redirect
+        if (!$room->kosInfo) {
+            return redirect()->route('user.rooms.index')
+                ->with('error', 'Kos belum diaktifkan oleh admin');
+        }
+
+        $kosInfo = $room->kosInfo;
+
+        // definisikan relatedRooms
+        $relatedRooms = Room::where('kos_info_id', $room->kos_info_id)
             ->where('id', '!=', $room->id)
-            ->where('type', $room->type)
+            ->available()
             ->limit(3)
             ->get();
 
-        $kosInfo = \App\Models\KosInfo::first();
-
-        return view('user.rooms.show', compact('room', 'relatedRooms', 'kosInfo'));
+        // Kirim ke view
+        return view('user.rooms.show', compact(
+            'room',
+            'kosInfo',
+            'relatedRooms'
+        ));
     }
 }

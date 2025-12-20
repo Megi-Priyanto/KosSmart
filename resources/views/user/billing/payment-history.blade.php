@@ -18,10 +18,10 @@
     </div>
 
     <!-- Payment History List -->
-    <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+    <div class="bg-white rounded-lg shadow-sm border border-gray-200 hover:border-yellow-400 transition overflow-hidden">
         <div class="divide-y divide-gray-200">
             @forelse($payments as $payment)
-            <div class="p-6 hover:bg-gray-50 transition-colors">
+            <div class="p-6 hover:bg-gray-50 transition border-l-4 border-transparent hover:border-yellow-400">
                 <div class="flex items-start justify-between gap-6">
                     <div class="flex-1">
                         <!-- Payment Header -->
@@ -118,7 +118,7 @@
                     <div class="flex-shrink-0">
                         <a href="{{ Storage::url($payment->payment_proof) }}" 
                            target="_blank"
-                           class="block w-32 h-32 border-2 border-gray-300 rounded-lg overflow-hidden hover:border-purple-500 transition-colors">
+                           class="block w-32 h-32 border-2 border-gray-300 rounded-lg overflow-hidden hover:border-yellow-400 transition">
                             <img src="{{ Storage::url($payment->payment_proof) }}" 
                                  alt="Bukti Pembayaran" 
                                  class="w-full h-full object-cover">
@@ -128,7 +128,7 @@
                 </div>
             </div>
             @empty
-            <div class="p-12 text-center">
+            <div class="p-12 text-center border border-gray-200 rounded-lg hover:border-yellow-400 transition">
                 <svg class="mx-auto h-16 w-16 text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                 </svg>
@@ -144,7 +144,7 @@
 
         <!-- Pagination -->
         @if($payments->hasPages())
-        <div class="p-6 border-t border-gray-200 bg-gray-50">
+        <div class="p-6 border-t border-gray-200 bg-gray-50 hover:border-yellow-400 transition">
             {{ $payments->links() }}
         </div>
         @endif

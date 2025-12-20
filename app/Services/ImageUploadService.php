@@ -17,29 +17,29 @@ class ImageUploadService
         // Generate unique filename
         $filename = Str::random(20) . '_' . time() . '.' . $file->getClientOriginalExtension();
         $path = "{$directory}/{$filename}";
-        
+
         // Store the file
         Storage::disk('public')->put($path, file_get_contents($file));
-        
+
         return $path;
     }
-    
+
     /**
      * Upload multiple images
      */
     public function uploadMultiple(array $files, string $directory = 'rooms'): array
     {
         $paths = [];
-        
+
         foreach ($files as $file) {
             if ($file instanceof UploadedFile && $file->isValid()) {
                 $paths[] = $this->uploadSingle($file, $directory);
             }
         }
-        
+
         return $paths;
     }
-    
+
     /**
      * Delete single image
      */
@@ -48,10 +48,10 @@ class ImageUploadService
         if (Storage::disk('public')->exists($path)) {
             return Storage::disk('public')->delete($path);
         }
-        
+
         return false;
     }
-    
+
     /**
      * Delete multiple images
      */
@@ -63,7 +63,7 @@ class ImageUploadService
             }
         }
     }
-    
+
     /**
      * Replace old images with new ones
      */
@@ -72,18 +72,18 @@ class ImageUploadService
         if ($oldPaths) {
             $this->deleteMultiple($oldPaths);
         }
-        
+
         return $this->uploadMultiple($newFiles, $directory);
     }
-    
+
     /**
      * Get full URL of image
      */
     public function getUrl(string $path): string
     {
-        return Storage::disk('public')->url($path);
+        return Storage::url($path);
     }
-    
+ 
     /**
      * Check if file exists
      */

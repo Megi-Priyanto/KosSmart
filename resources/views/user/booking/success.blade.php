@@ -21,7 +21,7 @@
     <!-- Info Card -->
     <div class="bg-white rounded-xl shadow-lg border border-gray-200 p-8 mb-6">
         <div class="space-y-4">
-            <div class="flex items-start">
+            <div class="flex items-start bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded-lg">
                 <svg class="w-6 h-6 text-green-500 mr-3 mt-1 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                 </svg>
@@ -31,8 +31,8 @@
                 </div>
             </div>
             
-            <div class="flex items-start">
-                <svg class="w-6 h-6 text-blue-500 mr-3 mt-1 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div class="flex items-start bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded-lg">
+                <svg class="w-6 h-6 text-purple-500 mr-3 mt-1 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
                 </svg>
                 <div>
@@ -41,7 +41,7 @@
                 </div>
             </div>
             
-            <div class="flex items-start">
+            <div class="flex items-start bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded-lg">
                 <svg class="w-6 h-6 text-purple-500 mr-3 mt-1 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
                 </svg>

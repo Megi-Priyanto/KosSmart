@@ -9,7 +9,7 @@
     <nav class="flex" aria-label="Breadcrumb">
         <ol class="inline-flex items-center space-x-1 md:space-x-3">
             <li class="inline-flex items-center">
-                <a href="{{ route('user.dashboard') }}" class="text-gray-600 hover:text-purple-600 text-sm">
+                <a href="{{ route('user.dashboard') }}" class="text-gray-600 hover:text-yellow-600 text-sm">
                     <svg class="w-4 h-4 mr-2 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
                     </svg>
@@ -21,7 +21,7 @@
                     <svg class="w-4 h-4 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
                         <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
                     </svg>
-                    <a href="{{ route('user.rooms.index') }}" class="ml-1 text-sm text-gray-600 hover:text-purple-600">
+                    <a href="{{ route('user.rooms.index') }}" class="ml-1 text-sm text-gray-600 hover:text-yellow-600">
                         Cari Kamar
                     </a>
                 </div>
@@ -31,7 +31,7 @@
                     <svg class="w-4 h-4 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
                         <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
                     </svg>
-                    <span class="ml-1 text-sm text-gray-500 font-medium">Kamar {{ $room->room_number }}</span>
+                    <span class="ml-1 text-sm text-yellow-500 font-medium">Kamar {{ $room->room_number }}</span>
                 </div>
             </li>
         </ol>
@@ -120,12 +120,12 @@
                 </script>
             @else
                 <!-- No Image Placeholder -->
-                <div class="aspect-video bg-gradient-to-br from-purple-100 to-indigo-200 flex items-center justify-center">
+                <div class="aspect-video bg-gradient-to-br from-yellow-400 to-orange-500 flex items-center justify-center">
                     <div class="text-center">
-                        <svg class="w-24 h-24 mx-auto text-purple-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg class="w-24 h-24 mx-auto text-yellow-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
                         </svg>
-                        <p class="text-purple-600 font-medium">Foto belum tersedia</p>
+                        <p class="text-gray-600 font-medium">Foto belum tersedia</p>
                     </div>
                 </div>
             @endif
@@ -139,7 +139,7 @@
                     <p class="text-gray-600">{{ $room->floor }} • {{ $room->size }} m²</p>
                 </div>
                 <div class="text-right">
-                    <p class="text-3xl font-bold text-purple-600">Rp {{ number_format($room->price, 0, ',', '.') }}</p>
+                    <p class="text-3xl font-bold text-yellow-600">Rp {{ number_format($room->price, 0, ',', '.') }}</p>
                     <p class="text-sm text-gray-500">{{ $room->jenis_sewa === 'tahun' ? 'per tahun' : 'per bulan' }}</p>
                 </div>
             </div>
@@ -147,8 +147,8 @@
             <!-- Quick Info -->
             <div class="grid grid-cols-3 gap-4 py-4 border-t border-b border-gray-200 mb-6">
                 <div class="text-center">
-                    <div class="bg-purple-100 w-12 h-12 rounded-lg flex items-center justify-center mx-auto mb-2">
-                        <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div class="bg-yellow-100 w-12 h-12 rounded-lg flex items-center justify-center mx-auto mb-2">
+                        <svg class="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
                         </svg>
                     </div>
@@ -219,30 +219,30 @@
             @endif
         </div>
         
-        @if($kosInfo)
-        <div class="bg-gradient-to-br from-purple-50 to-indigo-50 rounded-xl border border-purple-200 p-6">
-            <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center">
-                <svg class="w-6 h-6 mr-2 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        @if($kosInfo && $kosInfo->is_active)
+        <div class="bg-gradient-to-br from-yellow-500 to-amber-600 rounded-xl shadow-lg p-6 mb-8 text-white">
+            <h3 class="text-lg font-bold text-white-800 mb-4 flex items-center">
+                <svg class="w-6 h-6 mr-2 text-white-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
                 </svg>
                 Tentang Kos
             </h3>
             <div class="space-y-3">
                 <div>
-                    <p class="text-2xl font-bold text-gray-800 mb-1">{{ $kosInfo->name }}</p>
-                    <p class="text-gray-600">{{ $kosInfo->full_address }}</p>
+                    <p class="text-2xl font-bold text-white-800 mb-1">{{ $kosInfo->name }}</p>
+                    <p class="text-white-600">{{ $kosInfo->full_address }}</p>
                 </div>
 
                 <div class="grid grid-cols-2 gap-4 pt-3">
                     <div>
-                        <p class="text-sm text-gray-600">Telepon</p>
-                        <p class="font-semibold text-gray-800">{{ $kosInfo->phone }}</p>
+                        <p class="text-sm text-white-600">Telepon</p>
+                        <p class="font-semibold text-white-800">{{ $kosInfo->phone }}</p>
                     </div>
 
                     @if($kosInfo->whatsapp)
                     <div>
-                        <p class="text-sm text-gray-600">WhatsApp</p>
-                        <p class="font-semibold text-gray-800">{{ $kosInfo->whatsapp }}</p>
+                        <p class="text-sm text-white-600">WhatsApp</p>
+                        <p class="font-semibold text-white-800">{{ $kosInfo->whatsapp }}</p>
                     </div>
                     @endif
                 </div>
@@ -261,11 +261,11 @@
                 @endphp
 
                 @if(!empty($generalFacilities))
-                    <div class="pt-3 border-t border-purple-200">
+                    <div class="pt-3 border-t border-yellow-200">
                         <p class="text-sm font-medium text-gray-700 mb-2">Fasilitas Umum:</p>
                         <div class="flex flex-wrap gap-2">
                             @foreach($generalFacilities as $facility)
-                                <span class="px-3 py-1 bg-white text-purple-700 rounded-full text-sm">{{ $facility }}</span>
+                                <span class="px-3 py-1 bg-white text-yellow-700 rounded-full text-sm">{{ $facility }}</span>
                             @endforeach
                         </div>
                     </div>
@@ -285,7 +285,7 @@
                 @endphp
 
                 @if(!empty($rules))
-                    <div class="pt-3 border-t border-purple-200">
+                    <div class="pt-3 border-t border-yellow-200">
                         <p class="text-sm font-medium text-gray-700 mb-2">Peraturan Kos:</p>
                         <ul class="space-y-1">
                             @foreach(array_slice($rules, 0, 10) as $rule)
@@ -324,13 +324,13 @@
                                  class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300">
                         </div>
                         @else
-                        <div class="aspect-video bg-gradient-to-br from-purple-200 to-indigo-300"></div>
+                        <div class="aspect-video bg-gradient-to-br from-yellow-400 to-orange-500"></div>
                         @endif
                         
                         <div class="p-3">
-                            <p class="font-semibold text-gray-800 group-hover:text-purple-600">Kamar {{ $relatedRoom->room_number }}</p>
+                            <p class="font-semibold text-gray-800 group-hover:text-yellw-600">Kamar {{ $relatedRoom->room_number }}</p>
                             <p class="text-sm text-gray-600">{{ $relatedRoom->floor }}</p>
-                            <p class="text-lg font-bold text-purple-600 mt-2">Rp {{ number_format($relatedRoom->price, 0, ',', '.') }}</p>
+                            <p class="text-lg font-bold text-yellow-600 mt-2">Rp {{ number_format($relatedRoom->price, 0, ',', '.') }}</p>
                         </div>
                     </div>
                 </a>
@@ -345,23 +345,23 @@
     <div class="space-y-6">
         
         <!-- Booking Card -->
-        <div class="bg-white rounded-xl shadow-lg border-2 border-purple-200 p-6 sticky top-6">
+        <div class="bg-white rounded-xl shadow-lg border-2 border-yellow-200 p-6 sticky top-6">
             <div class="mb-6">
                 <div class="flex items-center justify-between mb-2">
                     <span class="text-gray-600">Harga Sewa</span>
                     <span class="text-sm text-gray-500">{{ $room->jenis_sewa_label }}</span>
                 </div>
-                <p class="text-4xl font-bold text-purple-600">Rp {{ number_format($room->price, 0, ',', '.') }}</p>
+                <p class="text-4xl font-bold text-yellow-600">Rp {{ number_format($room->price, 0, ',', '.') }}</p>
                 <p class="text-sm text-gray-500 mt-1">{{ $room->jenis_sewa === 'tahun' ? 'Dibayar per tahun' : 'Dibayar per bulan' }}</p>
             </div>
             
             <div class="space-y-3 mb-6">
                 <a href="{{ route('user.booking.create', $room->id) }}" 
-                   class="block w-full text-center bg-purple-600 text-white py-3 rounded-lg hover:bg-purple-700 font-semibold transition-colors">
+                   class="block w-full text-center bg-yellow-500 text-white py-3 rounded-lg hover:bg-yellow-600 font-semibold transition-colors">
                     Booking Sekarang
                 </a>
                 
-                @if($room->kosInfo && $room->kosInfo->whatsapp)
+                @if($room->kosInfo && $room->kosInfo->is_active && $room->kosInfo->whatsapp)
                 <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $room->kosInfo->whatsapp) }}?text=Halo, saya tertarik dengan Kamar {{ $room->room_number }}" 
                    target="_blank"
                    class="block w-full text-center bg-green-600 text-white py-3 rounded-lg hover:bg-green-700 font-semibold transition-colors flex items-center justify-center space-x-2">
@@ -397,8 +397,8 @@
         </div>
         
         <!-- Contact Info -->
-        @if($kosInfo)
-        <div class="bg-gradient-to-br from-purple-600 to-indigo-700 rounded-xl shadow-lg p-6 text-white">
+        @if($kosInfo && $kosInfo->is_active)
+        <div class="bg-gradient-to-br from-yellow-400 to-orange-500 rounded-xl shadow-lg p-6 text-white">
             <h3 class="text-lg font-bold mb-4">Hubungi Kami</h3>
         
             <div class="space-y-3">
@@ -410,8 +410,8 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
                     </svg>
                     <div>
-                        <p class="text-purple-100 text-sm">Alamat</p>
-                        <p class="font-medium">{{ $kosInfo->alamat }}</p>
+                        <p class="text-white-100 text-sm">Alamat</p>
+                        <p class="font-medium">{{ $kosInfo->address }}</p>
                         <p class="text-sm">{{ $kosInfo->city }}, {{ $kosInfo->province }}</p>
                     </div>
                 </div>
@@ -422,7 +422,7 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path>
                     </svg>
                     <div>
-                        <p class="text-purple-100 text-sm">Telepon</p>
+                        <p class="text-white-100 text-sm">Telepon</p>
                         <p class="font-medium">{{ $kosInfo->phone ?? 'Tidak tersedia' }}</p>
                     </div>
                 </div>
@@ -434,30 +434,36 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
                     </svg>
                     <div>
-                        <p class="text-purple-100 text-sm">Email</p>
+                        <p class="text-white-100 text-sm">Email</p>
                         <p class="font-medium">{{ $kosInfo->email }}</p>
                     </div>
                 </div>
                 @endif
             
                 <!-- Check-in & Check-out -->
-                <div class="pt-3 border-t border-purple-400">
-                    <div class="grid grid-cols-1 gap-3">
-                        <div>
-                            <p class="text-purple-100 text-sm">Check-in</p>
-                            <p class="font-medium">
-                                Buka mulai pukul <strong>06.00</strong> s/d <strong>22.00 WIB</strong>
-                            </p>
-                        </div>
-                    
-                        <div>
-                            <p class="text-purple-100 text-sm">Check-out</p>
-                            <p class="font-medium">
-                                Bebas kapan saja (tanpa batasan waktu)
-                            </p>
+                @if($kosInfo)
+                    <div class="pt-3 border-t border-yellow-400">
+                        <div class="grid grid-cols-1 gap-3">
+                        
+                            <!-- Check-in -->
+                            <div>
+                                <p class="text-white-100 text-sm">Check-in</p>
+                                <p class="font-medium">
+                                    {{ \Carbon\Carbon::parse($kosInfo->checkin_time)->format('H:i') }} WIB
+                                </p>
+                            </div>
+                        
+                            <!-- Check-out -->
+                            <div>
+                                <p class="text-white-100 text-sm">Check-out</p>
+                                <p class="font-medium">
+                                    {{ \Carbon\Carbon::parse($kosInfo->checkout_time)->format('H:i') }} WIB
+                                </p>
+                            </div>
+                        
                         </div>
                     </div>
-                </div>
+                    @endif
             
             </div>
         </div>
@@ -501,9 +507,9 @@
         </div>
         
         <!-- Tips -->
-        <div class="bg-blue-50 rounded-xl border border-blue-200 p-6">
+        <div class="bg-yellow-50 rounded-xl border border-yellow-200 p-6">
             <h3 class="text-lg font-bold text-gray-800 mb-3 flex items-center">
-                <svg class="w-5 h-5 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="w-5 h-5 mr-2 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                 </svg>
                 Tips Booking
@@ -511,19 +517,19 @@
             
             <ul class="space-y-2 text-sm text-gray-700">
                 <li class="flex items-start">
-                    <span class="text-blue-600 mr-2">•</span>
+                    <span class="text-yellow-600 mr-2">•</span>
                     <span>Pastikan Anda sudah melihat kondisi kamar secara langsung atau via video call</span>
                 </li>
                 <li class="flex items-start">
-                    <span class="text-blue-600 mr-2">•</span>
+                    <span class="text-yellow-600 mr-2">•</span>
                     <span>Tanyakan detail pembayaran dan deposit yang diperlukan</span>
                 </li>
                 <li class="flex items-start">
-                    <span class="text-blue-600 mr-2">•</span>
+                    <span class="text-yellow-600 mr-2">•</span>
                     <span>Baca peraturan kos dengan teliti sebelum booking</span>
                 </li>
                 <li class="flex items-start">
-                    <span class="text-blue-600 mr-2">•</span>
+                    <span class="text-yellow-600 mr-2">•</span>
                     <span>Simpan bukti pembayaran dan perjanjian sewa</span>
                 </li>
             </ul>
@@ -536,7 +542,7 @@
 <!-- Back to List Button (Mobile) -->
 <div class="mt-8 lg:hidden">
     <a href="{{ route('user.rooms.index') }}" 
-       class="block w-full text-center px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 flex items-center justify-center space-x-2">
+       class="block w-full text-center px-6 py-3 border border-gray-300 font-bold text-white rounded-lg bg-yellow-500 hover:bg-yellow-600 flex items-center justify-center space-x-2">
         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
         </svg>

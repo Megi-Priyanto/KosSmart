@@ -14,7 +14,7 @@
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
         </svg>
         <div class="flex-1">
-            <h3 class="font-bold text-yellow-800 mb-2">⚠️ Ada {{ $pendingBookingsCount }} Booking Menunggu Persetujuan!</h3>
+            <h3 class="font-bold text-yellow-800 mb-2">Ada {{ $pendingBookingsCount }} Booking Menunggu Persetujuan!</h3>
             <p class="text-sm text-yellow-700 mb-3">
                 Segera proses booking berikut untuk memberikan konfirmasi kepada calon penyewa.
             </p>
@@ -58,7 +58,7 @@
 
     <!-- Total User -->
     <a href="{{ route('admin.users.index') }}" 
-       class="bg-white rounded-xl shadow-sm p-6 border border-gray-200 block hover:bg-gray-50 transition cursor-pointer">
+       class="bg-white rounded-xl shadow-sm p-6 border border-gray-200 hover:border-blue-400 block hover:bg-gray-50 transition cursor-pointer">
         <div class="flex items-center justify-between">
             <div>
                 <p class="text-gray-600 text-sm font-medium">Total User</p>
@@ -77,7 +77,7 @@
 
     <!-- Total Kamar -->
     <a href="{{ route('admin.kos.index') }}" 
-       class="bg-white rounded-xl shadow-sm p-6 border border-gray-200 block hover:bg-gray-50 transition cursor-pointer">
+       class="bg-white rounded-xl shadow-sm p-6 border border-gray-200 hover:border-purple-400 block hover:bg-gray-50 transition cursor-pointer">
         <div class="flex items-center justify-between">
             <div>
                 <p class="text-gray-600 text-sm font-medium">Total Kamar</p>
@@ -96,7 +96,7 @@
 
     <!-- Pendapatan -->
     <a href="{{ route('admin.reports.index') }}" 
-       class="bg-white rounded-xl shadow-sm p-6 border border-gray-200 block hover:bg-gray-50 transition cursor-pointer">
+       class="bg-white rounded-xl shadow-sm p-6 border border-gray-200 hover:border-green-400 block hover:bg-gray-50 transition cursor-pointer">
         <div class="flex items-center justify-between">
             <div>
                 <p class="text-gray-600 text-sm font-medium">Pendapatan</p>
@@ -115,7 +115,7 @@
 
      <!-- Tagihan Pending -->
     <a href="{{ route('admin.billing.index') }}" 
-        class="bg-white rounded-xl shadow-sm p-6 border border-gray-200 block hover:bg-gray-50 transition cursor-pointer">
+        class="bg-white rounded-xl shadow-sm p-6 border border-gray-200 hover:border-yellow-400 block hover:bg-gray-50 transition cursor-pointer">
 
         <div class="flex items-center justify-between">
             <div>
@@ -166,7 +166,7 @@
         <div class="p-6 border-b border-gray-200">
             <div class="flex items-center justify-between">
                 <h2 class="text-lg font-bold text-gray-800">User Terbaru</h2>
-                <a href="{{ route('admin.users.index') }}" class="text-sm text-purple-600 hover:text-purple-700 font-medium">
+                <a href="{{ route('admin.users.index') }}" class="text-sm text-yellow-600 hover:text-yellow-700 font-medium">
                     Lihat Semua →
                 </a>
             </div>
@@ -176,8 +176,8 @@
                 @forelse($recentUsers ?? [] as $user)
                 <div class="flex items-center justify-between">
                     <div class="flex items-center space-x-3">
-                        <div class="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center">
-                            <span class="text-purple-600 font-semibold">{{ substr($user->name, 0, 2) }}</span>
+                        <div class="w-10 h-10 bg-gray-300 rounded-full flex items-center justify-center">
+                            <span class="text-yellow-600 font-semibold">{{ substr($user->name, 0, 2) }}</span>
                         </div>
                         <div>
                             <p class="text-sm font-medium text-gray-800">{{ $user->name }}</p>
@@ -250,32 +250,32 @@
     <h2 class="text-lg font-bold text-gray-800 mb-6">Aksi Cepat</h2>
     <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
         <a href="{{ route('admin.users.create') }}" 
-           class="flex flex-col items-center p-6 border-2 border-gray-200 rounded-lg hover:border-purple-500 hover:bg-purple-50 transition-all group">
-            <svg class="w-10 h-10 text-gray-600 group-hover:text-purple-600 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+           class="flex flex-col items-center p-6 bg-white border border-gray-200 rounded-lg hover:border-yellow-400 hover:bg-yellow-50 transition-all group">
+            <svg class="w-10 h-10 text-gray-400 group-hover:text-yellow-500 transition mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path>
             </svg>
             <p class="text-sm font-medium text-gray-700 text-center">Tambah User</p>
         </a>
         
         <a href="{{ route('admin.kos.create') }}" 
-           class="flex flex-col items-center p-6 border-2 border-gray-200 rounded-lg hover:border-purple-500 hover:bg-purple-50 transition-all group">
-            <svg class="w-10 h-10 text-gray-600 group-hover:text-purple-600 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+           class="flex flex-col items-center p-6 bg-white border border-gray-200 rounded-lg hover:border-yellow-400 hover:bg-yellow-50 transition-all group">
+            <svg class="w-10 h-10 text-gray-400 group-hover:text-yellow-500 transition mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
             </svg>
             <p class="text-sm font-medium text-gray-700 text-center">Tambah Kamar</p>
         </a>
         
         <a href="{{ route('admin.billing.create') }}" 
-           class="flex flex-col items-center p-6 border-2 border-gray-200 rounded-lg hover:border-purple-500 hover:bg-purple-50 transition-all group">
-            <svg class="w-10 h-10 text-gray-600 group-hover:text-purple-600 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+           class="flex flex-col items-center p-6 bg-white border border-gray-200 rounded-lg hover:border-yellow-400 hover:bg-yellow-50 transition-all group">
+            <svg class="w-10 h-10 text-gray-400 group-hover:text-yellow-500 transition mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
             </svg>
             <p class="text-sm font-medium text-gray-700 text-center">Buat Tagihan</p>
         </a>
         
         <a href="{{ route('admin.reports.index') }}" 
-           class="flex flex-col items-center p-6 border-2 border-gray-200 rounded-lg hover:border-purple-500 hover:bg-purple-50 transition-all group">
-            <svg class="w-10 h-10 text-gray-600 group-hover:text-purple-600 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+           class="flex flex-col items-center p-6 bg-white border border-gray-200 rounded-lg hover:border-yellow-400 hover:bg-yellow-50 transition-all group">
+            <svg class="w-10 h-10 text-gray-400 group-hover:text-yellow-500 transition mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
             </svg>
             <p class="text-sm font-medium text-gray-700 text-center">Lihat Laporan</p>

@@ -9,14 +9,14 @@
     <!-- Header -->
     <div class="mb-8">
         <a href="{{ route('user.rooms.show', $room) }}" 
-           class="inline-flex items-center text-purple-600 hover:text-purple-700 mb-4">
+           class="inline-flex items-center text-yellow-600 hover:text-yellow-700 mb-4">
             <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
             </svg>
             Kembali ke Detail Kamar
         </a>
         
-        <h1 class="text-3xl font-bold text-gray-800 mb-2">🏠 Booking Kamar {{ $room->room_number }}</h1>
+        <h1 class="text-3xl font-bold text-gray-800 mb-2"> Booking Kamar {{ $room->room_number }}</h1>
         <p class="text-gray-600">Lengkapi formulir di bawah ini untuk melakukan booking</p>
     </div>
 
@@ -32,31 +32,34 @@
             <div class="lg:col-span-2 space-y-6">
                 
                 <!-- Informasi Kamar -->
-                <div class="bg-gradient-to-br from-purple-600 to-indigo-700 rounded-xl shadow-lg p-6 text-white">
+                <div class="bg-gradient-to-br from-yellow-500 to-amber-600 rounded-xl shadow-lg p-6 text-white">
                     <div class="flex items-start justify-between">
                         <div class="flex-1">
-                            <h3 class="text-xl font-bold mb-2">Kamar {{ $room->room_number }}</h3>
-                            <p class="text-purple-100 mb-4">{{ $room->floor }} • {{ $room->size }} m²</p>
-                            
+                            <h3 class="text-xl font-bold mb-2">
+                                Kamar {{ $room->room_number }}
+                            </h3>
+                        
+                            <p class="text-yellow-100 mb-4">
+                                {{ $room->floor }} • {{ $room->size }} m²
+                            </p>
+                        
                             <div class="grid grid-cols-2 gap-4">
                                 <div>
-                                    <p class="text-purple-200 text-sm">Harga Sewa/Bulan</p>
-                                    <p class="text-2xl font-bold">Rp {{ number_format($room->price, 0, ',', '.') }}</p>
+                                    <p class="text-yellow-100 text-sm">Harga Sewa/Bulan</p>
+                                    <p class="text-2xl font-bold">
+                                        Rp {{ number_format($room->price, 0, ',', '.') }}
+                                    </p>
                                 </div>
                                 <div>
-                                    <p class="text-purple-200 text-sm">DP (50%)</p>
-                                    <p class="text-2xl font-bold">Rp {{ number_format($depositAmount, 0, ',', '.') }}</p>
+                                    <p class="text-yellow-100 text-sm">DP (50%)</p>
+                                    <p class="text-2xl font-bold">
+                                        Rp {{ number_format($depositAmount, 0, ',', '.') }}
+                                    </p>
                                 </div>
                             </div>
                         </div>
-
-                        @php
-                            $images = is_string($room->images)
-                                ? json_decode($room->images, true)
-                                : ($room->images ?? []);
-                        @endphp
-
-                        @if(count($images) > 0)
+                    
+                        @if(is_array($room->images) && count($room->images))
                         <div class="ml-4">
                             <img src="{{ asset('storage/' . $room->images[0]) }}" 
                                  alt="Kamar {{ $room->room_number }}"
@@ -67,9 +70,9 @@
                 </div>
                 
                 <!-- Form Data Penyewa -->
-                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                <div class="bg-white rounded-xl shadow-sm border-gray-200 hover:border-yellow-400 transition p-6">
                     <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center">
-                        <svg class="w-6 h-6 mr-2 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg class="w-6 h-6 mr-2 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
                         </svg>
                         Data Penyewa
@@ -100,10 +103,10 @@
                                    readonly>
                         </div>
                         
-                        <div class="p-3 bg-blue-50 border border-blue-200 rounded-lg">
-                            <p class="text-sm text-blue-800">
+                        <div class="p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+                            <p class="text-sm text-yellow-800">
                                 <strong>Info:</strong> Data di atas diambil dari profil Anda. 
-                                <a href="{{ route('user.profile') }}" class="text-blue-600 underline hover:text-blue-700">
+                                <a href="{{ route('user.profile') }}" class="text-yellow-600 underline hover:text-yellow-700">
                                     Edit profil
                                 </a> jika ada yang perlu diubah.
                             </p>
@@ -112,9 +115,9 @@
                 </div>
                 
                 <!-- Tanggal Mulai Sewa -->
-                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                <div class="bg-white rounded-xl shadow-sm border-gray-200 hover:border-yellow-400 transition p-6">
                     <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center">
-                        <svg class="w-6 h-6 mr-2 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg class="w-6 h-6 mr-2 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
                         </svg>
                         Tanggal Mulai Sewa
@@ -128,13 +131,13 @@
                                name="start_date" 
                                value="{{ old('start_date', now()->addDays(3)->format('Y-m-d')) }}"
                                min="{{ now()->format('Y-m-d') }}"
-                               class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                               class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
                                required>
                         @error('start_date')
                         <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                         @enderror
                         <p class="text-sm text-gray-500 mt-2">
-                            📅 Anda dapat mulai menempati kamar pada tanggal yang dipilih setelah pembayaran disetujui
+                            Anda dapat mulai menempati kamar pada tanggal yang dipilih setelah pembayaran disetujui
                         </p>
                     </div>
                 </div>
@@ -142,15 +145,20 @@
                 <!-- Upload Bukti Transfer DP -->
                 <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
                     <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center">
-                        <svg class="w-6 h-6 mr-2 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg class="w-6 h-6 mr-2 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path>
                         </svg>
-                        Pembayaran DP
+                        <span>Pembayaran DP</span>
+
+                        <span class="ml-auto text-xs font-semibold px-3 py-1 rounded-full 
+                                 bg-orange-100 text-orange-700">
+                        Wajib DP
+                    </span>
                     </h3>
                     
                     <div class="space-y-4">
                         <!-- Informasi Rekening -->
-                        <div class="p-4 bg-gradient-to-r from-purple-50 to-indigo-50 border border-purple-200 rounded-lg">
+                        <div class="p-4 bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-xl shadow-sm">
                             <p class="font-semibold text-gray-800 mb-3">Transfer ke rekening:</p>
                             <div class="space-y-2">
                                 <div class="flex justify-between items-center">
@@ -163,7 +171,7 @@
                                         <span id="accountNumber">1234567890</span>
                                         <button type="button" 
                                                 onclick="copyAccountNumber()"
-                                                class="ml-2 text-purple-600 hover:text-purple-700">
+                                                class="ml-2 text-amber-600 hover:text-amber-700 transition-colors">
                                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path>
                                             </svg>
@@ -174,9 +182,10 @@
                                     <span class="text-gray-600">Atas Nama:</span>
                                     <span class="font-semibold text-gray-800">KosSmart Residence</span>
                                 </div>
-                                <div class="flex justify-between items-center pt-2 border-t border-purple-200">
+                                <div class="flex justify-between items-center pt-2 border-t border-yellow-200">
                                     <span class="text-gray-600">Jumlah DP:</span>
-                                    <span class="text-xl font-bold text-purple-600">Rp {{ number_format($depositAmount, 0, ',', '.') }}</span>
+                                    <span class="text-xl font-extrabold text-orange-700">Rp {{ number_format($depositAmount, 0, ',', '.') }}</span>
+
                                 </div>
                             </div>
                         </div>
@@ -190,7 +199,7 @@
                                    name="deposit_proof" 
                                    accept="image/*"
                                    @change="previewImage"
-                                   class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                                   class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-amber-500 focus:border-transparent"
                                    required>
                             @error('deposit_proof')
                             <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
@@ -208,9 +217,9 @@
                 </div>
                 
                 <!-- Syarat & Ketentuan -->
-                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                <div class="bg-white rounded-xl shadow-sm border-gray-200 hover:border-yellow-400 transition p-6">
                     <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center">
-                        <svg class="w-6 h-6 mr-2 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg class="w-6 h-6 mr-2 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                         </svg>
                         Syarat & Ketentuan
@@ -254,12 +263,15 @@
                                name="agreement" 
                                value="1"
                                id="agreement"
-                               class="w-5 h-5 text-purple-600 rounded focus:ring-purple-500 mt-0.5"
+                               class="w-5 h-5 rounded mt-0.5 accent-yellow-600 focus:ring-yellow-500"
                                required>
+
                         <label for="agreement" class="ml-3 text-sm text-gray-700">
-                            Saya telah membaca dan menyetujui syarat & ketentuan di atas <span class="text-red-500">*</span>
+                            Saya telah membaca dan menyetujui syarat & ketentuan di atas
+                            <span class="text-red-500">*</span>
                         </label>
                     </div>
+
                     @error('agreement')
                     <p class="text-red-500 text-sm mt-2">{{ $message }}</p>
                     @enderror
@@ -271,7 +283,7 @@
             <div class="space-y-6">
                 
                 <!-- Ringkasan Booking -->
-                <div class="bg-white rounded-xl shadow-lg border-2 border-purple-200 p-6 sticky top-6">
+                <div class="bg-white rounded-xl shadow-lg border-2 border-yellow-200 p-6 sticky top-6">
                     <h3 class="text-lg font-bold text-gray-800 mb-4">Ringkasan Booking</h3>
                     
                     <div class="space-y-3 mb-6">
@@ -315,7 +327,7 @@
                     </div>
                     
                     <button type="submit" 
-                            class="w-full bg-purple-600 text-white py-3 rounded-lg hover:bg-purple-700 font-semibold transition-colors flex items-center justify-center space-x-2">
+                            class="w-full bg-yellow-600 text-white py-3 rounded-lg hover:bg-yellow-700 font-semibold transition-colors flex items-center justify-center space-x-2">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
                         </svg>
@@ -328,9 +340,9 @@
                 </div>
                 
                 <!-- Bantuan -->
-                <div class="bg-blue-50 rounded-xl border border-blue-200 p-6">
+                <div class="bg-yellow-50 rounded-xl border border-yellow-200 p-6">
                     <h3 class="text-lg font-bold text-gray-800 mb-3 flex items-center">
-                        <svg class="w-5 h-5 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg class="w-5 h-5 mr-2 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                         </svg>
                         Butuh Bantuan?
@@ -341,7 +353,7 @@
                     @if($room->kosInfo)
                     <div class="space-y-2">
                         <a href="tel:{{ $room->kosInfo->phone }}" 
-                           class="flex items-center text-sm text-gray-700 hover:text-purple-600">
+                           class="flex items-center text-sm text-gray-700 hover:text-yellow-600">
                             <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path>
                             </svg>

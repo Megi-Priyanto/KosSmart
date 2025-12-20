@@ -30,18 +30,22 @@
         <!-- Sidebar -->
         <aside 
             :class="sidebarOpen ? 'w-64' : 'w-20'"
-            class="bg-gradient-to-b from-purple-700 to-purple-900 text-white transition-all duration-300 flex-shrink-0 flex flex-col"
-        >
+            class="bg-gradient-to-b from-gray-900 to-gray-800 text-gray-100 transition-all duration-300 flex-shrink-0 flex flex-col">
             
             <!-- Logo -->
-            <div class="p-4 flex items-center justify-between border-b border-purple-600">
+            <div class="p-4 flex items-center justify-between border-b border-gray-700">
                 <div class="flex items-center space-x-3" x-show="sidebarOpen">
-                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
-                    </svg>
-                    <span class="text-xl font-bold">KosSmart</span>
+                    <!-- Logo -->
+                    <a href="{{ route('admin.dashboard') }}"
+                       class="flex items-center space-x-3">
+                        <img src="{{ asset('images/logo.png') }}"
+                            class="w-9 h-9 rounded-full object-cover">
+                        <span class="text-xl font-bold text-yellow-400">
+                            KosSmart
+                        </span>
+                    </a>
                 </div>
-                <button @click="sidebarOpen = !sidebarOpen" class="p-2 rounded hover:bg-purple-600">
+                <button @click="sidebarOpen = !sidebarOpen" class="p-2 rounded hover:bg-gray-700">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
                     </svg>
@@ -52,7 +56,7 @@
             <nav class="p-4 space-y-2">
                 <!-- Dashboard -->
                 <a href="{{ route('admin.dashboard') }}" 
-                   class="flex items-center space-x-3 p-3 rounded-lg hover:bg-purple-600 transition-colors {{ request()->routeIs('admin.dashboard') ? 'bg-purple-600' : '' }}">
+                   class="flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-700 transition-colors {{ request()->routeIs('admin.dashboard') ? 'bg-gray-700 text-yellow-400' : 'text-gray-300' }}">
                     <svg class="w-6 h-6 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
                     </svg>
@@ -61,7 +65,7 @@
                 
                 <!-- Kelola User -->
                 <a href="{{ route('admin.users.index') }}" 
-                   class="flex items-center space-x-3 p-3 rounded-lg hover:bg-purple-600 transition-colors {{ request()->routeIs('admin.users.*') ? 'bg-purple-600' : '' }}">
+                   class="flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-700 transition-colors {{ request()->routeIs('admin.users.*') ? 'bg-gray-700 text-yellow-400' : 'text-gray-300' }}">
                     <svg class="w-6 h-6 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
                     </svg>
@@ -70,7 +74,7 @@
                 
                 <!-- Kelola Kos (Info) -->
                 <a href="{{ route('admin.kos.index') }}" 
-                   class="flex items-center space-x-3 p-3 rounded-lg hover:bg-purple-600 transition-colors {{ request()->routeIs('admin.kos.*') ? 'bg-purple-600' : '' }}">
+                   class="flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-700 transition-colors {{ request()->routeIs('admin.kos.*') ? 'bg-gray-700 text-yellow-400' : 'text-gray-300' }}">
                     <svg class="w-6 h-6 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                     </svg>
@@ -79,7 +83,7 @@
                 
                 <!-- Kelola Kamar -->
                 <a href="{{ route('admin.rooms.index') }}" 
-                   class="flex items-center space-x-3 p-3 rounded-lg hover:bg-purple-600 transition-colors {{ request()->routeIs('admin.rooms.*') ? 'bg-purple-600' : '' }}">
+                   class="flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-700 transition-colors {{ request()->routeIs('admin.rooms.*') ? 'bg-gray-700 text-yellow-400' : 'text-gray-300' }}">
                     <svg class="w-6 h-6 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
                     </svg>
@@ -88,7 +92,7 @@
 
                 <!-- Booking -->
                 <a href="{{ route('admin.bookings.index') }}" 
-                   class="flex items-center space-x-3 p-3 rounded-lg hover:bg-purple-600 transition-colors {{ request()->routeIs('admin.bookings.*') ? 'bg-purple-600' : '' }}">
+                   class="flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-700 transition-colors {{ request()->routeIs('admin.bookings.*') ? 'bg-gray-700 text-yellow-400' : 'text-gray-300' }}">
                     <svg class="w-6 h-6 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path>
                     </svg>
@@ -98,7 +102,7 @@
                             $pendingCount = \App\Models\Rent::where('status', 'pending')->count();
                         @endphp
                         @if($pendingCount > 0)
-                        <span class="bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full">
+                        <span class="bg-red-600 text-white text-white text-xs font-bold px-2 py-1 rounded-full">
                             {{ $pendingCount }}
                         </span>
                         @endif
@@ -107,7 +111,7 @@
                 
                 <!-- Tagihan -->
                 <a href="{{ route('admin.billing.index') }}" 
-                    class="flex items-center space-x-3 p-3 rounded-lg hover:bg-purple-600 transition-colors {{ request()->routeIs('admin.billing.*') ? 'bg-purple-600' : '' }}">
+                    class="flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-700 transition-colors {{ request()->routeIs('admin.billing.*') ? 'bg-gray-700 text-yellow-400' : 'text-gray-300' }}">
                             
                     <svg class="w-6 h-6 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -134,7 +138,7 @@
 
                 <!-- Laporan -->
                 <a href="{{ route('admin.reports.index') }}" 
-                   class="flex items-center space-x-3 p-3 rounded-lg hover:bg-purple-600 transition-colors {{ request()->routeIs('admin.reports.*') ? 'bg-purple-600' : '' }}">
+                   class="flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-700 transition-colors {{ request()->routeIs('admin.reports.*') ? 'bg-gray-700 text-yellow-400' : 'text-gray-300' }}">
                     <svg class="w-6 h-6 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
                     </svg>
@@ -143,7 +147,7 @@
                 
                 <!-- Pengaturan -->
                 <a href="{{ route('admin.settings.index') }}" 
-                   class="flex items-center space-x-3 p-3 rounded-lg hover:bg-purple-600 transition-colors {{ request()->routeIs('admin.settings.*') ? 'bg-purple-600' : '' }}">
+                   class="flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-700 transition-colors {{ request()->routeIs('admin.settings.*') ? 'bg-gray-700 text-yellow-400' : 'text-gray-300' }}">
                     <svg class="w-6 h-6 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
@@ -152,30 +156,39 @@
                 </a>
             </nav>
             
-            <!-- User Profile (Bottom New) -->
-            <div class="mt-auto border-t border-purple-600">
+            <!-- Admin Profile (Bottom) -->
+            <div class="mt-auto border-t border-gray-700">
                 <div class="p-4 flex items-center space-x-3">
                 
                     <!-- Foto Profil -->
-                    <div class="w-10 h-10 bg-purple-600 bg-opacity-20 backdrop-blur-md rounded-full flex items-center justify-center">
+                    <div
+                        class="w-10 h-10 bg-yellow-500 bg-opacity-20 rounded-full flex items-center justify-center flex-shrink-0">
                         <span class="text-sm font-bold text-white">
                             {{ substr(Auth::user()->name, 0, 1) }}
                         </span>
                     </div>
                 
                     <!-- Nama + Role -->
-                    <div class="flex-1" x-show="sidebarOpen">
-                        <p class="text-sm font-semibold">{{ Auth::user()->name }}</p>
-                        <p class="text-xs text-purple-300">Administrator</p>
+                    <div class="flex-1 leading-tight" x-show="sidebarOpen">
+                        <!-- Baris 1 -->
+                        <p class="text-sm font-semibold text-gray-100">
+                            <span class="text-yellow-400">{{ Auth::user()->name }}</span>
+                        </p>
+                    
+                        <!-- Baris 2 -->
+                        <p class="text-xs text-gray-400">
+                            Administrator
+                        </p>
                     </div>
                 
                     <!-- Logout Icon -->
                     <form action="{{ route('logout') }}" method="POST">
                         @csrf
-                        <button 
-                            class="p-2 rounded-lg hover:bg-purple-700 transition"
+                        <button
+                            class="p-2 rounded-lg hover:bg-gray-700 transition"
                             title="Keluar">
-                            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg class="w-5 h-5 text-gray-300" fill="none" stroke="currentColor"
+                                 viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                       d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a2 2 0 11-4 0v-1m0-8V7a2 2 0 114 0v1" />
                             </svg>
@@ -190,12 +203,12 @@
         <div class="flex-1 flex flex-col overflow-hidden">
             
             <!-- Top Navbar -->
-            <header class="bg-white shadow-sm border-b border-gray-200 z-10">
+            <header class="bg-gray-100 shadow-sm border-b border-gray-200 z-10">
                 <div class="px-6 py-4 flex items-center justify-between">
                     <!-- Page Title -->
                     <div>
                         <h1 class="text-2xl font-bold text-gray-800">@yield('page-title', 'Dashboard')</h1>
-                        <p class="text-sm text-gray-600">@yield('page-description', 'Selamat datang di panel admin KosSmart')</p>
+                        <p class="text-sm text-gray-500">@yield('page-description', 'Selamat datang di panel admin KosSmart')</p>
                     </div>
                     
                     <!-- Right Actions -->
@@ -213,7 +226,7 @@
                                     $notifCount = \App\Models\Rent::where('status', 'pending')->count();
                                 @endphp
                                 @if($notifCount > 0)
-                                    <span class="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
+                                    <span class="absolute top-1 right-1 w-2 h-2 bg-red-600 text-white rounded-full"></span>
                                 @endif
                             </button>
                         
@@ -266,7 +279,7 @@
                                 @if($pendingBookings->count() > 0)
                                     <div class="p-3 bg-gray-50 border-t">
                                         <a href="{{ route('admin.bookings.index') }}" 
-                                           class="text-sm text-purple-600 hover:text-purple-700 font-medium">
+                                           class="text-sm text-yellow-600 hover:text-yellow-700 font-medium">
                                             Lihat Semua Booking →
                                         </a>
                                     </div>
@@ -274,7 +287,7 @@
                             </div>
                         </div>
                     
-                        <!-- Billing Notifications (TAGIHAN OVERDUE) -->
+                        <!-- Billing Notifications Tagihan -->
                         <div x-data="{ open: false }" class="relative ml-4">
                             <button @click="open = !open" class="p-2 text-gray-600 hover:bg-gray-100 rounded-lg relative">
                                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -283,7 +296,7 @@
                                 </svg>
                             
                                 @if(isset($overdueNotifications) && $overdueNotifications->count() > 0)
-                                    <span class="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
+                                    <span class="absolute top-1 right-1 w-2 h-2 bg-red-600 text-white rounded-full"></span>
                                 @endif
                             </button>
                         
@@ -324,7 +337,7 @@
                         <!-- Logout -->
                         <form action="{{ route('logout') }}" method="POST">
                             @csrf
-                            <button type="submit" class="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors text-sm font-medium">
+                            <button type="submit" class="px-4 py-2 bg-red-600 text-white text-white rounded-lg hover:bg-red-600 transition-colors text-sm font-medium">
                                 Keluar
                             </button>
                         </form>

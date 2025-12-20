@@ -144,18 +144,45 @@ Route::middleware(['auth', 'verified', 'role:admin'])
         Route::get('/dashboard', [AdminDashboardController::class, 'index'])
             ->name('dashboard');
 
-        // Kelola Info Kos
-        Route::controller(KosInfoController::class)->group(function () {
-            Route::get('/kos', 'index')->name('kos.index');
-            Route::get('/kos/create', 'create')->name('kos.create');
-            Route::post('/kos', 'store')->name('kos.store');
-            Route::get('/kos/edit', 'edit')->name('kos.edit');
-            Route::put('/kos', 'update')->name('kos.update');
+       // Kos Info
+        Route::prefix('kos')->name('kos.')->group(function () {
+
+            Route::get('/', [\App\Http\Controllers\Admin\KosInfoController::class, 'index'])
+                ->name('index');
+
+            Route::get('/create', [\App\Http\Controllers\Admin\KosInfoController::class, 'create'])
+                ->name('create');
+
+            Route::post('/', [\App\Http\Controllers\Admin\KosInfoController::class, 'store'])
+                ->name('store');
+
+            Route::get('/{kos}', [\App\Http\Controllers\Admin\KosInfoController::class, 'show'])
+                ->name('show');
+
+            Route::get('/{kos}/edit', [\App\Http\Controllers\Admin\KosInfoController::class, 'edit'])
+                ->name('edit');
+
+            Route::put('/{kos}', [\App\Http\Controllers\Admin\KosInfoController::class, 'update'])
+                ->name('update');
+
+            Route::post('/{kos}/activate', [\App\Http\Controllers\Admin\KosInfoController::class, 'activate'])
+                ->name('activate');
+
+            Route::post('/{kos}/deactivate', [\App\Http\Controllers\Admin\KosInfoController::class, 'deactivate'])
+                ->name('deactivate');
         });
 
-        Route::patch('/kos/{id}/toggle-apply', [KosInfoController::class, 'toggleApply'])
-            ->name('kos-info.toggle-apply');
+        // Room
+        Route::resource('rooms', \App\Http\Controllers\Admin\RoomController::class);
 
+        Route::put('/rooms/{room}/status', [\App\Http\Controllers\Admin\RoomStatusController::class, 'update'])
+            ->name('rooms.status.update');
+
+        Route::post('/rooms/bulk-status', [\App\Http\Controllers\Admin\RoomStatusController::class, 'bulkUpdate'])
+            ->name('rooms.status.bulk');
+
+        // Billing
+        Route::resource('billing', \App\Http\Controllers\Admin\BillingController::class);
 
         // Kelola Kamar
         Route::resource('rooms', AdminRoomController::class)->names([
@@ -201,7 +228,7 @@ Route::middleware(['auth', 'verified', 'role:admin'])
             Route::post('/billing/payment/{payment}/verify', 'verifyPayment')->name('billing.payment.verify');
             Route::post('/billing/{billing}/mark-paid', 'markAsPaid')->name('billing.mark-paid');
 
-            // Bulk generate tagihan
+            // Generate tagihan
             Route::post('/billing/bulk-generate', 'bulkGenerate')->name('billing.bulk-generate');
         });
 

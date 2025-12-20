@@ -8,7 +8,7 @@
     
     <!-- Header -->
     <div class="mb-8">
-        <h1 class="text-3xl font-bold text-gray-800 mb-2">📋 Status Booking Anda</h1>
+        <h1 class="text-3xl font-bold text-gray-800 mb-2">Status Booking Anda</h1>
         <p class="text-gray-600">Pantau status booking kamar Anda di sini</p>
     </div>
     
@@ -19,10 +19,10 @@
             
             <!-- Status Badge -->
             <div class="inline-flex items-center space-x-2 px-4 py-2 rounded-full text-lg font-semibold
-                @if($rent->status == 'pending') bg-yellow-100 text-yellow-700
-                @elseif($rent->status == 'active') bg-green-100 text-green-700
-                @elseif($rent->status == 'cancelled') bg-red-100 text-red-700
-                @else bg-gray-100 text-gray-700
+                @if($rent->status == 'pending') bg-yellow-200 text-yellow-900 ring-1 ring-yellow-400
+                @elseif($rent->status == 'active') bg-green-200 text-green-900 ring-1 ring-green-400
+                @elseif($rent->status == 'cancelled') bg-red-200 text-red-900 ring-1 ring-red-400
+                @else bg-gray-200 text-gray-800
                 @endif">
                 
                 @if($rent->status == 'pending')
@@ -48,7 +48,11 @@
         
         <!-- Timeline -->
         <div class="relative">
-            <div class="absolute left-4 top-0 bottom-0 w-0.5 bg-gray-200"></div>
+            <div class="absolute left-4 top-0 bottom-0 w-0.5 
+                {{ $rent->status == 'pending' ? 'bg-yellow-300' : '' }}
+                {{ $rent->status == 'active' ? 'bg-green-300' : '' }}
+                {{ $rent->status == 'cancelled' ? 'bg-red-300' : '' }}">
+            </div>
             
             <div class="space-y-6">
                 <!-- Step 1: Booking Submitted -->
@@ -69,10 +73,9 @@
                 <!-- Step 2: Admin Review -->
                 <div class="relative flex items-start pl-12">
                     <div class="absolute left-0 flex items-center justify-center w-8 h-8 rounded-full 
-                        {{ $rent->status == 'pending' ? 'bg-yellow-500 animate-pulse' : '' }}
-                        {{ in_array($rent->status, ['active', 'expired']) ? 'bg-green-500' : '' }}
-                        {{ $rent->status == 'cancelled' ? 'bg-red-500' : '' }}
-                        {{ !in_array($rent->status, ['pending', 'active', 'cancelled', 'expired']) ? 'bg-gray-300' : '' }}">
+                        {{ $rent->status == 'pending' ? 'bg-yellow-500 ring-4 ring-yellow-200 animate-pulse' : '' }}
+                        {{ in_array($rent->status, ['active', 'expired']) ? 'bg-green-500 ring-4 ring-green-200' : '' }}
+                        {{ $rent->status == 'cancelled' ? 'bg-red-500 ring-4 ring-red-200' : '' }}">
                         @if($rent->status == 'pending')
                             <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
@@ -231,7 +234,7 @@
                     <span class="text-gray-600">DP Dibayar</span>
                     <span class="font-semibold text-green-600">Rp {{ number_format($rent->deposit_paid, 0, ',', '.') }}</span>
                 </div>
-                <div class="flex justify-between pt-3 border-t border-gray-200">
+                <div class="flex justify-between pt-3 border-t border-orange-200 bg-orange-50 px-3 py-2 rounded-lg">
                     <span class="text-gray-600">Sisa Pembayaran</span>
                     <span class="font-semibold text-orange-600">Rp {{ number_format($rent->monthly_rent - $rent->deposit_paid, 0, ',', '.') }}</span>
                 </div>
@@ -256,7 +259,7 @@
             @if($rent->status == 'pending')
             <div class="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
                 <p class="text-sm text-yellow-800">
-                    💰 Sisa pembayaran akan diinformasikan setelah booking disetujui
+                    Sisa pembayaran akan diinformasikan setelah booking disetujui
                 </p>
             </div>
             @elseif($rent->status == 'active')
@@ -313,7 +316,7 @@
     
     <!-- Status-specific Messages -->
     @if($rent->status == 'pending')
-    <div class="bg-yellow-50 border-l-4 border-yellow-500 p-6 rounded-lg mb-6">
+    <div class="bg-yellow-100 border-l-4 border-yellow-500 p-6 rounded-lg mb-6 ring-1 ring-yellow-200">
         <div class="flex items-start">
             <svg class="w-6 h-6 text-yellow-500 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
@@ -330,7 +333,7 @@
         </div>
     </div>
     @elseif($rent->status == 'active')
-    <div class="bg-green-50 border-l-4 border-green-500 p-6 rounded-lg mb-6">
+    <div class="bg-green-100 border-l-4 border-green-500 p-6 rounded-lg mb-6 ring-1 ring-green-200">
         <div class="flex items-start">
             <svg class="w-6 h-6 text-green-500 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
@@ -347,7 +350,7 @@
         </div>
     </div>
     @elseif($rent->status == 'cancelled')
-    <div class="bg-red-50 border-l-4 border-red-500 p-6 rounded-lg mb-6">
+    <div class="bg-red-100 border-l-4 border-red-500 p-6 rounded-lg mb-6 ring-1 ring-red-200">
         <div class="flex items-start">
             <svg class="w-6 h-6 text-red-500 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"></path>

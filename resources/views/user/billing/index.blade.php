@@ -15,7 +15,7 @@
 
     <!-- Statistics Cards -->
     <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+        <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200 hover:border-yellow-400 transition">
             <div class="flex items-center justify-between">
                 <div>
                     <p class="text-sm text-gray-600">Total Tagihan</p>
@@ -29,7 +29,7 @@
             </div>
         </div>
 
-        <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+        <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200 hover:border-yellow-400 transition">
             <div class="flex items-center justify-between">
                 <div>
                     <p class="text-sm text-gray-600">Belum Dibayar</p>
@@ -39,11 +39,11 @@
                     <svg class="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                     </svg>
-                </div>
+                </div> 
             </div>
         </div>
 
-        <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+        <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200 hover:border-yellow-400 transition">
             <div class="flex items-center justify-between">
                 <div>
                     <p class="text-sm text-gray-600">Pending</p>
@@ -57,7 +57,7 @@
             </div>
         </div>
 
-        <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+        <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200 hover:border-yellow-400 transition">
             <div class="flex items-center justify-between">
                 <div>
                     <p class="text-sm text-gray-600">Lunas</p>
@@ -88,7 +88,7 @@
     @endif
 
     <!-- Filters -->
-    <div class="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
+    <div class="bg-white p-4 rounded-lg shadow-sm border border-gray-200 hover:border-yellow-400 transition">
         <div class="flex flex-col md:flex-row gap-3">
             <form method="GET" class="flex gap-2 flex-1">
                 <select name="status" onchange="this.form.submit()" 
@@ -119,7 +119,7 @@
     <!-- Billings Grid -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         @forelse($billings as $billing)
-        <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-shadow">
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200 hover:border-yellow-400 overflow-hidden hover:shadow-md transition">
             <!-- Header -->
             <div class="p-4 border-b border-gray-200 {{ $billing->status === 'paid' ? 'bg-green-50' : ($billing->is_overdue ? 'bg-red-50' : 'bg-gray-50') }}">
                 <div class="flex items-center justify-between mb-2">
@@ -187,7 +187,7 @@
             </div>
         </div>
         @empty
-        <div class="col-span-full bg-white rounded-lg shadow-sm border border-gray-200 p-12 text-center">
+        <div class="col-span-full bg-white rounded-lg shadow-sm border border-gray-200 hover:border-yellow-400 transition p-12 text-center">
             <svg class="mx-auto h-16 w-16 text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
             </svg>
@@ -199,7 +199,7 @@
 
     <!-- Pagination -->
     @if($billings->hasPages())
-    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+    <div class="bg-white rounded-lg shadow-sm border border-gray-200 hover:border-yellow-400 transition p-4">
         {{ $billings->links() }}
     </div>
     @endif

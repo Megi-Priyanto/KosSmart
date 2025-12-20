@@ -20,7 +20,7 @@
         <div class="lg:col-span-2 space-y-6">
             
             <!-- Billing Info -->
-            <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+            <div class="bg-white rounded-lg shadow-sm border border-gray-200 hover:border-yellow-400 transition overflow-hidden">
                 <div class="p-6 border-b border-gray-200 {{ $billing->status === 'paid' ? 'bg-green-50' : ($billing->is_overdue ? 'bg-red-50' : 'bg-purple-50') }}">
                     <div class="flex items-center justify-between mb-2">
                         <h2 class="text-2xl font-bold text-gray-900">{{ $billing->formatted_period }}</h2>
@@ -94,7 +94,7 @@
             </div>
 
             <!-- Payment History -->
-            <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+            <div class="bg-white rounded-lg shadow-sm border border-gray-200 hover:border-yellow-400 transition overflow-hidden">
                 <div class="p-6 border-b border-gray-200">
                     <h3 class="text-lg font-semibold text-gray-900">Riwayat Pembayaran</h3>
                 </div>
@@ -154,7 +154,7 @@
                             <div class="ml-4">
                                 <a href="{{ Storage::url($payment->payment_proof) }}" 
                                    target="_blank"
-                                   class="block w-32 h-32 border-2 border-gray-300 rounded-lg overflow-hidden hover:border-purple-500 transition-colors">
+                                   class="block w-32 h-32 border-2 border-gray-300 rounded-lg overflow-hidden hover:border-gray-300 rounded-lg overflow-hidden hover:border-yellow-400 transition">
                                     <img src="{{ Storage::url($payment->payment_proof) }}" 
                                          alt="Bukti Pembayaran" 
                                          class="w-full h-full object-cover">
@@ -167,7 +167,7 @@
                     @empty
                     <div class="p-8 text-center text-gray-500">
                         <svg class="mx-auto h-12 w-12 text-gray-400 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z + text-yellow-500"></path>
                         </svg>
                         <p>Belum ada pembayaran</p>
                     </div>
@@ -182,7 +182,7 @@
             
             <!-- Payment Actions -->
             @if($billing->status !== 'paid')
-            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+            <div class="bg-white rounded-lg shadow-sm border border-gray-200 hover:border-yellow-400 transition p-6">
                 <h3 class="text-lg font-semibold text-gray-900 mb-4">Bayar Tagihan</h3>
                 
                 <div class="space-y-3">
@@ -218,24 +218,24 @@
             @endif
 
             <!-- Payment Info Box -->
-            <div class="bg-blue-50 border border-blue-200 rounded-lg p-6">
-                <h4 class="text-sm font-semibold text-blue-900 mb-3">ℹInformasi Pembayaran</h4>
+            <div class="bg-blue-50 border border-blue-200 rounded-lg p-6 hover:border-yellow-400 transition">
+                <h4 class="text-sm font-semibold text-blue-900 mb-3">Informasi Pembayaran</h4>
                 <ul class="space-y-2 text-sm text-blue-800">
                     <li class="flex items-start">
                         <svg class="w-4 h-4 mr-2 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z + text-yellow-500" clip-rule="evenodd"/>
                         </svg>
                         Upload bukti transfer yang jelas
                     </li>
                     <li class="flex items-start">
                         <svg class="w-4 h-4 mr-2 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z + text-yellow-500" clip-rule="evenodd"/>
                         </svg>
                         Pastikan nominal sesuai
                     </li>
                     <li class="flex items-start">
                         <svg class="w-4 h-4 mr-2 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z + text-yellow-500" clip-rule="evenodd"/>
                         </svg>
                         Verifikasi dalam 1x24 jam
                     </li>

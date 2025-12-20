@@ -1,29 +1,33 @@
 <?php
+// bootstrap/app.php
 
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
+use Illuminate\Console\Scheduling\Schedule;
 
-// Tambahkan import middleware custom
+// Middleware
 use App\Http\Middleware\RoleMiddleware;
 use App\Http\Middleware\CheckHasRoom;
 use App\Http\Middleware\CheckNoRoom;
-use App\Http\Middleware\TrustProxies;
-use App\Http\Middleware\PreventRequestsDuringMaintenance;
-use App\Http\Middleware\TrimStrings;
-use Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull;
-use Illuminate\Http\Middleware\HandleCors;
 
-use Illuminate\Console\Scheduling\Schedule; // <-- WAJIB DITAMBAHKAN
+use Illuminate\Http\Middleware\HandleCors;
+use Illuminate\Http\Middleware\TrustProxies;
+use Illuminate\Foundation\Http\Middleware\PreventRequestsDuringMaintenance;
+use Illuminate\Foundation\Http\Middleware\TrimStrings;
+use Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
         web: __DIR__ . '/../routes/web.php',
+        api: __DIR__ . '/../routes/api.php', // ← Pastikan ini ada
         commands: __DIR__ . '/../routes/console.php',
         health: '/up',
     )
 
     ->withMiddleware(function (Middleware $middleware): void {
+        
+        // Global middleware
         $middleware->use([
             TrustProxies::class,
             HandleCors::class,
@@ -32,10 +36,18 @@ return Application::configure(basePath: dirname(__DIR__))
             ConvertEmptyStringsToNull::class,
         ]);
 
+        // Middleware alias
         $middleware->alias([
             'role' => RoleMiddleware::class,
             'no.room' => CheckNoRoom::class,
             'has.room' => CheckHasRoom::class,
+        ]);
+
+        // Middleware group API
+        $middleware->group('api', [
+            \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
+            'throttle:api',
+            \Illuminate\Routing\Middleware\SubstituteBindings::class,
         ]);
     })
 
@@ -54,10 +66,7 @@ return Application::configure(basePath: dirname(__DIR__))
     ])
 
     ->withSchedule(function (Schedule $schedule) {
-        // Generate tagihan bulanan setiap awal bulan
         $schedule->command(\App\Console\Commands\GenerateMonthlyBilling::class)->monthly();
-
-        // Cek tagihan jatuh tempo setiap hari jam 00:00
         $schedule->command(\App\Console\Commands\CheckOverdueBilling::class)->daily();
     })
 
