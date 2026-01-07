@@ -94,7 +94,7 @@
                         <div class="grid grid-cols-5 gap-2">
                             <template x-for="(image, index) in images" :key="index">
                                 <div @click="currentIndex = index" 
-                                     class="aspect-square rounded-lg overflow-hidden cursor-pointer border-3 transition-all hover:scale-105"
+                                     class="aspect-square rounded-lg overflow-hidden cursor-pointer border-2 border-3 transition-all hover:scale-105"
                                      :class="currentIndex === index ? 'border-purple-600 ring-2 ring-purple-300' : 'border-gray-300'">
                                     <img :src="'{{ asset('storage') }}/' + image" 
                                          class="w-full h-full object-cover">
@@ -145,7 +145,7 @@
             </div>
             
             <!-- Quick Info -->
-            <div class="grid grid-cols-3 gap-4 py-4 border-t border-b border-gray-200 mb-6">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 py-4 border-t border-b border-gray-200 mb-6">
                 <div class="text-center">
                     <div class="bg-yellow-100 w-12 h-12 rounded-lg flex items-center justify-center mx-auto mb-2">
                         <svg class="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -328,7 +328,7 @@
                         @endif
                         
                         <div class="p-3">
-                            <p class="font-semibold text-gray-800 group-hover:text-yellw-600">Kamar {{ $relatedRoom->room_number }}</p>
+                            <p class="font-semibold text-gray-800 group-hover:text-yellow-600">Kamar {{ $relatedRoom->room_number }}</p>
                             <p class="text-sm text-gray-600">{{ $relatedRoom->floor }}</p>
                             <p class="text-lg font-bold text-yellow-600 mt-2">Rp {{ number_format($relatedRoom->price, 0, ',', '.') }}</p>
                         </div>

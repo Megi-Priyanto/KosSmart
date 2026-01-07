@@ -13,9 +13,11 @@ use App\Http\Controllers\Admin\KosInfoController;
 use App\Http\Controllers\Admin\RoomController as AdminRoomController;
 use App\Http\Controllers\Admin\RoomStatusController;
 use App\Http\Controllers\Admin\AdminDashboardController;
+use App\Http\Controllers\Admin\AdminProfileController;
 use App\Http\Controllers\Admin\BookingManagementController;
 use App\Http\Controllers\User\UserProfileController;
 use App\Http\Controllers\Admin\NotificationController;
+use App\Http\Controllers\Admin\SettingController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -140,11 +142,45 @@ Route::middleware(['auth', 'verified', 'role:admin'])
     ->name('admin.')
     ->group(function () {
 
+        // Settings Management
+        Route::prefix('settings')->name('settings.')->group(function () {
+            Route::get('/', [\App\Http\Controllers\Admin\SettingController::class, 'index'])
+                ->name('index');
+
+            // Update Settings
+            Route::put('/general', [\App\Http\Controllers\Admin\SettingController::class, 'updateGeneral'])
+                ->name('general.update');
+
+            Route::put('/billing', [\App\Http\Controllers\Admin\SettingController::class, 'updateBilling'])
+                ->name('billing.update');
+
+            Route::put('/notification', [\App\Http\Controllers\Admin\SettingController::class, 'updateNotification'])
+                ->name('notification.update');
+
+            Route::put('/security', [\App\Http\Controllers\Admin\SettingController::class, 'updateSecurity'])
+                ->name('security.update');
+
+            // Maintenance Actions
+            Route::post('/backup', [\App\Http\Controllers\Admin\SettingController::class, 'backupDatabase'])
+                ->name('backup');
+
+            Route::get('/backup/{filename}/download', [\App\Http\Controllers\Admin\SettingController::class, 'downloadBackup'])
+                ->name('backup.download');
+
+            Route::post('/cache/clear', [\App\Http\Controllers\Admin\SettingController::class, 'clearCache'])
+                ->name('cache.clear');
+        });
+
+        // Profile
+        Route::get('/profile', [AdminProfileController::class, 'index'])->name('profile');
+        Route::put('/profile', [AdminProfileController::class, 'update'])->name('profile.update');
+        Route::put('/profile/password', [AdminProfileController::class, 'updatePassword'])->name('profile.password');
+
         // Dashboard
         Route::get('/dashboard', [AdminDashboardController::class, 'index'])
             ->name('dashboard');
 
-       // Kos Info
+        // Kos Info
         Route::prefix('kos')->name('kos.')->group(function () {
 
             Route::get('/', [\App\Http\Controllers\Admin\KosInfoController::class, 'index'])

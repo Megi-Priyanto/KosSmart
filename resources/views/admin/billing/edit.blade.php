@@ -5,70 +5,92 @@
 @section('page-description', 'Perbarui informasi tagihan')
 
 @section('content')
-<div class="max-w-4xl">
+
+<div class="max-w-full">
+
+    <!-- Back Button -->
+    <div class="mb-6">
+        <a href="{{ route('admin.billing.index') }}"
+            class="inline-flex items-center text-yellow-400 hover:text-yellow-500 transitions-colors">
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+            </svg>
+            Kembali ke Daftar Tagihan
+        </a>
+    </div>
+
     <form method="POST" action="{{ route('admin.billing.update', $billing) }}" x-data="billingForm()">
         @csrf
         @method('PUT')
 
-        <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+        <div class="bg-slate-800 rounded-lg shadow-xl border border-slate-700 overflow-hidden">
             
             <!-- Info Banner -->
-            <div class="p-4 bg-blue-50 border-b border-blue-200">
-                <div class="flex items-center">
-                    <svg class="w-5 h-5 text-blue-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                    </svg>
-                    <div>
-                        <p class="text-sm font-medium text-blue-800">
-                            Mengedit tagihan {{ $billing->formatted_period }} untuk {{ $billing->user->name }}
-                        </p>
-                        <p class="text-xs text-blue-600">Periode dan penyewa tidak dapat diubah</p>
+            <div class="p-8 border-b border-slate-700">
+                <h3 class="text-xl font-bold text-white mb-6 flex items-center pb-3 border-b-2 border-slate-700/50">
+                    <div class="p-2 bg-gradient-to-br from-slate-700 to-slate-600 rounded-lg border-2 border-slate-500 mr-3 shadow-lg">
+                        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
                     </div>
+                    Mengedit tagihan {{ $billing->formatted_period }} untuk {{ $billing->user->name }}
+                </h3>
+                <div class="text-yellow-400">
+                    <p>Periode dan penyewa tidak dapat diubah</p>
                 </div>
             </div>
 
             <!-- Cost Breakdown -->
-            <div class="p-6 border-b border-gray-200">
-                <h3 class="text-lg font-semibold text-gray-900 mb-4">Rincian Biaya</h3>
+            <div class="p-8 border-b border-slate-700">
+                <h3 class="text-xl font-bold text-white mb-6 flex items-center pb-3 border-b-2 border-slate-700/50">
+                    <div class="p-2 bg-gradient-to-br from-slate-700 to-slate-600 rounded-lg border-2 border-slate-500 mr-3 shadow-lg">
+                        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                        </svg>
+                    </div>
+                    Rincian Biaya
+                </h3>
                 
-                <div class="space-y-4">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 
                     <!-- Biaya Sewa -->
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Biaya Sewa *</label>
+                        <label class="block text-sm font-semibold text-slate-300 mb-3">Biaya Sewa <span class="text-red-400"></span></label>
                         <input type="number" 
                                name="rent_amount" 
                                x-model.number="rentAmount"
                                @input="calculateTotal()"
                                required 
                                min="0"
-                               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500">
+                               class="w-full px-5 py-3 bg-slate-900 border-2 border-slate-700 text-white rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all"
+                               placeholder="0">
                     </div>
                 
                     <!-- Diskon -->
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Diskon</label>
+                        <label class="block text-sm font-semibold text-slate-300 mb-3">Diskon</label>
                         <input type="number" 
                                name="discount" 
                                x-model.number="discount"
                                @input="calculateTotal()"
                                min="0"
-                               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500">
+                               class="w-full px-5 py-3 bg-slate-900 border-2 border-slate-700 text-white rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all"
+                               placeholder="0">
                     </div>
                 
                     <!-- Total Summary -->
-                    <div class="bg-purple-50 border-l-4 border-purple-500 p-4">
-                        <div class="flex justify-between items-center mb-2">
-                            <span class="text-sm text-gray-700">Subtotal:</span>
-                            <span class="text-lg font-semibold text-gray-900" x-text="formatCurrency(subtotal)"></span>
+                    <div class="md:col-span-2 bg-gradient-to-r from-blue-900/20 to-blue-900/10 border-2 border-blue-600/50 rounded-lg p-6">
+                        <div class="flex justify-between items-center mb-3">
+                            <span class="text-sm font-medium text-slate-300">Subtotal:</span>
+                            <span class="text-lg font-bold text-white" x-text="formatCurrency(subtotal)"></span>
                         </div>
-                        <div class="flex justify-between items-center mb-2">
-                            <span class="text-sm text-gray-700">Diskon:</span>
-                            <span class="text-lg font-semibold text-red-600" x-text="'- ' + formatCurrency(discount)"></span>
+                        <div class="flex justify-between items-center mb-3">
+                            <span class="text-sm font-medium text-slate-300">Diskon:</span>
+                            <span class="text-lg font-bold text-red-400" x-text="'- ' + formatCurrency(discount)"></span>
                         </div>
-                        <div class="flex justify-between items-center pt-2 border-t border-purple-200">
-                            <span class="text-base font-semibold text-gray-900">Total Tagihan:</span>
-                            <span class="text-2xl font-bold text-purple-600" x-text="formatCurrency(total)"></span>
+                        <div class="flex justify-between items-center pt-3 border-t border-blue-600/30">
+                            <span class="text-lg font-bold text-white">Total Tagihan:</span>
+                            <span class="text-3xl font-bold text-orange-400" x-text="formatCurrency(total)"></span>
                         </div>
                     </div>
                 
@@ -76,42 +98,52 @@
             </div>
 
             <!-- Additional Info -->
-            <div class="p-6 border-b border-gray-200">
-                <h3 class="text-lg font-semibold text-gray-900 mb-4">Informasi Tambahan</h3>
+            <div class="p-8 border-b border-slate-700">
+                <h3 class="text-xl font-bold text-white mb-6 flex items-center pb-3 border-b-2 border-slate-700/50">
+                    <div class="p-2 bg-gradient-to-br from-slate-700 to-slate-600 rounded-lg border-2 border-slate-500 mr-3 shadow-lg">
+                        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                        </svg>
+                    </div>
+                    Informasi Tambahan
+                </h3>
                 
-                <div class="space-y-4">
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Jatuh Tempo *</label>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="md:col-span-2">
+                        <label class="block text-sm font-semibold text-slate-300 mb-3">Jatuh Tempo <span class="text-red-400"></span></label>
                         <input type="date" 
                                name="due_date" 
                                value="{{ old('due_date', $billing->due_date->format('Y-m-d')) }}" 
                                required 
-                               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 @error('due_date') border-red-500 @enderror">
+                               class="w-full px-5 py-3 bg-slate-900 border-2 border-slate-700 text-white rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all [color-scheme:dark] @error('due_date') border-red-500 @enderror">
                         @error('due_date')
-                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                            <p class="mt-2 text-sm text-red-400">{{ $message }}</p>
                         @enderror
                     </div>
 
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Catatan Admin</label>
+                    <div class="md:col-span-2">
+                        <label class="block text-sm font-semibold text-slate-300 mb-3">Catatan Admin</label>
                         <textarea name="admin_notes" 
-                                  rows="3" 
+                                  rows="4" 
                                   placeholder="Catatan tambahan untuk tagihan ini..."
-                                  class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500">{{ old('admin_notes', $billing->admin_notes) }}</textarea>
+                                  class="w-full px-5 py-3 bg-slate-900 border-2 border-slate-700 text-white rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all placeholder-slate-500">{{ old('admin_notes', $billing->admin_notes) }}</textarea>
                     </div>
                 </div>
             </div>
 
             <!-- Actions -->
-            <div class="p-6 bg-gray-50">
-                <div class="flex gap-3 justify-end">
+            <div class="p-8 bg-slate-900">
+                <div class="flex gap-4 justify-end">
                     <a href="{{ route('admin.billing.show', $billing) }}" 
-                       class="px-6 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors">
+                       class="px-8 py-3 bg-slate-700 text-white rounded-lg hover:bg-slate-600 transition-all font-semibold shadow-lg">
                         Batal
                     </a>
                     <button type="submit" 
-                            class="px-6 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors">
-                        Simpan Perubahan
+                            class="px-8 py-3 bg-gradient-to-r from-orange-600 to-red-600 text-white rounded-lg hover:from-orange-700 hover:to-red-700 transition-all font-semibold shadow-xl flex items-center space-x-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                        </svg>
+                        <span>Simpan Perubahan</span>
                     </button>
                 </div>
             </div>

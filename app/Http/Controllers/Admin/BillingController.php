@@ -22,7 +22,8 @@ class BillingController extends Controller
      */
     public function index(Request $request)
     {
-        $query = Billing::with(['user', 'room', 'latestPayment']);
+        $query = Billing::with(['user', 'room', 'latestPayment'])
+            ->whereIn('tipe', ['pelunasan', 'bulanan']);
 
         // Search
         if ($request->filled('search')) {
@@ -63,14 +64,14 @@ class BillingController extends Controller
         $billings = $query->paginate(15)->withQueryString();
 
         // Statistics
+        $billingBase = Billing::whereIn('tipe', ['pelunasan', 'bulanan']);
+            
         $stats = [
-            'total' => Billing::count(),
-            'unpaid' => Billing::unpaid()->count(),
-            'overdue' => Billing::overdue()->count(),
-            'pending' => Billing::pending()->count(),
-            'paid' => Billing::paid()->count(),
-            'total_unpaid_amount' => Billing::whereIn('status', ['unpaid', 'overdue'])->sum('total_amount'),
-            'total_paid_amount' => Billing::paid()->sum('total_amount'),
+            'total'   => (clone $billingBase)->count(),
+            'unpaid'  => (clone $billingBase)->unpaid()->count(),
+            'overdue' => (clone $billingBase)->overdue()->count(),
+            'pending' => (clone $billingBase)->pending()->count(),
+            'paid'    => (clone $billingBase)->paid()->count(),
         ];
 
         // Data for filters
@@ -158,6 +159,8 @@ class BillingController extends Controller
             $billing->admin_notes = $validated['admin_notes'];
             $billing->status = 'unpaid';
 
+            $billing->tipe = 'bulanan';
+                    
             $billing->save();
 
             DB::commit();
@@ -425,6 +428,8 @@ class BillingController extends Controller
 
                 $billing->due_date = $validated['due_date'];
                 $billing->status = 'unpaid';
+                            
+                $billing->tipe = 'bulanan';
 
                 $billing->save();
                 $created++;

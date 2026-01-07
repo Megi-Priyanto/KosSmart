@@ -71,7 +71,10 @@
 
                     @foreach(array_slice($facilities, 0, 5) as $facility)
                         <span class="px-3 py-1 bg-white text-orange-600 font-semibold rounded-full text-xs shadow">
+                            {{ $facility }}
+                        </span>
                     @endforeach
+                    
                 </div>
             @endif
             

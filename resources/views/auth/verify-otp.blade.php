@@ -14,13 +14,34 @@
             font-family: 'Inter', sans-serif;
         }
         
-        .gradient-bg {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        .bg-primary {
+            background: #1a2332;
         }
         
-        .glass-effect {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
+        .bg-secondary {
+            background: #212b3d;
+        }
+        
+        .card-auth {
+            background: #2a3441;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        .logo-glow {
+            box-shadow: 0 0 30px rgba(245, 158, 11, 0.3);
+        }
+        
+        .text-accent {
+            color: #f59e0b;
+        }
+        
+        .floating-animation {
+            animation: floating 3s ease-in-out infinite;
+        }
+        
+        @keyframes floating {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
         }
 
         /* OTP Input Style */
@@ -29,74 +50,106 @@
             height: 60px;
             font-size: 24px;
             text-align: center;
-            border: 2px solid #e5e7eb;
+            background: #1a2332;
+            border: 2px solid rgba(255, 255, 255, 0.1);
             border-radius: 10px;
+            color: #e5e7eb;
             transition: all 0.3s;
         }
 
         .otp-input:focus {
-            border-color: #667eea;
+            border-color: #f59e0b;
             outline: none;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.1);
         }
 
         .countdown {
             font-size: 14px;
-            color: #6b7280;
+            color: #9ca3af;
         }
 
         .countdown.expired {
             color: #ef4444;
             font-weight: 600;
         }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary:hover:not(:disabled) {
+            background: linear-gradient(135deg, #d97706 0%, #b45309 100%);
+            transform: translateY(-1px);
+            box-shadow: 0 10px 20px rgba(245, 158, 11, 0.3);
+        }
+        
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .btn-secondary {
+            background: #212b3d;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-secondary:hover:not(:disabled) {
+            background: #2a3441;
+        }
+        
+        .btn-secondary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
     </style>
 </head>
-<body class="gradient-bg min-h-screen flex items-center justify-center p-4">
+<body class="bg-primary min-h-screen flex items-center justify-center p-4">
     
     <div class="w-full max-w-md">
         
         <!-- Logo -->
-        <div class="text-center mb-8">
-            <div class="inline-block bg-white rounded-full p-4 shadow-lg mb-4">
-                <svg class="w-12 h-12 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div class="text-center mb-8 floating-animation">
+            <div class="inline-block bg-secondary rounded-full p-4 logo-glow mb-4">
+                <svg class="w-12 h-12 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 19v-8.93a2 2 0 01.89-1.664l7-4.666a2 2 0 012.22 0l7 4.666A2 2 0 0121 10.07V19M3 19a2 2 0 002 2h14a2 2 0 002-2M3 19l6.75-4.5M21 19l-6.75-4.5M3 10l6.75 4.5M21 10l-6.75 4.5m0 0l-1.14.76a2 2 0 01-2.22 0l-1.14-.76"></path>
                 </svg>
             </div>
             <h1 class="text-3xl font-bold text-white mb-2">Verifikasi Email</h1>
-            <p class="text-purple-100">Masukkan kode OTP yang telah dikirim</p>
+            <p class="text-gray-400">Masukkan kode OTP yang telah dikirim</p>
         </div>
         
         <!-- Card -->
-        <div class="glass-effect rounded-2xl shadow-2xl p-8">
+        <div class="card-auth rounded-2xl shadow-2xl p-8">
             
             <!-- Success Message -->
             @if(session('success'))
-            <div class="mb-6 p-4 bg-green-50 border-l-4 border-green-500 rounded-lg">
+            <div class="mb-6 p-4 bg-green-500 bg-opacity-10 border-l-4 border-green-500 rounded-lg">
                 <div class="flex items-start">
-                    <svg class="w-5 h-5 text-green-500 mt-0.5 mr-3" fill="currentColor" viewBox="0 0 20 20">
+                    <svg class="w-5 h-5 text-green-400 mt-0.5 mr-3" fill="currentColor" viewBox="0 0 20 20">
                         <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
                     </svg>
-                    <p class="text-green-700 text-sm">{{ session('success') }}</p>
+                    <p class="text-green-400 text-sm">{{ session('success') }}</p>
                 </div>
             </div>
             @endif
 
             <!-- Error Message -->
             @if(session('error'))
-            <div class="mb-6 p-4 bg-red-50 border-l-4 border-red-500 rounded-lg">
+            <div class="mb-6 p-4 bg-red-500 bg-opacity-10 border-l-4 border-red-500 rounded-lg">
                 <div class="flex items-start">
-                    <svg class="w-5 h-5 text-red-500 mt-0.5 mr-3" fill="currentColor" viewBox="0 0 20 20">
+                    <svg class="w-5 h-5 text-red-400 mt-0.5 mr-3" fill="currentColor" viewBox="0 0 20 20">
                         <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
                     </svg>
-                    <p class="text-red-700 text-sm">{{ session('error') }}</p>
+                    <p class="text-red-400 text-sm">{{ session('error') }}</p>
                 </div>
             </div>
             @endif
             
             <!-- Email Info -->
-            <div class="mb-6 p-4 bg-purple-50 rounded-lg border border-purple-200">
-                <p class="text-sm text-gray-600 mb-1">Kode OTP telah dikirim ke:</p>
-                <p class="font-semibold text-gray-800">{{ session('email') ?? 'email@example.com' }}</p>
+            <div class="mb-6 p-4 bg-amber-500 bg-opacity-10 rounded-lg border border-amber-500 border-opacity-20">
+                <p class="text-sm text-gray-400 mb-1">Kode OTP telah dikirim ke:</p>
+                <p class="font-semibold text-white">{{ session('email') ?? 'email@example.com' }}</p>
             </div>
             
             <!-- OTP Form -->
@@ -104,7 +157,7 @@
                 @csrf
                 
                 <div class="mb-6">
-                    <label class="block text-sm font-medium text-gray-700 mb-3 text-center">
+                    <label class="block text-sm font-medium text-gray-300 mb-3 text-center">
                         Masukkan Kode OTP (6 Digit)
                     </label>
                     
@@ -118,18 +171,18 @@
                         <input type="text" maxlength="1" class="otp-input" data-index="5" autocomplete="off">
                     </div>
                     
-                    <!-- Hidden input untuk kirim ke server -->
+                    <!-- Hidden input -->
                     <input type="hidden" name="otp" id="otpValue">
                     
                     @error('otp')
-                    <p class="text-red-500 text-sm mt-2 text-center">{{ $message }}</p>
+                    <p class="text-red-400 text-sm mt-2 text-center">{{ $message }}</p>
                     @enderror
                 </div>
 
                 <!-- Countdown Timer -->
                 <div class="text-center mb-6">
                     <p class="countdown" id="countdown">
-                        Kode berlaku: <span id="timer" class="font-semibold">60</span> detik
+                        Kode berlaku: <span id="timer" class="font-semibold text-accent">60</span> detik
                     </p>
                 </div>
                 
@@ -137,7 +190,7 @@
                 <button 
                     type="submit" 
                     id="verifyBtn"
-                    class="w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3 px-4 rounded-lg transition-all mb-4 disabled:opacity-50 disabled:cursor-not-allowed"
+                    class="btn-primary w-full text-white font-semibold py-3 px-4 rounded-lg mb-4"
                 >
                     <span id="btnText">Verifikasi Sekarang</span>
                     <span id="btnLoading" class="hidden">
@@ -156,7 +209,7 @@
                 <button 
                     type="submit" 
                     id="resendBtn"
-                    class="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold py-3 px-4 rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                    class="btn-secondary w-full text-gray-300 font-semibold py-3 px-4 rounded-lg"
                     disabled
                 >
                     <span id="resendText">Kirim Ulang OTP</span>
@@ -165,19 +218,33 @@
             </form>
             
             <div class="mt-6 text-center">
-                <a href="{{ route('login') }}" class="text-sm text-purple-600 hover:text-purple-700 font-medium">
-                    ← Kembali ke Login
+                <a href="{{ route('login') }}" class="text-sm text-accent hover:text-amber-400 font-medium inline-flex items-center">
+                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                    </svg>
+                    Kembali ke Login
                 </a>
             </div>
         </div>
         
         <!-- Tips -->
-        <div class="mt-6 bg-white bg-opacity-10 backdrop-blur-sm rounded-xl p-4">
-            <p class="text-white text-sm">
-                <strong>💡 Tips:</strong> Pastikan memeriksa folder spam jika email tidak masuk dalam beberapa menit.
-            </p>
+        <div class="mt-6 card-auth rounded-xl p-4">
+            <div class="flex items-start">
+                <svg class="w-5 h-5 text-amber-500 mr-3 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
+                </svg>
+                <p class="text-gray-400 text-sm">
+                    <strong class="text-gray-300">💡 Tips:</strong> Pastikan memeriksa folder spam jika email tidak masuk dalam beberapa menit.
+                </p>
+            </div>
         </div>
         
+        <!-- Copyright -->
+        <div class="text-center mt-8">
+            <p class="text-gray-500 text-sm">
+                © {{ date('Y') }} KosSmart. Hak Cipta Dilindungi.
+            </p>
+        </div>
     </div>
 
     <script>
@@ -187,33 +254,27 @@
         const verifyBtn = document.getElementById('verifyBtn');
 
         otpInputs.forEach((input, index) => {
-            // Auto focus next input
             input.addEventListener('input', (e) => {
                 const value = e.target.value;
                 
-                // Only allow numbers
                 if (!/^\d$/.test(value)) {
                     e.target.value = '';
                     return;
                 }
 
-                // Update hidden input
                 updateOtpValue();
 
-                // Move to next input
                 if (value && index < 5) {
                     otpInputs[index + 1].focus();
                 }
             });
 
-            // Handle backspace
             input.addEventListener('keydown', (e) => {
                 if (e.key === 'Backspace' && !e.target.value && index > 0) {
                     otpInputs[index - 1].focus();
                 }
             });
 
-            // Paste handler
             input.addEventListener('paste', (e) => {
                 e.preventDefault();
                 const pasteData = e.clipboardData.getData('text').slice(0, 6);
@@ -234,12 +295,10 @@
         function updateOtpValue() {
             const otp = Array.from(otpInputs).map(input => input.value).join('');
             otpValue.value = otp;
-            
-            // Enable/disable verify button
             verifyBtn.disabled = otp.length !== 6;
         }
 
-        // Countdown Timer (60 seconds)
+        // Countdown Timer
         let timeLeft = 60;
         const timerElement = document.getElementById('timer');
         const countdownElement = document.getElementById('countdown');
@@ -259,9 +318,8 @@
 
             if (timeLeft <= 0) {
                 clearInterval(countdown);
-                countdownElement.innerHTML = '<span class="text-red-500 font-semibold">⚠️ Kode OTP telah kadaluarsa</span>';
+                countdownElement.innerHTML = '<span class="text-red-400 font-semibold">⚠️ Kode OTP telah kadaluarsa</span>';
                 
-                // Enable resend button
                 resendBtn.disabled = false;
                 resendText.classList.remove('hidden');
                 resendWait.classList.add('hidden');
@@ -284,7 +342,7 @@
             resendText.textContent = 'Mengirim...';
         });
 
-        // Auto focus first input on load
+        // Auto focus first input
         otpInputs[0].focus();
     </script>
     
