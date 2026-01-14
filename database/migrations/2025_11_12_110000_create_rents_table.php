@@ -22,7 +22,7 @@ return new class extends Migration
             $table->decimal('deposit_paid', 10, 2)->default(0);
             $table->decimal('monthly_rent', 10, 2);
 
-            $table->enum('status', ['pending', 'active', 'expired', 'cancelled'])
+            $table->enum('status', ['pending', 'active','checkout_requested','checked_out', 'completed', 'expired', 'cancelled'])
                 ->default('pending');
 
             $table->text('notes')->nullable();

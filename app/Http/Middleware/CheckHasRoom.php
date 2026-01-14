@@ -6,31 +6,23 @@ use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-/**
- * Middleware: User HARUS punya kamar aktif untuk mengakses
- * Digunakan untuk: Dashboard Penghuni, Tagihan, Pembayaran
- */
 class CheckHasRoom
 {
-    /**
-     * Handle an incoming request.
-     */
     public function handle(Request $request, Closure $next): Response
     {
         $user = $request->user();
-        
-        // Cek apakah user memiliki rent yang aktif
-        $hasActiveRoom = $user->rents()
-            ->where('status', 'active')
-            ->whereNull('end_date')
+
+        // Cek apakah user memiliki sewa aktif
+        $hasRoom = $user->rents()
+            ->whereIn('status', ['active', 'checkout_requested'])
             ->exists();
-        
-        if (!$hasActiveRoom) {
+
+        if (!$hasRoom) {
             return redirect()
                 ->route('user.rooms.index')
-                ->with('info', 'Anda belum menyewa kamar. Silakan pilih kamar terlebih dahulu.');
+                ->with('info', 'Anda belum memiliki kamar.');
         }
-        
+
         return $next($request);
     }
 }

@@ -18,13 +18,13 @@ class KosInfoSeeder extends Seeder
 
         KosInfo::create([
             'name' => 'KosSmart Residence',
-            'address' => 'Jl. Merdeka No. 123, Kelurahan Suka Maju',
+            'address' => 'Jalan Sindangsari Indah II No. 55, RT.6/RW.10, Kelurahan Antapani Wetan, Antapani (Cicadas)',
             'city' => 'Bandung',
             'province' => 'Jawa Barat',
-            'postal_code' => '40123',
-            'phone' => '022-1234567',
-            'whatsapp' => '081234567890',
-            'email' => 'info@kossmart.com',
+            'postal_code' => '40291',
+            'phone' => '081324084335',
+            'whatsapp' => '081324084335',
+            'email' => 'kossmartinaja@gmail.com',
             'description' => 'Kos modern dan nyaman di pusat kota Bandung dengan fasilitas lengkap dan keamanan 24 jam.',
             'general_facilities' => [
                 'Parkir Motor & Mobil',

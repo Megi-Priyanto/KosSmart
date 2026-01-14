@@ -12,6 +12,8 @@ use App\Http\Controllers\User\PaymentController;
 use App\Http\Controllers\Admin\KosInfoController;
 use App\Http\Controllers\Admin\RoomController as AdminRoomController;
 use App\Http\Controllers\Admin\RoomStatusController;
+use App\Http\Controllers\Admin\RentCheckoutController as AdminRentCheckoutController;
+use App\Http\Controllers\User\RentCheckoutController as UserRentCheckoutController;
 use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Admin\AdminProfileController;
 use App\Http\Controllers\Admin\BookingManagementController;
@@ -89,6 +91,15 @@ Route::middleware(['auth', 'verified', 'role:user'])->group(function () {
     // Dashboard User (cek otomatis apakah punya kamar atau tidak)
     Route::get('/user/dashboard', [UserDashboardController::class, 'index'])
         ->name('user.dashboard');
+
+    // Detail Kamar
+    Route::get('/user/room/detail', [UserDashboardController::class, 'roomDetail'])
+        ->middleware('has.room')
+        ->name('user.room.detail');
+
+    // Checkout User
+    Route::put('/rents/{rent}/checkout', [UserRentCheckoutController::class, 'requestCheckout'])
+        ->name('user.rents.checkout.request');
 
     // ==============================
     // UNTUK USER YANG BELUM PUNYA KAMAR
@@ -266,6 +277,11 @@ Route::middleware(['auth', 'verified', 'role:admin'])
 
             // Generate tagihan
             Route::post('/billing/bulk-generate', 'bulkGenerate')->name('billing.bulk-generate');
+
+            // Checkout User
+            Route::put('/rents/{rent}/checkout', [AdminRentCheckoutController::class, 'checkout'])
+                ->name('rents.checkout');
+
         });
 
         // Laporan

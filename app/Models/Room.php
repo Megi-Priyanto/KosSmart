@@ -49,12 +49,14 @@ class Room extends Model
 
     /**
      * Relasi: Room memiliki satu rent aktif
+     * PERBAIKAN: Tambahkan 'checkout_requested' agar tombol approve muncul
      */
     public function currentRent()
     {
         return $this->hasOne(Rent::class)
-            ->where('status', 'active')
-            ->whereNull('end_date');
+            ->whereIn('status', ['active', 'checkout_requested']) // ← UBAH INI
+            ->whereNull('end_date')
+            ->latest(); // Tambahkan latest() untuk ambil yang terbaru
     }
 
     /**

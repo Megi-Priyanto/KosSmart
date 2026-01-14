@@ -86,6 +86,53 @@
     </div>
 </div>
 
+<!-- Tagihan Bulan Ini -->
+<div class="bg-white rounded-xl shadow-sm border border-gray-200 hover:border-yellow-400 transition mb-6">
+    <div class="p-6 border-b border-gray-200">
+        <h2 class="text-lg font-bold text-gray-800 flex items-center">
+            <svg class="w-5 h-5 mr-2 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"></path>
+            </svg>
+            Tagihan {{ now()->format('F Y') }}
+        </h2>
+    </div>
+    <div class="p-6">
+        @if($currentBill)
+        <div class="text-center mb-6">
+            <p class="text-sm text-gray-600 mb-2">Total Tagihan</p>
+            <p class="text-4xl font-bold text-gray-800 mb-2">
+                Rp {{ number_format($currentBill->total_amount, 0, ',', '.') }}
+            </p>
+            <span class="px-3 py-1 bg-{{ $currentBill->status === 'paid' ? 'green' : 'orange' }}-100 text-{{ $currentBill->status === 'paid' ? 'green' : 'orange' }}-700 text-sm font-medium rounded-full">
+                {{ $currentBill->status === 'paid' ? 'Lunas' : 'Belum Bayar' }}
+            </span>
+            <p class="text-xs text-gray-500 mt-2">Jatuh tempo: {{ $currentBill->due_date->format('d M Y') }}</p>
+        </div>
+        
+        <div class="space-y-3 mb-6">
+            <div class="flex justify-between text-sm">
+                <span class="text-gray-600">Sewa Kamar</span>
+                <span class="font-medium text-gray-800">Rp {{ number_format($currentBill->rent_amount, 0, ',', '.') }}</span>
+            </div>
+            <div class="border-t border-gray-200 pt-3 flex justify-between font-bold">
+                <span class="text-gray-800">Total</span>
+                <span class="text-yellow-600">Rp {{ number_format($currentBill->total_amount, 0, ',', '.') }}</span>
+            </div>
+        </div>
+        
+        @if($currentBill->status !== 'paid')
+        <a href="{{ route('user.billing.pay', $currentBill->id) }}" class="block w-full text-center bg-yellow-500 hover:bg-yellow-600 text-white py-3 px-4 rounded-lg font-semibold hover:bg-yellow-600 hover:shadow-lg transition-all">
+            Bayar Sekarang
+        </a>
+        @endif
+        @else
+        <div class="text-center py-8">
+            <p class="text-gray-500">Belum ada tagihan bulan ini</p>
+        </div>
+        @endif
+    </div>
+</div>
+
 <!-- Filter & Search -->
 <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-6">
     <form id="searchForm" class="flex flex-col md:flex-row gap-4">

@@ -16,7 +16,7 @@ class Billing extends Model
         'rent_id',
         'user_id',
         'room_id',
-        'tipe' => 'bulanan',
+        'tipe',
         'jumlah',
         'keterangan',
         'billing_period',

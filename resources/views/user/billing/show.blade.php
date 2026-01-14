@@ -7,7 +7,7 @@
 
     <!-- Back Button -->
     <a href="{{ route('user.billing.index') }}" 
-       class="inline-flex items-center text-sm text-purple-600 hover:text-purple-800">
+       class="inline-flex items-center text-sm text-yellow-400 hover:text-yellow-500">
         <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
         </svg>
@@ -183,8 +183,8 @@
             <!-- Payment Actions -->
             @if($billing->status !== 'paid')
             <div class="bg-white rounded-lg shadow-sm border border-gray-200 hover:border-yellow-400 transition p-6">
-                <h3 class="text-lg font-semibold text-gray-900 mb-4">Bayar Tagihan</h3>
-                
+                <h3 class="text-lg font-semibold text-gray-900 mb-2">Bayar Tagihan</h3>
+                <p class="text-sm text-red-700">Menunggu Verifikasi Admin</p>
                 <div class="space-y-3">
                     @if($billing->is_overdue)
                     <div class="p-3 bg-red-50 border-l-4 border-red-500 rounded mb-4">
@@ -194,15 +194,6 @@
                         </p>
                     </div>
                     @endif
-
-                    <a href="{{ route('user.billing.pay', $billing) }}" 
-                       class="block w-full px-4 py-3 bg-green-600 text-white text-center rounded-lg hover:bg-green-700 transition-colors font-semibold">
-                        Bayar Sekarang
-                    </a>
-
-                    <div class="text-xs text-gray-600 text-center">
-                        Upload bukti transfer untuk verifikasi pembayaran
-                    </div>
                 </div>
             </div>
             @else

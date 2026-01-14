@@ -17,7 +17,6 @@ class PaymentController extends Controller
 
     public function index()
     {
-        
         /** @var \App\Models\User $user */
         $user = Auth::user();
 
@@ -25,26 +24,31 @@ class PaymentController extends Controller
             ->with('billing')
             ->latest()
             ->paginate(10);
-        
-        return view('user.payments.index', compact('payments'));
+
+        $currentBill = $user->billings()
+            ->orderByDesc('billing_year')
+            ->orderByDesc('billing_month')
+            ->first();
+
+        return view('user.payments.index', compact('payments', 'currentBill'));
     }
-    
+
     /**
      * Tampilkan daftar tagihan
      */
     public function billings()
     {
-        $/** @var \App\Models\User $user */
+        /** @var \App\Models\User $user */
         $user = Auth::user();
 
         $billings = $user->billings()
             ->with('rent.room')
             ->orderBy('due_date', 'desc')
             ->paginate(10);
-        
+
         return view('user.billings.index', compact('billings'));
     }
-    
+
     /**
      * Form pembayaran tagihan
      */
@@ -54,16 +58,16 @@ class PaymentController extends Controller
         if ($billing->user_id !== Auth::id()) {
             abort(403, 'Anda tidak memiliki akses ke tagihan ini.');
         }
-        
+
         if ($billing->status === 'paid') {
             return redirect()
                 ->route('user.billings')
                 ->with('info', 'Tagihan ini sudah dibayar.');
         }
-        
+
         return view('user.payments.pay', compact('billing'));
     }
-    
+
     /**
      * Proses pembayaran
      */
@@ -77,20 +81,20 @@ class PaymentController extends Controller
             'payment_proof.required_if' => 'Bukti transfer wajib diunggah',
             'payment_proof.image' => 'File harus berupa gambar',
         ]);
-        
+
         if ($billing->user_id !== Auth::id()) {
             abort(403);
         }
-        
+
         DB::beginTransaction();
         try {
             $paymentProofPath = null;
-            
+
             if ($request->hasFile('payment_proof')) {
                 $paymentProofPath = $request->file('payment_proof')
                     ->store('payments', 'public');
             }
-            
+
             Payment::create([
                 'user_id' => Auth::id(),
                 'billing_id' => $billing->id,
@@ -101,16 +105,15 @@ class PaymentController extends Controller
                 'payment_date' => now(),
                 'notes' => $request->notes,
             ]);
-            
+
             DB::commit();
-            
+
             return redirect()
                 ->route('user.billings')
                 ->with('success', 'Pembayaran berhasil diajukan. Menunggu konfirmasi admin.');
-            
         } catch (\Exception $e) {
             DB::rollBack();
-            
+
             return back()
                 ->with('error', 'Terjadi kesalahan saat memproses pembayaran: ' . $e->getMessage());
         }

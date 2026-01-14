@@ -9,7 +9,7 @@
     <!-- Header -->
     <div class="mb-8">
         <a href="{{ route('user.rooms.show', $room) }}" 
-           class="inline-flex items-center text-yellow-600 hover:text-yellow-700 mb-4">
+           class="inline-flex items-center text-yellow-400 hover:text-yellow-500 mb-4">
             <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
             </svg>
@@ -32,7 +32,7 @@
             <div class="lg:col-span-2 space-y-6">
                 
                 <!-- Informasi Kamar -->
-                <div class="bg-gradient-to-br from-yellow-500 to-amber-600 rounded-xl shadow-lg p-6 text-white">
+                <div class="bg-gradient-to-br from-yellow-400 to-orange-500 rounded-xl shadow-lg p-6 text-white">
                     <div class="flex items-start justify-between">
                         <div class="flex-1">
                             <h3 class="text-xl font-bold mb-2">
@@ -125,7 +125,7 @@
                     
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">
-                            Pilih Tanggal <span class="text-red-500">*</span>
+                            Pilih Tanggal <span class="text-red-500"></span>
                         </label>
                         <input type="date" 
                                name="start_date" 
@@ -184,7 +184,7 @@
                                 </div>
                                 <div class="flex justify-between items-center pt-2 border-t border-yellow-200">
                                     <span class="text-gray-600">Jumlah DP:</span>
-                                    <span class="text-xl font-extrabold text-orange-700">Rp {{ number_format($depositAmount, 0, ',', '.') }}</span>
+                                    <span class="text-xl font-extrabold text-yellow-600">Rp {{ number_format($depositAmount, 0, ',', '.') }}</span>
 
                                 </div>
                             </div>
@@ -193,7 +193,7 @@
                         <!-- Upload Bukti -->
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-2">
-                                Upload Bukti Transfer <span class="text-red-500">*</span>
+                                Upload Bukti Transfer <span class="text-red-500"></span>
                             </label>
                             <input type="file" 
                                    name="deposit_proof" 
@@ -268,7 +268,7 @@
 
                         <label for="agreement" class="ml-3 text-sm text-gray-700">
                             Saya telah membaca dan menyetujui syarat & ketentuan di atas
-                            <span class="text-red-500">*</span>
+                            <span class="text-red-500"></span>
                         </label>
                     </div>
 
@@ -283,7 +283,7 @@
             <div class="space-y-6">
                 
                 <!-- Ringkasan Booking -->
-                <div class="bg-white rounded-xl shadow-lg border-2 border-yellow-200 p-6 sticky top-6">
+                <div class="bg-white rounded-xl shadow-lg border-2 border-slate-200 p-6 sticky top-6">
                     <h3 class="text-lg font-bold text-gray-800 mb-4">Ringkasan Booking</h3>
                     
                     <div class="space-y-3 mb-6">
@@ -312,7 +312,7 @@
                         </div>
                         <div class="flex justify-between">
                             <span class="text-gray-600">DP (50%)</span>
-                            <span class="font-semibold text-orange-600">Rp {{ number_format($depositAmount, 0, ',', '.') }}</span>
+                            <span class="font-semibold text-yellow-600">Rp {{ number_format($depositAmount, 0, ',', '.') }}</span>
                         </div>
                         <div class="flex justify-between pt-3 border-t border-gray-200">
                             <span class="text-gray-600">Sisa Pembayaran</span>
@@ -327,7 +327,7 @@
                     </div>
                     
                     <button type="submit" 
-                            class="w-full bg-yellow-600 text-white py-3 rounded-lg hover:bg-yellow-700 font-semibold transition-colors flex items-center justify-center space-x-2">
+                            class="w-full bg-yellow-500 text-white py-3 rounded-lg hover:bg-yellow-600 font-semibold transition-colors flex items-center justify-center space-x-2">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
                         </svg>

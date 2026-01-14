@@ -227,7 +227,7 @@
         <!-- Copyright -->
         <div class="text-center mt-8">
             <p class="text-gray-500 text-sm">
-                © {{ date('Y') }} KosSmart. Hak Cipta Dilindungi.
+                © {{ date('Y') }} KosSmart. All rights reserved.
             </p>
         </div>
     </div>

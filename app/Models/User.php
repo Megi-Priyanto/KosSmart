@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Auth\MustVerifyEmail as MustVerifyEmailTrait;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use App\Models\Rent;
@@ -24,8 +25,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class User extends Authenticatable implements MustVerifyEmail
 {
+    use MustVerifyEmailTrait;
     use HasApiTokens, Notifiable;
-    
     use HasFactory, Notifiable;
 
     protected $fillable = [
@@ -49,10 +50,6 @@ class User extends Authenticatable implements MustVerifyEmail
         ];
     }
 
-    // ========================================
-    // TAMBAHKAN KODE DI BAWAH INI (RELASI BARU)
-    // ========================================
-    
     /**
      * Relasi: User memiliki banyak rents (riwayat sewa)
      */
@@ -60,7 +57,7 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->hasMany(Rent::class);
     }
-    
+
     /**
      * Relasi: User memiliki banyak pembayaran
      */
@@ -68,7 +65,7 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->hasMany(Payment::class);
     }
-    
+
     /**
      * Relasi: User memiliki banyak tagihan
      */
@@ -76,30 +73,33 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->hasMany(Billing::class);
     }
-    
+
     /**
      * Helper: Cek apakah user sedang menyewa kamar
+     * PERBAIKAN: Hanya status 'active' dan 'checkout_requested' yang dianggap masih punya kamar
      */
     public function hasActiveRoom(): bool
     {
         return $this->rents()
-            ->where('status', 'active')
+            ->whereIn('status', ['active', 'checkout_requested'])
             ->whereNull('end_date')
             ->exists();
     }
-    
+
     /**
      * Helper: Ambil rent aktif user saat ini
+     * PERBAIKAN: Include checkout_requested agar masih bisa diakses
      */
     public function activeRent(): ?Rent
     {
         return $this->rents()
             ->with('room')
-            ->where('status', 'active')
+            ->whereIn('status', ['active', 'checkout_requested'])
             ->whereNull('end_date')
+            ->latest()
             ->first();
     }
-    
+
     /**
      * Helper: Ambil tagihan bulan ini
      */
@@ -111,7 +111,7 @@ class User extends Authenticatable implements MustVerifyEmail
             ->first();
     }
 
-    // Method lama tetap ada (hasVerifiedEmail, markEmailAsVerified, dll)
+    // Method lama tetap ada
     public function hasVerifiedEmail()
     {
         return ! is_null($this->email_verified_at);

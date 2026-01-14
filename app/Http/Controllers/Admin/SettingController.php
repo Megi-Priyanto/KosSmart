@@ -45,20 +45,25 @@ class SettingController extends Controller
             $this->updateSetting('timezone', $request->timezone);
             $this->updateSetting('currency', $request->currency);
 
-            // Handle logo upload
-            if ($request->hasFile('app_logo')) {
-                $logo = $request->file('app_logo');
-                $logoName = 'logo_' . time() . '.' . $logo->extension();
-                $logo->storeAs('public/images', $logoName);
-                
-                // Delete old logo if exists
-                $oldLogo = $this->getSetting('app_logo');
-                if ($oldLogo && Storage::exists('public/images/' . $oldLogo)) {
-                    Storage::delete('public/images/' . $oldLogo);
-                }
-                
-                $this->updateSetting('app_logo', $logoName);
-            }
+if ($request->hasFile('app_logo')) {
+
+    // AMBIL LOGO LAMA DULU
+    $oldLogo = $this->getSetting('app_logo');
+
+    $logo = $request->file('app_logo');
+    $logoName = 'logo_' . time() . '.' . $logo->extension();
+
+    // SIMPAN FILE BARU
+    $logo->storeAs('public/images', $logoName);
+
+    // UPDATE DB
+    $this->updateSetting('app_logo', $logoName);
+
+    // HAPUS FILE LAMA
+    if ($oldLogo && $oldLogo !== $logoName && Storage::exists('public/images/' . $oldLogo)) {
+        Storage::delete('public/images/' . $oldLogo);
+    }
+}
 
             // Clear cache
             Cache::forget('app_settings');

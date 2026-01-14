@@ -50,6 +50,10 @@ class BookingManagementController extends Controller
      */
     public function approve(Request $request, Rent $booking)
     {
+        $year   = now()->year;
+        $month  = now()->month;
+        $period = now()->format('Y-m');
+
         $request->validate([
             'admin_notes' => 'nullable|string|max:1000',
         ]);
@@ -88,48 +92,52 @@ class BookingManagementController extends Controller
             /**
              * Buat Billing DP (dp = dianggap sudah dibayar)
              */
-            $billingDp = \App\Models\Billing::create([
-                'rent_id'        => $booking->id,
-                'user_id'        => $booking->user_id,
-                'room_id'        => $booking->room_id,
-                'tipe'           => 'dp',
-                'jumlah'         => $dp,
-                'status'         => 'paid',
-                'keterangan'     => 'DP 50% sewa kamar',
-                'billing_period' => now()->format('Y-m'),
-                'billing_year'   => now()->year,
-                'billing_month'  => now()->month,
-
-                // KOMPONEN BIAYA
-                'rent_amount'    => $dp,       // DP = 50%
-                'subtotal'       => $dp,
-                'discount'       => 0,
-                'total_amount'   => $dp,
-                'due_date'       => now(),
-            ]);
+            \App\Models\Billing::firstOrCreate(
+                [
+                    'rent_id'       => $booking->id,
+                    'billing_year'  => $year,
+                    'billing_month' => $month,
+                    'tipe'          => 'dp',
+                ],
+                [
+                    'user_id'        => $booking->user_id,
+                    'room_id'        => $booking->room_id,
+                    'jumlah'         => $dp,
+                    'status'         => 'paid',
+                    'keterangan'     => 'DP 50% sewa kamar',
+                    'billing_period' => $period,
+                    'rent_amount'    => $dp,
+                    'subtotal'       => $dp,
+                    'discount'       => 0,
+                    'total_amount'   => $dp,
+                    'due_date'       => now(),
+                ]
+            );
 
             /**
              * Buat Billing Pelunasan (belum dibayar)
              */
-            $billingPelunasan = \App\Models\Billing::create([
-                'rent_id'        => $booking->id,
-                'user_id'        => $booking->user_id,
-                'room_id'        => $booking->room_id,
-                'tipe'           => 'pelunasan',
-                'jumlah'         => $sisaPembayaran,
-                'status'         => 'unpaid',
-                'keterangan'     => 'Pelunasan 50% sisa pembayaran sewa kamar',
-                'billing_period' => now()->format('Y-m'),
-                'billing_year'   => now()->year,
-                'billing_month'  => now()->month,
-
-                // KOMPONEN BIAYA
-                'rent_amount'    => $sisaPembayaran, // 50%
-                'subtotal'       => $sisaPembayaran,
-                'discount'       => 0,
-                'total_amount'   => $sisaPembayaran,
-                'due_date'       => now()->addDays(5),
-            ]);
+            \App\Models\Billing::firstOrCreate(
+                [
+                    'rent_id'       => $booking->id,
+                    'billing_year'  => $year,
+                    'billing_month' => $month,
+                    'tipe'          => 'pelunasan',
+                ],
+                [
+                    'user_id'        => $booking->user_id,
+                    'room_id'        => $booking->room_id,
+                    'jumlah'         => $sisaPembayaran,
+                    'status'         => 'unpaid',
+                    'keterangan'     => 'Pelunasan 50% sisa pembayaran sewa kamar',
+                    'billing_period' => $period,
+                    'rent_amount'    => $sisaPembayaran,
+                    'subtotal'       => $sisaPembayaran,
+                    'discount'       => 0,
+                    'total_amount'   => $sisaPembayaran,
+                    'due_date'       => now()->addDays(5),
+                ]
+            );
 
             /**
              * 6) Buat NotificationItem untuk pelunasan

@@ -28,7 +28,7 @@
         <div class="flex-1">
             <!-- Title -->
             <h3 class="font-semibold text-yellow-300 mb-1">
-                ⚠ {{ $pendingBookingsCount }} Booking Menunggu Persetujuan
+                {{ $pendingBookingsCount }} Booking Menunggu Persetujuan
             </h3>
 
             <!-- Description -->
@@ -77,6 +77,78 @@
                class="inline-flex items-center text-sm font-medium
                       text-yellow-400 hover:text-yellow-300">
                 Lihat Semua Booking Pending
+                <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M9 5l7 7-7 7"/>
+                </svg>
+            </a>
+        </div>
+    </div>
+</div>
+@endif
+
+@if(isset($checkoutRequestsCount) && $checkoutRequestsCount > 0)
+<div class="mb-6 px-6 py-5
+            bg-slate-800 border border-orange-500/40
+            rounded-xl shadow-sm">
+
+    <div class="flex items-start gap-4">
+
+        <!-- Icon -->
+        <div class="p-2 bg-orange-500/20 rounded-lg">
+            <svg class="w-6 h-6 text-orange-400"
+                 fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M9 17v-6h13M9 7h13M5 12h.01"/>
+            </svg>
+        </div>
+
+        <div class="flex-1">
+            <h3 class="font-semibold text-orange-300 mb-1">
+                {{ $checkoutRequestsCount }} Permintaan Checkout
+            </h3>
+
+            <p class="text-sm text-slate-300 mb-4">
+                User mengajukan checkout dan menunggu persetujuan Anda.
+            </p>
+
+            <div class="space-y-2 mb-4">
+                @foreach($checkoutRequests as $rent)
+                <div class="flex items-center justify-between
+                            px-3 py-2 bg-slate-900
+                            border border-slate-700
+                            rounded-lg hover:border-orange-400/50 transition">
+
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 bg-orange-500/20 rounded-full
+                                    flex items-center justify-center">
+                            <span class="text-xs font-bold text-orange-300">
+                                {{ $rent->room->room_number }}
+                            </span>
+                        </div>
+
+                        <div>
+                            <p class="text-sm font-medium text-white">
+                                {{ $rent->user->name }}
+                            </p>
+                            <p class="text-xs text-slate-400">
+                                Checkout diajukan {{ $rent->updated_at->diffForHumans() }}
+                            </p>
+                        </div>
+                    </div>
+
+                    <a href="{{ route('admin.rooms.show', $rent) }}"
+                       class="text-sm font-medium text-orange-400 hover:text-orange-300">
+                        Proses →
+                    </a>
+                </div>
+                @endforeach
+            </div>
+
+            <a href="{{ route('admin.rooms.index') }}"
+               class="inline-flex items-center text-sm font-medium
+                      text-orange-400 hover:text-orange-300">
+                Lihat Semua Checkout
                 <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                           d="M9 5l7 7-7 7"/>

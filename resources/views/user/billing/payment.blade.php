@@ -6,16 +6,15 @@
 <div class="max-w-4xl mx-auto space-y-6">
 
     <!-- Back Button -->
-    <a href="{{ route('user.billing.show', $billing) }}" 
-       class="inline-flex items-center text-sm text-yellow-600 hover:text-yellow-800">
+    <a href="{{ route('user.payments') }}" 
+       class="inline-flex items-center text-sm text-yellow-400 hover:text-yellow-500">
         <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
         </svg>
-        Kembali
+        Kembali ke Daftar Tagihan
     </a>
-
     <!-- Billing Summary -->
-    <div class="bg-gradient-to-r from-yellow-600 to-yellow-800 rounded-lg shadow-lg p-8 text-white">
+    <div class="bg-gradient-to-br from-yellow-400 to-orange-500 rounded-lg shadow-lg p-8 text-white">
         <div class="flex items-center justify-between mb-6">
             <div>
                 <h1 class="text-3xl font-bold mb-2">{{ $billing->formatted_period }}</h1>
@@ -105,7 +104,7 @@
                 <!-- Amount -->
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-2">
-                        Jumlah Pembayaran *
+                        Jumlah Pembayaran
                     </label>
                     <div class="relative">
                         <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500">Rp</span>
@@ -130,7 +129,7 @@
                 <!-- Payment Date -->
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-2">
-                        Tanggal Pembayaran *
+                        Tanggal Pembayaran
                     </label>
                     <input type="date" 
                            name="payment_date" 
@@ -146,7 +145,7 @@
                 <!-- Payment Method -->
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-2">
-                        Metode Pembayaran *
+                        Metode Pembayaran
                     </label>
                     <div class="grid grid-cols-3 gap-3">
                         <label class="relative flex flex-col items-center p-4 border-2 border-gray-300 rounded-lg cursor-pointer hover:border-yellow-500 transition-colors"
@@ -199,7 +198,7 @@
                 <!-- Upload Proof -->
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-2">
-                        Bukti Pembayaran * <span class="text-xs text-gray-500">(JPG, PNG max 5MB)</span>
+                        Bukti Pembayaran<span class="text-xs text-gray-500">(JPG, PNG max 5MB)</span>
                     </label>
                     <div class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-yellow-500 transition-colors"
                          @dragover.prevent="isDragging = true"
@@ -264,7 +263,7 @@
                         Batal
                     </a>
                     <button type="submit" 
-                            class="flex-1 px-6 py-3 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700 transition-colors font-semibold">
+                            class="flex-1 px-6 py-3 bg-yellow-400 text-white rounded-lg hover:bg-yellow-500 transition-colors font-semibold">
                         Kirim Pembayaran
                     </button>
                 </div>
@@ -274,26 +273,33 @@
     </form>
 
     <!-- Instructions -->
-    <div class="bg-blue-50 border border-gray-200 rounded-lg p-6 hover:border-yellow-400 transition">
-        <h3 class="text-lg font-semibold text-blue-900 mb-4">Panduan Pembayaran</h3>
-        <ol class="space-y-2 text-sm text-blue-800">
-            <li class="flex items-start">
-                <span class="font-bold mr-2">1.</span>
-                <span>Lakukan pembayaran sesuai nominal tagihan ke rekening yang disediakan</span>
-            </li>
-            <li class="flex items-start">
-                <span class="font-bold mr-2">2.</span>
-                <span>Upload bukti transfer yang jelas (pastikan nominal dan tanggal terlihat)</span>
-            </li>
-            <li class="flex items-start">
-                <span class="font-bold mr-2">3.</span>
-                <span>Tunggu verifikasi dari admin (maksimal 1x24 jam)</span>
-            </li>
-            <li class="flex items-start">
-                <span class="font-bold mr-2">4.</span>
-                <span>Status pembayaran akan diupdate setelah diverifikasi</span>
-            </li>
-        </ol>
+    <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-6 hover:border-slate-400 transition">
+        <div class="flex items-start">
+            <svg class="w-6 h-6 text-yellow-600 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            <div>
+                <h3 class="text-lg font-semibold text-yellow-900 mb-2">Panduan Pembayaran</h3>
+                <ol class="space-y-2 text-sm text-yellow-800">
+                    <li class="flex items-start">
+                        <span class="font-bold mr-2">1.</span>
+                        <span>Lakukan pembayaran sesuai nominal tagihan ke rekening yang disediakan</span>
+                    </li>
+                    <li class="flex items-start">
+                        <span class="font-bold mr-2">2.</span>
+                        <span>Upload bukti transfer yang jelas (pastikan nominal dan tanggal terlihat)</span>
+                    </li>
+                    <li class="flex items-start">
+                        <span class="font-bold mr-2">3.</span>
+                        <span>Tunggu verifikasi dari admin (maksimal 1x24 jam)</span>
+                    </li>
+                    <li class="flex items-start">
+                        <span class="font-bold mr-2">4.</span>
+                        <span>Status pembayaran akan diupdate setelah diverifikasi</span>
+                    </li>
+                </ol>
+            </div>
+        </div>
     </div>
 
 </div>

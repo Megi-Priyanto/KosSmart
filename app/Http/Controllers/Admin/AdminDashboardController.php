@@ -90,6 +90,17 @@ class AdminDashboardController extends Controller
         $pendingBookingsCount = Rent::where('status', 'pending')->count();
 
         // ==========================
+        // CHECKOUT REQUEST (USER)
+        // ==========================
+        $checkoutRequests = Rent::where('status', 'checkout_requested')
+            ->with(['user', 'room'])
+            ->latest()
+            ->take(5)
+            ->get();
+
+        $checkoutRequestsCount = Rent::where('status', 'checkout_requested')->count();
+
+        // ==========================
         // NOTIFIKASI BARU
         // ==========================
         $activities = Notification::with('user')
@@ -132,6 +143,8 @@ class AdminDashboardController extends Controller
             'kosInfo',
             'pendingBookings',
             'pendingBookingsCount',
+            'checkoutRequests',
+            'checkoutRequestsCount',
             'todayNotifications',
             'activities',
             'notifications',

@@ -110,7 +110,7 @@
     
         <div class="w-14 h-14 rounded-full flex items-center justify-center shadow-lg hover:scale-105 transition"
              style="background: radial-gradient(circle at top left, #c4c4c4, #292c30);">
-            <!-- Icon Instagram -->
+            <!-- Icon Twitter -->
             <svg class="w-7 h-7 text-white" fill="currentColor" viewBox="0 0 24 24">
                 <path d="M23 3a10.9 10.9 0 01-3.14 1.53A4.48 4.48 0 0016 3a4.48 4.48 0 00-4.47 4.48c0 .35.04.7.11 1.03A12.94 12.94 0 013 4s-4 9 5 13a13.07 13.07 0 01-7 2c9 5 20 0 20-11.5a4.5 4.5 0 00-.08-.83A7.72 7.72 0 0023 3z"/>
             </svg>
@@ -126,7 +126,7 @@
     
         <div class="w-14 h-14 rounded-full flex items-center justify-center shadow-lg hover:scale-105 transition"
              style="background: radial-gradient(circle at top left, #c4c4c4, #292c30);">
-            <!-- Icon Instagram -->
+            <!-- Icon YouTube -->
             <svg class="w-7 h-7 text-white" fill="currentColor" viewBox="0 0 24 24">
                 <path d="M23.498 6.186a2.958 2.958 0 00-2.08-2.093C19.61 3.5 12 3.5 12 3.5s-7.61 0-9.418.593A2.958 2.958 0 00.502 6.186C0 8.002 0 12 0 12s0 3.998.502 5.814a2.958 2.958 0 002.08 2.093C4.39 20.5 12 20.5 12 20.5s7.61 0 9.418-.593a2.958 2.958 0 002.08-2.093C24 15.998 24 12 24 12s0-3.998-.502-5.814zM9.75 15.02V8.98L15.5 12l-5.75 3.02z"/>
             </svg>
@@ -137,103 +137,68 @@
 
 </div>
 
-<!-- Info Cards Row -->
-<div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-    
-    <!-- Informasi Kamar -->
-    <div class="bg-white rounded-xl shadow-sm border border-gray-200 hover:border-yellow-400 transition">
-        <div class="p-6 border-b border-gray-200">
-            <h2 class="text-lg font-bold text-gray-800 flex items-center">
-                <svg class="w-5 h-5 mr-2 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
-                </svg>
-                Informasi Kamar
-            </h2>
-        </div>
-        <div class="p-6">
-            <div class="space-y-4">
-                <div class="flex justify-between items-center">
-                    <span class="text-gray-600">Nomor Kamar</span>
-                    <span class="font-bold text-gray-800">{{ $activeRent->room->room_number ?? '-' }}</span>
-                </div>
-                <div class="flex justify-between items-center">
-                    <span class="text-gray-600">Lokasi</span>
-                    <span class="font-medium text-gray-800">{{ $activeRent->room->floor ?? '-' }}</span>
-                </div>
-                <div class="flex justify-between items-center">
-                    <span class="text-gray-600">Ukuran</span>
-                    <span class="font-medium text-gray-800">{{ $activeRent->room->size ?? '-' }} m²</span>
-                </div>
-                <div class="flex justify-between items-center">
-                    <span class="text-gray-600">Status</span>
-                    <span class="px-3 py-1 bg-green-100 text-green-700 text-sm font-medium rounded-full">
-                        Aktif
-                    </span>
-                </div>
-                <div class="flex justify-between items-center">
-                    <span class="text-gray-600">Tanggal Masuk</span>
-                    <span class="font-medium text-gray-800">{{ $activeRent->start_date->format('d M Y') ?? '-' }}</span>
-                </div>
+<!-- Informasi Kamar -->
+<div class="bg-white rounded-xl shadow-sm border border-gray-200 hover:border-yellow-400 transition mb-6">
+    <div class="p-6 border-b border-gray-200">
+        <h2 class="text-lg font-bold text-gray-800 flex items-center">
+            <svg class="w-5 h-5 mr-2 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+            </svg>
+            Informasi Kamar
+        </h2>
+    </div>
+    <div class="p-6">
+        <div class="space-y-4">
+            <div class="flex justify-between items-center">
+                <span class="text-gray-600">Nomor Kamar</span>
+                <span class="font-bold text-gray-800">{{ $activeRent->room->room_number ?? '-' }}</span>
             </div>
-            
-            @if(is_array($activeRent->room->facilities))
+            <div class="flex justify-between items-center">
+                <span class="text-gray-600">Lokasi</span>
+                <span class="font-medium text-gray-800">{{ $activeRent->room->floor ?? '-' }}</span>
+            </div>
+            <div class="flex justify-between items-center">
+                <span class="text-gray-600">Ukuran</span>
+                <span class="font-medium text-gray-800">{{ $activeRent->room->size ?? '-' }} m²</span>
+            </div>
+            <div class="flex justify-between items-center">
+                <span class="text-gray-600">Status</span>
+                <span class="px-3 py-1 bg-green-100 text-green-700 text-sm font-medium rounded-full">
+                    Aktif
+                </span>
+            </div>
+            <div class="flex justify-between items-center">
+                <span class="text-gray-600">Tanggal Masuk</span>
+                <span class="font-medium text-gray-800">{{ $activeRent->start_date->format('d M Y') ?? '-' }}</span>
+            </div>
+        </div>
+        
+        @if(is_array($activeRent->room->facilities) && count($activeRent->room->facilities) > 0)
+        <div class="mt-4 pt-4 border-t border-gray-200">
+            <p class="text-sm text-gray-600 mb-2">Fasilitas:</p>
+            <div class="flex flex-wrap gap-2">
                 @foreach($activeRent->room->facilities as $facility)
                     <span class="px-3 py-1 bg-yellow-50 text-yellow-700 text-xs font-medium rounded-full">
                         {{ $facility }}
                     </span>
                 @endforeach
-            @endif
-                
+            </div>
         </div>
-    </div>
-    
-    <!-- Tagihan Bulan Ini -->
-    <div class="bg-white rounded-xl shadow-sm border border-gray-200 hover:border-yellow-400 transition">
-        <div class="p-6 border-b border-gray-200">
-            <h2 class="text-lg font-bold text-gray-800 flex items-center">
-                <svg class="w-5 h-5 mr-2 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"></path>
+        @endif
+
+        <!-- Tombol Show Detail -->
+        <div class="mt-6 pt-4 border-t border-gray-200">
+            <a href="{{ route('user.room.detail') }}" 
+               class="w-full inline-flex items-center justify-center px-4 py-3 bg-yellow-500 hover:bg-yellow-600 text-white font-medium rounded-lg transition duration-200 shadow-sm hover:shadow-md">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
                 </svg>
-                Tagihan {{ now()->format('F Y') }}
-            </h2>
-        </div>
-        <div class="p-6">
-            @if($currentBill)
-            <div class="text-center mb-6">
-                <p class="text-sm text-gray-600 mb-2">Total Tagihan</p>
-                <p class="text-4xl font-bold text-gray-800 mb-2">
-                    Rp {{ number_format($currentBill->total_amount, 0, ',', '.') }}
-                </p>
-                <span class="px-3 py-1 bg-{{ $currentBill->status === 'paid' ? 'green' : 'orange' }}-100 text-{{ $currentBill->status === 'paid' ? 'green' : 'orange' }}-700 text-sm font-medium rounded-full">
-                    {{ $currentBill->status === 'paid' ? 'Lunas' : 'Belum Bayar' }}
-                </span>
-                <p class="text-xs text-gray-500 mt-2">Jatuh tempo: {{ $currentBill->due_date->format('d M Y') }}</p>
-            </div>
-            
-            <div class="space-y-3 mb-6">
-                <div class="flex justify-between text-sm">
-                    <span class="text-gray-600">Sewa Kamar</span>
-                    <span class="font-medium text-gray-800">Rp {{ number_format($currentBill->rent_amount, 0, ',', '.') }}</span>
-                </div>
-                <div class="border-t border-gray-200 pt-3 flex justify-between font-bold">
-                    <span class="text-gray-800">Total</span>
-                    <span class="text-yellow-600">Rp {{ number_format($currentBill->total_amount, 0, ',', '.') }}</span>
-                </div>
-            </div>
-            
-            @if($currentBill->status !== 'paid')
-            <a href="{{ route('user.billing.pay', $currentBill->id) }}" class="block w-full text-center bg-yellow-500 hover:bg-yellow-600 text-white py-3 px-4 rounded-lg font-semibold hover:bg-yellow-600 hover:shadow-lg transition-all">
-                Bayar Sekarang
+                Lihat Detail Kamar
             </a>
-            @endif
-            @else
-            <div class="text-center py-8">
-                <p class="text-gray-500">Belum ada tagihan bulan ini</p>
-            </div>
-            @endif
         </div>
+            
     </div>
-    
 </div>
 
 <!-- Riwayat Pembayaran -->

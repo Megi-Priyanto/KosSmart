@@ -135,7 +135,7 @@
                 <!-- Input Nama -->
                 <div>
                     <label for="name" class="block text-sm font-medium text-gray-300 mb-2">
-                        Nama Lengkap <span class="text-red-500">*</span>
+                        Nama Lengkap <span class="text-red-500"></span>
                     </label>
                     <div class="relative">
                         <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -162,7 +162,7 @@
                 <!-- Input Email -->
                 <div>
                     <label for="email" class="block text-sm font-medium text-gray-300 mb-2">
-                        Alamat Email <span class="text-red-500">*</span>
+                        Alamat Email <span class="text-red-500"></span>
                     </label>
                     <div class="relative">
                         <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -213,7 +213,7 @@
                 <!-- Input Password -->
                 <div>
                     <label for="password" class="block text-sm font-medium text-gray-300 mb-2">
-                        Password <span class="text-red-500">*</span>
+                        Password <span class="text-red-500"></span>
                     </label>
                     <div class="relative">
                         <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -274,7 +274,7 @@
                 <!-- Konfirmasi Password -->
                 <div>
                     <label for="password_confirmation" class="block text-sm font-medium text-gray-300 mb-2">
-                        Konfirmasi Password <span class="text-red-500">*</span>
+                        Konfirmasi Password <span class="text-red-500"></span>
                     </label>
                     <div class="relative">
                         <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -321,7 +321,7 @@
                         <a href="#" class="text-accent hover:text-amber-400 font-medium">Syarat & Ketentuan</a> 
                         dan 
                         <a href="#" class="text-accent hover:text-amber-400 font-medium">Kebijakan Privasi</a>
-                        <span class="text-red-500">*</span>
+                        <span class="text-red-500"></span>
                     </label>
                 </div>
                 @error('terms')
@@ -356,7 +356,7 @@
         <!-- Copyright -->
         <div class="text-center mt-8">
             <p class="text-gray-500 text-sm">
-                © {{ date('Y') }} KosSmart. Hak Cipta Dilindungi.
+                © {{ date('Y') }} KosSmart. All rights reserved.
             </p>
         </div>
     </div>
