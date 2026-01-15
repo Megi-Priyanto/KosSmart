@@ -116,7 +116,55 @@ class UserBillingController extends Controller
             ->latest()
             ->first();
 
-        return view('user.billing.payment', compact('billing', 'pendingPayment'));
+        // Payment methods configuration (sama seperti booking)
+        $paymentMethods = [
+            'manual_transfer' => [
+                'label' => 'Transfer Bank',
+                'options' => [
+                    'bca' => [
+                        'name' => 'BCA',
+                        'account' => '1234567890',
+                        'holder' => 'KosSmart Residence'
+                    ],
+                    'bni' => [
+                        'name' => 'BNI',
+                        'account' => '0987654321',
+                        'holder' => 'KosSmart Residence'
+                    ],
+                    'mandiri' => [
+                        'name' => 'Mandiri',
+                        'account' => '1122334455',
+                        'holder' => 'KosSmart Residence'
+                    ],
+                ]
+            ],
+            'e_wallet' => [
+                'label' => 'E-Wallet',
+                'options' => [
+                    'dana' => [
+                        'name' => 'DANA',
+                        'account' => '081234567890',
+                        'holder' => 'KosSmart Residence'
+                    ],
+                    'ovo' => [
+                        'name' => 'OVO',
+                        'account' => '081234567890',
+                        'holder' => 'KosSmart Residence'
+                    ],
+                    'gopay' => [
+                        'name' => 'GoPay',
+                        'account' => '081234567890',
+                        'holder' => 'KosSmart Residence'
+                    ],
+                ]
+            ],
+            'qris' => [
+                'label' => 'QRIS',
+                'qr_image' => 'qris/sample-qr.png'
+            ]
+        ];
+
+        return view('user.billing.payment', compact('billing', 'pendingPayment', 'paymentMethods'));
     }
 
     /**

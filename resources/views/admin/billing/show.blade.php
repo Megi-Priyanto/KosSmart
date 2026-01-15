@@ -224,6 +224,9 @@
                                     <div class="bg-slate-800 p-3 rounded-lg border border-slate-700">
                                         <p class="text-slate-400 text-xs font-semibold mb-1">Metode Pembayaran</p>
                                         <p class="font-bold text-white">{{ $payment->payment_method_label }}</p>
+                                        @if($payment->payment_sub_method)
+                                        <p class="text-xs text-slate-400">{{ $payment->payment_sub_method_label }}</p>
+                                        @endif
                                     </div>
                                     <div class="bg-slate-800 p-3 rounded-lg border border-slate-700">
                                         <p class="text-slate-400 text-xs font-semibold mb-1">Tanggal Pembayaran</p>

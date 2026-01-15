@@ -149,7 +149,15 @@
             <!-- Email Info -->
             <div class="mb-6 p-4 bg-amber-500 bg-opacity-10 rounded-lg border border-amber-500 border-opacity-20">
                 <p class="text-sm text-gray-400 mb-1">Kode OTP telah dikirim ke:</p>
-                <p class="font-semibold text-white">{{ session('email') ?? 'email@example.com' }}</p>
+                @if(session()->has('verification_email'))
+                    <p class="font-semibold text-white">
+                        {{ session('verification_email') }}
+                    </p>
+                @else
+                    <p class="font-semibold text-red-400">
+                        Email tidak ditemukan
+                    </p>
+                @endif
             </div>
             
             <!-- OTP Form -->

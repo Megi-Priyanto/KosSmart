@@ -176,60 +176,100 @@
             </div>
         </div>
         
-        <!-- Info Pembayaran -->
-        <div class="bg-slate-800/90 backdrop-blur rounded-xl border-2 border-slate-700/50 p-6 shadow-2xl">
-            <h3 class="text-xl font-bold text-white mb-6 flex items-center pb-3 border-b-2 border-slate-700/50">
-                <div class="p-2 bg-gradient-to-br from-slate-700 to-slate-600 rounded-lg border-2 border-slate-500 mr-3 shadow-lg">
-                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"></path>
-                    </svg>
+        <!-- Payment Method & Status -->
+        <div class="bg-slate-800/90 rounded-xl border-2 border-slate-700/50 p-6">
+            <h3 class="text-xl font-bold text-white mb-6">Informasi Pembayaran DP</h3>
+            
+            <div class="grid grid-cols-2 gap-4 mb-6">
+                <div class="p-4 bg-slate-900 rounded-lg">
+                    <label class="text-xs text-slate-400 uppercase mb-2 block">Metode Pembayaran</label>
+                    <p class="font-bold text-white">{{ $booking->payment_method_label }}</p>
+                    <p class="text-sm text-slate-300">{{ $booking->payment_sub_method_label }}</p>
                 </div>
-                Informasi Pembayaran
-            </h3>
-
-            <div class="space-y-3 mb-4">
-                <div class="flex justify-between items-center p-4 bg-slate-900 rounded-lg border border-slate-700">
-                    <span class="text-slate-300 flex items-center">
-                        <svg class="w-5 h-5 mr-2 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                        </svg>
-                        Harga Sewa/Bulan
+                
+                <div class="p-4 bg-slate-900 rounded-lg">
+                    <label class="text-xs text-slate-400 uppercase mb-2 block">Status Pembayaran</label>
+                    <span class="inline-flex px-3 py-1 rounded-full text-sm font-bold {{ $booking->dp_payment_status_badge }}">
+                        {{ $booking->dp_payment_status_label }}
                     </span>
-                    <span class="font-bold text-xl text-white">Rp {{ number_format($booking->monthly_rent, 0, ',', '.') }}</span>
                 </div>
-                <div class="flex justify-between items-center p-4 bg-green-500/10 rounded-lg border border-green-500/30">
-                    <span class="text-green-300 flex items-center">
-                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                        </svg>
-                        DP Dibayar (50%)
-                    </span>
-                    <span class="font-bold text-xl text-green-400">Rp {{ number_format($booking->deposit_paid, 0, ',', '.') }}</span>
+                
+                <div class="p-4 bg-slate-900 rounded-lg">
+                    <label class="text-xs text-slate-400 uppercase mb-2 block">Jumlah DP</label>
+                    <p class="text-xl font-bold text-yellow-400">Rp {{ number_format($booking->deposit_paid, 0, ',', '.') }}</p>
                 </div>
-                <div class="flex justify-between items-center p-4 bg-orange-500/10 rounded-lg border border-orange-500/30">
-                    <span class="text-orange-300 flex items-center">
-                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                        </svg>
-                        Sisa Pembayaran
-                    </span>
-                    <span class="font-bold text-xl text-orange-400">Rp {{ number_format($booking->monthly_rent - $booking->deposit_paid, 0, ',', '.') }}</span>
+                
+                <div class="p-4 bg-slate-900 rounded-lg">
+                    <label class="text-xs text-slate-400 uppercase mb-2 block">Sisa Pembayaran</label>
+                    <p class="text-xl font-bold text-orange-400">Rp {{ number_format($booking->monthly_rent - $booking->deposit_paid, 0, ',', '.') }}</p>
                 </div>
             </div>
-
-            <!-- Bukti Transfer Button -->
+            
+            <!-- Bukti Pembayaran -->
             @if($booking->notes && str_contains($booking->notes, 'Bukti DP:'))
-            <div class="mt-6 pt-6 border-t border-slate-700">
+            <div class="border-t border-slate-700 pt-6">
+                <h4 class="font-bold text-white mb-4 flex items-center">
+                    <svg class="w-5 h-5 mr-2 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                    </svg>
+                    Bukti Pembayaran {{ $booking->payment_method_label }}
+                </h4>
+                
                 @php
                     $imagePath = str_replace('Bukti DP: ', '', $booking->notes);
                 @endphp
-                <button onclick="openImageModal('{{ asset('storage/' . $imagePath) }}')" 
-                        class="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold py-3 px-4 rounded-lg transition-all shadow-lg flex items-center justify-center space-x-2">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                    </svg>
-                    <span>Lihat Bukti Transfer DP</span>
-                </button>
+                
+                <div class="bg-slate-900 rounded-lg p-4 border border-slate-700">
+                    <img src="{{ asset('storage/' . $imagePath) }}" 
+                         alt="Bukti Pembayaran"
+                         class="w-full max-w-md rounded-lg cursor-pointer"
+                         onclick="openImageModal('{{ asset('storage/' . $imagePath) }}')">
+                    
+                    <div class="mt-4 flex gap-3">
+                        <a href="{{ asset('storage/' . $imagePath) }}" 
+                           target="_blank"
+                           class="flex-1 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 text-center text-sm">
+                            Lihat Full Size
+                        </a>
+                        <a href="{{ asset('storage/' . $imagePath) }}" 
+                           download
+                           class="flex-1 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 text-center text-sm">
+                            Download
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- Payment Validation Info -->
+                <div class="mt-4 p-4 rounded-lg
+                    @if($booking->payment_method === 'manual_transfer') bg-blue-500/10 border border-blue-500/30
+                    @elseif($booking->payment_method === 'e_wallet') bg-green-500/10 border border-green-500/30
+                    @else bg-purple-500/10 border border-purple-500/30
+                    @endif">
+                    <p class="text-sm
+                        @if($booking->payment_method === 'manual_transfer') text-blue-300
+                        @elseif($booking->payment_method === 'e_wallet') text-green-300
+                        @else text-purple-300
+                        @endif">
+                        <strong>Validasi:</strong> Pastikan bukti pembayaran sesuai dengan metode 
+                        <strong>{{ $booking->payment_method_label }}</strong>
+                        @if($booking->payment_sub_method)
+                        via <strong>{{ $booking->payment_sub_method_label }}</strong>
+                        @endif
+                    </p>
+                </div>
+            </div>
+            @endif
+            
+            @if($booking->dp_payment_status === 'rejected' && $booking->dp_rejection_reason)
+            <div class="mt-4 p-4 bg-red-500/10 border border-red-500/30 rounded-lg">
+                <p class="text-sm text-red-300">
+                    <strong>Alasan Penolakan:</strong> {{ $booking->dp_rejection_reason }}
+                </p>
+                @if($booking->dpVerifier)
+                <p class="text-xs text-red-400 mt-2">
+                    Ditolak oleh: {{ $booking->dpVerifier->name }} pada {{ $booking->dp_verified_at->format('d M Y, H:i') }}
+                </p>
+                @endif
             </div>
             @endif
         </div>

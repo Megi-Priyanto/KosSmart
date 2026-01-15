@@ -4,7 +4,7 @@
 
 @section('content')
 
-<div class="max-w-5xl mx-auto">
+<div class="max-w-5xl mx-auto" x-data="bookingForm()">
     
     <!-- Header -->
     <div class="mb-8">
@@ -16,106 +16,53 @@
             Kembali ke Detail Kamar
         </a>
         
-        <h1 class="text-3xl font-bold text-gray-800 mb-2"> Booking Kamar {{ $room->room_number }}</h1>
+        <h1 class="text-3xl font-bold text-gray-800 mb-2">Booking Kamar {{ $room->room_number }}</h1>
         <p class="text-gray-600">Lengkapi formulir di bawah ini untuk melakukan booking</p>
     </div>
 
     <form action="{{ route('user.booking.store', $room) }}" 
           method="POST" 
           enctype="multipart/form-data"
-          x-data="bookingForm()">
+          @submit="validateForm">
         @csrf
+        
+        <input type="hidden" name="payment_method" x-model="selectedMethod">
+        <input type="hidden" name="payment_sub_method" x-model="selectedSubMethod">
         
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
             
             <!-- Left Column: Form -->
             <div class="lg:col-span-2 space-y-6">
                 
-                <!-- Informasi Kamar -->
+                <!-- Info Kamar -->
                 <div class="bg-gradient-to-br from-yellow-400 to-orange-500 rounded-xl shadow-lg p-6 text-white">
                     <div class="flex items-start justify-between">
                         <div class="flex-1">
-                            <h3 class="text-xl font-bold mb-2">
-                                Kamar {{ $room->room_number }}
-                            </h3>
-                        
-                            <p class="text-yellow-100 mb-4">
-                                {{ $room->floor }} • {{ $room->size }} m²
-                            </p>
-                        
+                            <h3 class="text-xl font-bold mb-2">Kamar {{ $room->room_number }}</h3>
+                            <p class="text-yellow-100 mb-4">{{ $room->floor }} • {{ $room->size }} m²</p>
+                            
                             <div class="grid grid-cols-2 gap-4">
                                 <div>
                                     <p class="text-yellow-100 text-sm">Harga Sewa/Bulan</p>
-                                    <p class="text-2xl font-bold">
-                                        Rp {{ number_format($room->price, 0, ',', '.') }}
-                                    </p>
+                                    <p class="text-2xl font-bold">Rp {{ number_format($room->price, 0, ',', '.') }}</p>
                                 </div>
                                 <div>
                                     <p class="text-yellow-100 text-sm">DP (50%)</p>
-                                    <p class="text-2xl font-bold">
-                                        Rp {{ number_format($depositAmount, 0, ',', '.') }}
-                                    </p>
+                                    <p class="text-2xl font-bold">Rp {{ number_format($depositAmount, 0, ',', '.') }}</p>
                                 </div>
                             </div>
                         </div>
                     
                         @if(is_array($room->images) && count($room->images))
-                        <div class="ml-4">
-                            <img src="{{ asset('storage/' . $room->images[0]) }}" 
-                                 alt="Kamar {{ $room->room_number }}"
-                                 class="w-24 h-24 rounded-lg object-cover border-2 border-white">
-                        </div>
+                        <img src="{{ asset('storage/' . $room->images[0]) }}" 
+                             alt="Kamar {{ $room->room_number }}"
+                             class="w-24 h-24 rounded-lg object-cover border-2 border-white ml-4">
                         @endif
                     </div>
                 </div>
                 
-                <!-- Form Data Penyewa -->
-                <div class="bg-white rounded-xl shadow-sm border-gray-200 hover:border-yellow-400 transition p-6">
-                    <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center">
-                        <svg class="w-6 h-6 mr-2 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
-                        </svg>
-                        Data Penyewa
-                    </h3>
-                    
-                    <div class="space-y-4">
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Nama Lengkap</label>
-                            <input type="text" 
-                                   value="{{ Auth::user()->name }}" 
-                                   class="w-full border border-gray-300 rounded-lg px-4 py-2 bg-gray-50 cursor-not-allowed"
-                                   readonly>
-                        </div>
-                        
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
-                            <input type="email" 
-                                   value="{{ Auth::user()->email }}" 
-                                   class="w-full border border-gray-300 rounded-lg px-4 py-2 bg-gray-50 cursor-not-allowed"
-                                   readonly>
-                        </div>
-                        
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Nomor Telepon</label>
-                            <input type="text" 
-                                   value="{{ Auth::user()->phone ?? '-' }}" 
-                                   class="w-full border border-gray-300 rounded-lg px-4 py-2 bg-gray-50 cursor-not-allowed"
-                                   readonly>
-                        </div>
-                        
-                        <div class="p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
-                            <p class="text-sm text-yellow-800">
-                                <strong>Info:</strong> Data di atas diambil dari profil Anda. 
-                                <a href="{{ route('user.profile') }}" class="text-yellow-600 underline hover:text-yellow-700">
-                                    Edit profil
-                                </a> jika ada yang perlu diubah.
-                            </p>
-                        </div>
-                    </div>
-                </div>
-                
                 <!-- Tanggal Mulai Sewa -->
-                <div class="bg-white rounded-xl shadow-sm border-gray-200 hover:border-yellow-400 transition p-6">
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
                     <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center">
                         <svg class="w-6 h-6 mr-2 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
@@ -123,222 +70,157 @@
                         Tanggal Mulai Sewa
                     </h3>
                     
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">
-                            Pilih Tanggal <span class="text-red-500"></span>
-                        </label>
-                        <input type="date" 
-                               name="start_date" 
-                               value="{{ old('start_date', now()->addDays(3)->format('Y-m-d')) }}"
-                               min="{{ now()->format('Y-m-d') }}"
-                               class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
-                               required>
-                        @error('start_date')
-                        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-                        @enderror
-                        <p class="text-sm text-gray-500 mt-2">
-                            Anda dapat mulai menempati kamar pada tanggal yang dipilih setelah pembayaran disetujui
-                        </p>
-                    </div>
+                    <input type="date" 
+                           name="start_date" 
+                           value="{{ old('start_date', now()->addDays(3)->format('Y-m-d')) }}"
+                           min="{{ now()->format('Y-m-d') }}"
+                           class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-yellow-500"
+                           required>
+                    @error('start_date')
+                    <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                    @enderror
                 </div>
                 
-                <!-- Upload Bukti Transfer DP -->
+                <!-- Payment Method Selection -->
                 <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-                    <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center">
-                        <svg class="w-6 h-6 mr-2 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path>
-                        </svg>
-                        <span>Pembayaran DP</span>
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center">
+                            <svg class="w-6 h-6 mr-2 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                            </svg>
+                            Metode Pembayaran DP
+                        </h3>
 
-                        <span class="ml-auto text-xs font-semibold px-3 py-1 rounded-full 
-                                 bg-orange-100 text-orange-700">
-                        Wajib DP
-                    </span>
-                    </h3>
+                        <!-- Button Pilih Metode -->
+                        <button type="button" 
+                                @click="showPaymentModal = true"
+                                class="px-4 py-2 bg-yellow-500 hover:bg-yellow-600 text-white font-semibold rounded-lg transition-all shadow-lg flex items-center justify-center">
+                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                            </svg>
+                            <span x-text="selectedMethod ? 'Ubah Metode Pembayaran' : 'Pilih Metode Pembayaran'"></span>
+                        </button>
+                    </div>
                     
-                    <div class="space-y-4">
-                        <!-- Informasi Rekening -->
-                        <div class="p-4 bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-xl shadow-sm">
-                            <p class="font-semibold text-gray-800 mb-3">Transfer ke rekening:</p>
+                    @error('payment_method')
+                    <p class="text-red-500 text-sm mt-2">{{ $message }}</p>
+                    @enderror
+                    
+                    <!-- Selected Payment Info -->
+                    <div x-show="selectedMethod" x-transition class="mt-6">
+                        <!-- Manual Transfer / E-Wallet -->
+                        <div x-show="selectedMethod !== 'qris'" class="p-4 bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-xl">
+                            <p class="font-semibold text-gray-800 mb-3">Transfer ke:</p>
                             <div class="space-y-2">
-                                <div class="flex justify-between items-center">
-                                    <span class="text-gray-600">Bank:</span>
-                                    <span class="font-semibold text-gray-800">BCA</span>
+                                <div class="flex justify-between">
+                                    <span class="text-gray-600" x-text="selectedMethod === 'manual_transfer' ? 'Bank:' : 'E-Wallet:'"></span>
+                                    <span class="font-semibold text-gray-800" x-text="getSubMethodLabel()"></span>
                                 </div>
-                                <div class="flex justify-between items-center">
-                                    <span class="text-gray-600">No. Rekening:</span>
+                                <div class="flex justify-between">
+                                    <span class="text-gray-600" x-text="selectedMethod === 'manual_transfer' ? 'No. Rekening:' : 'Nomor:'"></span>
                                     <span class="font-semibold text-gray-800 flex items-center">
-                                        <span id="accountNumber">1234567890</span>
+                                        <span x-text="getAccountNumber()"></span>
                                         <button type="button" 
-                                                onclick="copyAccountNumber()"
-                                                class="ml-2 text-amber-600 hover:text-amber-700 transition-colors">
+                                                @click="copyToClipboard(getAccountNumber())"
+                                                class="ml-2 text-amber-600 hover:text-amber-700">
                                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path>
                                             </svg>
                                         </button>
                                     </span>
                                 </div>
-                                <div class="flex justify-between items-center">
+                                <div class="flex justify-between">
                                     <span class="text-gray-600">Atas Nama:</span>
-                                    <span class="font-semibold text-gray-800">KosSmart Residence</span>
+                                    <span class="font-semibold text-gray-800" x-text="getAccountHolder()"></span>
                                 </div>
-                                <div class="flex justify-between items-center pt-2 border-t border-yellow-200">
+                                <div class="flex justify-between pt-2 border-t border-yellow-200">
                                     <span class="text-gray-600">Jumlah DP:</span>
                                     <span class="text-xl font-extrabold text-yellow-600">Rp {{ number_format($depositAmount, 0, ',', '.') }}</span>
-
                                 </div>
                             </div>
                         </div>
                         
-                        <!-- Upload Bukti -->
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">
-                                Upload Bukti Transfer <span class="text-red-500"></span>
-                            </label>
-                            <input type="file" 
-                                   name="deposit_proof" 
-                                   accept="image/*"
-                                   @change="previewImage"
-                                   class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-amber-500 focus:border-transparent"
-                                   required>
-                            @error('deposit_proof')
-                            <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-                            @enderror
-                            <p class="text-sm text-gray-500 mt-1">Format: JPG, PNG (Max. 2MB)</p>
-                            
-                            <!-- Preview -->
-                            <div x-show="imagePreview" class="mt-4">
-                                <p class="text-sm font-medium text-gray-700 mb-2">Preview:</p>
-                                <img :src="imagePreview" 
-                                     class="max-w-md rounded-lg border-2 border-gray-200">
-                            </div>
+                        <!-- QRIS -->
+                        <div x-show="selectedMethod === 'qris'" class="p-4 bg-gradient-to-r from-purple-50 to-pink-50 border border-purple-200 rounded-xl text-center">
+                            <p class="font-semibold text-gray-800 mb-4">Scan QR Code untuk Pembayaran</p>
+                            <img src="{{ asset('storage/qris/sample-qr.png') }}" 
+                                 alt="QRIS" 
+                                 class="w-64 h-64 mx-auto border-4 border-white shadow-lg rounded-lg mb-4">
+                            <p class="text-lg font-bold text-purple-600 mb-2">Rp {{ number_format($depositAmount, 0, ',', '.') }}</p>
+                            <p class="text-sm text-gray-600">Scan dengan aplikasi pembayaran favorit Anda</p>
                         </div>
                     </div>
                 </div>
                 
-                <!-- Syarat & Ketentuan -->
-                <div class="bg-white rounded-xl shadow-sm border-gray-200 hover:border-yellow-400 transition p-6">
-                    <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center">
-                        <svg class="w-6 h-6 mr-2 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                        </svg>
-                        Syarat & Ketentuan
-                    </h3>
+                <!-- Upload Bukti Transfer -->
+                <div x-show="selectedMethod" x-transition class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                    <h3 class="text-lg font-bold text-gray-800 mb-4">Upload Bukti Pembayaran</h3>
                     
-                    <div class="space-y-3 mb-4">
-                        <div class="flex items-start">
-                            <svg class="w-5 h-5 text-green-500 mr-2 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                            </svg>
-                            <p class="text-sm text-gray-700">Pembayaran DP sebesar 50% dari harga sewa wajib dilakukan</p>
-                        </div>
-                        <div class="flex items-start">
-                            <svg class="w-5 h-5 text-green-500 mr-2 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                            </svg>
-                            <p class="text-sm text-gray-700">Sisa pembayaran dilakukan setelah booking disetujui</p>
-                        </div>
-                        <div class="flex items-start">
-                            <svg class="w-5 h-5 text-green-500 mr-2 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                            </svg>
-                            <p class="text-sm text-gray-700">Admin akan menghubungi Anda dalam 1x24 jam setelah booking</p>
-                        </div>
-                        <div class="flex items-start">
-                            <svg class="w-5 h-5 text-green-500 mr-2 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                            </svg>
-                            <p class="text-sm text-gray-700">DP tidak dapat dikembalikan jika membatalkan booking</p>
-                        </div>
-                        <div class="flex items-start">
-                            <svg class="w-5 h-5 text-green-500 mr-2 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                            </svg>
-                            <p class="text-sm text-gray-700">Wajib mematuhi peraturan kos yang berlaku</p>
-                        </div>
+                    <input type="file" 
+                           name="deposit_proof" 
+                           accept="image/*"
+                           @change="previewImage"
+                           class="w-full border border-gray-300 rounded-lg px-4 py-2"
+                           required>
+                    @error('deposit_proof')
+                    <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                    @enderror
+                    <p class="text-sm text-gray-500 mt-1">Format: JPG, PNG (Max. 2MB)</p>
+                    
+                    <div x-show="imagePreview" class="mt-4">
+                        <p class="text-sm font-medium text-gray-700 mb-2">Preview:</p>
+                        <img :src="imagePreview" class="max-w-md rounded-lg border-2 border-gray-200">
                     </div>
-                    
+                </div>
+                
+                <!-- Agreement -->
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
                     <div class="flex items-start p-3 bg-gray-50 rounded-lg">
                         <input type="checkbox" 
                                name="agreement" 
                                value="1"
                                id="agreement"
-                               class="w-5 h-5 rounded mt-0.5 accent-yellow-600 focus:ring-yellow-500"
+                               class="w-5 h-5 rounded mt-0.5"
                                required>
-
                         <label for="agreement" class="ml-3 text-sm text-gray-700">
-                            Saya telah membaca dan menyetujui syarat & ketentuan di atas
-                            <span class="text-red-500"></span>
+                            Saya telah membaca dan menyetujui syarat & ketentuan
                         </label>
                     </div>
-
-                    @error('agreement')
-                    <p class="text-red-500 text-sm mt-2">{{ $message }}</p>
-                    @enderror
                 </div>
                 
             </div>
             
             <!-- Right Column: Summary -->
-            <div class="space-y-6">
-                
-                <!-- Ringkasan Booking -->
-                <div class="bg-white rounded-xl shadow-lg border-2 border-slate-200 p-6 sticky top-6">
+            <div>
+                <div class="bg-white rounded-xl shadow-lg border-2 border-slate-200 p-6 sticky top-6 mb-4">
                     <h3 class="text-lg font-bold text-gray-800 mb-4">Ringkasan Booking</h3>
                     
                     <div class="space-y-3 mb-6">
                         <div class="flex justify-between text-sm">
                             <span class="text-gray-600">Kamar</span>
-                            <span class="font-semibold text-gray-800">{{ $room->room_number }}</span>
+                            <span class="font-semibold">{{ $room->room_number }}</span>
                         </div>
                         <div class="flex justify-between text-sm">
-                            <span class="text-gray-600">Lantai</span>
-                            <span class="font-semibold text-gray-800">{{ $room->floor }}</span>
+                            <span class="text-gray-600">Harga/Bulan</span>
+                            <span class="font-semibold">Rp {{ number_format($room->price, 0, ',', '.') }}</span>
                         </div>
-                        <div class="flex justify-between text-sm">
-                            <span class="text-gray-600">Tipe</span>
-                            <span class="font-semibold text-gray-800">{{ ucfirst($room->type) }}</span>
-                        </div>
-                        <div class="flex justify-between text-sm">
-                            <span class="text-gray-600">Ukuran</span>
-                            <span class="font-semibold text-gray-800">{{ $room->size }} m²</span>
-                        </div>
-                    </div>
-                    
-                    <div class="space-y-3 pt-4 border-t border-gray-200 mb-6">
-                        <div class="flex justify-between">
-                            <span class="text-gray-600">Harga Sewa/Bulan</span>
-                            <span class="font-semibold text-gray-800">Rp {{ number_format($room->price, 0, ',', '.') }}</span>
-                        </div>
-                        <div class="flex justify-between">
+                        <div class="flex justify-between text-sm border-t pt-3">
                             <span class="text-gray-600">DP (50%)</span>
                             <span class="font-semibold text-yellow-600">Rp {{ number_format($depositAmount, 0, ',', '.') }}</span>
                         </div>
-                        <div class="flex justify-between pt-3 border-t border-gray-200">
-                            <span class="text-gray-600">Sisa Pembayaran</span>
-                            <span class="font-semibold text-gray-800">Rp {{ number_format($room->price - $depositAmount, 0, ',', '.') }}</span>
-                        </div>
-                    </div>
-                    
-                    <div class="p-3 bg-yellow-50 border border-yellow-200 rounded-lg mb-6">
-                        <p class="text-xs text-yellow-800">
-                            <strong>Catatan:</strong> Sisa pembayaran dibayarkan setelah booking Anda disetujui admin
-                        </p>
                     </div>
                     
                     <button type="submit" 
-                            class="w-full bg-yellow-500 text-white py-3 rounded-lg hover:bg-yellow-600 font-semibold transition-colors flex items-center justify-center space-x-2">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                        </svg>
-                        <span>Konfirmasi Booking</span>
+                            :disabled="!selectedMethod"
+                            :class="selectedMethod ? 'bg-yellow-500 hover:bg-yellow-600' : 'bg-gray-300 cursor-not-allowed'"
+                            class="w-full text-white py-3 rounded-lg font-semibold transition-colors">
+                        Konfirmasi Booking
                     </button>
-                    
                     <p class="text-xs text-center text-gray-500 mt-3">
                         Dengan klik tombol di atas, Anda menyetujui syarat & ketentuan yang berlaku
                     </p>
                 </div>
-                
+
                 <!-- Bantuan -->
                 <div class="bg-yellow-50 rounded-xl border border-yellow-200 p-6">
                     <h3 class="text-lg font-bold text-gray-800 mb-3 flex items-center">
@@ -372,12 +254,86 @@
                     </div>
                     @endif
                 </div>
-                
+
+            </div>
+        </div>
+    </form>
+    
+    <!-- Payment Method Modal -->
+    <div x-show="showPaymentModal" 
+         x-transition:enter="transition ease-out duration-300"
+         x-transition:enter-start="opacity-0"
+         x-transition:enter-end="opacity-100"
+         x-transition:leave="transition ease-in duration-200"
+         x-transition:leave-start="opacity-100"
+         x-transition:leave-end="opacity-0"
+         @click.self="showPaymentModal = false"
+         class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+        
+        <div @click.away="showPaymentModal = false"
+             x-transition:enter="transition ease-out duration-300"
+             x-transition:enter-start="opacity-0 transform scale-95"
+             x-transition:enter-end="opacity-100 transform scale-100"
+             class="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            
+            <div class="sticky top-0 bg-white border-b p-6 flex justify-between items-center">
+                <h3 class="text-2xl font-bold text-gray-800">Pilih Metode Pembayaran</h3>
+                <button @click="showPaymentModal = false" class="text-gray-400 hover:text-gray-600">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
             </div>
             
+            <div class="p-6 space-y-6">
+                @foreach($paymentMethods as $method => $data)
+                <div class="border-2 border-gray-200 rounded-xl p-4">
+                    <h4 class="font-bold text-lg mb-3">{{ $data['label'] }}</h4>
+                    
+                    @if($method === 'qris')
+                    <button type="button"
+                            @click="selectPayment('qris', 'qris')"
+                            class="w-full p-4 border-2 rounded-lg hover:border-purple-500 hover:bg-purple-50 transition-all text-left"
+                            :class="selectedMethod === 'qris' ? 'border-purple-500 bg-purple-50' : 'border-gray-200'">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center">
+                                <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mr-3">
+                                    <svg class="w-6 h-6 text-purple-600" fill="currentColor" viewBox="0 0 24 24">
+                                        <path d="M3 3h8v8H3V3zm10 0h8v8h-8V3zM3 13h8v8H3v-8zm10 0h8v8h-8v-8z"/>
+                                    </svg>
+                                </div>
+                                <span class="font-semibold">QRIS (All Payment)</span>
+                            </div>
+                            <svg x-show="selectedMethod === 'qris'" class="w-6 h-6 text-purple-600" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                        </div>
+                    </button>
+                    @else
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        @foreach($data['options'] as $key => $option)
+                        <button type="button"
+                                @click="selectPayment('{{ $method }}', '{{ $key }}')"
+                                class="p-4 border-2 rounded-lg hover:border-amber-500 hover:bg-amber-50 transition-all text-left"
+                                :class="selectedSubMethod === '{{ $key }}' ? 'border-amber-500 bg-amber-50' : 'border-gray-200'">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="font-semibold">{{ $option['name'] }}</p>
+                                    <p class="text-xs text-gray-500">{{ $option['account'] }}</p>
+                                </div>
+                                <svg x-show="selectedSubMethod === '{{ $key }}'" class="w-6 h-6 text-amber-600" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                </svg>
+                            </div>
+                        </button>
+                        @endforeach
+                    </div>
+                    @endif
+                </div>
+                @endforeach
+            </div>
         </div>
-        
-    </form>
+    </div>
     
 </div>
 
@@ -387,7 +343,47 @@
 <script>
 function bookingForm() {
     return {
+        showPaymentModal: false,
+        selectedMethod: '{{ old("payment_method") }}',
+        selectedSubMethod: '{{ old("payment_sub_method") }}',
         imagePreview: null,
+        
+        paymentData: @json($paymentMethods),
+        
+        selectPayment(method, subMethod) {
+            this.selectedMethod = method;
+            this.selectedSubMethod = subMethod;
+            this.showPaymentModal = false;
+        },
+        
+        getSubMethodLabel() {
+            if (!this.selectedSubMethod) return '';
+            return this.selectedSubMethod.toUpperCase();
+        },
+        
+        getAccountNumber() {
+            if (!this.selectedMethod || !this.selectedSubMethod) return '';
+            const methodData = this.paymentData[this.selectedMethod];
+            if (methodData.options && methodData.options[this.selectedSubMethod]) {
+                return methodData.options[this.selectedSubMethod].account;
+            }
+            return '';
+        },
+        
+        getAccountHolder() {
+            if (!this.selectedMethod || !this.selectedSubMethod) return '';
+            const methodData = this.paymentData[this.selectedMethod];
+            if (methodData.options && methodData.options[this.selectedSubMethod]) {
+                return methodData.options[this.selectedSubMethod].holder;
+            }
+            return '';
+        },
+        
+        copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                alert('✓ Berhasil disalin!');
+            });
+        },
         
         previewImage(event) {
             const file = event.target.files[0];
@@ -398,17 +394,16 @@ function bookingForm() {
                 };
                 reader.readAsDataURL(file);
             }
+        },
+        
+        validateForm(e) {
+            if (!this.selectedMethod) {
+                e.preventDefault();
+                alert('Silakan pilih metode pembayaran terlebih dahulu');
+                return false;
+            }
         }
     }
-}
-
-function copyAccountNumber() {
-    const accountNumber = document.getElementById('accountNumber').textContent;
-    navigator.clipboard.writeText(accountNumber).then(() => {
-        alert('✓ Nomor rekening berhasil disalin!');
-    }).catch(err => {
-        console.error('Gagal menyalin:', err);
-    });
 }
 </script>
 @endpush
