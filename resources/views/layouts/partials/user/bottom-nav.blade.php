@@ -10,10 +10,23 @@
         </a>
     
         <!-- Pembayaran -->
-        <a href="{{ route('user.payments') }}" 
-           class="flex flex-col items-center text-xs {{ request()->routeIs('user.payments') ? 'text-yellow-500 font-semibold' : '' }}">
-           <i class="fa-solid fa-money-bill-wave text-xl"></i>
-            <span class="mb-1">Pembayaran</span>
+        @if(auth()->user()->hasActiveRoom())
+            <a href="{{ route('user.billing.index') }}"
+               class="flex flex-col items-center text-xs {{ request()->routeIs('user.billing') ? 'text-yellow-500 font-semibold' : 'text-gray-600' }}">
+                <i class="fa-solid fa-money-bill-wave text-xl"></i>
+                <span class="mb-1">Pembayaran</span>
+            </a>
+        @else
+            <div class="flex flex-col items-center text-xs text-gray-400 cursor-not-allowed">
+                <i class="fa-solid fa-money-bill-wave text-xl"></i>
+                <span class="mb-1">Pembayaran</span>
+            </div>
+        @endif
+
+        <a href="{{ route('user.status.index') }}" 
+           class="flex flex-col items-center text-xs {{ request()->routeIs('user.status.*') ? 'text-yellow-500 font-semibold' : '' }}">
+            <i class="fa-solid fa-clipboard-list text-xl"></i>
+            <span class="mb-1">Status</span>
         </a>
     
         <!-- Profil -->

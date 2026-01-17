@@ -110,7 +110,7 @@
             </form>
 
             <a href="{{ route('user.payment.history') }}" 
-               class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors text-sm font-medium text-center">
+               class="px-4 py-2 bg-gradient-to-r from-yellow-500 to-orange-600 text-white font-semibold rounded-lg hover:from-yellow-600 hover:to-orange-700 transition-all shadow-lg flex items-center justify-center">
                 Riwayat Pembayaran
             </a>
         </div>
@@ -135,7 +135,7 @@
             <div class="p-6">
                 <div class="mb-4">
                     <p class="text-sm text-gray-600 mb-1">Total Tagihan</p>
-                    <p class="text-3xl font-bold text-purple-600">Rp {{ number_format($billing->total_amount, 0, ',', '.') }}</p>
+                    <p class="text-3xl font-bold text-yellow-600">Rp {{ number_format($billing->total_amount, 0, ',', '.') }}</p>
                 </div>
 
                 <div class="space-y-2 mb-4">
@@ -172,17 +172,25 @@
 
                 <!-- Actions -->
                 <div class="flex gap-2">
-                    <a href="{{ route('user.billing.show', $billing) }}" 
-                       class="flex-1 px-4 py-2 bg-purple-600 text-white text-center rounded-lg hover:bg-purple-700 transition-colors text-sm font-medium">
+                
+                    {{-- LIHAT DETAIL: SELALU ADA --}}
+                    <a href="{{ route('user.billing.show', $billing->id) }}"
+                        class="flex-1 px-4 py-2 bg-gradient-to-r from-yellow-500 to-orange-600
+                           text-white font-semibold rounded-lg hover:from-yellow-600 hover:to-orange-700
+                           transition-all shadow-lg flex items-center justify-center">
                         Lihat Detail
                     </a>
-                    
+                
+                    {{-- BAYAR: HANYA JIKA BELUM LUNAS --}}
                     @if($billing->status !== 'paid')
-                    <a href="{{ route('user.billing.pay', $billing) }}" 
-                       class="flex-1 px-4 py-2 bg-green-600 text-white text-center rounded-lg hover:bg-green-700 transition-colors text-sm font-medium">
-                        Bayar
-                    </a>
+                        <a href="{{ route('user.billing.pay', $billing) }}" 
+                           class="flex-1 px-4 py-2 bg-gradient-to-r from-green-500 to-green-600
+                                  text-white font-semibold rounded-lg hover:from-green-600 hover:to-green-700
+                                  transition-all shadow-lg flex items-center justify-center">
+                            Bayar
+                        </a>
                     @endif
+                    
                 </div>
             </div>
         </div>

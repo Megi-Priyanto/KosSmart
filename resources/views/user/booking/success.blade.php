@@ -4,7 +4,7 @@
 
 @section('content')
 
-<div class="max-w-3xl mx-auto py-12">
+<div class="space-y-6">
     
     <!-- Success Icon -->
     <div class="text-center mb-8">
@@ -14,7 +14,7 @@
             </svg>
         </div>
         
-        <h1 class="text-3xl font-bold text-gray-800 mb-2">🎉 Booking Berhasil!</h1>
+        <h1 class="text-3xl font-bold text-gray-800 mb-2">Booking Berhasil!</h1>
         <p class="text-gray-600">Terima kasih telah melakukan booking di KosSmart</p>
     </div>
     

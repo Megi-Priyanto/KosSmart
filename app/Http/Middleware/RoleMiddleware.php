@@ -12,8 +12,7 @@ class RoleMiddleware
     /**
      * Handle an incoming request.
      *
-     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
-     * @param  string  $role
+     * @param  string  $role  Role yang diizinkan (super_admin|admin|user)
      */
     public function handle(Request $request, Closure $next, string $role): Response
     {
@@ -27,14 +26,17 @@ class RoleMiddleware
 
         // Cek apakah user memiliki role yang sesuai
         if ($user->role !== $role) {
-            // Redirect ke dashboard sesuai role user
-            if ($user->role === 'admin') {
-                return redirect()->route('admin.dashboard')
-                    ->with('error', 'Anda tidak memiliki akses ke halaman tersebut.');
-            } else {
-                return redirect()->route('user.dashboard')
-                    ->with('error', 'Anda tidak memiliki akses ke halaman tersebut.');
-            }
+            // Redirect sesuai role user
+            return match ($user->role) {
+                'super_admin' => redirect()->route('superadmin.dashboard')
+                    ->with('error', 'Anda tidak memiliki akses ke halaman tersebut.'),
+                'admin' => redirect()->route('admin.dashboard')
+                    ->with('error', 'Anda tidak memiliki akses ke halaman tersebut.'),
+                'user' => redirect()->route('user.dashboard')
+                    ->with('error', 'Anda tidak memiliki akses ke halaman tersebut.'),
+                default => redirect()->route('login')
+                    ->with('error', 'Role tidak valid.'),
+            };
         }
 
         return $next($request);

@@ -2,15 +2,20 @@
 
 namespace App\Models;
 
+use App\Traits\ScopesByTempatKos;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use App\Models\Rent;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Room extends Model
 {
     use HasFactory;
+    use ScopesByTempatKos;
 
     protected $fillable = [
+        'tempat_kos_id',
         'kos_info_id',
         'room_number',
         'floor',
@@ -40,23 +45,48 @@ class Room extends Model
     ];
 
     /**
+     * Relasi: Room belongs to Tempat Kos
+     */
+    public function tempatKos(): BelongsTo
+    {
+        return $this->belongsTo(TempatKos::class);
+    }
+
+    /**
+     * Relasi: Room belongs to Kos Info
+     * (Untuk backward compatibility dengan sistem lama)
+     */
+    public function kosInfo(): BelongsTo
+    {
+        return $this->belongsTo(KosInfo::class, 'kos_info_id');
+    }
+
+    /**
      * Relasi: Room memiliki banyak rents
      */
-    public function rents()
+    public function rents(): HasMany
     {
         return $this->hasMany(Rent::class);
     }
 
     /**
      * Relasi: Room memiliki satu rent aktif
-     * PERBAIKAN: Tambahkan 'checkout_requested' agar tombol approve muncul
+     * Include 'checkout_requested' agar tombol approve muncul
      */
-    public function currentRent()
+    public function currentRent(): HasOne
     {
         return $this->hasOne(Rent::class)
-            ->whereIn('status', ['active', 'checkout_requested']) // ← UBAH INI
+            ->whereIn('status', ['active', 'checkout_requested'])
             ->whereNull('end_date')
-            ->latest(); // Tambahkan latest() untuk ambil yang terbaru
+            ->latest();
+    }
+
+    /**
+     * Relasi: Room memiliki banyak billings
+     */
+    public function billings(): HasMany
+    {
+        return $this->hasMany(Billing::class, 'room_id');
     }
 
     /**
@@ -68,54 +98,32 @@ class Room extends Model
     }
 
     /**
-     * Scope: Kamar yang tersedia saja
+     * Helper: Cek apakah kamar terisi
      */
-    public function scopeAvailable($query)
+    public function isOccupied(): bool
     {
-        return $query->where('status', 'available')
-            ->whereDoesntHave('currentRent');
+        return $this->status === 'occupied';
     }
 
-    public function kosInfo()
+    /**
+     * Helper: Cek apakah kamar sedang maintenance
+     */
+    public function isMaintenance(): bool
     {
-        return $this->belongsTo(KosInfo::class, 'kos_info_id');
+        return $this->status === 'maintenance';
     }
 
-    public function scopeOfType($query, $type)
+    /**
+     * Helper: Get current tenant (penghuni saat ini)
+     */
+    public function currentTenant()
     {
-        if ($type) {
-            return $query->where('type', $type);
-        }
-        return $query;
+        return $this->currentRent?->user;
     }
 
-    public function scopeOnFloor($query, $floor)
-    {
-        if ($floor) {
-            return $query->where('floor', $floor);
-        }
-        return $query;
-    }
-
-    public function scopeWithStatus($query, $status)
-    {
-        if ($status) {
-            return $query->where('status', $status);
-        }
-        return $query;
-    }
-
-    public function scopePriceRange($query, $min = null, $max = null)
-    {
-        if ($min) {
-            $query->where('price', '>=', $min);
-        }
-        if ($max) {
-            $query->where('price', '<=', $max);
-        }
-        return $query;
-    }
-
+    /**
+     * Helper: Get status badge color
+     */
     public function getStatusBadgeColorAttribute(): string
     {
         return match ($this->status) {
@@ -126,6 +134,9 @@ class Room extends Model
         };
     }
 
+    /**
+     * Helper: Get status label
+     */
     public function getStatusLabelAttribute(): string
     {
         return match ($this->status) {
@@ -158,13 +169,135 @@ class Room extends Model
         return $price . ' ' . $period;
     }
 
+    /**
+     * Helper: Increment view count
+     */
     public function incrementViewCount(): void
     {
         $this->increment('view_count');
     }
 
-    public function billings()
+    /**
+     * Scope: Kamar yang tersedia saja
+     */
+    public function scopeAvailable($query)
     {
-        return $this->hasMany(Billing::class, 'room_id');
+        return $query->where('status', 'available')
+            ->whereDoesntHave('currentRent');
+    }
+
+    /**
+     * Scope: Kamar yang terisi
+     */
+    public function scopeOccupied($query)
+    {
+        return $query->where('status', 'occupied');
+    }
+
+    /**
+     * Scope: Kamar yang sedang maintenance
+     */
+    public function scopeMaintenance($query)
+    {
+        return $query->where('status', 'maintenance');
+    }
+
+    /**
+     * Scope: Filter by type
+     */
+    public function scopeOfType($query, $type)
+    {
+        if ($type) {
+            return $query->where('type', $type);
+        }
+        return $query;
+    }
+
+    /**
+     * Scope: Filter by floor
+     */
+    public function scopeOnFloor($query, $floor)
+    {
+        if ($floor) {
+            return $query->where('floor', $floor);
+        }
+        return $query;
+    }
+
+    /**
+     * Scope: Filter by status
+     */
+    public function scopeWithStatus($query, $status)
+    {
+        if ($status) {
+            return $query->where('status', $status);
+        }
+        return $query;
+    }
+
+    /**
+     * Scope: Filter by price range
+     */
+    public function scopePriceRange($query, $min = null, $max = null)
+    {
+        if ($min) {
+            $query->where('price', '>=', $min);
+        }
+        if ($max) {
+            $query->where('price', '<=', $max);
+        }
+        return $query;
+    }
+
+    /**
+     * Scope: Filter by jenis sewa
+     */
+    public function scopeByJenisSewa($query, $jenisSewa)
+    {
+        if ($jenisSewa) {
+            return $query->where('jenis_sewa', $jenisSewa);
+        }
+        return $query;
+    }
+
+    /**
+     * Scope: Popular rooms (berdasarkan view count)
+     */
+    public function scopePopular($query, $limit = 5)
+    {
+        return $query->orderBy('view_count', 'desc')->limit($limit);
+    }
+
+    /**
+     * Helper: Check if room needs maintenance
+     * (jika last_maintenance lebih dari 6 bulan yang lalu)
+     */
+    public function needsMaintenance(): bool
+    {
+        if (!$this->last_maintenance) {
+            return true;
+        }
+        
+        return $this->last_maintenance->addMonths(6)->isPast();
+    }
+
+    /**
+     * Helper: Get maintenance status
+     */
+    public function getMaintenanceStatusAttribute(): string
+    {
+        if (!$this->last_maintenance) {
+            return 'Belum pernah maintenance';
+        }
+        
+        $monthsSince = now()->diffInMonths($this->last_maintenance);
+        
+        if ($monthsSince >= 6) {
+            return 'Perlu maintenance';
+        } elseif ($monthsSince >= 4) {
+            return 'Maintenance dalam waktu dekat';
+        } else {
+            return 'Maintenance baik';
+        }
     }
 }

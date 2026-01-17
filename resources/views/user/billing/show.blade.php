@@ -5,14 +5,33 @@
 @section('content')
 <div class="space-y-6">
 
-    <!-- Back Button -->
-    <a href="{{ route('user.billing.index') }}" 
-       class="inline-flex items-center text-sm text-yellow-400 hover:text-yellow-500">
-        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
-        </svg>
-        Kembali ke Daftar Tagihan
-    </a>
+    <!-- Page Header (SELALU ADA) -->
+    <div class="flex items-center justify-between">
+        <div>
+            <h1 class="text-2xl font-bold text-gray-800">Detail Pembayaran</h1>
+            <p class="text-sm text-gray-600 mt-1">Riwayat transaksi pembayaran Anda</p>
+        </div>
+    
+        <div class="flex gap-2">
+            {{-- JIKA DARI STATUS --}}
+            @if(request('from') === 'status')
+                <a href="{{ route('user.status.billing') }}" 
+                   class="px-4 py-2 bg-gradient-to-r from-yellow-500 to-orange-600
+                          text-white font-semibold rounded-lg hover:from-yellow-600 hover:to-orange-700
+                          transition-all shadow-lg flex items-center justify-center">
+                    Kembali ke History Tagihan
+                </a>
+            @else
+                {{-- JIKA DARI TAGIHAN / PEMBAYARAN --}}
+                <a href="{{ route('user.billing.index') }}" 
+                   class="px-4 py-2 bg-gradient-to-r from-yellow-500 to-orange-600
+                          text-white font-semibold rounded-lg hover:from-yellow-600 hover:to-orange-700
+                          transition-all shadow-lg flex items-center justify-center">
+                    Kembali ke Tagihan
+                </a>
+            @endif
+        </div>
+    </div>
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
         
@@ -21,7 +40,7 @@
             
             <!-- Billing Info -->
             <div class="bg-white rounded-lg shadow-sm border border-gray-200 hover:border-yellow-400 transition overflow-hidden">
-                <div class="p-6 border-b border-gray-200 {{ $billing->status === 'paid' ? 'bg-green-50' : ($billing->is_overdue ? 'bg-red-50' : 'bg-purple-50') }}">
+                <div class="p-6 border-b border-gray-200 {{ $billing->status === 'paid' ? 'bg-green-50' : ($billing->is_overdue ? 'bg-red-50' : 'bg-yellow-50') }}">
                     <div class="flex items-center justify-between mb-2">
                         <h2 class="text-2xl font-bold text-gray-900">{{ $billing->formatted_period }}</h2>
                         <span class="px-4 py-2 text-sm font-semibold rounded-full {{ $billing->status_badge }}">
@@ -53,9 +72,9 @@
                         </div>
                         @endif
 
-                        <div class="flex justify-between items-center py-4 border-t-2 border-gray-300 bg-purple-50 -mx-6 px-6">
+                        <div class="flex justify-between items-center py-4 border-t-2 border-gray-300 bg-yellow-50 -mx-6 px-6">
                             <span class="text-lg font-bold text-gray-900">Total Tagihan</span>
-                            <span class="text-3xl font-bold text-purple-600">Rp {{ number_format($billing->total_amount, 0, ',', '.') }}</span>
+                            <span class="text-3xl font-bold text-yellow-600">Rp {{ number_format($billing->total_amount, 0, ',', '.') }}</span>
                         </div>
                     </div>
                 </div>
@@ -181,31 +200,38 @@
         <div class="space-y-6">
             
             <!-- Payment Actions -->
-            @if($billing->status !== 'paid')
-            <div class="bg-white rounded-lg shadow-sm border border-gray-200 hover:border-yellow-400 transition p-6">
-                <h3 class="text-lg font-semibold text-gray-900 mb-2">Bayar Tagihan</h3>
-                <p class="text-sm text-red-700">Menunggu Verifikasi Admin</p>
-                <div class="space-y-3">
-                    @if($billing->is_overdue)
-                    <div class="p-3 bg-red-50 border-l-4 border-red-500 rounded mb-4">
-                        <p class="text-sm text-red-800">
-                            <span class="font-semibold">Tagihan Terlambat</span><br>
-                            Segera lakukan pembayaran untuk menghindari denda.
-                        </p>
+            {{-- TAGIHAN LUNAS --}}
+            @if($billing->status === 'paid')
+
+                <div class="bg-green-50 border-2 border-green-500 rounded-lg p-6">
+                    <div class="text-center">
+                        <svg class="mx-auto h-12 w-12 text-green-600 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                        <h3 class="text-lg font-bold text-green-800 mb-2">Tagihan Lunas</h3>
+                        <p class="text-sm text-green-700">Terima kasih atas pembayaran Anda</p>
                     </div>
-                    @endif
                 </div>
-            </div>
+            
+            {{-- MENUNGGU VERIFIKASI ADMIN --}}
+            @elseif($billing->status === 'pending')
+            
+                <div class="text-sm text-yellow-700 bg-yellow-50 border border-yellow-300 rounded-lg p-4">
+                    Pembayaran Anda sedang <strong>menunggu verifikasi admin</strong>.
+                    Mohon menunggu, status akan diperbarui setelah diverifikasi.
+                </div>
+            
+            {{-- BELUM BAYAR --}}
             @else
-            <div class="bg-green-50 border-2 border-green-500 rounded-lg p-6">
-                <div class="text-center">
-                    <svg class="mx-auto h-12 w-12 text-green-600 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                    </svg>
-                    <h3 class="text-lg font-bold text-green-800 mb-2">Tagihan Lunas</h3>
-                    <p class="text-sm text-green-700">Terima kasih atas pembayaran Anda</p>
+            
+                <div class="bg-white rounded-lg shadow-sm border border-gray-200 hover:border-yellow-400 transition p-6">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-2">Bayar Tagihan</h3>
+                    <p class="text-sm text-gray-600">
+                        Silakan lakukan pembayaran untuk melanjutkan proses sewa.
+                    </p>
                 </div>
-            </div>
+            
             @endif
 
             <!-- Payment Info Box -->

@@ -4,21 +4,16 @@
 
 @section('content')
 
-<!-- Back Button -->
-<div class="mb-6">
+<!-- Page Header -->
+<div class="flex items-center justify-between mb-8">
+    <div>
+        <h1 class="text-2xl font-bold text-gray-800">Detail Kamar {{ $room->room_number }}</h1>
+        <p class="text-sm text-gray-600 mt-1">Informasi lengkap tentang kamar yang Anda tempati</p>
+    </div>
     <a href="{{ route('user.dashboard') }}" 
-       class="inline-flex items-center text-gray-600 hover:text-yellow-600 transition-colors">
-        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
-        </svg>
+       class="px-4 py-2 bg-gradient-to-r from-yellow-500 to-orange-600 text-white font-semibold rounded-lg hover:from-yellow-600 hover:to-orange-700 transition-all shadow-lg flex items-center justify-center">
         Kembali ke Dashboard
     </a>
-</div>
-
-<!-- Header -->
-<div class="mb-8">
-    <h1 class="text-3xl font-bold text-gray-800 mb-2">Detail Kamar {{ $room->room_number }}</h1>
-    <p class="text-gray-600">Informasi lengkap tentang kamar yang Anda tempati</p>
 </div>
 
 <!-- Main Content Grid -->
@@ -29,8 +24,9 @@
         
         <!-- Galeri Foto -->
         @if(!empty($room->images) && is_array($room->images) && count($room->images) > 0)
-        <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-            <div class="aspect-video bg-gray-100 relative" x-data="imageGallery()">
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden" x-data="imageGallery()">
+
+            <div class="aspect-video bg-gray-100 relative">
                 <img :src="'{{ asset('storage') }}/' + images[currentIndex]" 
                      alt="Kamar {{ $room->room_number }}" 
                      class="w-full h-full object-cover">
@@ -60,13 +56,10 @@
             </div>
             
             <!-- Thumbnails -->
-            <div class="p-4 bg-gray-50 grid grid-cols-6 gap-2" x-data="imageGallery()">
+            <div class="p-4 bg-gray-50 grid grid-cols-6 gap-2">
                 <template x-for="(image, index) in images" :key="index">
-                    <div @click="currentIndex = index" 
-                         class="aspect-square rounded-lg overflow-hidden cursor-pointer border-2 transition-all hover:scale-105"
-                         :class="currentIndex === index ? 'border-yellow-500 ring-2 ring-yellow-500/50' : 'border-gray-300 hover:border-gray-400'">
-                        <img :src="'{{ asset('storage') }}/' + image" 
-                             class="w-full h-full object-cover">
+                    <div @click="currentIndex = index">
+                        <img :src="'{{ asset('storage') }}/' + image">
                     </div>
                 </template>
             </div>
@@ -109,9 +102,6 @@
             <div class="grid grid-cols-2 md:grid-cols-3 gap-6">
                 <div>
                     <label class="text-sm text-gray-600 flex items-center mb-2">
-                        <svg class="w-4 h-4 mr-1.5 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14"></path>
-                        </svg>
                         Nomor Kamar
                     </label>
                     <p class="font-bold text-xl text-gray-800">{{ $room->room_number }}</p>
@@ -119,9 +109,6 @@
                 
                 <div>
                     <label class="text-sm text-gray-600 flex items-center mb-2">
-                        <svg class="w-4 h-4 mr-1.5 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
-                        </svg>
                         Lantai
                     </label>
                     <p class="font-semibold text-gray-800">{{ $room->floor }}</p>
@@ -129,9 +116,6 @@
                 
                 <div>
                     <label class="text-sm text-gray-600 flex items-center mb-2">
-                        <svg class="w-4 h-4 mr-1.5 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path>
-                        </svg>
                         Tipe
                     </label>
                     <p><span class="px-3 py-1.5 text-sm font-bold rounded-lg
@@ -143,9 +127,6 @@
                 
                 <div>
                     <label class="text-sm text-gray-600 flex items-center mb-2">
-                        <svg class="w-4 h-4 mr-1.5 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
-                        </svg>
                         Kapasitas
                     </label>
                     <p class="font-semibold text-gray-800">{{ $room->capacity }} orang</p>
@@ -153,9 +134,6 @@
                 
                 <div>
                     <label class="text-sm text-gray-600 flex items-center mb-2">
-                        <svg class="w-4 h-4 mr-1.5 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"></path>
-                        </svg>
                         Ukuran
                     </label>
                     <p class="font-semibold text-gray-800">{{ $room->size }} m²</p>
@@ -163,9 +141,6 @@
                 
                 <div>
                     <label class="text-sm text-gray-600 flex items-center mb-2">
-                        <svg class="w-4 h-4 mr-1.5 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                        </svg>
                         Harga Sewa
                     </label>
                     <p class="font-bold text-xl text-yellow-600">{{ $room->formatted_price }}</p>
@@ -173,9 +148,6 @@
                 
                 <div>
                     <label class="text-sm text-gray-600 flex items-center mb-2">
-                        <svg class="w-4 h-4 mr-1.5 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                        </svg>
                         Jenis Sewa
                     </label>
                     <p class="font-semibold text-gray-800">
@@ -187,9 +159,6 @@
                 
                 <div>
                     <label class="text-sm text-gray-600 flex items-center mb-2">
-                        <svg class="w-4 h-4 mr-1.5 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
-                        </svg>
                         Jendela
                     </label>
                     <p class="font-semibold text-gray-800">{{ $room->has_window ? '✓ Ada' : '✗ Tidak Ada' }}</p>
@@ -197,9 +166,6 @@
                 
                 <div>
                     <label class="text-sm text-gray-600 flex items-center mb-2">
-                        <svg class="w-4 h-4 mr-1.5 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                        </svg>
                         Status
                     </label>
                     <p><span class="px-3 py-1.5 text-sm font-bold rounded-lg
@@ -282,7 +248,7 @@
                 <div class="pt-4 border-t border-gray-200">
                     <label class="text-xs text-gray-500 font-semibold uppercase tracking-wide">Lama Sewa</label>
                     <p class="font-bold text-gray-800 mt-1 text-lg">
-                        {{ $activeRent->start_date->diffInMonths(now()) }} Bulan
+                        {{ $activeRent->duration_accurate }}
                     </p>
                 </div>
                 
@@ -323,8 +289,41 @@
                     </div>
                 @endif
 
+                @php
+                    $hasUnpaidBill = $activeRent->billings
+                        ->where('status', '!=', 'paid')
+                        ->count() > 0;
+                @endphp
+
+                @if($hasUnpaidBill)
+                    <div class="pt-4 border-t border-gray-200">
+                        <div class="flex items-center gap-2 px-3 py-2
+                                    bg-red-100 text-red-800
+                                    rounded-lg text-sm font-medium
+                                    border border-red-300">
+                    
+                            <svg class="w-5 h-5 flex-shrink-0 text-red-700"
+                                 fill="none"
+                                 stroke="currentColor"
+                                 stroke-width="2.2"
+                                 viewBox="0 0 24 24">
+                                <path stroke-linecap="round"
+                                      stroke-linejoin="round"
+                                      d="M12 9v2m0 4h.01m-6.938 4h13.856
+                                         c1.54 0 2.502-1.667 1.732-3
+                                         L13.732 4c-.77-1.333-2.694-1.333-3.464 0
+                                         L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                            </svg>
+                        
+                            <span>
+                                Anda harus melunasi seluruh tagihan sebelum checkout
+                            </span>
+                        </div>
+                    </div>
+                @endif
+                
                 {{-- Tombol Checkout --}}
-                @if($activeRent->status === 'active')
+                @if(!$hasUnpaidBill && $activeRent->status === 'active')
                     <div class="pt-6 border-t border-gray-200">
                         <form action="{{ route('user.rents.checkout.request', $activeRent->id) }}" 
                               method="POST"
@@ -345,7 +344,7 @@
                         </form>
                     
                         <p class="text-xs text-gray-500 mt-3 text-center">
-                            Checkout harus disetujui oleh admin
+                            Checkout hanya bisa dilakukan setelah semua tagihan lunas
                         </p>
                     </div>
                 @endif

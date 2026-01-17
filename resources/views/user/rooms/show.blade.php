@@ -21,9 +21,11 @@
                     <svg class="w-4 h-4 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
                         <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
                     </svg>
-                    <a href="{{ route('user.rooms.index') }}" class="ml-1 text-sm text-gray-600 hover:text-yellow-600">
-                        Cari Kamar
-                    </a>
+                    @if(isset($tempatKos))
+                        <a href="{{ route('user.rooms.index', ['tempat_kos_id' => $tempatKos->id]) }}">
+                            Cari Kamar
+                        </a>
+                    @endif
                 </div>
             </li>
             <li aria-current="page">
@@ -39,7 +41,7 @@
 </div>
 
 <!-- Main Content -->
-<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
     
     <!-- Left Column: Detail Kamar -->
     <div class="lg:col-span-2 space-y-6">
@@ -153,7 +155,7 @@
                         </svg>
                     </div>
                     <p class="text-sm text-gray-600">Kapasitas</p>
-                    <p class="font-semibold text-gray-800">{{ $room->capacity }} Orang</p>
+                    <p class="font-semibold text-gray-800 text-sm sm:text-base">{{ $room->capacity }} Orang</p>
                 </div>
                 
                 <div class="text-center">
@@ -163,7 +165,7 @@
                         </svg>
                     </div>
                     <p class="text-sm text-gray-600">Tipe</p>
-                    <p class="font-semibold text-gray-800">{{ ucfirst($room->type) }}</p>
+                    <p class="font-semibold text-gray-800 text-sm sm:text-base">{{ ucfirst($room->type) }}</p>
                 </div>
 
                 <div class="text-center">
@@ -173,7 +175,7 @@
                         </svg>
                     </div>
                     <p class="text-sm text-gray-600">Jenis Sewa</p>
-                    <p class="font-semibold text-gray-800">{{ $room->jenis_sewa_label }}</p>
+                    <p class="font-semibold text-gray-800 text-sm sm:text-base">{{ $room->jenis_sewa_label }}</p>
                 </div>
                 
                 <div class="text-center">
@@ -183,7 +185,7 @@
                         </svg>
                     </div>
                     <p class="text-sm text-gray-600">Jendela</p>
-                    <p class="font-semibold text-gray-800">{{ $room->has_window ? 'Ada' : 'Tidak' }}</p>
+                    <p class="font-semibold text-gray-800 text-sm sm:text-base">{{ $room->has_window ? 'Ada' : 'Tidak' }}</p>
                 </div>
             </div>
             
@@ -308,11 +310,11 @@
         <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
             <h3 class="text-lg font-bold text-gray-800 mb-4">Kamar Lain yang Tersedia</h3>
             
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                 @foreach($relatedRooms as $relatedRoom)
                 <a href="{{ route('user.rooms.show', $relatedRoom->id) }}" 
                    class="block group">
-                    <div class="bg-gray-50 rounded-lg overflow-hidden hover:shadow-lg transition-all">
+                    <div class="bg-gray-50 rounded-lg overflow-hidden hover:shadow-lg transition-all p-2 sm:p-3">
                         @php
                             $images = $room->images;
                         @endphp
@@ -357,7 +359,7 @@
             
             <div class="space-y-3 mb-6">
                 <a href="{{ route('user.booking.create', $room->id) }}" 
-                   class="block w-full text-center bg-yellow-500 text-white py-3 rounded-lg hover:bg-yellow-600 font-semibold transition-colors">
+                   class="w-full px-4 py-3 bg-gradient-to-r from-yellow-500 to-orange-600 text-white font-semibold rounded-lg hover:from-yellow-600 hover:to-orange-700 transition-all shadow-lg flex items-center justify-center">
                     Booking Sekarang
                 </a>
                 
@@ -541,7 +543,7 @@
 
 <!-- Back to List Button (Mobile) -->
 <div class="mt-8 lg:hidden">
-    <a href="{{ route('user.rooms.index') }}" 
+    <a href="{{ route('user.rooms.index', ['tempat_kos_id' => $tempatKos->id]) }}"
        class="block w-full text-center px-6 py-3 border border-gray-300 font-bold text-white rounded-lg bg-yellow-500 hover:bg-yellow-600 flex items-center justify-center space-x-2">
         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>

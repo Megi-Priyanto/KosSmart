@@ -68,6 +68,8 @@
     @include('layouts.partials.user.footer')
 
     @include('layouts.partials.user.bottom-nav')
+    
+    @include('components.modal')
 
     @stack('scripts')
     

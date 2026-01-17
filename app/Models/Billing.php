@@ -3,16 +3,21 @@
 
 namespace App\Models;
 
+use App\Traits\ScopesByTempatKos;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Carbon\Carbon;
 
 class Billing extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory, SoftDeletes, ScopesByTempatKos;
 
     protected $fillable = [
+        'tempat_kos_id',
         'rent_id',
         'user_id',
         'room_id',
@@ -48,71 +53,112 @@ class Billing extends Model
         'discount' => 'decimal:2',
         'total_amount' => 'decimal:2',
         'due_date' => 'date',
-        'paid_date' => 'date',
+        'paid_date' => 'datetime',
         'billing_year' => 'integer',
         'billing_month' => 'integer',
     ];
 
-    // Relasi
-    public function rent()
+    /**
+     * Relasi: Billing belongs to Tempat Kos
+     */
+    public function tempatKos(): BelongsTo
+    {
+        return $this->belongsTo(TempatKos::class);
+    }
+
+    /**
+     * Relasi: Billing belongs to Rent
+     */
+    public function rent(): BelongsTo
     {
         return $this->belongsTo(Rent::class);
     }
 
-    public function user()
+    /**
+     * Relasi: Billing belongs to User
+     */
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
-    public function room()
+    /**
+     * Relasi: Billing belongs to Room
+     */
+    public function room(): BelongsTo
     {
         return $this->belongsTo(Room::class);
     }
 
-    public function payments()
+    /**
+     * Relasi: Billing has many payments
+     */
+    public function payments(): HasMany
     {
         return $this->hasMany(Payment::class);
     }
 
-    public function latestPayment()
+    /**
+     * Relasi: Latest payment
+     */
+    public function latestPayment(): HasOne
     {
         return $this->hasOne(Payment::class)->latestOfMany();
     }
 
-    // Scopes
+    /**
+     * Scope: Unpaid billings
+     */
     public function scopeUnpaid($query)
     {
         return $query->where('status', 'unpaid');
     }
 
+    /**
+     * Scope: Overdue billings
+     */
     public function scopeOverdue($query)
     {
         return $query->where('status', '!=', 'paid')
             ->whereDate('due_date', '<', now());
     }
 
+    /**
+     * Scope: Pending billings
+     */
     public function scopePending($query)
     {
         return $query->where('status', 'pending');
     }
 
+    /**
+     * Scope: Paid billings
+     */
     public function scopePaid($query)
     {
         return $query->where('status', 'paid');
     }
 
+    /**
+     * Scope: For specific month
+     */
     public function scopeForMonth($query, $year, $month)
     {
         return $query->where('billing_year', $year)
             ->where('billing_month', $month);
     }
 
+    /**
+     * Scope: For specific user
+     */
     public function scopeForUser($query, $userId)
     {
         return $query->where('user_id', $userId);
     }
 
-    // Accessors
+    /**
+     * Accessor: Get status badge class
+     */
     public function getStatusBadgeAttribute(): string
     {
         return match ($this->status) {
@@ -123,6 +169,9 @@ class Billing extends Model
         };
     }
 
+    /**
+     * Accessor: Get status label
+     */
     public function getStatusLabelAttribute(): string
     {
         return match ($this->status) {
@@ -134,37 +183,40 @@ class Billing extends Model
         };
     }
 
+    /**
+     * Accessor: Check if overdue
+     */
     public function getIsOverdueAttribute(): bool
     {
-        return $this->status !== 'paid' && $this->due_date->isPast();
+        return $this->status !== 'paid' && $this->due_date && $this->due_date->isPast();
     }
 
+    /**
+     * Accessor: Days until due
+     */
     public function getDaysUntilDueAttribute(): int
     {
-        return now()->diffInDays($this->due_date, false);
+        return $this->due_date ? now()->diffInDays($this->due_date, false) : 0;
     }
 
+    /**
+     * Accessor: Formatted period
+     */
     public function getFormattedPeriodAttribute(): string
     {
         $months = [
-            1 => 'Januari',
-            2 => 'Februari',
-            3 => 'Maret',
-            4 => 'April',
-            5 => 'Mei',
-            6 => 'Juni',
-            7 => 'Juli',
-            8 => 'Agustus',
-            9 => 'September',
-            10 => 'Oktober',
-            11 => 'November',
-            12 => 'Desember'
+            1 => 'Januari', 2 => 'Februari', 3 => 'Maret',
+            4 => 'April', 5 => 'Mei', 6 => 'Juni',
+            7 => 'Juli', 8 => 'Agustus', 9 => 'September',
+            10 => 'Oktober', 11 => 'November', 12 => 'Desember'
         ];
 
         return $months[$this->billing_month] . ' ' . $this->billing_year;
     }
 
-    // Methods
+    /**
+     * Helper: Calculate total
+     */
     public function calculateTotal(): void
     {
         $this->subtotal = $this->rent_amount +
@@ -176,6 +228,9 @@ class Billing extends Model
         $this->total_amount = $this->subtotal - $this->discount;
     }
 
+    /**
+     * Helper: Mark as paid
+     */
     public function markAsPaid(): void
     {
         $this->update([
@@ -184,11 +239,17 @@ class Billing extends Model
         ]);
     }
 
+    /**
+     * Helper: Mark as pending
+     */
     public function markAsPending(): void
     {
         $this->update(['status' => 'pending']);
     }
 
+    /**
+     * Boot method: Auto update overdue status
+     */
     protected static function booted()
     {
         static::retrieved(function ($billing) {
@@ -196,9 +257,12 @@ class Billing extends Model
         });
     }
 
-    public function autoUpdateOverdueStatus()
+    /**
+     * Auto update status to overdue if past due date
+     */
+    public function autoUpdateOverdueStatus(): void
     {
-        if (empty($this->due_date)) {
+        if (!$this->due_date) {
             return;
         }
 

@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Log;
 
 class BookingController extends Controller
 {
@@ -67,7 +68,7 @@ class BookingController extends Controller
             ],
             'qris' => [
                 'label' => 'QRIS',
-                'qr_image' => 'qris/sample-qr.png' // Path to QR image in storage
+                'qr_image' => 'qris/sample-qr.png'
             ]
         ];
 
@@ -79,14 +80,14 @@ class BookingController extends Controller
         $validated = $request->validate([
             'start_date' => 'required|date|after_or_equal:today',
             'payment_method' => 'required|in:manual_transfer,e_wallet,qris',
-            'payment_sub_method' => 'required_unless:payment_method,qris|string',
+            'payment_sub_method' => 'required_if:payment_method,manual_transfer,e_wallet|string',
             'deposit_proof' => 'required|image|mimes:jpeg,png,jpg|max:2048',
             'agreement' => 'required|accepted',
         ], [
             'start_date.required' => 'Tanggal mulai sewa wajib diisi',
             'start_date.after_or_equal' => 'Tanggal mulai sewa tidak boleh di masa lalu',
             'payment_method.required' => 'Metode pembayaran wajib dipilih',
-            'payment_sub_method.required_unless' => 'Sub-metode pembayaran wajib dipilih',
+            'payment_sub_method.required_if' => 'Sub-metode pembayaran wajib dipilih',
             'deposit_proof.required' => 'Bukti transfer DP wajib diunggah',
             'deposit_proof.image' => 'File harus berupa gambar',
             'deposit_proof.max' => 'Ukuran file maksimal 2MB',
@@ -111,12 +112,36 @@ class BookingController extends Controller
 
         DB::beginTransaction();
         try {
+            // Upload bukti pembayaran
             $depositProofPath = $request->file('deposit_proof')
                 ->store('deposits', 'public');
 
             $depositAmount = $room->price * 0.5;
 
+            // Load kosInfo
+            $room->load('kosInfo');
+
+            // Validasi kosInfo
+            if (!$room->kosInfo) {
+                throw new \Exception('Informasi kos tidak ditemukan.');
+            }
+
+            if (!$room->kosInfo->tempat_kos_id) {
+                throw new \Exception('ID tempat kos tidak valid.');
+            }
+
+            // Log untuk debugging
+            Log::info('Creating booking', [
+                'user_id' => Auth::id(),
+                'room_id' => $room->id,
+                'tempat_kos_id' => $room->kosInfo->tempat_kos_id,
+                'payment_method' => $validated['payment_method'],
+                'payment_sub_method' => $validated['payment_sub_method'] ?? 'qris',
+            ]);
+
+            // Create rent
             $rent = Rent::create([
+                'tempat_kos_id' => $room->kosInfo->tempat_kos_id,
                 'user_id' => Auth::id(),
                 'room_id' => $room->id,
                 'start_date' => $validated['start_date'],
@@ -130,11 +155,17 @@ class BookingController extends Controller
                 'notes' => 'Bukti DP: ' . $depositProofPath,
             ]);
 
+            Log::info('Booking created successfully', [
+                'rent_id' => $rent->id,
+                'tempat_kos_id' => $rent->tempat_kos_id,
+            ]);
+
             DB::commit();
 
             return redirect()
                 ->route('user.dashboard')
                 ->with('success', 'Booking berhasil! Menunggu konfirmasi admin.');
+
         } catch (\Exception $e) {
             DB::rollBack();
 
@@ -142,9 +173,17 @@ class BookingController extends Controller
                 Storage::disk('public')->delete($depositProofPath);
             }
 
+            // Log error
+            Log::error('Booking failed', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+                'user_id' => Auth::id(),
+                'room_id' => $room->id,
+            ]);
+
             return back()
                 ->withInput()
-                ->with('error', 'Terjadi kesalahan saat memproses booking.');
+                ->with('error', 'Terjadi kesalahan saat memproses booking: ' . $e->getMessage());
         }
     }
 

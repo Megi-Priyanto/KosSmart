@@ -5,20 +5,40 @@ namespace App\Http\Controllers\User;
 use App\Http\Controllers\Controller;
 use App\Models\Room;
 use App\Models\KosInfo;
+use App\Models\TempatKos;
 use Illuminate\Http\Request;
 
 class RoomSelectionController extends Controller
 {
     /**
      * Tampilkan daftar kamar kosong
+     * MODIFIED: Support filter by tempat_kos_id
      */
-
     public function index(Request $request)
     {
         $query = Room::with(['kosInfo' => function ($q) {
             $q->where('is_active', true);
         }])->available();
 
+        // FILTER BY TEMPAT KOS (Parameter baru dari dashboard)
+        $tempatKos = null;
+        if ($request->filled('tempat_kos_id')) {
+            $tempatKosId = $request->tempat_kos_id;
+
+            // Load tempat kos untuk ditampilkan di header
+            $tempatKos = TempatKos::where('id', $tempatKosId)
+                ->where('status', 'active')
+                ->first();
+
+            // Filter rooms berdasarkan tempat_kos_id
+            if ($tempatKos) {
+                $query->whereHas('kosInfo', function ($q) use ($tempatKosId) {
+                    $q->where('tempat_kos_id', $tempatKosId);
+                });
+            }
+        }
+
+        // Filter existing
         if ($request->filled('type')) {
             $query->ofType($request->type);
         }
@@ -39,18 +59,26 @@ class RoomSelectionController extends Controller
         $types = Room::select('type')->distinct()->pluck('type');
         $floors = Room::select('floor')->distinct()->orderBy('floor')->pluck('floor');
 
-        // Ambil kos info beserta relasi rooms
-        $kosInfo = KosInfo::where('is_active', true)
-            ->with('rooms')
-            ->first();
-
         $totalRooms = 0;
         $availableRooms = 0;
+        $occupiedRooms = 0;
 
-        if ($kosInfo) {
-            $totalRooms = $kosInfo->rooms->count();
-            $availableRooms = $kosInfo->rooms
-                ->filter(fn($room) => $room->isAvailable())
+        if ($tempatKos) {
+            $baseRoomQuery = Room::whereHas('kosInfo', function ($q) use ($tempatKos) {
+                $q->where('tempat_kos_id', $tempatKos->id);
+            });
+
+            // TOTAL SEMUA KAMAR
+            $totalRooms = (clone $baseRoomQuery)->count();
+
+            // KAMAR TERSEDIA
+            $availableRooms = (clone $baseRoomQuery)
+                ->where('status', 'available')
+                ->count();
+
+            // KAMAR TERISI
+            $occupiedRooms = (clone $baseRoomQuery)
+                ->where('status', 'occupied')
                 ->count();
         }
 
@@ -58,9 +86,10 @@ class RoomSelectionController extends Controller
             'rooms',
             'types',
             'floors',
-            'kosInfo',
             'totalRooms',
-            'availableRooms'
+            'availableRooms',
+            'occupiedRooms',
+            'tempatKos'
         ));
     }
 
@@ -78,7 +107,7 @@ class RoomSelectionController extends Controller
         // Load kosInfo yang AKTIF saja
         $room->load([
             'kosInfo' => function ($q) {
-                $q->where('is_active', true);
+                $q->where('is_active', true)->with('tempatKos');
             }
         ]);
 
@@ -89,8 +118,9 @@ class RoomSelectionController extends Controller
         }
 
         $kosInfo = $room->kosInfo;
+        $tempatKos = $kosInfo->tempatKos;
 
-        // definisikan relatedRooms
+        // Definisikan relatedRooms (kamar lain dari tempat kos yang sama)
         $relatedRooms = Room::where('kos_info_id', $room->kos_info_id)
             ->where('id', '!=', $room->id)
             ->available()
@@ -101,6 +131,7 @@ class RoomSelectionController extends Controller
         return view('user.rooms.show', compact(
             'room',
             'kosInfo',
+            'tempatKos',
             'relatedRooms'
         ));
     }

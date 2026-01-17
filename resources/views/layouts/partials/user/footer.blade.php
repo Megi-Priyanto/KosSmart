@@ -55,7 +55,19 @@
                         <a href="{{ route('user.rooms.index') }}" class="text-sm text-gray-600 hover:text-yellow-600 transition">Kamar Tersedia</a>
                     </li>
                     <li>
-                        <a href="{{ route('user.payments') }}" class="text-sm text-gray-600 hover:text-yellow-600 transition">Pembayaran</a>
+                        @if(auth()->user()->hasActiveRoom())
+                            <a href="{{ route('user.billing.index') }}" 
+                               class="text-sm transition 
+                               {{ request()->routeIs('user.billing') 
+                                    ? 'text-yellow-600 font-medium' 
+                                    : 'text-gray-600 hover:text-yellow-600' }}">
+                                Pembayaran
+                            </a>
+                        @else
+                            <span class="text-sm text-gray-400 cursor-not-allowed">
+                                Pembayaran
+                            </span>
+                        @endif
                     </li>
                     <li>
                         <a href="{{ route('user.profile') }}" class="text-sm text-gray-600 hover:text-yellow-600 transition">Profil</a>

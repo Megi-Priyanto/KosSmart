@@ -9,20 +9,12 @@ use Illuminate\Auth\MustVerifyEmail as MustVerifyEmailTrait;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use App\Models\Rent;
-use App\Models\Billing;
-use App\Models\Payment;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Payment[] $payments
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Billing[] $billings
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Rent[] $rents
- *
- * @method bool hasActiveRoom()
- * @method \App\Models\Rent|null activeRent()
- * @method \App\Models\Billing|null currentBilling()
+ * @method bool isSuperAdmin()
  */
-
 class User extends Authenticatable implements MustVerifyEmail
 {
     use MustVerifyEmailTrait;
@@ -35,6 +27,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'phone',
         'password',
         'role',
+        'tempat_kos_id',
     ];
 
     protected $hidden = [
@@ -51,7 +44,15 @@ class User extends Authenticatable implements MustVerifyEmail
     }
 
     /**
-     * Relasi: User memiliki banyak rents (riwayat sewa)
+     * Relasi: User belongs to Tempat Kos
+     */
+    public function tempatKos(): BelongsTo
+    {
+        return $this->belongsTo(TempatKos::class);
+    }
+
+    /**
+     * Relasi: User memiliki banyak rents
      */
     public function rents(): HasMany
     {
@@ -59,7 +60,7 @@ class User extends Authenticatable implements MustVerifyEmail
     }
 
     /**
-     * Relasi: User memiliki banyak pembayaran
+     * Relasi: User memiliki banyak payments
      */
     public function payments(): HasMany
     {
@@ -67,7 +68,7 @@ class User extends Authenticatable implements MustVerifyEmail
     }
 
     /**
-     * Relasi: User memiliki banyak tagihan
+     * Relasi: User memiliki banyak billings
      */
     public function billings(): HasMany
     {
@@ -75,8 +76,30 @@ class User extends Authenticatable implements MustVerifyEmail
     }
 
     /**
-     * Helper: Cek apakah user sedang menyewa kamar
-     * PERBAIKAN: Hanya status 'active' dan 'checkout_requested' yang dianggap masih punya kamar
+     * Helper: Cek role
+     */
+    public function isSuperAdmin(): bool
+    {
+        return $this->role === 'super_admin';
+    }
+
+    public function isAdmin(): bool
+    {
+        return $this->role === 'admin';
+    }
+
+    public function isUser(): bool
+    {
+        return $this->role === 'user';
+    }
+
+    public function hasRole(string $role): bool
+    {
+        return $this->role === $role;
+    }
+
+    /**
+     * Helper: Cek apakah user punya kamar aktif
      */
     public function hasActiveRoom(): bool
     {
@@ -87,8 +110,7 @@ class User extends Authenticatable implements MustVerifyEmail
     }
 
     /**
-     * Helper: Ambil rent aktif user saat ini
-     * PERBAIKAN: Include checkout_requested agar masih bisa diakses
+     * Helper: Ambil rent aktif
      */
     public function activeRent(): ?Rent
     {
@@ -111,10 +133,42 @@ class User extends Authenticatable implements MustVerifyEmail
             ->first();
     }
 
+    /**
+     * Scope: Filter by Tempat Kos
+     */
+    public function scopeByTempatKos($query, $tempatKosId)
+    {
+        return $query->where('tempat_kos_id', $tempatKosId);
+    }
+
+    /**
+     * Scope: Super Admin only
+     */
+    public function scopeSuperAdmin($query)
+    {
+        return $query->where('role', 'super_admin');
+    }
+
+    /**
+     * Scope: Admin only
+     */
+    public function scopeAdmin($query)
+    {
+        return $query->where('role', 'admin');
+    }
+
+    /**
+     * Scope: Regular users only
+     */
+    public function scopeRegularUser($query)
+    {
+        return $query->where('role', 'user');
+    }
+
     // Method lama tetap ada
     public function hasVerifiedEmail()
     {
-        return ! is_null($this->email_verified_at);
+        return !is_null($this->email_verified_at);
     }
 
     public function markEmailAsVerified()
@@ -127,10 +181,5 @@ class User extends Authenticatable implements MustVerifyEmail
     public function getEmailForVerification()
     {
         return $this->email;
-    }
-
-    public function hasRole(string $role): bool
-    {
-        return $this->role === $role;
     }
 }

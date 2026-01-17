@@ -3,7 +3,12 @@
 @section('title', 'Bayar Tagihan')
 
 @section('content')
-<div class="max-w-4xl mx-auto space-y-6" x-data="paymentForm()">
+<div class="max-w-4xl mx-auto space-y-6"
+     x-data="paymentForm()"
+     x-init="
+        if(!selectedMethod) selectedMethod = null;
+        if(!selectedSubMethod) selectedSubMethod = null;
+     ">
 
     <!-- Back Button -->
     <a href="{{ route('user.billing.index') }}" 
@@ -88,7 +93,7 @@
     <form method="POST" 
           action="{{ route('user.billing.submit-payment', $billing) }}" 
           enctype="multipart/form-data"
-          @submit="validateForm">
+          @submit="validateForm($event)">
         @csrf
 
         <input type="hidden" name="payment_type" x-model="selectedMethod">
@@ -155,7 +160,7 @@
                     <!-- Button Pilih Metode -->
                     <button type="button" 
                             @click="showPaymentModal = true"
-                            class="w-full px-6 py-4 bg-gradient-to-r from-amber-500 to-orange-500 text-white font-semibold rounded-lg hover:from-amber-600 hover:to-orange-600 transition-all shadow-lg flex items-center justify-center">
+                            class="w-full px-4 py-3 bg-gradient-to-r from-yellow-500 to-orange-600 text-white font-semibold rounded-lg hover:from-yellow-600 hover:to-orange-700 transition-all shadow-lg flex items-center justify-center">
                         <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
                         </svg>
@@ -201,62 +206,39 @@
                         </div>
                         
                         <!-- QRIS -->
-                        <div x-show="selectedMethod === 'qris'" class="p-4 bg-gradient-to-r from-purple-50 to-pink-50 border border-purple-200 rounded-xl text-center">
+                        <div x-show="selectedMethod === 'qris'" class="bg-yellow-50 rounded-xl border border-yellow-200 p-6 rounded-xl text-center">
                             <p class="font-semibold text-gray-800 mb-4">Scan QR Code untuk Pembayaran</p>
-                            <img src="{{ asset('storage/qris/sample-qr.png') }}" 
+                            <img src="{{ asset('storage/qris/dana.jpeg') }}" 
                                  alt="QRIS" 
                                  class="w-64 h-64 mx-auto border-4 border-white shadow-lg rounded-lg mb-4">
-                            <p class="text-lg font-bold text-purple-600 mb-2">Rp {{ number_format($billing->total_amount, 0, ',', '.') }}</p>
+                            <p class="text-lg font-bold text-yellow-600 mb-2">Rp {{ number_format($billing->total_amount, 0, ',', '.') }}</p>
                             <p class="text-sm text-gray-600">Scan dengan aplikasi pembayaran favorit Anda</p>
                         </div>
                     </div>
                 </div>
 
-                <!-- Upload Proof -->
+                <!-- Upload Bukti Transfer -->
                 <div x-show="selectedMethod" x-transition>
                     <label class="block text-sm font-medium text-gray-700 mb-2">
-                        Bukti Pembayaran <span class="text-xs text-gray-500">(JPG, PNG max 5MB)</span>
+                        Upload Bukti Pembayaran
                     </label>
-                    <div class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-yellow-500 transition-colors"
-                         @dragover.prevent="isDragging = true"
-                         @dragleave.prevent="isDragging = false"
-                         @drop.prevent="handleDrop($event)"
-                         :class="isDragging ? 'border-yellow-500 bg-yellow-50' : ''">
-                        
-                        <input type="file" 
-                               name="payment_proof" 
-                               id="payment_proof"
-                               @change="handleFileSelect($event)"
-                               accept="image/jpeg,image/png,image/jpg" 
-                               required 
-                               class="hidden">
-                        
-                        <div x-show="!preview">
-                            <svg class="mx-auto h-12 w-12 text-gray-400 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
-                            </svg>
-                            <label for="payment_proof" class="cursor-pointer">
-                                <span class="text-yellow-600 hover:text-yellow-700 font-medium">Klik untuk upload</span>
-                                <span class="text-gray-600"> atau drag & drop</span>
-                            </label>
-                            <p class="text-xs text-gray-500 mt-2">Format: JPG, PNG (Max 5MB)</p>
-                        </div>
+                    
+                    <input type="file" 
+                           name="payment_proof"
+                           accept="image/*"
+                           @change="previewImage"
+                           class="w-full border border-gray-300 rounded-lg px-4 py-2"
+                           required>
 
-                        <div x-show="preview" class="relative">
-                            <img :src="preview" alt="Preview" class="mx-auto max-h-64 rounded-lg">
-                            <button type="button" 
-                                    @click="removeFile()"
-                                    class="absolute top-2 right-2 p-2 bg-red-600 text-white rounded-full hover:bg-red-700">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                                </svg>
-                            </button>
-                            <p class="text-sm text-gray-600 mt-2" x-text="fileName"></p>
-                        </div>
-                    </div>
                     @error('payment_proof')
-                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                    <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                     @enderror
+                    <p class="text-sm text-gray-500 mt-1">Format: JPG, PNG (Max. 2MB)</p>
+                    
+                    <div x-show="imagePreview" class="mt-4">
+                        <p class="text-sm font-medium text-gray-700 mb-2">Preview:</p>
+                        <img :src="imagePreview" class="max-w-md rounded-lg border-2 border-gray-200">
+                    </div>
                 </div>
 
                 <!-- Notes -->
@@ -281,8 +263,8 @@
                     </a>
                     <button type="submit" 
                             :disabled="!selectedMethod"
-                            :class="selectedMethod ? 'bg-yellow-400 hover:bg-yellow-500' : 'bg-gray-300 cursor-not-allowed'"
-                            class="flex-1 px-6 py-3 text-white rounded-lg transition-colors font-semibold">
+                            :class="selectedMethod ? 'bg-gradient-to-r from-yellow-500 to-orange-600 hover:from-yellow-600 hover:to-orange-700' : 'bg-gray-300 cursor-not-allowed'"
+                            class="flex-1 px-6 py-3 text-white rounded-lg transition-all shadow-lg flex items-center justify-center">
                         Kirim Pembayaran
                     </button>
                 </div>
@@ -322,18 +304,18 @@
                     @if($method === 'qris')
                     <button type="button"
                             @click="selectPayment('qris', 'qris')"
-                            class="w-full p-4 border-2 rounded-lg hover:border-purple-500 hover:bg-purple-50 transition-all text-left"
-                            :class="selectedMethod === 'qris' ? 'border-purple-500 bg-purple-50' : 'border-gray-200'">
+                            class="w-full p-4 border-2 rounded-lg hover:border-yellow-500 hover:bg-yellow-50 transition-all text-left"
+                            :class="selectedMethod === 'qris' ? 'border-yellow-500 bg-yellow-50' : 'border-gray-200'">
                         <div class="flex items-center justify-between">
                             <div class="flex items-center">
-                                <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mr-3">
-                                    <svg class="w-6 h-6 text-purple-600" fill="currentColor" viewBox="0 0 24 24">
+                                <div class="w-12 h-12 bg-yellow-100 rounded-lg flex items-center justify-center mr-3">
+                                    <svg class="w-6 h-6 text-yellow-600" fill="currentColor" viewBox="0 0 24 24">
                                         <path d="M3 3h8v8H3V3zm10 0h8v8h-8V3zM3 13h8v8H3v-8zm10 0h8v8h-8v-8z"/>
                                     </svg>
                                 </div>
                                 <span class="font-semibold">QRIS (All Payment)</span>
                             </div>
-                            <svg x-show="selectedMethod === 'qris'" class="w-6 h-6 text-purple-600" fill="currentColor" viewBox="0 0 24 24">
+                            <svg x-show="selectedMethod === 'qris'" class="w-6 h-6 text-yellow-600" fill="currentColor" viewBox="0 0 24 24">
                                 <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                             </svg>
                         </div>
@@ -396,110 +378,84 @@
 
 </div>
 
-@push('scripts')
 <script>
 function paymentForm() {
     return {
         showPaymentModal: false,
-        selectedMethod: '{{ old("payment_type") }}',
-        selectedSubMethod: '{{ old("payment_sub_method") }}',
+        selectedMethod: '{{ old("payment_type") }}' || null,
+        selectedSubMethod: '{{ old("payment_sub_method") }}' || null,
         amount: {{ old('amount', $billing->total_amount) }},
-        preview: null,
-        fileName: '',
-        isDragging: false,
-        
+
+        imagePreview: null,
+
         paymentData: @json($paymentMethods),
-        
+
+        /* ===============================
+           WAJIB ADA (INI YANG ERROR)
+        =============================== */
+
+        getSubMethodLabel() {
+            if (!this.selectedMethod || !this.selectedSubMethod) return '-';
+                
+            const method = this.paymentData[this.selectedMethod];
+            if (!method || !method.options) return '-';
+                
+            return method.options[this.selectedSubMethod]?.name ?? '-';
+        },
+
+        getAccountNumber() {
+            if (!this.selectedMethod || !this.selectedSubMethod) return '-';
+
+            const method = this.paymentData[this.selectedMethod];
+            if (!method || !method.options) return '-';
+
+            return method.options[this.selectedSubMethod]?.account ?? '-';
+        },
+
+        getAccountHolder() {
+            if (!this.selectedMethod || !this.selectedSubMethod) return '-';
+
+            const method = this.paymentData[this.selectedMethod];
+            if (!method || !method.options) return '-';
+
+            return method.options[this.selectedSubMethod]?.holder ?? '-';
+        },
+
+        /* =============================== */
+
+        previewImage(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            if (!['image/jpeg', 'image/png', 'image/jpg'].includes(file.type)) {
+                alert('Hanya JPG / PNG');
+                return;
+            }
+
+            if (file.size > 2 * 1024 * 1024) {
+                alert('Maksimal 2MB');
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = e => this.imagePreview = e.target.result;
+            reader.readAsDataURL(file);
+        },
+
         selectPayment(method, subMethod) {
             this.selectedMethod = method;
             this.selectedSubMethod = subMethod;
             this.showPaymentModal = false;
         },
-        
-        getSubMethodLabel() {
-            if (!this.selectedSubMethod) return '';
-            return this.selectedSubMethod.toUpperCase();
-        },
-        
-        getAccountNumber() {
-            if (!this.selectedMethod || !this.selectedSubMethod) return '';
-            const methodData = this.paymentData[this.selectedMethod];
-            if (methodData.options && methodData.options[this.selectedSubMethod]) {
-                return methodData.options[this.selectedSubMethod].account;
-            }
-            return '';
-        },
-        
-        getAccountHolder() {
-            if (!this.selectedMethod || !this.selectedSubMethod) return '';
-            const methodData = this.paymentData[this.selectedMethod];
-            if (methodData.options && methodData.options[this.selectedSubMethod]) {
-                return methodData.options[this.selectedSubMethod].holder;
-            }
-            return '';
-        },
-        
-        copyToClipboard(text) {
-            navigator.clipboard.writeText(text).then(() => {
-                alert('✓ Berhasil disalin!');
-            });
-        },
-        
-        handleFileSelect(event) {
-            const file = event.target.files[0];
-            this.processFile(file);
-        },
 
-        handleDrop(event) {
-            this.isDragging = false;
-            const file = event.dataTransfer.files[0];
-            
-            const input = document.getElementById('payment_proof');
-            const dataTransfer = new DataTransfer();
-            dataTransfer.items.add(file);
-            input.files = dataTransfer.files;
-            
-            this.processFile(file);
-        },
-
-        processFile(file) {
-            if (!file) return;
-
-            if (!['image/jpeg', 'image/png', 'image/jpg'].includes(file.type)) {
-                alert('Hanya file JPG atau PNG yang diperbolehkan');
-                return;
-            }
-
-            if (file.size > 5 * 1024 * 1024) {
-                alert('Ukuran file maksimal 5MB');
-                return;
-            }
-
-            this.fileName = file.name;
-            
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                this.preview = e.target.result;
-            };
-            reader.readAsDataURL(file);
-        },
-
-        removeFile() {
-            this.preview = null;
-            this.fileName = '';
-            document.getElementById('payment_proof').value = '';
-        },
-        
         validateForm(e) {
             if (!this.selectedMethod) {
                 e.preventDefault();
-                alert('Silakan pilih metode pembayaran terlebih dahulu');
-                return false;
+                alert('Pilih metode pembayaran dulu');
             }
         }
     }
 }
 </script>
-@endpush
 
 @endsection

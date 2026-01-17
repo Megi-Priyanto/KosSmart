@@ -18,10 +18,23 @@
                    class="text-sm font-medium {{ request()->routeIs('user.dashboard') ? 'text-yellow-500' : 'text-gray-600 hover:text-yellow-500' }}">
                     Home
                 </a>
-                <a href="{{ route('user.payments') }}" 
-                   class="text-sm font-medium {{ request()->routeIs('user.payments') ? 'text-yellow-500' : 'text-gray-600 hover:text-yellow-500' }}">
-                    Pembayaran
+
+                @if(auth()->user()->hasActiveRoom())
+                    <a href="{{ route('user.billing.index') }}"
+                       class="text-sm font-medium {{ request()->routeIs('user.billing') ? 'text-yellow-500' : 'text-gray-600 hover:text-yellow-500' }}">
+                        Pembayaran
+                    </a>
+                @else
+                    <span class="text-sm font-medium text-gray-400 cursor-not-allowed">
+                        Pembayaran
+                    </span>
+                @endif
+
+                <a href="{{ route('user.status.index') }}" 
+                   class="text-sm font-medium {{ request()->routeIs('user.status.*') ? 'text-yellow-500' : 'text-gray-600 hover:text-yellow-500' }}">
+                    Status
                 </a>
+
                 <a href="{{ route('user.profile') }}" 
                    class="text-sm font-medium {{ request()->routeIs('user.profile') ? 'text-yellow-500' : 'text-gray-600 hover:text-yellow-500' }}">
                     Profil

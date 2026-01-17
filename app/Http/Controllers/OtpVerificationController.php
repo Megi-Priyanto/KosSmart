@@ -17,7 +17,7 @@ class OtpVerificationController extends Controller
      */
     public function showOtpForm()
     {
-        // Jika user sudah login dan verified, redirect ke dashboard
+        // PENTING: Jika user sudah login dan verified, redirect ke dashboard
         if (Auth::check() && !is_null(Auth::user()->email_verified_at)) {
             return redirect()->route('user.dashboard');
         }
@@ -33,6 +33,7 @@ class OtpVerificationController extends Controller
 
     /**
      * Verifikasi OTP yang diinput user
+     * FLOW BARU: OTP Success → REDIRECT ke LOGIN (JANGAN auto login!)
      */
     public function verifyOtp(Request $request)
     {
@@ -106,23 +107,17 @@ class OtpVerificationController extends Controller
         // Clear rate limiter
         RateLimiter::clear($throttleKey);
 
-        // Hapus session verifikasi
-        session()->forget('verification_email');
+        // PENTING: Hapus session verifikasi
+        session()->forget(['verification_email', 'verification_name']);
 
-        // Auto login user
-        Auth::login($user);
-        $request->session()->regenerate();
-
-        // Redirect sesuai role
-        if ($user->role === 'admin') {
-            return redirect()->route('admin.dashboard')->with([
-                'success' => 'Email berhasil diverifikasi! Selamat datang Admin.',
-            ]);
-        }
-
-        return redirect()->route('user.dashboard')->with([
-            'success' => 'Email berhasil diverifikasi! Selamat datang di KosSmart.',
-            'first_login' => true,
+        // CRITICAL CHANGE: JANGAN auto login!
+        // OLD: Auth::login($user); 
+        // NEW: Redirect ke login dengan pesan sukses
+        
+        return redirect()->route('login')->with([
+            'success' => 'Email berhasil diverifikasi! Silakan login untuk melanjutkan.',
+            'verified' => true,
+            'email' => $email,
         ]);
     }
 

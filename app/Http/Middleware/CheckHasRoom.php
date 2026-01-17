@@ -17,7 +17,7 @@ class CheckHasRoom
             ->whereIn('status', ['active', 'checkout_requested'])
             ->exists();
 
-        if (!$hasRoom) {
+        if (!$user->hasActiveRoom()) {
             return redirect()
                 ->route('user.rooms.index')
                 ->with('info', 'Anda belum memiliki kamar.');

@@ -3,46 +3,45 @@
 @section('title', 'Profil Saya')
 
 @section('content')
-
-<div class="max-w-5xl mx-auto">
+<div class="space-y-6">
     
     <!-- Header -->
-    <div class="mb-8">
-        <h1 class="text-3xl font-bold text-gray-800 mb-2 flex items-center gap-2">
-            <i class="fa-solid fa-user text-purple-600"></i>
+    <div class="mb-6">
+        <h1 class="text-xl sm:text-2xl font-bold text-gray-800 mb-1 flex items-center gap-2">
+            <i class="fa-solid fa-user text-yellow-400"></i>
             Profil Saya
         </h1>
-        <p class="text-gray-600">Kelola informasi profil dan keamanan akun Anda</p>
+        <p class="text-sm text-gray-600">Kelola informasi profil dan keamanan akun Anda</p>
     </div>
     
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
         
         <!-- Left Column: Profile Card -->
         <div class="space-y-6">
             
             <!-- Profile Summary Card -->
-            <div class="bg-gradient-to-br from-purple-600 to-indigo-700 rounded-xl shadow-lg p-6 text-white">
+            <div class="bg-gradient-to-br from-yellow-400 to-orange-500 rounded-lg shadow-md p-4 text-white">
                 <div class="text-center">
                     <!-- Avatar -->
-                    <div class="w-24 h-24 bg-white rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
-                        <span class="text-4xl font-bold text-purple-600">
+                    <div class="w-16 h-16 bg-white rounded-full flex items-center justify-center mx-auto mb-3 shadow-lg">
+                        <span class="text-xl font-bold text-yellow-600">
                             {{ strtoupper(substr(Auth::user()->name, 0, 2)) }}
                         </span>
                     </div>
                     
-                    <h2 class="text-2xl font-bold mb-1">{{ Auth::user()->name }}</h2>
-                    <p class="text-purple-200 text-sm mb-4">{{ Auth::user()->email }}</p>
+                    <h2 class="text-base sm:text-lg font-semibold mb-0.5">{{ Auth::user()->name }}</h2>
+                    <p class="text-yellow-200 text-xs mb-3">{{ Auth::user()->email }}</p>
                     
                     <!-- Status Badge -->
                     @if(Auth::user()->hasActiveRoom())
-                        <span class="inline-flex items-center px-3 py-1 bg-green-500 text-white text-sm font-semibold rounded-full">
+                        <span class="inline-flex items-center px-2.5 py-0.5 bg-green-500 text-white text-xs font-semibold rounded-full">
                             <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                             </svg>
                             Penyewa Aktif
                         </span>
                     @else
-                        <span class="inline-flex items-center px-3 py-1 bg-yellow-500 text-white text-sm font-semibold rounded-full">
+                        <span class="inline-flex items-center px-2.5 py-0.5 bg-yellow-500 text-white text-xs font-semibold rounded-full">
                             <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                             </svg>
@@ -51,8 +50,8 @@
                     @endif
                 </div>
                 
-                <div class="mt-6 pt-6 border-t border-purple-400 space-y-2">
-                    <div class="flex items-center text-sm">
+                <div class="mt-4 pt-4 border-t border-yellow-400 space-y-2">
+                    <div class="flex items-center text-xs">
                         <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
                         </svg>
@@ -60,7 +59,7 @@
                     </div>
                     
                     @if(Auth::user()->email_verified_at)
-                    <div class="flex items-center text-sm">
+                    <div class="flex items-center text-xs">
                         <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                         </svg>
@@ -77,22 +76,21 @@
                 $totalPayments = Auth::user()->payments()->where('status', 'confirmed')->count();
             @endphp
             <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-                <h3 class="text-lg font-bold text-gray-800 mb-4">Statistik Saya</h3>
+                <h3 class="text-sm font-semiboldtext-gray-800 mb-3">Statistik Saya</h3>
                 
                 <div class="space-y-3">
                     <div class="flex justify-between items-center">
-                        <span class="text-sm text-gray-600">Kamar</span>
-                        <span class="font-semibold text-gray-800">{{ $activeRent->room->room_number }}</span>
+                        <span class="text-xs text-gray-600">Kamar</span>
+                        <span class="text-sm font-medium text-gray-800">{{ $activeRent->room->room_number }}</span>
                     </div>
                     <div class="flex justify-between items-center">
-                        <span class="text-sm text-gray-600">Lama Menyewa</span>
-                        <span class="font-semibold text-gray-800">
-                            {{ $activeRent->duration_human }}
+                        <span class="text-xs text-gray-600">Lama Menyewa</span>
+                        <span class="text-sm font-medium text-gray-800">{{ $activeRent->duration_human }}
                         </span>
                     </div>
                     <div class="flex justify-between items-center">
-                        <span class="text-sm text-gray-600">Total Pembayaran</span>
-                        <span class="font-semibold text-gray-800">{{ $totalPayments }}x</span>
+                        <span class="text-xs text-gray-600">Total Pembayaran</span>
+                        <span class="text-sm font-medium text-gray-800">{{ $totalPayments }}x</span>
                     </div>
                 </div>
             </div>
@@ -106,10 +104,10 @@
             <!-- Informasi Pribadi -->
             <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
                 <div class="flex items-center justify-between mb-6">
-                    <h3 class="text-lg font-bold text-gray-800">Informasi Pribadi</h3>
+                    <h3 class="text-sm sm:text-base font-semibold text-gray-800">Informasi Pribadi</h3>
                     <button onclick="toggleEdit('personal')" 
                             id="btn-edit-personal"
-                            class="text-sm text-purple-600 hover:text-purple-700 font-medium">
+                            class="text-sm text-yellow-400 hover:text-yellow-500 font-medium">
                         Edit
                     </button>
                 </div>
@@ -122,7 +120,7 @@
                         <!-- Nama -->
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-2">
-                                Nama Lengkap <span class="text-red-500">*</span>
+                                Nama Lengkap <span class="text-red-500"></span>
                             </label>
                             <input type="text" 
                                    name="name" 
@@ -137,7 +135,7 @@
                         <!-- Email -->
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-2">
-                                Email <span class="text-red-500">*</span>
+                                Email <span class="text-red-500"></span>
                             </label>
                             <input type="email" 
                                    name="email" 
@@ -176,7 +174,7 @@
                         <!-- Action Buttons (Hidden by default) -->
                         <div id="actions-personal" class="hidden pt-4 border-t border-gray-200 flex gap-3">
                             <button type="submit" 
-                                    class="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 font-medium">
+                                    class="px-3 py-1.5 bg-yellow-400 text-white rounded-md text-sm hover:bg-yellow-400 font-medium">
                                 Simpan Perubahan
                             </button>
                             <button type="button" 
@@ -190,22 +188,22 @@
             </div>
             
             <!-- Ubah Password -->
-            <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
                 <div class="flex items-center justify-between mb-6">
-                    <h3 class="text-lg font-bold text-gray-800">Keamanan Akun</h3>
+                    <h3 class="text-sm sm:text-base font-semibold text-gray-800">Keamanan Akun</h3>
                     <button onclick="toggleEdit('password')" 
                             id="btn-edit-password"
-                            class="text-sm text-purple-600 hover:text-purple-700 font-medium">
+                            class="text-sm text-yellow-400 hover:text-yellow-500 font-medium">
                         Ubah Password
                     </button>
                 </div>
                 
                 <div id="form-password-display">
-                    <div class="flex items-center p-4 bg-gray-50 rounded-lg">
+                    <div class="flex items-center p-3 bg-gray-50 rounded-md text-sm">
                         <svg class="w-5 h-5 text-gray-400 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
                         </svg>
-                        <span class="text-gray-600">••••••••••••</span>
+                       <span class="text-xs text-gray-600">••••••••••••</span>
                     </div>
                 </div>
                 
@@ -257,7 +255,7 @@
                         <!-- Action Buttons -->
                         <div class="pt-4 border-t border-gray-200 flex gap-3">
                             <button type="submit" 
-                                    class="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 font-medium">
+                                    class="px-4 py-2 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700 font-medium">
                                 Simpan Password
                             </button>
                             <button type="button" 
@@ -275,9 +273,9 @@
             @php
                 $activeRent = Auth::user()->activeRent();
             @endphp
-            <div class="bg-gradient-to-br from-purple-50 to-indigo-50 rounded-xl border border-purple-200 p-6">
+            <div class="bg-yellow-50 rounded-lg border border-yellow-200 p-4">
                 <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center">
-                    <svg class="w-6 h-6 mr-2 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg class="w-6 h-6 mr-2 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
                     </svg>
                     Informasi Sewa Saya
@@ -285,32 +283,32 @@
                 
                 <div class="space-y-3">
                     <div class="flex justify-between">
-                        <span class="text-gray-600">Kamar</span>
-                        <span class="font-semibold text-gray-800">{{ $activeRent->room->room_number }}</span>
+                        <span class="text-xs text-gray-600">Kamar</span>
+                        <span class="text-sm font-medium text-gray-800">{{ $activeRent->room->room_number }}</span>
                     </div>
                     <div class="flex justify-between">
-                        <span class="text-gray-600">Lantai</span>
-                        <span class="font-semibold text-gray-800">{{ $activeRent->room->floor }}</span>
+                        <span class="text-xs text-gray-600">Lantai</span>
+                        <span class="text-sm font-medium text-gray-800">{{ $activeRent->room->floor }}</span>
                     </div>
                     <div class="flex justify-between">
-                        <span class="text-gray-600">Harga Sewa/Bulan</span>
-                        <span class="font-semibold text-gray-800">Rp {{ number_format($activeRent->monthly_rent, 0, ',', '.') }}</span>
+                        <span class="text-xs text-gray-600">Harga Sewa/Bulan</span>
+                        <span class="text-sm font-medium text-gray-800">Rp {{ number_format($activeRent->monthly_rent, 0, ',', '.') }}</span>
                     </div>
                     <div class="flex justify-between">
-                        <span class="text-gray-600">Mulai Sewa</span>
-                        <span class="font-semibold text-gray-800">{{ $activeRent->start_date->format('d M Y') }}</span>
+                        <span class="text-xs text-gray-600">Mulai Sewa</span>
+                        <span class="text-sm font-medium text-gray-800">{{ $activeRent->start_date->format('d M Y') }}</span>
                     </div>
-                    <div class="flex justify-between pt-3 border-t border-purple-200">
-                        <span class="text-gray-600">Status</span>
-                        <span class="px-3 py-1 bg-green-100 text-green-700 text-sm font-semibold rounded-full">
+                    <div class="flex justify-between pt-3 border-t border-yellow-200">
+                        <span class="text-xs text-gray-600">Status</span>
+                        <span class="px-2.5 py-0.5 bg-green-100 text-green-700 text-xs font-semibold rounded-full">
                             Aktif
                         </span>
                     </div>
                 </div>
                 
-                <div class="mt-4 pt-4 border-t border-purple-200">
+                <div class="mt-4 pt-4 border-t border-yellow-200">
                     <a href="{{ route('user.dashboard') }}" 
-                       class="text-sm text-purple-600 hover:text-purple-700 font-medium">
+                       class="text-sm text-yellow-400 hover:text-yellow-500 font-medium">
                         Lihat Detail Kamar →
                     </a>
                 </div>
@@ -318,14 +316,14 @@
             @endif
             
             <!-- Danger Zone -->
-            <div class="bg-red-50 border border-red-200 rounded-xl p-6">
-                <h3 class="text-lg font-bold text-red-800 mb-2">Zona Berbahaya</h3>
+            <div class="bg-red-50 border border-red-200 rounded-lg p-4">
+                <h3 class="text-sm font-semibold text-red-800 mb-2">Zona Berbahaya</h3>
                 <p class="text-sm text-red-700 mb-4">
                     Tindakan di bawah ini bersifat permanen dan tidak dapat dibatalkan.
                 </p>
                 
                 <button onclick="confirmDelete()" 
-                        class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 font-medium text-sm">
+                        class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 font-semibold text-sm">
                     Hapus Akun
                 </button>
             </div>
@@ -339,7 +337,7 @@
 <!-- Delete Confirmation Modal -->
 <div id="deleteModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
     <div class="bg-white rounded-xl max-w-md w-full p-6">
-        <h3 class="text-xl font-bold text-red-600 mb-4">Konfirmasi Hapus Akun</h3>
+        <h3 class="text-sm font-semibold text-red-600 mb-3">Konfirmasi Hapus Akun</h3>
         <p class="text-gray-700 mb-6">
             Apakah Anda yakin ingin menghapus akun? Semua data Anda akan dihapus secara permanen dan tidak dapat dipulihkan.
         </p>

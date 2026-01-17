@@ -22,6 +22,14 @@ class RegisterController extends Controller
         // Jika sudah login, redirect ke dashboard
         if (Auth::check()) {
             $user = Auth::user();
+            
+            // PENTING: Jika sudah login tapi belum verify, logout dulu
+            if (is_null($user->email_verified_at)) {
+                Auth::logout();
+                return redirect()->route('verification.otp.form')
+                    ->with('info', 'Silakan verifikasi email Anda terlebih dahulu.');
+            }
+            
             if ($user->role === 'admin') {
                 return redirect()->route('admin.dashboard');
             }
@@ -32,7 +40,8 @@ class RegisterController extends Controller
     }
 
     /**
-     * Proses registrasi user baru dengan OTP
+     * Proses registrasi user baru
+     * FLOW: Register → OTP Verification (JANGAN langsung login)
      */
     public function register(Request $request)
     {
@@ -79,7 +88,7 @@ class RegisterController extends Controller
                 'email' => strtolower($validated['email']),
                 'phone' => $validated['phone'] ?? null,
                 'password' => Hash::make($validated['password']),
-                'email_verified_at' => null, // Belum verified
+                'email_verified_at' => null, // PENTING: Belum verified
             ]);
 
             // Generate dan kirim OTP
@@ -88,10 +97,13 @@ class RegisterController extends Controller
             // Clear rate limiter jika berhasil
             RateLimiter::clear($throttleKey);
 
-            // Simpan email di session untuk proses verifikasi
-            session(['verification_email' => $user->email]);
+            // PENTING: Simpan email di session untuk proses verifikasi
+            session([
+                'verification_email' => $user->email,
+                'verification_name' => $user->name,
+            ]);
 
-            // Redirect ke halaman input OTP
+            // REDIRECT: Register → OTP Verification (JANGAN auto login!)
             return redirect()->route('verification.otp.form')->with([
                 'success' => 'Pendaftaran berhasil! Kode OTP telah dikirim ke email Anda.',
                 'email' => $user->email,

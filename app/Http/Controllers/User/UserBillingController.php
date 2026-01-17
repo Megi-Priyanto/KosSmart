@@ -16,13 +16,18 @@ class UserBillingController extends Controller
      */
     public function index(Request $request)
     {
+        $userId = auth()->id();
+
+        // =========================
+        // QUERY UTAMA BILLINGS
+        // =========================
         $query = Billing::with(['room', 'latestPayment'])
-            ->where('user_id', auth()->id());
+            ->where('user_id', $userId);
 
         // Filter by status
         if ($request->filled('status')) {
             if ($request->status === 'unpaid') {
-                // tampilkan unpaid, pending, overdue
+                // unpaid mencakup unpaid, pending, overdue
                 $query->whereIn('status', ['unpaid', 'pending', 'overdue']);
             } else {
                 $query->where('status', $request->status);
@@ -34,49 +39,72 @@ class UserBillingController extends Controller
             $query->where('billing_year', $request->year);
         }
 
-        // Sort
-        $sortBy = $request->get('sort', 'due_date');
+        // Sorting
+        $sortBy    = $request->get('sort', 'due_date');
         $sortOrder = $request->get('order', 'desc');
         $query->orderBy($sortBy, $sortOrder);
 
-        // GET BILLINGS
+        // =========================
+        // GET BILLINGS (PAGINATED)
+        // =========================
         $billings = $query->paginate(12)->withQueryString();
 
-        // Auto-update overdue
+        // =========================
+        // AUTO UPDATE OVERDUE
+        // =========================
         foreach ($billings as $billing) {
             if (now()->greaterThan($billing->due_date) && $billing->status !== 'paid') {
-            
+
                 if ($billing->status !== 'overdue') {
-                    $billing->status = 'overdue';
-                    $billing->save();
+                    $billing->update(['status' => 'overdue']);
                 }
-            
+
                 $billing->is_overdue = true;
             } else {
                 $billing->is_overdue = false;
             }
         }
 
-        // Statistics
+        // =========================
+        // CURRENT / ACTIVE BILLING
+        // =========================
+        $currentBilling = Billing::where('user_id', $userId)
+            ->whereIn('status', ['unpaid', 'pending', 'overdue'])
+            ->orderBy('due_date', 'asc')
+            ->first();
+
+        // =========================
+        // STATISTICS
+        // =========================
         $stats = [
-            'total' => Billing::where('user_id', auth()->id())->count(),
-            'unpaid' => Billing::where('user_id', auth()->id())->unpaid()->count(),
-            'overdue' => Billing::where('user_id', auth()->id())->overdue()->count(),
-            'pending' => Billing::where('user_id', auth()->id())->pending()->count(),
-            'paid' => Billing::where('user_id', auth()->id())->paid()->count(),
-            'total_unpaid' => Billing::where('user_id', auth()->id())
+            'total'        => Billing::where('user_id', $userId)->count(),
+            'unpaid'       => Billing::where('user_id', $userId)->unpaid()->count(),
+            'overdue'      => Billing::where('user_id', $userId)->overdue()->count(),
+            'pending'      => Billing::where('user_id', $userId)->pending()->count(),
+            'paid'         => Billing::where('user_id', $userId)->paid()->count(),
+            'total_unpaid' => Billing::where('user_id', $userId)
                 ->whereIn('status', ['unpaid', 'overdue'])
                 ->sum('total_amount'),
         ];
 
-        // Years for filter
-        $years = Billing::where('user_id', auth()->id())
+        // =========================
+        // YEARS FOR FILTER
+        // =========================
+        $years = Billing::where('user_id', $userId)
             ->select('billing_year')
             ->distinct()
             ->orderBy('billing_year', 'desc')
             ->pluck('billing_year');
 
-        return view('user.billing.index', compact('billings', 'stats', 'years'));
+        // =========================
+        // RETURN VIEW
+        // =========================
+        return view('user.billing.index', compact(
+            'billings',
+            'currentBilling',
+            'stats',
+            'years'
+        ));
     }
 
     /**
@@ -172,18 +200,17 @@ class UserBillingController extends Controller
      */
     public function submitPayment(Request $request, Billing $billing)
     {
-        // Authorization
         if ($billing->user_id !== auth()->id()) {
             abort(403, 'Unauthorized action.');
         }
 
-        // Check if already paid
         if ($billing->status === 'paid') {
             return back()->with('error', 'Tagihan ini sudah lunas');
         }
 
         $validated = $request->validate([
-            'payment_method' => 'required|in:transfer,cash,e-wallet',
+            'payment_type' => 'required|in:manual_transfer,e_wallet,qris',
+            'payment_sub_method' => 'required_if:payment_type,manual_transfer,e_wallet|string',
             'payment_proof' => 'required|image|mimes:jpeg,png,jpg|max:5120',
             'payment_date' => 'required|date|before_or_equal:today',
             'amount' => 'required|numeric|min:0',
@@ -193,33 +220,33 @@ class UserBillingController extends Controller
         try {
             DB::beginTransaction();
 
-            // Upload proof
             $proofPath = $request->file('payment_proof')
                 ->store('payment-proofs', 'public');
 
-            // Create payment
+            // SIMPAN DENGAN FORMAT BARU
             Payment::create([
+                'tempat_kos_id' => $billing->tempat_kos_id,
                 'user_id' => auth()->id(),
                 'billing_id' => $billing->id,
                 'amount' => $validated['amount'],
-                'payment_method' => $validated['payment_method'],
+                'payment_method' => $validated['payment_type'],
+                'payment_type' => $validated['payment_type'],
+                'payment_sub_method' => $validated['payment_sub_method'] ?? 'qris',
                 'payment_proof' => $proofPath,
                 'payment_date' => $validated['payment_date'],
                 'notes' => $validated['notes'],
                 'status' => 'pending',
             ]);
 
-            // Update billing status to pending
             $billing->markAsPending();
 
             DB::commit();
 
             return redirect()->route('user.billing.show', $billing)
                 ->with('success', 'Bukti pembayaran berhasil dikirim. Menunggu verifikasi admin.');
-
         } catch (\Exception $e) {
             DB::rollBack();
-            
+
             if (isset($proofPath)) {
                 Storage::disk('public')->delete($proofPath);
             }

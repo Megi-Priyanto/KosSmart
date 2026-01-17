@@ -2,16 +2,23 @@
 
 namespace App\Models;
 
+use App\Traits\ScopesByTempatKos;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/**
+ * @method static \Illuminate\Database\Eloquent\Builder withoutTempatKosScope()
+ */
 class KosInfo extends Model
 {
     use HasFactory;
+    use ScopesByTempatKos;
 
     protected $table = 'kos_info';
 
     protected $fillable = [
+        'tempat_kos_id',
         'name',
         'address',
         'city',
@@ -37,6 +44,11 @@ class KosInfo extends Model
         'checkin_time' => 'datetime:H:i',
         'checkout_time' => 'datetime:H:i',
     ];
+
+    public function tempatKos(): BelongsTo
+    {
+        return $this->belongsTo(TempatKos::class, 'tempat_kos_id');
+    }
 
     public function rooms()
     {

@@ -12,7 +12,7 @@
             <p class="text-sm text-gray-600 mt-1">Semua riwayat transaksi pembayaran Anda</p>
         </div>
         <a href="{{ route('user.billing.index') }}" 
-           class="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors text-sm font-medium">
+           class="px-4 py-2 bg-gradient-to-r from-yellow-500 to-orange-600 text-white font-semibold rounded-lg hover:from-yellow-600 hover:to-orange-700 transition-all shadow-lg flex items-center justify-center">
             Kembali ke Tagihan
         </a>
     </div>
@@ -100,8 +100,8 @@
                         <!-- Action Buttons -->
                         <div class="mt-4 flex gap-2">
                             <a href="{{ route('user.billing.show', $payment->billing) }}" 
-                               class="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors text-sm font-medium">
-                                Lihat Tagihan
+                               class="px-4 py-2 bg-gradient-to-r from-yellow-500 to-orange-600 text-white font-semibold rounded-lg hover:from-yellow-600 hover:to-orange-700 transition-all shadow-lg flex items-center justify-center">
+                                Lihat Detail Tagihan
                             </a>
                             @if($payment->payment_proof)
                             <a href="{{ Storage::url($payment->payment_proof) }}" 

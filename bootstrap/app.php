@@ -1,5 +1,4 @@
 <?php
-// bootstrap/app.php
 
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -8,6 +7,8 @@ use Illuminate\Console\Scheduling\Schedule;
 
 // Middleware
 use App\Http\Middleware\RoleMiddleware;
+use App\Http\Middleware\SuperAdminMiddleware;
+use App\Http\Middleware\AdminKosMiddleware;
 use App\Http\Middleware\CheckHasRoom;
 use App\Http\Middleware\CheckNoRoom;
 
@@ -20,7 +21,7 @@ use Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull;
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
         web: __DIR__ . '/../routes/web.php',
-        api: __DIR__ . '/../routes/api.php', // ← Pastikan ini ada
+        api: __DIR__ . '/../routes/api.php',
         commands: __DIR__ . '/../routes/console.php',
         health: '/up',
     )
@@ -39,6 +40,8 @@ return Application::configure(basePath: dirname(__DIR__))
         // Middleware alias
         $middleware->alias([
             'role' => RoleMiddleware::class,
+            'super.admin' => SuperAdminMiddleware::class,
+            'admin.kos' => AdminKosMiddleware::class,
             'no.room' => CheckNoRoom::class,
             'has.room' => CheckHasRoom::class,
         ]);

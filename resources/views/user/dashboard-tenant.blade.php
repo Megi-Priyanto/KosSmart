@@ -4,6 +4,20 @@
 
 @section('content')
 
+<!-- Notifikasi Check-out Pending -->
+@if($activeRent->status === 'checkout_requested')
+<div class="mb-6 bg-yellow-50 border-l-4 border-yellow-500 p-6 rounded-lg">
+    <div class="flex items-start">
+        <svg class="w-6 h-6 text-yellow-500 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+        </svg>
+        <div class="flex-1">
+            <h3 class="font-bold text-yellow-800 mb-2">Permintaan checkout Anda sedang diproses admin.</h3>
+        </div>
+    </div>
+</div>
+@endif
+
 <!-- Carousel Banner -->
 <div id="dashboardCarousel"
      class="carousel slide mb-8 rounded-2xl overflow-hidden shadow-sm"
@@ -185,11 +199,11 @@
             </div>
         </div>
         @endif
-
+        
         <!-- Tombol Show Detail -->
         <div class="mt-6 pt-4 border-t border-gray-200">
             <a href="{{ route('user.room.detail') }}" 
-               class="w-full inline-flex items-center justify-center px-4 py-3 bg-yellow-500 hover:bg-yellow-600 text-white font-medium rounded-lg transition duration-200 shadow-sm hover:shadow-md">
+               class="w-full px-4 py-3 bg-gradient-to-r from-yellow-500 to-orange-600 text-white font-semibold rounded-lg hover:from-yellow-600 hover:to-orange-700 transition-all shadow-lg flex items-center justify-center">
                 <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
@@ -206,7 +220,7 @@
     <div class="p-6 border-b border-gray-200">
         <div class="flex items-center justify-between">
             <h2 class="text-lg font-bold text-gray-800">Riwayat Pembayaran</h2>
-            <a href="{{ route('user.payments') }}" class="text-sm text-yellow-600 hover:text-yellow-700 font-medium">
+            <a href="{{ route('user.billing.index') }}" class="text-sm text-yellow-600 hover:text-yellow-700 font-medium">
                 Lihat Semua →
             </a>
         </div>
