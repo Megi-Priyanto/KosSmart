@@ -8,13 +8,10 @@
 
 <div class="max-w-full">
 
-    <!-- Back Button -->
-    <div class="mb-6">
-        <a href="{{ route('admin.billing.index') }}"
-            class="inline-flex items-center text-yellow-400 hover:text-yellow-500 transitions-colors">
-            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
-            </svg>
+    <!-- Page Header -->
+    <div class="flex items-center justify-between mb-4">
+        <a href="{{ route('admin.billing.index') }}" 
+           class="px-5 py-3 bg-gradient-to-r from-yellow-500 to-orange-600 text-white font-semibold rounded-lg hover:from-yellow-600 hover:to-orange-700 transition-all shadow-lg flex items-center justify-center">
             Kembali ke Daftar Tagihan
         </a>
     </div>
@@ -79,7 +76,7 @@
                     </div>
                 
                     <!-- Total Summary -->
-                    <div class="md:col-span-2 bg-gradient-to-r from-blue-900/20 to-blue-900/10 border-2 border-blue-600/50 rounded-lg p-6">
+                    <div class="md:col-span-2 bg-gradient-to-r from-yellow-900/20 to-yellow-900/10 border-2 border-yellow-600/50 rounded-lg p-6">
                         <div class="flex justify-between items-center mb-3">
                             <span class="text-sm font-medium text-slate-300">Subtotal:</span>
                             <span class="text-lg font-bold text-white" x-text="formatCurrency(subtotal)"></span>
@@ -88,9 +85,9 @@
                             <span class="text-sm font-medium text-slate-300">Diskon:</span>
                             <span class="text-lg font-bold text-red-400" x-text="'- ' + formatCurrency(discount)"></span>
                         </div>
-                        <div class="flex justify-between items-center pt-3 border-t border-blue-600/30">
+                        <div class="flex justify-between items-center pt-3 border-t border-yellow-600/30">
                             <span class="text-lg font-bold text-white">Total Tagihan:</span>
-                            <span class="text-3xl font-bold text-orange-400" x-text="formatCurrency(total)"></span>
+                            <span class="text-3xl font-bold text-yellow-500" x-text="formatCurrency(total)"></span>
                         </div>
                     </div>
                 
@@ -139,7 +136,12 @@
                         Batal
                     </a>
                     <button type="submit" 
-                            class="px-8 py-3 bg-gradient-to-r from-orange-600 to-red-600 text-white rounded-lg hover:from-orange-700 hover:to-red-700 transition-all font-semibold shadow-xl flex items-center space-x-2">
+                            class="inline-flex items-center gap-2
+                                bg-gradient-to-r from-yellow-500 to-orange-600
+                                text-white font-semibold
+                                px-5 py-3 rounded-lg
+                                hover:from-yellow-600 hover:to-orange-700
+                                transition-all shadow-lg">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
                         </svg>

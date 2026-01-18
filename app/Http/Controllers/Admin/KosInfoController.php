@@ -1,5 +1,4 @@
 <?php
-// app/Http/Controllers/Admin/KosInfoController.php
 
 namespace App\Http\Controllers\Admin;
 
@@ -20,17 +19,35 @@ class KosInfoController extends Controller
 
     /**
      * Display kos info (admin view)
+     * 
+     * Global Scope otomatis filter berdasarkan tempat_kos_id
+     * Super Admin bisa lihat semua dengan withoutTempatKosScope()
      */
     public function index()
     {
-        return view('admin.kos.index', [
-            'kosInfos'  => KosInfo::latest()->get(),
-            'activeKos' => KosInfo::where('is_active', true)->first(),
-        ]);
+        /** @var \App\Models\User $user */
+        $user = auth()->user();
+
+        // Super Admin: Lihat semua kos
+        if ($user->isSuperAdmin()) {
+            $kosInfos = KosInfo::withoutTempatKosScope()->latest()->get();
+            $activeKos = KosInfo::withoutTempatKosScope()
+                ->where('is_active', true)
+                ->first();
+        } 
+        // Admin: Hanya lihat kos miliknya (otomatis filtered oleh Global Scope)
+        else {
+            $kosInfos = KosInfo::latest()->get();
+            $activeKos = KosInfo::where('is_active', true)->first();
+        }
+
+        return view('admin.kos.index', compact('kosInfos', 'activeKos'));
     }
 
     /**
-     * Show form to create kos info (first time only)
+     * Show form to create kos info
+     * 
+     * tempat_kos_id otomatis terisi saat create (via trait)
      */
     public function create()
     {
@@ -38,7 +55,9 @@ class KosInfoController extends Controller
     }
 
     /**
-     * Store kos info (first time)
+     * Store kos info
+     * 
+     * tempat_kos_id otomatis terisi via ScopesByTempatKos::creating()
      */
     public function store(UpdateKosInfoRequest $request)
     {
@@ -54,6 +73,7 @@ class KosInfoController extends Controller
             );
         }
 
+        // tempat_kos_id otomatis terisi oleh trait
         KosInfo::create($data);
 
         return redirect()
@@ -61,28 +81,38 @@ class KosInfoController extends Controller
             ->with('success', 'Informasi kos berhasil ditambahkan (belum aktif)');
     }
 
+    /**
+     * Show specific kos info
+     * 
+     * Global Scope otomatis cek ownership
+     */
     public function show(KosInfo $kos)
     {
+        // Model binding sudah terfilter oleh Global Scope
+        // Jika bukan milik admin, akan 404 otomatis
         return view('admin.kos.show', compact('kos'));
     }
 
     /**
      * Show form to edit kos info
+     * 
+     * Global Scope otomatis validasi ownership
      */
-    public function edit($id)
+    public function edit(KosInfo $kos)
     {
-        $kosInfo = KosInfo::findOrFail($id);
-        return view('admin.kos.edit', [
-            'kos' => $kosInfo
-        ]);
+        // Model binding sudah terfilter oleh Global Scope
+        return view('admin.kos.edit', compact('kos'));
     }
 
     /**
      * Update kos info
+     * 
+     * Global Scope mencegah update kos milik orang lain
      */
-    public function update(UpdateKosInfoRequest $request, $id)
+    public function update(UpdateKosInfoRequest $request, KosInfo $kos)
     {
-        $kosInfo = KosInfo::findOrFail($id);
+        // Model binding sudah terfilter, tidak perlu cek manual
+        
         $data = $request->validated();
 
         // Handle image upload
@@ -92,15 +122,14 @@ class KosInfoController extends Controller
                 'kos'
             );
 
-            // Merge dengan gambar lama (jika tidak dihapus)
-            $existingImages = $kosInfo->images ?? [];
+            $existingImages = $kos->images ?? [];
             $data['images'] = array_merge($existingImages, $newImages);
         }
 
         // Handle image removal
         if ($request->has('remove_images')) {
             $removeIndices = $request->input('remove_images');
-            $existingImages = $kosInfo->images ?? [];
+            $existingImages = $kos->images ?? [];
 
             foreach ($removeIndices as $index) {
                 if (isset($existingImages[$index])) {
@@ -114,26 +143,39 @@ class KosInfoController extends Controller
 
         $data['is_active'] = $request->boolean('is_active');
 
+        // Jika diaktifkan, nonaktifkan kos lain di tempat_kos_id yang sama
         if ($data['is_active']) {
-            KosInfo::where('id', '!=', $kosInfo->id)
+            KosInfo::where('id', '!=', $kos->id)
                 ->where('is_active', true)
                 ->update(['is_active' => false]);
         }
 
-        $kosInfo->update($data);
+        $kos->update($data);
 
         return redirect()->route('admin.kos.index')
             ->with('success', 'Informasi kos berhasil diperbarui');
     }
 
+    /**
+     * Activate specific kos info
+     * 
+     * Hanya bisa activate kos milik sendiri
+     */
     public function activate(KosInfo $kos)
     {
-        KosInfo::where('is_active', true)->update(['is_active' => false]);
+        // Nonaktifkan kos lain di tempat_kos_id yang sama
+        KosInfo::where('is_active', true)
+            ->where('id', '!=', $kos->id)
+            ->update(['is_active' => false]);
+
         $kos->update(['is_active' => true]);
 
         return back()->with('success', 'Informasi kos berhasil diterapkan');
     }
 
+    /**
+     * Deactivate specific kos info
+     */
     public function deactivate(KosInfo $kos)
     {
         $kos->update(['is_active' => false]);

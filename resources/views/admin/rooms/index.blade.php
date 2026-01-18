@@ -152,7 +152,12 @@
             
             <!-- Buttons -->
             <button type="submit"
-                class="px-6 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition font-medium">
+                class="inline-flex items-center gap-2
+                    bg-gradient-to-r from-yellow-500 to-orange-600
+                    text-white font-semibold
+                    px-5 py-2 rounded-lg
+                    hover:from-yellow-600 hover:to-orange-700
+                    transition-all shadow-lg">
                 <svg class="w-5 h-5 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                           d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
@@ -170,7 +175,12 @@
         
         <!-- Add Room Button -->
         <a href="{{ route('admin.rooms.create') }}" 
-           class="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 flex items-center space-x-2 whitespace-nowrap">
+           class="inline-flex items-center gap-2
+              bg-gradient-to-r from-yellow-500 to-orange-600
+              text-white font-semibold
+              px-5 py-2 rounded-lg
+              hover:from-yellow-600 hover:to-orange-700
+              transition-all shadow-lg">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
             </svg>
@@ -269,36 +279,71 @@
                     </td>
 
                     <td class="px-6 py-4 whitespace-nowrap text-center text-sm font-medium">
-                        <div class="flex justify-center items-center space-x-2">
-                            <a href="{{ route('admin.rooms.show', $room) }}" 
-                               class="p-2 text-purple-600 hover:bg-slate-700 rounded-lg transition-colors"
+                        <div class="flex justify-center items-center gap-2">
+                        
+                            {{-- DETAIL --}}
+                            <a href="{{ route('admin.rooms.show', $room) }}"
+                               class="inline-flex items-center justify-center
+                                      w-10 h-10 rounded-xl
+                                      bg-blue-600/20 text-blue-400
+                                      hover:bg-blue-600/30 hover:-translate-y-0.5
+                                      transition-all duration-200"
                                title="Lihat Detail">
+                        
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                          d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                          d="M2.458 12C3.732 7.943 7.523 5 12 5
+                                             c4.478 0 8.268 2.943 9.542 7
+                                             -1.274 4.057-5.064 7-9.542 7
+                                             -4.477 0-8.268-2.943-9.542-7z"/>
                                 </svg>
                             </a>
-                            <a href="{{ route('admin.rooms.edit', $room) }}" 
-                               class="p-2 text-blue-600 hover:bg-slate-700 rounded-lg transition-colors"
+                        
+                            {{-- EDIT --}}
+                            <a href="{{ route('admin.rooms.edit', $room) }}"
+                               class="inline-flex items-center justify-center
+                                      w-10 h-10 rounded-xl
+                                      bg-yellow-500/20 text-yellow-400
+                                      hover:bg-yellow-500/30 hover:-translate-y-0.5
+                                      transition-all duration-200"
                                title="Edit">
+                        
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                          d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5
+                                             m-1.414-9.414a2 2 0 112.828 2.828
+                                             L11.828 15H9v-2.828l8.586-8.586z"/>
                                 </svg>
                             </a>
-                            <form action="{{ route('admin.rooms.destroy', $room) }}" 
-                                  method="POST" 
-                                  class="inline"
+                        
+                            {{-- DELETE --}}
+                            <form action="{{ route('admin.rooms.destroy', $room) }}"
+                                  method="POST"
                                   onsubmit="return confirm('Yakin ingin menghapus kamar {{ $room->room_number }}?')">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit" 
-                                        class="p-2 text-red-600 hover:bg-slate-700 rounded-lg transition-colors"
+                        
+                                <button type="submit"
+                                        class="inline-flex items-center justify-center
+                                               w-10 h-10 rounded-xl
+                                               bg-red-600/20 text-red-400
+                                               hover:bg-red-600/30 hover:-translate-y-0.5
+                                               transition-all duration-200"
                                         title="Hapus">
+                        
                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                              d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862
+                                                 a2 2 0 01-1.995-1.858L5 7
+                                                 m5 4v6m4-6v6
+                                                 M15 4a1 1 0 00-1-1h-4
+                                                 a1 1 0 00-1 1v3M4 7h16"/>
                                     </svg>
                                 </button>
                             </form>
+                        
                         </div>
                     </td>
                 </tr>
@@ -309,10 +354,6 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
                         </svg>
                         <p class="text-slate-400 mb-4">Belum ada kamar yang ditambahkan</p>
-                        <a href="{{ route('admin.rooms.create') }}" 
-                           class="inline-block px-6 py-2 bg-orange-600 hover:bg-orange-700 text-white rounded-lg hover:bg-orange-700">
-                            Tambah Kamar Pertama
-                        </a>
                     </td>
                 </tr>
                 @endforelse

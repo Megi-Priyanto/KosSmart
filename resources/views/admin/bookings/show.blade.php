@@ -6,42 +6,42 @@
 
 @section('content')
 
-<!-- Back Button -->
-<div class="mb-6">
-    <a href="{{ route('admin.bookings.index') }}" 
-       class="inline-flex items-center text-yellow-400 hover:text-yellow-500 transition-colors">
-        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
-        </svg>
-        Kembali ke Daftar Booking
-    </a>
-</div>
+<div class="mb-6 flex justify-between items-center">
 
-<!-- Status Badge -->
-<div class="mb-6">
-    <span class="inline-flex items-center px-5 py-3 rounded-lg text-lg font-bold shadow-lg
-        @if($booking->status == 'pending') bg-yellow-500/20 text-yellow-300 border-2 border-yellow-500/50
-        @elseif($booking->status == 'active') bg-green-500/20 text-green-300 border-2 border-green-500/50
-        @elseif($booking->status == 'cancelled') bg-red-500/20 text-red-300 border-2 border-red-500/50
-        @else bg-slate-500/20 text-slate-300 border-2 border-slate-500/50
-        @endif">
-        @if($booking->status == 'pending')
-            <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-            </svg>
-            Menunggu Persetujuan
-        @elseif($booking->status == 'active')
-            <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-            </svg>
-            Booking Aktif
-        @elseif($booking->status == 'cancelled')
-            <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-            </svg>
-            Dibatalkan
-        @endif
-    </span>
+    <!-- Page Header -->
+    <div class="flex items-center justify-between mb-2">
+        <a href="{{ route('admin.bookings.index') }}" 
+           class="px-5 py-3 bg-gradient-to-r from-yellow-500 to-orange-600 text-white font-semibold rounded-lg hover:from-yellow-600 hover:to-orange-700 transition-all shadow-lg flex items-center justify-center">
+            Kembali ke Daftar Booking
+        </a>
+    </div>
+
+    <!-- Status Badge -->
+    <div class="flex space-x-3">
+        <span class="inline-flex items-center px-5 py-3 rounded-lg text-lg font-bold shadow-lg
+            @if($booking->status == 'pending') bg-yellow-500/20 text-yellow-300 border-2 border-yellow-500/50
+            @elseif($booking->status == 'active') bg-green-500/20 text-green-300 border-2 border-green-500/50
+            @elseif($booking->status == 'cancelled') bg-red-500/20 text-red-300 border-2 border-red-500/50
+            @else bg-slate-500/20 text-slate-300 border-2 border-slate-500/50
+            @endif">
+            @if($booking->status == 'pending')
+                <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                Menunggu Persetujuan
+            @elseif($booking->status == 'active')
+                <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                Booking Aktif
+            @elseif($booking->status == 'cancelled')
+                <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                Dibatalkan
+            @endif
+        </span>
+    </div>
 </div>
 
 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -177,9 +177,15 @@
         </div>
         
         <!-- Payment Method & Status -->
-        <div class="bg-slate-800/90 rounded-xl border-2 border-slate-700/50 p-6">
-            <h3 class="text-xl font-bold text-white mb-6">Informasi Pembayaran DP</h3>
-            
+        <div class="bg-slate-800/90 backdrop-blur rounded-xl border-2 border-slate-700/50 p-6 shadow-2xl">
+            <h3 class="text-xl font-bold text-white mb-6 flex items-center pb-3 border-b-2 border-slate-700/50">
+                <div class="p-2 bg-gradient-to-br from-slate-700 to-slate-600 rounded-lg border-2 border-slate-500 mr-3 shadow-lg">
+                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                </div>
+                Informasi Pembayaran DP
+            </h3>
             <div class="grid grid-cols-2 gap-4 mb-6">
                 <div class="p-4 bg-slate-900 rounded-lg">
                     <label class="text-xs text-slate-400 uppercase mb-2 block">Metode Pembayaran</label>
@@ -228,12 +234,12 @@
                     <div class="mt-4 flex gap-3">
                         <a href="{{ asset('storage/' . $imagePath) }}" 
                            target="_blank"
-                           class="flex-1 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 text-center text-sm">
+                           class="flex-1 bg-blue-600 text-white px-5 py-3 rounded-lg hover:bg-blue-700 text-center text-sm">
                             Lihat Full Size
                         </a>
                         <a href="{{ asset('storage/' . $imagePath) }}" 
                            download
-                           class="flex-1 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 text-center text-sm">
+                           class="flex-1 bg-green-600 text-white px-5 py-3 rounded-lg hover:bg-green-700 text-center text-sm">
                             Download
                         </a>
                     </div>
@@ -506,7 +512,7 @@
             </h3>
 
             <div class="space-y-2">
-                <a href="{{ route('admin.users.show', $booking->user->id) }}" 
+                <a href="{{ route('superadmin.users.show', $booking->user->id) }}"
                    class="inline-flex items-center text-yellow-400 hover:text-yellow-500 transition-colors">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor"
                          viewBox="0 0 24 24" stroke-width="2">

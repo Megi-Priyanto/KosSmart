@@ -10,10 +10,26 @@ use Illuminate\Support\Facades\DB;
 
 class BookingManagementController extends Controller
 {
+    /**
+     * Display bookings
+     * 
+     * Global Scope otomatis filter berdasarkan tempat_kos_id
+     */
     public function index(Request $request)
     {
-        $query = Rent::with(['user', 'room']);
+        /** @var \App\Models\User $user */
+        $user = auth()->user();
 
+        // Query builder
+        if ($user->isSuperAdmin()) {
+            // Super Admin: Lihat semua booking
+            $query = Rent::withoutTempatKosScope()->with(['user', 'room']);
+        } else {
+            // Admin: Hanya booking di kos miliknya (auto-filtered)
+            $query = Rent::with(['user', 'room']);
+        }
+
+        // Filter by status
         if ($request->filled('status')) {
             $query->where('status', $request->status);
         } else {
@@ -21,17 +37,32 @@ class BookingManagementController extends Controller
         }
 
         $bookings = $query->latest()->paginate(15);
-        $pendingCount = Rent::where('status', 'pending')->count();
+
+        // Count pending (otomatis filtered)
+        $pendingCount = $user->isSuperAdmin() 
+            ? Rent::withoutTempatKosScope()->where('status', 'pending')->count()
+            : Rent::where('status', 'pending')->count();
 
         return view('admin.bookings.index', compact('bookings', 'pendingCount'));
     }
 
+    /**
+     * Show booking detail
+     * 
+     * Model binding sudah ter-filter otomatis
+     */
     public function show(Rent $booking)
     {
+        // Model binding otomatis cek ownership via Global Scope
         $booking->load(['user', 'room.kosInfo', 'dpVerifier']);
         return view('admin.bookings.show', compact('booking'));
     }
 
+    /**
+     * Approve booking
+     * 
+     * Model binding otomatis validasi ownership
+     */
     public function approve(Request $request, Rent $booking)
     {
         $request->validate([
@@ -79,6 +110,7 @@ class BookingManagementController extends Controller
             $sisaPembayaran = $harga - $dp;
 
             // Buat Billing DP (sudah dibayar)
+            // tempat_kos_id otomatis terisi via trait
             \App\Models\Billing::firstOrCreate(
                 [
                     'rent_id' => $booking->id,
@@ -140,6 +172,9 @@ class BookingManagementController extends Controller
         }
     }
 
+    /**
+     * Reject booking
+     */
     public function reject(Request $request, Rent $booking)
     {
         $request->validate([
@@ -180,8 +215,16 @@ class BookingManagementController extends Controller
         }
     }
 
+    /**
+     * Get pending count
+     */
     public function getPendingCount()
     {
-        return Rent::where('status', 'pending')->count();
+        /** @var \App\Models\User $user */
+        $user = auth()->user();
+        
+        return $user->isSuperAdmin()
+            ? Rent::withoutTempatKosScope()->where('status', 'pending')->count()
+            : Rent::where('status', 'pending')->count();
     }
 }

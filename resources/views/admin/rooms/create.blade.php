@@ -1,18 +1,17 @@
 @extends('layouts.admin')
 
-@section('title', 'Edit Kamar ' . ($room->room_number ?? 'Baru'))
-@section('page-title', 'Edit Kamar ' . ($room->room_number ?? ''))
+@section('title', 'Tambah Kamar ' . ($room->room_number ?? 'Baru'))
+@section('page-title', 'Tambah Kamar ' . ($room->room_number ?? ''))
 @section('page-description', 'Kelola Informasi Kamar')
 
 @section('content')
 
 <div class="w-full mx-auto">
-    <!-- Back Button -->
-    <div class="mb-6">
-        <a href="{{ route('admin.rooms.index') }}" class="inline-flex items-center text-yellow-400 hover:text-yellow-500 transition-colors">
-            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
-            </svg>
+
+    <!-- Page Header -->
+    <div class="flex items-center justify-between mb-4">
+        <a href="{{ route('admin.rooms.index') }}" 
+           class="px-5 py-3 bg-gradient-to-r from-yellow-500 to-orange-600 text-white font-semibold rounded-lg hover:from-yellow-600 hover:to-orange-700 transition-all shadow-lg flex items-center justify-center">
             Kembali ke Daftar Kamar
         </a>
     </div>
@@ -169,11 +168,18 @@
                 <!-- Checkbox Jendela -->
                 <div class="mt-6 pt-6 border-t-2 border-slate-700/50">
                     <label class="flex items-center cursor-pointer group">
+
                         <input type="checkbox" name="has_window" value="1" 
                                {{ old('has_window', true) ? 'checked' : '' }}
                                id="has_window"
-                               class="w-6 h-6 bg-slate-900 border-2 border-slate-600 text-orange-500 rounded-lg focus:ring-2 focus:ring-orange-500 cursor-pointer transition-all">
-                        <span class="ml-3 text-base font-semibold text-slate-200 group-hover:text-orange-400 transition-colors">
+                               class="w-5 h-5
+                                    accent-amber-500
+                                    bg-slate-700 border-slate-600
+                                    rounded
+                                    focus:ring-2 focus:ring-amber-500
+                                    focus:ring-offset-0
+                                    mt-0.5">
+                        <span class="ml-3 text-base font-semibold text-slate-200">
                             Kamar memiliki jendela
                         </span>
                     </label>
@@ -417,8 +423,8 @@
                 </div>
 
                 <!-- Info Box -->
-                <div class="flex items-start space-x-3 bg-blue-400/10 border-2 border-blue-400/40 rounded-xl p-4 mb-5">
-                    <svg class="w-6 h-6 text-blue-400 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                <div class="flex items-start space-x-3 bg-yellow-400/10 border-2 border-yellow-400/40 rounded-xl p-4 mb-5">
+                    <svg class="w-6 h-6 text-yellow-400 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                     </svg>
                     <div>
@@ -500,16 +506,21 @@
         </div>
 
         <!-- Actions -->
-        <div class="flex flex-col sm:flex-row justify-between items-center gap-4 mt-8 mb-8">
+        <div class="flex justify-end space-x-4 mt-6">
             <a href="{{ route('admin.rooms.index') }}" 
-               class="w-full sm:w-auto px-8 py-4 border-3 border-slate-600 text-slate-300 bg-slate-800 rounded-xl hover:bg-slate-700 hover:border-slate-500 transition-all font-bold flex items-center justify-center shadow-lg hover:scale-105">
+               class="w-full sm:w-auto px-6 py-4 border-3 border-slate-600 text-slate-300 bg-slate-800 rounded-xl hover:bg-slate-700 hover:border-slate-500 transition-all font-bold flex items-center justify-center shadow-lg hover:scale-105">
                 <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
                 </svg>
                 Batal
             </a>
             <button type="submit" 
-                    class="w-full sm:w-auto px-6 py-4 bg-gradient-to-r from-yellow-500 via-orange-600 to-orange-700 text-white rounded-xl hover:from-yellow-600 hover:via-orange-700 hover:to-orange-600 transition-all shadow-2xl hover:shadow-orange-500/30 flex items-center justify-center font-black text-lg hover:scale-105">
+                    class="inline-flex items-center gap-2
+                    bg-gradient-to-r from-yellow-500 to-orange-600
+                    text-white font-semibold
+                    px-5 py-3 rounded-lg
+                    hover:from-yellow-600 hover:to-orange-700
+                    transition-all shadow-lg">
                 <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
                 </svg>

@@ -191,8 +191,10 @@
                             type="checkbox" 
                             id="remember" 
                             name="remember" 
-                            class="h-4 w-4 text-amber-500 bg-primary border-gray-600 rounded focus:ring-amber-500 focus:ring-offset-primary"
-                        >
+                            class="h-4 w-4 rounded 
+                                   border-gray-600 
+                                   accent-amber-500 
+                                   focus:ring-2 focus:ring-amber-500 focus:ring-offset-2">
                         <label for="remember" class="ml-2 block text-sm text-gray-300">
                             Ingat saya
                         </label>

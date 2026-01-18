@@ -7,13 +7,12 @@
 @section('content')
 
 <div class="w-full mx-auto">
-    <!-- Back Button -->
-    <div class="mb-6">
-        <a href="{{ route('admin.kos.index') }}" class="inline-flex items-center text-yellow-400 hover:text-yellow-500 transition-colors">
-            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
-            </svg>
-            Kembali ke Daftar Kos
+    
+    <!-- Page Header -->
+    <div class="flex items-center justify-between mb-4">
+        <a href="{{ route('admin.kos.index') }}" 
+           class="px-4 py-2 bg-gradient-to-r from-yellow-500 to-orange-600 text-white font-semibold rounded-lg hover:from-yellow-600 hover:to-orange-700 transition-all shadow-lg flex items-center justify-center">
+            Kembali ke Daftar Informasi
         </a>
     </div>
 
@@ -236,8 +235,10 @@
                                 <div class="flex items-center space-x-2">
                                     <input type="text" name="general_facilities[]" value="{{ $facility }}"
                                            class="flex-1 bg-slate-700/50 border border-slate-600 rounded-lg px-3 py-2 text-white placeholder-slate-400 text-sm focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all">
-                                    <button type="button" onclick="this.parentElement.remove()" 
-                                            class="px-3 py-2 bg-slate-500 hover:bg-slate-400 text-white rounded-lg transition-colors">
+                                    <button type="button" onclick="this.parentElement.remove()"
+                                        class="px-3 py-2 bg-red-600 hover:bg-red-700
+                                               text-white rounded-lg transition-all duration-200
+                                               flex items-center justify-center">
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                                         </svg>
@@ -253,9 +254,12 @@
                             @endif
                         </div>
                         <button type="button" onclick="addFacility()" 
-                                class="mt-2 w-full px-3 py-2 text-sm bg-green-600 text-white rounded-lg
-                                   hover:bg-green-700 flex items-center justify-center gap-2
-                                   transition-colors font-medium">
+                            class="mt-2 w-full inline-flex items-center justify-center gap-2
+                                bg-gradient-to-r from-yellow-500 to-orange-600
+                                text-white font-semibold
+                                px-5 py-2 rounded-lg
+                                hover:from-yellow-600 hover:to-orange-700
+                                transition-all shadow-lg">
                                             
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -292,8 +296,10 @@
                                 <div class="flex items-center space-x-2">
                                     <input type="text" name="rules[]" value="{{ $rule }}"
                                            class="flex-1 bg-slate-700/50 border border-slate-600 rounded-lg px-3 py-2 text-white placeholder-slate-400 text-sm focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all">
-                                    <button type="button" onclick="this.parentElement.remove()" 
-                                            class="px-3 py-2 bg-slate-500/80 hover:bg-slate-400 text-white rounded-lg transition-colors">
+                                    <button type="button" onclick="this.parentElement.remove()"
+                                        class="px-3 py-2 bg-red-600 hover:bg-red-700
+                                               text-white rounded-lg transition-all duration-200
+                                               flex items-center justify-center">
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                                         </svg>
@@ -309,9 +315,12 @@
                             @endif
                         </div>
                         <button type="button" onclick="addRule()"
-                            class="mt-2 w-full px-3 py-2 text-sm bg-green-600 text-white rounded-lg
-                                   hover:bg-green-700 flex items-center justify-center gap-2
-                                   transition-colors font-medium">
+                            class="mt-2 w-full inline-flex items-center justify-center gap-2
+                                bg-gradient-to-r from-yellow-500 to-orange-600
+                                text-white font-semibold
+                                px-5 py-2 rounded-lg
+                                hover:from-yellow-600 hover:to-orange-700
+                                transition-all shadow-lg">
                                             
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -374,7 +383,13 @@
                     <label class="flex items-start space-x-3 cursor-pointer">
                         <input type="checkbox" name="is_active" value="1" 
                                {{ old('is_active', $kos->is_active) ? 'checked' : '' }}
-                               class="w-5 h-5 text-amber-500 bg-slate-700 border-slate-600 rounded focus:ring-2 focus:ring-amber-500 mt-0.5">
+                               class="w-5 h-5
+                                    accent-amber-500
+                                    bg-slate-700 border-slate-600
+                                    rounded
+                                    focus:ring-2 focus:ring-amber-500
+                                    focus:ring-offset-0
+                                    mt-0.5">
                         <div>
                             <span class="text-sm font-semibold text-white block">Aktifkan kos</span>
                             <p class="text-xs text-slate-400 mt-1">Tampilkan ke calon penghuni</p>
@@ -391,7 +406,12 @@
                 Batal
             </a>
             <button type="submit" 
-                    class="px-6 py-3 bg-gradient-to-r from-amber-500 to-orange-500 text-white rounded-xl hover:from-amber-600 hover:to-orange-600 transition-all font-medium flex items-center space-x-2 shadow-lg shadow-amber-500/30">
+                    class="inline-flex items-center gap-2
+                        bg-gradient-to-r from-yellow-500 to-orange-600
+                        text-white font-semibold
+                        px-5 py-2 rounded-lg
+                        hover:from-yellow-600 hover:to-orange-700
+                        transition-all shadow-lg">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
                 </svg>
@@ -442,17 +462,25 @@ function addFacility() {
     const container = document.getElementById('facilitiesContainer');
     const div = document.createElement('div');
     div.className = 'flex items-center space-x-2';
+
     div.innerHTML = `
-        <input type="text" name="general_facilities[]" 
-               class="flex-1 border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+        <input type="text" name="general_facilities[]"
+               class="flex-1 bg-slate-700/50 border border-slate-600
+                      rounded-lg px-3 py-2 text-white placeholder-slate-400 text-sm
+                      focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all"
                placeholder="Tambah fasilitas...">
-        <button type="button" onclick="this.parentElement.remove()" 
-                class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+
+        <button type="button" onclick="this.parentElement.remove()"
+                class="px-3 py-2 bg-red-600 hover:bg-red-700
+                       text-white rounded-lg transition-all duration-200
+                       flex items-center justify-center">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M6 18L18 6M6 6l12 12"></path>
             </svg>
         </button>
     `;
+
     container.appendChild(div);
 }
 
@@ -460,18 +488,27 @@ function addRule() {
     const container = document.getElementById('rulesContainer');
     const div = document.createElement('div');
     div.className = 'flex items-center space-x-2';
+
     div.innerHTML = `
-        <input type="text" name="rules[]" 
-               class="flex-1 border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+        <input type="text" name="rules[]"
+               class="flex-1 bg-slate-700/50 border border-slate-600
+                      rounded-lg px-3 py-2 text-white placeholder-slate-400 text-sm
+                      focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all"
                placeholder="Tambah peraturan...">
-        <button type="button" onclick="this.parentElement.remove()" 
-                class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+
+        <button type="button" onclick="this.parentElement.remove()"
+                class="px-3 py-2 bg-red-600 hover:bg-red-700
+                       text-white rounded-lg transition-all duration-200
+                       flex items-center justify-center">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M6 18L18 6M6 6l12 12"></path>
             </svg>
         </button>
     `;
+
     container.appendChild(div);
 }
+
 </script>
 @endpush

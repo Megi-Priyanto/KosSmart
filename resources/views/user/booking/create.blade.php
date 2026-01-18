@@ -189,14 +189,16 @@
                                        name="agreement" 
                                        value="1"
                                        id="agreement"
-                                       class="w-5 h-5 rounded mt-0.5"
+                                       class="h-4 w-4 rounded 
+                                            border-gray-600 
+                                            accent-amber-500 
+                                            focus:ring-2 focus:ring-amber-500 focus:ring-offset-2"
                                        required>
                                 <label for="agreement" class="ml-3 text-sm text-gray-700">
                                     Saya telah membaca dan menyetujui syarat & ketentuan
                                 </label>
                             </div>
                         </div>
-
                     </div>
 
                     <!-- Form Footer -->

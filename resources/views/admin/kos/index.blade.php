@@ -7,7 +7,7 @@
 @section('content')
 
 {{-- ================= QUICK STATS ================= --}}
-<div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+<div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
     <div class="bg-slate-800 p-6 rounded-lg border border-slate-700
         transition-all duration-300 ease-out
         hover:-translate-y-1 hover:shadow-lg hover:border-purple-500 hover:bg-slate-700">
@@ -81,12 +81,27 @@
     </div>
 </div>
 
+<div class="flex justify-end mb-4">
+    <a href="{{ route('admin.kos.create') }}"
+       class="inline-flex items-center gap-2
+              bg-gradient-to-r from-yellow-500 to-orange-600
+              text-white font-semibold
+              px-5 py-2 rounded-lg
+              hover:from-yellow-600 hover:to-orange-700
+              transition-all shadow-lg">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+        </svg>
+        <span>Tambah Kos Baru</span>
+    </a>
+</div>
+
 {{-- ================= KOS AKTIF ================= --}}
 @if($activeKos)
 <div class="bg-slate-900 rounded-xl border border-slate-700 overflow-hidden mb-6">
     <div class="bg-slate-800 px-6 py-5 border-b border-slate-700 flex justify-between items-center">
         <div class="flex items-center space-x-3">
-            <div class="bg-yellow-100 rounded-lg p-2">
+            <div class="bg-slate-400 rounded-lg p-2">
                 <svg class="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"></path>
                 </svg>
@@ -96,14 +111,6 @@
                 <p class="text-sm text-slate-400">Kos yang sedang aktif</p>
             </div>
         </div>
-
-        <a href="{{ route('admin.kos.edit', $activeKos->id) }}"
-           class="bg-yellow-600 text-white px-5 py-2 rounded-lg font-medium hover:bg-yellow-700 transition-colors flex items-center space-x-2">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
-            </svg>
-            <span>Edit Informasi</span>
-        </a>
     </div>
 
     <div class="p-6">
@@ -244,7 +251,8 @@
     </div>
 </div>
 @else
-<div class="bg-blue-500/10 border-2 border-blue-500/40 text-slate-200 rounded-lg p-5 mb-6 flex items-start">
+
+<div class="bg-yellow-500/20 border-2 border-yellow-500/40 text-slate-200 rounded-lg p-5 mb-4 flex items-start">
     <svg class="w-6 h-6 text-white-600 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
     </svg>
@@ -267,33 +275,35 @@
             </h3>
             <p class="text-sm text-gray-400 mt-1">Kelola semua informasi kos yang tersimpan</p>
         </div>
-        <a href="{{ route('admin.kos.create') }}"
-           class="bg-yellow-600 text-white px-5 py-2 rounded-lg hover:bg-yellow-700 transition-colors font-medium flex items-center space-x-2">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
-            </svg>
-            <span>Tambah Kos Baru</span>
-        </a>
     </div>
 
     <div class="p-6">
         @if($kosInfos->count() > 0)
             <div class="space-y-3">
                 @foreach($kosInfos as $kos)
-                <div class="border border-slate-500 rounded-lg p-5 hover:shadow-sm transition-shadow {{ $kos->is_active ? 'bg-blue-500/10 border-blue-500/40' : 'bg-slate-800' }}">
+                <div class="border border-slate-500 rounded-lg p-5 hover:shadow-sm transition-shadow {{ $kos->is_active ? 'bg-yellow-500/10 border-yellow-500/40' : 'bg-slate-800' }}">
                     <div class="flex justify-between items-start">
                         <div class="flex-1">
                             <div class="flex items-center space-x-3 mb-2">
                                 <h4 class="text-lg font-bold text-slate-200">{{ $kos->name }}</h4>
                                 @if($kos->is_active)
-                                    <span class="px-3 py-1 bg-yellow-600 text-white text-xs font-semibold rounded-full flex items-center">
-                                        <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                                    <span class="inline-flex items-center gap-1
+                                                 px-3 py-1 text-xs font-semibold rounded-full
+                                                 bg-gradient-to-r from-yellow-500 to-orange-600 text-white">
+                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3"
+                                                  d="M5 13l4 4L19 7"/>
                                         </svg>
                                         AKTIF
                                     </span>
                                 @else
-                                    <span class="px-3 py-1 bg-slate-900 text-gray-600 text-xs font-semibold rounded-full">
+                                    <span class="inline-flex items-center gap-1
+                                                 px-3 py-1 text-xs font-semibold rounded-full
+                                                 bg-slate-700 text-slate-400">
+                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3"
+                                                  d="M6 18L18 6M6 6l12 12"/>
+                                        </svg>
                                         NON-AKTIF
                                     </span>
                                 @endif
@@ -303,86 +313,86 @@
                         </div>
 
                         <div class="flex gap-2 ml-4">
+
+                            {{-- DETAIL --}}
                             <a href="{{ route('admin.kos.show', $kos->id) }}"
-                               class="p-2 rounded-lg transition-colors
-                                {{ $kos->is_active
-                                     ? 'bg-yellow-500 text-slate-100 hover:bg-yellow-400/30'
-                                     : 'bg-slate-500 text-slate-100 hover:bg-slate-400/30'
-                                }}"
-                                title="Lihat Detail">
+                               class="inline-flex items-center justify-center
+                                      w-10 h-10 rounded-xl
+                                      bg-purple-600/20 text-purple-400
+                                      hover:bg-purple-600/30 hover:-translate-y-0.5
+                                      transition-all duration-200"
+                               title="Lihat Detail">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                          d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                          d="M2.458 12C3.732 7.943 7.523 5 12 5
+                                             c4.478 0 8.268 2.943 9.542 7
+                                             -1.274 4.057-5.064 7-9.542 7
+                                             -4.477 0-8.268-2.943-9.542-7z"/>
                                 </svg>
                             </a>
-
+                        
+                            {{-- EDIT --}}
                             <a href="{{ route('admin.kos.edit', $kos->id) }}"
-                               class="p-2 rounded-lg transition-colors
-                                {{ $kos->is_active
-                                     ? 'bg-green-500 text-slate-100 hover:bg-green-400/30'
-                                     : 'bg-slate-500 text-slate-100 hover:bg-slate-400/30'
-                                }}"
-                                title="Edit">
+                               class="inline-flex items-center justify-center
+                                      w-10 h-10 rounded-xl
+                                      bg-yellow-500/20 text-yellow-400
+                                      hover:bg-yellow-500/30 hover:-translate-y-0.5
+                                      transition-all duration-200"
+                               title="Edit">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                          d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5
+                                             m-1.414-9.414a2 2 0 112.828 2.828
+                                             L11.828 15H9v-2.828l8.586-8.586z"/>
                                 </svg>
                             </a>
-
+                        
+                            {{-- TOGGLE AKTIF / NON-AKTIF --}}
                             <div
                                 x-data="{
                                     active: {{ $kos->is_active ? 'true' : 'false' }},
                                     submit() {
-                                        const action = this.active
+                                        this.$refs.form.action = this.active
                                             ? '{{ route('admin.kos.deactivate', $kos) }}'
                                             : '{{ route('admin.kos.activate', $kos) }}';
-                                                    
-                                        this.$refs.form.action = action;
                                         this.$refs.form.submit();
                                     }
                                 }"
-                                class="inline-block"
                             >
                                 <form x-ref="form" method="POST">
                                     @csrf
                                 
-                                    <button
-                                        type="button"
+                                    <button type="button"
                                         @click="submit"
-                                        class="w-9 h-9 rounded-lg flex items-center justify-center
-                                               transition-colors"
+                                        class="inline-flex items-center justify-center
+                                               w-10 h-10 rounded-xl
+                                               transition-all duration-200 hover:-translate-y-0.5"
                                         :class="active
-                                            ? 'bg-green-500 hover:bg-green-400/30 text-white'
-                                            : 'bg-slate-500 hover:bg-slate-400/30 text-slate-300'"
-                                        title="Toggle Status"
-                                    >
-                                        <!-- ICON AKTIF -->
-                                        <svg
-                                            x-show="active"
-                                            class="w-5 h-5"
-                                            fill="none"
-                                            stroke="currentColor"
-                                            viewBox="0 0 24 24"
-                                        >
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3"
-                                                  d="M5 13l4 4L19 7"/>
+                                            ? 'bg-gradient-to-r from-green-500 to-emerald-600 text-white'
+                                            : 'bg-slate-600/40 text-slate-300 hover:bg-slate-600/60'"
+                                        title="Toggle Status">
+                                
+                                        {{-- ICON AKTIF --}}
+                                        <svg x-show="!active" class="w-5 h-5 opacity-60"
+                                             fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                  d="M12 2v10m6.364-6.364a9 9 0 11-12.728 0"/>
                                         </svg>
                                     
-                                        <!-- ICON NON-AKTIF -->
-                                        <svg
-                                            x-show="!active"
-                                            class="w-5 h-5"
-                                            fill="none"
-                                            stroke="currentColor"
-                                            viewBox="0 0 24 24"
-                                        >
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3"
-                                                  d="M6 18L18 6M6 6l12 12"/>
+                                        {{-- ICON NON-AKTIF --}}
+                                        <svg x-show="active" class="w-5 h-5"
+                                             fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                  d="M12 2v10m6.364-6.364a9 9 0 11-12.728 0"/>
                                         </svg>
                                     </button>
                                 </form>
                             </div>
-
+                        
                         </div>
+
                     </div>
                 </div>
                 @endforeach

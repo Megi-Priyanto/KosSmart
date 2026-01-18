@@ -1,5 +1,4 @@
 <?php
-// app/Http/Controllers/Admin/RoomStatusController.php
 
 namespace App\Http\Controllers\Admin;
 
@@ -11,6 +10,8 @@ class RoomStatusController extends Controller
 {
     /**
      * Update room status
+     * 
+     * Model binding otomatis ter-filter
      */
     public function update(Request $request, Room $room)
     {
@@ -43,6 +44,8 @@ class RoomStatusController extends Controller
     
     /**
      * Bulk update status
+     * 
+     * Otomatis filtered via Global Scope
      */
     public function bulkUpdate(Request $request)
     {
@@ -52,7 +55,15 @@ class RoomStatusController extends Controller
             'status' => 'required|in:available,occupied,maintenance'
         ]);
         
-        $rooms = Room::whereIn('id', $request->room_ids)->get();
+        /** @var \App\Models\User $user */
+        $user = auth()->user();
+
+        // Query otomatis filtered
+        $roomsQuery = $user->isSuperAdmin()
+            ? Room::withoutTempatKosScope()->whereIn('id', $request->room_ids)
+            : Room::whereIn('id', $request->room_ids);
+
+        $rooms = $roomsQuery->get();
         $updated = 0;
         
         foreach ($rooms as $room) {

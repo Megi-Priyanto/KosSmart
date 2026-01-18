@@ -8,7 +8,8 @@ use App\Http\Controllers\ResetPasswordController;
 use App\Http\Controllers\User\UserDashboardController;
 use App\Http\Controllers\User\RoomSelectionController;
 use App\Http\Controllers\User\BookingController;
-use App\Http\Controllers\User\PaymentController;
+use App\Http\Controllers\User\UserBillingController;
+use App\Http\Controllers\User\StatusController;
 use App\Http\Controllers\Admin\KosInfoController;
 use App\Http\Controllers\Admin\RoomController as AdminRoomController;
 use App\Http\Controllers\Admin\RoomStatusController;
@@ -19,7 +20,6 @@ use App\Http\Controllers\Admin\AdminProfileController;
 use App\Http\Controllers\Admin\BookingManagementController;
 use App\Http\Controllers\User\UserProfileController;
 use App\Http\Controllers\Admin\NotificationController;
-use App\Http\Controllers\Admin\SettingController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -34,7 +34,7 @@ Route::get('/', function () {
 });
 
 // ==============================
-// ROUTE UNTUK TAMU (BELUM LOGIN)
+// GUEST ROUTES
 // ==============================
 Route::middleware('guest')->group(function () {
     // Login Routes
@@ -58,7 +58,7 @@ Route::middleware('guest')->group(function () {
 });
 
 // ==============================
-// VERIFIKASI EMAIL DENGAN OTP
+// EMAIL VERIFICATION
 // ==============================
 Route::prefix('verification')->name('verification.')->group(function () {
     // Halaman input OTP (tidak perlu auth, karena user baru register)
@@ -77,7 +77,7 @@ Route::prefix('verification')->name('verification.')->group(function () {
 });
 
 // ==============================
-// LOGOUT – HARUS DI LUAR ROLE
+// LOGOUT
 // ==============================
 Route::middleware('auth')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
@@ -100,6 +100,13 @@ Route::middleware(['auth', 'verified', 'role:user'])->group(function () {
     // Checkout User
     Route::put('/rents/{rent}/checkout', [UserRentCheckoutController::class, 'requestCheckout'])
         ->name('user.rents.checkout.request');
+
+    Route::prefix('status')->name('user.status.')->group(function () {
+        Route::get('/', [StatusController::class, 'index'])->name('index');
+        Route::get('/booking', [StatusController::class, 'booking'])->name('booking');
+        Route::get('/tagihan', [StatusController::class, 'billing'])->name('billing');
+        Route::get('/checkout', [StatusController::class, 'checkout'])->name('checkout');
+    });
 
     // ==============================
     // UNTUK USER YANG BELUM PUNYA KAMAR
@@ -125,9 +132,6 @@ Route::middleware(['auth', 'verified', 'role:user'])->group(function () {
     // UNTUK USER YANG SUDAH PUNYA KAMAR
     // ==============================
     Route::middleware('has.room')->group(function () {
-        Route::get('/user/payments', [PaymentController::class, 'index'])
-            ->name('user.payments');
-
         // Billing Management
         Route::controller(\App\Http\Controllers\User\UserBillingController::class)->group(function () {
             Route::get('/billing', 'index')->name('user.billing.index');
@@ -146,41 +150,54 @@ Route::middleware(['auth', 'verified', 'role:user'])->group(function () {
 });
 
 // ==============================
-// ROUTE UNTUK ADMIN
+// SUPER ADMIN ROUTES
 // ==============================
-Route::middleware(['auth', 'verified', 'role:admin'])
+Route::middleware(['auth', 'verified', 'super.admin'])
+    ->prefix('superadmin')
+    ->name('superadmin.')
+    ->group(function () {
+        // Dashboard
+        Route::get('/dashboard', [\App\Http\Controllers\SuperAdmin\SuperAdminDashboardController::class, 'index'])
+            ->name('dashboard');
+
+        // Profile
+        Route::get('/profile', [\App\Http\Controllers\SuperAdmin\ProfileController::class, 'index'])
+            ->name('profile');
+        Route::put('/profile', [\App\Http\Controllers\SuperAdmin\ProfileController::class, 'update'])
+            ->name('profile.update');
+        Route::put('/profile/password', [\App\Http\Controllers\SuperAdmin\ProfileController::class, 'updatePassword'])
+            ->name('profile.password');
+
+        // Tempat Kos Management
+        Route::resource('tempat-kos', \App\Http\Controllers\SuperAdmin\TempatKosController::class)->parameters(['tempat-kos' => 'tempat_kos']);
+
+        // User Management (Super Admin only)
+        Route::resource('users', \App\Http\Controllers\SuperAdmin\UserController::class);
+
+        // System Settings
+        Route::prefix('settings')->name('settings.')->group(function () {
+            Route::get('/', [\App\Http\Controllers\SuperAdmin\SettingController::class, 'index'])
+                ->name('index');
+            Route::put('/general', [\App\Http\Controllers\SuperAdmin\SettingController::class, 'updateGeneral'])
+                ->name('general.update');
+            Route::post('/backup', [\App\Http\Controllers\SuperAdmin\SettingController::class, 'backup'])
+                ->name('backup');
+            Route::post('/cache/clear', [\App\Http\Controllers\SuperAdmin\SettingController::class, 'clearCache'])
+                ->name('cache.clear');
+            Route::post('/optimize', [\App\Http\Controllers\SuperAdmin\SettingController::class, 'optimize'])
+                ->name('optimize');
+            Route::post('/migrate', [\App\Http\Controllers\SuperAdmin\SettingController::class, 'migrate'])
+                ->name('migrate');
+        });
+    });
+
+// ==============================
+// ADMIN KOS ROUTES
+// ==============================
+Route::middleware(['auth', 'verified', 'admin.kos'])
     ->prefix('admin')
     ->name('admin.')
     ->group(function () {
-
-        // Settings Management
-        Route::prefix('settings')->name('settings.')->group(function () {
-            Route::get('/', [\App\Http\Controllers\Admin\SettingController::class, 'index'])
-                ->name('index');
-
-            // Update Settings
-            Route::put('/general', [\App\Http\Controllers\Admin\SettingController::class, 'updateGeneral'])
-                ->name('general.update');
-
-            Route::put('/billing', [\App\Http\Controllers\Admin\SettingController::class, 'updateBilling'])
-                ->name('billing.update');
-
-            Route::put('/notification', [\App\Http\Controllers\Admin\SettingController::class, 'updateNotification'])
-                ->name('notification.update');
-
-            Route::put('/security', [\App\Http\Controllers\Admin\SettingController::class, 'updateSecurity'])
-                ->name('security.update');
-
-            // Maintenance Actions
-            Route::post('/backup', [\App\Http\Controllers\Admin\SettingController::class, 'backupDatabase'])
-                ->name('backup');
-
-            Route::get('/backup/{filename}/download', [\App\Http\Controllers\Admin\SettingController::class, 'downloadBackup'])
-                ->name('backup.download');
-
-            Route::post('/cache/clear', [\App\Http\Controllers\Admin\SettingController::class, 'clearCache'])
-                ->name('cache.clear');
-        });
 
         // Profile
         Route::get('/profile', [AdminProfileController::class, 'index'])->name('profile');
@@ -248,10 +265,7 @@ Route::middleware(['auth', 'verified', 'role:admin'])
         Route::post('/rooms/bulk-status', [RoomStatusController::class, 'bulkUpdate'])
             ->name('rooms.status.bulk');
 
-        Route::resource('users', \App\Http\Controllers\Admin\UserController::class);
         Route::resource('billing', \App\Http\Controllers\Admin\BillingController::class);
-        Route::get('/settings', [\App\Http\Controllers\Admin\SettingController::class, 'index'])
-            ->name('settings.index');
 
         // Booking Management
         Route::controller(BookingManagementController::class)->group(function () {
@@ -281,7 +295,6 @@ Route::middleware(['auth', 'verified', 'role:admin'])
             // Checkout User
             Route::put('/rents/{rent}/checkout', [AdminRentCheckoutController::class, 'checkout'])
                 ->name('rents.checkout');
-
         });
 
         // Laporan

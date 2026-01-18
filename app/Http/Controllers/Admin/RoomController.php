@@ -1,5 +1,4 @@
 <?php
-// app/Http/Controllers/Admin/RoomController.php
 
 namespace App\Http\Controllers\Admin;
 
@@ -22,10 +21,20 @@ class RoomController extends Controller
 
     /**
      * Display a listing of rooms
+     * 
+     * Global Scope otomatis filter berdasarkan tempat_kos_id
      */
     public function index(Request $request)
     {
-        $query = Room::with('currentRent.user');
+        /** @var \App\Models\User $user */
+        $user = auth()->user();
+
+        // Query builder
+        if ($user->isSuperAdmin()) {
+            $query = Room::withoutTempatKosScope()->with('currentRent.user');
+        } else {
+            $query = Room::with('currentRent.user');
+        }
 
         // Filter by status
         if ($request->filled('status')) {
@@ -54,17 +63,29 @@ class RoomController extends Controller
 
         $rooms = $query->paginate(15)->withQueryString();
 
-        // Data for filters
-        $types = Room::select('type')->distinct()->pluck('type');
-        $floors = Room::select('floor')->distinct()->orderBy('floor')->pluck('floor');
+        // Data for filters (otomatis filtered)
+        $typesQuery = $user->isSuperAdmin()
+            ? Room::withoutTempatKosScope()
+            : Room::query();
+        $types = $typesQuery->select('type')->distinct()->pluck('type');
+
+        $floorsQuery = $user->isSuperAdmin()
+            ? Room::withoutTempatKosScope()
+            : Room::query();
+        $floors = $floorsQuery->select('floor')->distinct()->orderBy('floor')->pluck('floor');
+
         $statuses = ['available', 'occupied', 'maintenance'];
 
-        // Statistics
+        // Statistics (otomatis filtered)
+        $statsQuery = $user->isSuperAdmin()
+            ? Room::withoutTempatKosScope()
+            : Room::query();
+
         $stats = [
-            'total' => Room::count(),
-            'available' => Room::where('status', 'available')->count(),
-            'occupied' => Room::where('status', 'occupied')->count(),
-            'maintenance' => Room::where('status', 'maintenance')->count(),
+            'total' => (clone $statsQuery)->count(),
+            'available' => (clone $statsQuery)->where('status', 'available')->count(),
+            'occupied' => (clone $statsQuery)->where('status', 'occupied')->count(),
+            'maintenance' => (clone $statsQuery)->where('status', 'maintenance')->count(),
         ];
 
         return view('admin.rooms.index', compact('rooms', 'types', 'floors', 'statuses', 'stats'));
@@ -75,18 +96,45 @@ class RoomController extends Controller
      */
     public function create()
     {
+        /** @var \App\Models\User $user */
+        $user = auth()->user();
+
+        // Cek apakah kos_info sudah ada untuk tempat kos ini
+        $hasKosInfo = KosInfo::where('tempat_kos_id', $user->tempat_kos_id)->exists();
+
+        if (!$hasKosInfo) {
+            return redirect()
+                ->route('admin.kos.edit', $user->tempat_kos_id)
+                ->with('error', 'Lengkapi data Informasi Kos terlebih dahulu sebelum menambahkan kamar.');
+        }
+
         return view('admin.rooms.create');
     }
 
     /**
      * Store a newly created room
+     * 
+     * tempat_kos_id otomatis terisi via trait
      */
     public function store(StoreRoomRequest $request)
     {
         $data = $request->validated();
 
-        // Assign kos_info_id from first KosInfo
-        $data['kos_info_id'] = KosInfo::first()->id;
+        /** @var \App\Models\User $user */
+        $user = auth()->user();
+
+        // Ambil kos_info SESUAI tempat_kos user
+        $kosInfo = KosInfo::where('tempat_kos_id', $user->tempat_kos_id)->first();
+
+        // JIKA BELUM ADA → STOP DENGAN PESAN JELAS
+        if (!$kosInfo) {
+            return redirect()
+                ->route('admin.kos.edit', $user->tempat_kos_id)
+                ->with('error', 'Lengkapi data Informasi Kos terlebih dahulu sebelum menambahkan kamar.');
+        }
+
+        // Assign kos_info_id
+        $data['kos_info_id'] = $kosInfo->id;
 
         // Handle multiple images upload
         if ($request->hasFile('images')) {
@@ -98,6 +146,7 @@ class RoomController extends Controller
             $data['images'] = [];
         }
 
+        // tempat_kos_id otomatis terisi via trait
         $room = Room::create($data);
 
         return redirect()->route('admin.rooms.index')
@@ -106,6 +155,8 @@ class RoomController extends Controller
 
     /**
      * Display the specified room
+     * 
+     * Model binding otomatis ter-filter
      */
     public function show(Room $room)
     {
@@ -121,6 +172,8 @@ class RoomController extends Controller
 
     /**
      * Show form to edit room
+     * 
+     * Model binding otomatis ter-filter
      */
     public function edit(Room $room)
     {
@@ -129,14 +182,16 @@ class RoomController extends Controller
 
     /**
      * Update the specified room
+     * 
+     * Model binding otomatis ter-filter
      */
     public function update(UpdateRoomRequest $request, Room $room)
     {
         $data = $request->validated();
 
         // Get existing images
-        $existingImages = is_array($room->images) 
-            ? $room->images 
+        $existingImages = is_array($room->images)
+            ? $room->images
             : (json_decode($room->images ?? '[]', true) ?? []);
 
         $deletedCount = 0;
@@ -145,17 +200,15 @@ class RoomController extends Controller
         // Handle image removal first
         if ($request->has('remove_images')) {
             $removeIndices = $request->input('remove_images', []);
-            
+
             foreach ($removeIndices as $index) {
                 if (isset($existingImages[$index])) {
-                    // Delete from storage
                     $this->imageService->delete($existingImages[$index]);
                     unset($existingImages[$index]);
                     $deletedCount++;
                 }
             }
-            
-            // Reindex array
+
             $existingImages = array_values($existingImages);
         }
 
@@ -165,15 +218,11 @@ class RoomController extends Controller
                 $request->file('images'),
                 'rooms'
             );
-            
+
             $addedCount = count($newImages);
-            
-            // Merge with existing images
             $existingImages = array_merge($existingImages, $newImages);
-            
-            // Limit to 10 images max
+
             if (count($existingImages) > 10) {
-                // Remove excess images and delete from storage
                 $excessImages = array_slice($existingImages, 10);
                 $this->imageService->deleteMultiple($excessImages);
                 $existingImages = array_slice($existingImages, 0, 10);
@@ -181,7 +230,6 @@ class RoomController extends Controller
         }
 
         $data['images'] = $existingImages;
-
         $room->update($data);
 
         $message = "Data kamar {$room->room_number} berhasil diperbarui";
@@ -196,12 +244,13 @@ class RoomController extends Controller
             $message .= " ({$addedCount} foto ditambahkan)";
         }
 
-        return redirect()->route('admin.rooms.index')
-            ->with('success', $message);
+        return redirect()->route('admin.rooms.index')->with('success', $message);
     }
 
     /**
      * Remove the specified room
+     * 
+     * Model binding otomatis ter-filter
      */
     public function destroy(Room $room)
     {
@@ -212,10 +261,10 @@ class RoomController extends Controller
 
         // Delete all images
         if (!empty($room->images)) {
-            $images = is_array($room->images) 
-                ? $room->images 
+            $images = is_array($room->images)
+                ? $room->images
                 : json_decode($room->images ?? '[]', true);
-            
+
             $this->imageService->deleteMultiple($images);
         }
 

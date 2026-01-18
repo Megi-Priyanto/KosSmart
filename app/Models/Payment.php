@@ -99,10 +99,17 @@ class Payment extends Model
     public function getStatusBadgeAttribute(): string
     {
         return match ($this->status) {
-            'confirmed' => 'bg-green-100 text-green-800',
-            'pending' => 'bg-yellow-100 text-yellow-800',
-            'rejected' => 'bg-red-100 text-red-800',
-            default => 'bg-gray-100 text-gray-800',
+            'confirmed' =>
+            'bg-emerald-500/15 text-emerald-400 border border-emerald-500/30',
+
+            'pending' =>
+            'bg-amber-500/15 text-amber-400 border border-amber-500/30',
+
+            'rejected' =>
+            'bg-red-500/15 text-red-400 border border-red-500/30',
+
+            default =>
+            'bg-slate-500/15 text-slate-300 border border-slate-500/30',
         };
     }
 

@@ -161,7 +161,12 @@
 
                     <!-- Search Button -->
                     <button type="submit"
-                            class="px-6 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition font-medium">
+                        class="inline-flex items-center gap-2
+                            bg-gradient-to-r from-yellow-500 to-orange-600
+                            text-white font-semibold
+                            px-5 py-2 rounded-lg
+                            hover:from-yellow-600 hover:to-orange-700
+                            transition-all shadow-lg">
                         <svg class="w-5 h-5 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                   d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
@@ -190,7 +195,12 @@
                     Generate Massal
                 </button>
                 <a href="{{ route('admin.billing.create') }}"
-                   class="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-500 transition font-medium text-center">
+                    class="inline-flex items-center gap-2
+                        bg-gradient-to-r from-yellow-500 to-orange-600
+                        text-white font-semibold
+                        px-5 py-2 rounded-lg
+                        hover:from-yellow-600 hover:to-orange-700
+                        transition-all shadow-lg">
                     <svg class="w-5 h-5 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                               d="M12 4v16m8-8H4"/>
@@ -250,17 +260,47 @@
                             </span>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                            <div class="flex items-center justify-end gap-2">
-                                <a href="{{ route('admin.billing.show', $billing) }}" 
-                                   class="text-purple-400 transition-all duration-200 hover:text-purple-300 hover:-translate-y-0.5">
-                                    Detail
+                            <div class="flex items-center justify-end gap-3">
+                            
+                                {{-- DETAIL --}}
+                                <a href="{{ route('admin.billing.show', $billing) }}"
+                                   class="w-10 h-10 rounded-xl 
+                                          bg-blue-600/20 text-blue-400
+                                          flex items-center justify-center
+                                          hover:bg-blue-600/30 hover:-translate-y-0.5
+                                          transition-all duration-200">
+                                    {{-- ICON PLUS / EYE --}}
+                                    <svg xmlns="http://www.w3.org/2000/svg" 
+                                         class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                              d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                              d="M2.458 12C3.732 7.943 7.523 5 12 5
+                                                 c4.478 0 8.268 2.943 9.542 7
+                                                 -1.274 4.057-5.064 7-9.542 7
+                                                 -4.477 0-8.268-2.943-9.542-7z"/>
+                                    </svg>
                                 </a>
+                            
+                                {{-- EDIT --}}
                                 @if($billing->status !== 'paid')
-                                    <a href="{{ route('admin.billing.edit', $billing) }}" 
-                                       class="text-blue-400 transition-all duration-200 hover:text-blue-300 hover:-translate-y-0.5">
-                                        Edit
+                                    <a href="{{ route('admin.billing.edit', $billing) }}"
+                                       class="w-10 h-10 rounded-xl 
+                                              bg-yellow-500/20 text-yellow-400
+                                              flex items-center justify-center
+                                              hover:bg-yellow-500/30 hover:-translate-y-0.5
+                                              transition-all duration-200">
+                                        {{-- ICON PLUS / EDIT --}}
+                                        <svg xmlns="http://www.w3.org/2000/svg" 
+                                             class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                  d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5"/>
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                  d="M18.586 2.586a2 2 0 112.828 2.828L11 15l-4 1 1-4 10.586-10.414z"/>
+                                        </svg>
                                     </a>
                                 @endif
+                                
                             </div>
                         </td>
                     </tr>

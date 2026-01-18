@@ -3,10 +3,14 @@
         
         <!-- Page Title -->
         <div>
-            <h1 class="text-2xl font-bold text-slate-100">
+            <h1 class="text-2xl font-bold text-white flex items-center">
+                <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                          d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"/>
+                </svg>
                 @yield('page-title', 'Dashboard')
             </h1>
-            <p class="text-sm text-slate-800">
+            <p class="text-sm text-white">
                 @yield('page-description', 'Selamat datang di panel admin KosSmart')
             </p>
         </div>

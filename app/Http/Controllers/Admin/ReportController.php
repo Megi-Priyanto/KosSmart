@@ -17,10 +17,20 @@ class ReportController extends Controller
 {
     /**
      * Display billing reports
+     * 
+     * Global Scope otomatis filter berdasarkan tempat_kos_id
      */
     public function index(Request $request)
     {
-        $query = Billing::with(['user', 'room', 'rent', 'latestPayment']);
+        /** @var \App\Models\User $user */
+        $user = auth()->user();
+
+        // Query builder
+        if ($user->isSuperAdmin()) {
+            $query = Billing::withoutTempatKosScope()->with(['user', 'room', 'rent', 'latestPayment']);
+        } else {
+            $query = Billing::with(['user', 'room', 'rent', 'latestPayment']);
+        }
         
         // Filter by date range
         if ($request->filled('start_date')) {
@@ -67,17 +77,29 @@ class ReportController extends Controller
         // Statistics
         $stats = $this->calculateStatistics($request);
         
-        // Data for filters
-        $users = User::where('role', 'user')
-            ->whereHas('billings')
-            ->orderBy('name')
-            ->get(['id', 'name']);
+        // Data for filters (hanya user di kos yang sama)
+        $usersQuery = User::where('role', 'user')
+            ->whereHas('billings');
+
+        if (!$user->isSuperAdmin()) {
+            $usersQuery->where('tempat_kos_id', $user->tempat_kos_id);
+        }
+
+        $users = $usersQuery->orderBy('name')->get(['id', 'name']);
         
-        $rooms = Room::whereHas('billings')
-            ->orderBy('room_number')
-            ->get(['id', 'room_number']);
+        // Rooms (otomatis filtered)
+        $roomsQuery = $user->isSuperAdmin()
+            ? Room::withoutTempatKosScope()->whereHas('billings')
+            : Room::whereHas('billings');
+
+        $rooms = $roomsQuery->orderBy('room_number')->get(['id', 'room_number']);
         
-        $years = Billing::selectRaw('DISTINCT billing_year')
+        // Years (otomatis filtered)
+        $yearsQuery = $user->isSuperAdmin()
+            ? Billing::withoutTempatKosScope()
+            : Billing::query();
+
+        $years = $yearsQuery->selectRaw('DISTINCT billing_year')
             ->orderBy('billing_year', 'desc')
             ->pluck('billing_year');
         
@@ -92,10 +114,17 @@ class ReportController extends Controller
     
     /**
      * Calculate statistics based on filters
+     * 
+     * Otomatis filtered berdasarkan tempat_kos_id
      */
     private function calculateStatistics(Request $request)
     {
-        $query = Billing::query();
+        /** @var \App\Models\User $user */
+        $user = auth()->user();
+
+        $query = $user->isSuperAdmin()
+            ? Billing::withoutTempatKosScope()
+            : Billing::query();
         
         // Apply same filters as main query
         if ($request->filled('start_date')) {
@@ -144,7 +173,12 @@ class ReportController extends Controller
      */
     public function exportPdf(Request $request)
     {
-        $query = Billing::with(['user', 'room', 'rent']);
+        /** @var \App\Models\User $user */
+        $user = auth()->user();
+
+        $query = $user->isSuperAdmin()
+            ? Billing::withoutTempatKosScope()->with(['user', 'room', 'rent'])
+            : Billing::with(['user', 'room', 'rent']);
         
         // Apply filters
         $this->applyFilters($query, $request);
@@ -168,7 +202,12 @@ class ReportController extends Controller
      */
     public function exportExcel(Request $request)
     {
-        $query = Billing::with(['user', 'room', 'rent']);
+        /** @var \App\Models\User $user */
+        $user = auth()->user();
+
+        $query = $user->isSuperAdmin()
+            ? Billing::withoutTempatKosScope()->with(['user', 'room', 'rent'])
+            : Billing::with(['user', 'room', 'rent']);
         
         // Apply filters
         $this->applyFilters($query, $request);
@@ -263,10 +302,17 @@ class ReportController extends Controller
     
     /**
      * Payment report
+     * 
+     * Otomatis filtered
      */
     public function paymentReport(Request $request)
     {
-        $query = Payment::with(['user', 'billing.room']);
+        /** @var \App\Models\User $user */
+        $user = auth()->user();
+
+        $query = $user->isSuperAdmin()
+            ? Payment::withoutTempatKosScope()->with(['user', 'billing.room'])
+            : Payment::with(['user', 'billing.room']);
         
         // Filter by date range
         if ($request->filled('start_date')) {
@@ -301,15 +347,23 @@ class ReportController extends Controller
     
     /**
      * Financial summary
+     * 
+     * Otomatis filtered
      */
     public function financialSummary(Request $request)
     {
+        /** @var \App\Models\User $user */
+        $user = auth()->user();
         $year = $request->get('year', now()->year);
         
         $monthlyData = [];
         
         for ($month = 1; $month <= 12; $month++) {
-            $billings = Billing::where('billing_year', $year)
+            $billingsQuery = $user->isSuperAdmin()
+                ? Billing::withoutTempatKosScope()
+                : Billing::query();
+
+            $billings = $billingsQuery->where('billing_year', $year)
                 ->where('billing_month', $month)
                 ->get();
             
@@ -323,7 +377,11 @@ class ReportController extends Controller
             ];
         }
         
-        $years = Billing::selectRaw('DISTINCT billing_year')
+        $yearsQuery = $user->isSuperAdmin()
+            ? Billing::withoutTempatKosScope()
+            : Billing::query();
+
+        $years = $yearsQuery->selectRaw('DISTINCT billing_year')
             ->orderBy('billing_year', 'desc')
             ->pluck('billing_year');
         

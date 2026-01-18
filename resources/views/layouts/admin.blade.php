@@ -77,6 +77,10 @@
         </div>
         
     </div>
+
+    @include('components.modal')
+    
+    @stack('scripts')
     
     @stack('scripts')
     

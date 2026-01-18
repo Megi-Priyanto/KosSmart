@@ -8,17 +8,23 @@
 
 <!-- Action Buttons -->
 <div class="mb-6 flex justify-between items-center">
-    <!-- Back Button -->
-    <a href="{{ route('admin.rooms.index') }}" class="inline-flex items-center text-yellow-400 hover:text-yellow-500 transition-colors">
-        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
-        </svg>
-        Kembali ke Daftar Kamar
-    </a>
+    
+    <!-- Page Header -->
+    <div class="flex items-center justify-between mb-2">
+        <a href="{{ route('admin.rooms.index') }}" 
+           class="px-5 py-3 bg-gradient-to-r from-yellow-500 to-orange-600 text-white font-semibold rounded-lg hover:from-yellow-600 hover:to-orange-700 transition-all shadow-lg flex items-center justify-center">
+            Kembali ke Daftar Kamar
+        </a>
+    </div>
     
     <div class="flex space-x-3">
         <a href="{{ route('admin.rooms.edit', $room) }}" 
-           class="px-5 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 flex items-center space-x-2 transition-all shadow-lg">
+           class="inline-flex items-center gap-2
+                    bg-gradient-to-r from-yellow-500 to-orange-600
+                    text-white font-semibold
+                    px-5 py-2 rounded-lg
+                    hover:from-yellow-600 hover:to-orange-700
+                    transition-all shadow-lg">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
             </svg>
@@ -389,7 +395,7 @@
                 </div>
             </div>
             
-            <a href="{{ route('admin.users.show', $room->currentRent->user_id) }}" 
+            <a href="{{ route('superadmin.users.show', $room->currentRent->user_id) }}" 
                class="block w-full mt-6 text-center px-5 py-3 bg-gradient-to-r from-yellow-500 via-orange-600 to-orange-700 text-white font-semibold rounded-lg hover:from-yellow-600 hover:to-orange-600 transition-all shadow-lg text-sm">
                 Lihat Profil Penyewa
                 <svg class="w-4 h-4 inline ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">

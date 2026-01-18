@@ -1,5 +1,4 @@
 <?php
-// app/Http/Controllers/Admin/BillingController.php
 
 namespace App\Http\Controllers\Admin;
 
@@ -11,19 +10,31 @@ use App\Models\User;
 use App\Models\Payment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use App\Models\Notification;
-use App\Models\NotificationItem;
 use Carbon\Carbon;
 
 class BillingController extends Controller
 {
     /**
-     * Display a listing of billings
+     * Display billings
+     * 
+     * Global Scope otomatis filter berdasarkan tempat_kos_id
      */
     public function index(Request $request)
     {
-        $query = Billing::with(['user', 'room', 'latestPayment'])
-            ->whereIn('tipe', ['pelunasan', 'bulanan']);
+        /** @var \App\Models\User $user */
+        $user = auth()->user();
+
+        // Query builder
+        if ($user->isSuperAdmin()) {
+            // Super Admin: Lihat semua billing
+            $query = Billing::withoutTempatKosScope()
+                ->with(['user', 'room', 'latestPayment'])
+                ->whereIn('tipe', ['pelunasan', 'bulanan']);
+        } else {
+            // Admin: Hanya billing di kos miliknya (auto-filtered)
+            $query = Billing::with(['user', 'room', 'latestPayment'])
+                ->whereIn('tipe', ['pelunasan', 'bulanan']);
+        }
 
         // Search
         if ($request->filled('search')) {
@@ -63,8 +74,12 @@ class BillingController extends Controller
 
         $billings = $query->paginate(15)->withQueryString();
 
-        // Statistics
-        $billingBase = Billing::whereIn('tipe', ['pelunasan', 'bulanan']);
+        // Statistics (otomatis filtered)
+        if ($user->isSuperAdmin()) {
+            $billingBase = Billing::withoutTempatKosScope()->whereIn('tipe', ['pelunasan', 'bulanan']);
+        } else {
+            $billingBase = Billing::whereIn('tipe', ['pelunasan', 'bulanan']);
+        }
             
         $stats = [
             'total'   => (clone $billingBase)->count(),
@@ -74,15 +89,24 @@ class BillingController extends Controller
             'paid'    => (clone $billingBase)->paid()->count(),
         ];
 
-        // Data for filters
-        $users = User::where('role', 'user')
+        // Data for filters (hanya user di kos yang sama)
+        $usersQuery = User::where('role', 'user')
             ->whereHas('rents', function ($q) {
                 $q->where('status', 'active');
-            })
-            ->orderBy('name')
-            ->get();
+            });
 
-        $years = Billing::select('billing_year')
+        if (!$user->isSuperAdmin()) {
+            $usersQuery->where('tempat_kos_id', $user->tempat_kos_id);
+        }
+
+        $users = $usersQuery->orderBy('name')->get();
+
+        // Years (otomatis filtered)
+        $yearsQuery = $user->isSuperAdmin()
+            ? Billing::withoutTempatKosScope()
+            : Billing::query();
+
+        $years = $yearsQuery->select('billing_year')
             ->distinct()
             ->orderBy('billing_year', 'desc')
             ->pluck('billing_year');
@@ -91,20 +115,32 @@ class BillingController extends Controller
     }
 
     /**
-     * Show form to create billing
+     * Show create form
      */
     public function create()
     {
-        // Get active tenants
-        $activeRents = Rent::with(['user', 'room'])
-            ->where('status', 'active')
-            ->get();
+        /** @var \App\Models\User $user */
+        $user = auth()->user();
+
+        // Get active rents (otomatis filtered)
+        $activeRentsQuery = Rent::with(['user', 'room'])
+            ->where('status', 'active');
+
+        if (!$user->isSuperAdmin()) {
+            // Sudah ter-filter via Global Scope
+        } else {
+            $activeRentsQuery->withoutTempatKosScope();
+        }
+
+        $activeRents = $activeRentsQuery->get();
 
         return view('admin.billing.create', compact('activeRents'));
     }
 
     /**
-     * Store a newly created billing
+     * Store billing
+     * 
+     * tempat_kos_id otomatis terisi via trait
      */
     public function store(Request $request)
     {
@@ -136,7 +172,7 @@ class BillingController extends Controller
                 return back()->with('error', 'Tagihan untuk periode ini sudah ada!')->withInput();
             }
 
-            // Create billing
+            // Create billing (tempat_kos_id auto-filled via trait)
             $billing = new Billing();
             $billing->rent_id = $rent->id;
             $billing->user_id = $rent->user_id;
@@ -150,7 +186,6 @@ class BillingController extends Controller
             $billing->water_cost = $validated['water_cost'] ?? 0;
             $billing->maintenance_cost = $validated['maintenance_cost'] ?? 0;
             $billing->other_costs = 0;
-            $billing->other_costs_description = null;
             $billing->discount = $validated['discount'] ?? 0;
 
             $billing->calculateTotal();
@@ -158,7 +193,6 @@ class BillingController extends Controller
             $billing->due_date = $validated['due_date'];
             $billing->admin_notes = $validated['admin_notes'];
             $billing->status = 'unpaid';
-
             $billing->tipe = 'bulanan';
                     
             $billing->save();
@@ -174,32 +208,31 @@ class BillingController extends Controller
     }
 
     /**
-     * Display the specified billing
+     * Show billing detail
+     * 
+     * Model binding otomatis ter-filter
      */
     public function show(Billing $billing)
     {
         $billing->load(['user', 'room', 'rent', 'payments.verifier']);
-
         return view('admin.billing.show', compact('billing'));
     }
 
     /**
-     * Show form to edit billing
+     * Show edit form
      */
     public function edit(Billing $billing)
     {
-        // Only allow edit if not paid
         if ($billing->status === 'paid') {
             return back()->with('error', 'Tagihan yang sudah lunas tidak dapat diedit');
         }
 
         $billing->load(['rent.user', 'rent.room']);
-
         return view('admin.billing.edit', compact('billing'));
     }
 
     /**
-     * Update the specified billing
+     * Update billing
      */
     public function update(Request $request, Billing $billing)
     {
@@ -220,26 +253,16 @@ class BillingController extends Controller
         try {
             DB::beginTransaction();
 
-            // Update basic fields
             $billing->rent_amount = $validated['rent_amount'];
             $billing->electricity_cost = $validated['electricity_cost'] ?? 0;
             $billing->water_cost = $validated['water_cost'] ?? 0;
             $billing->maintenance_cost = $validated['maintenance_cost'] ?? 0;
-            $billing->other_costs = 0;
-            $billing->other_costs_description = null;
             $billing->discount = $validated['discount'] ?? 0;
             $billing->due_date = $validated['due_date'];
             $billing->admin_notes = $validated['admin_notes'];
 
-            // Hitung ulang total biaya
             $billing->calculateTotal();
 
-            /**
-             * LOGIKA PERBAIKAN STATUS
-             * Jika due_date > hari ini → status harus "unpaid"
-             * Jika due_date < hari ini → status harus "overdue"
-             * (kecuali status sudah paid)
-             */
             if ($billing->status !== 'paid') {
                 if ($billing->due_date->isFuture()) {
                     $billing->status = 'unpaid';
@@ -261,7 +284,7 @@ class BillingController extends Controller
     }
 
     /**
-     * Remove the specified billing
+     * Delete billing
      */
     public function destroy(Billing $billing)
     {
@@ -300,23 +323,16 @@ class BillingController extends Controller
             DB::beginTransaction();
 
             if ($validated['action'] === 'confirm') {
-                // Confirm payment
                 $payment->update([
                     'status' => 'confirmed',
                     'verified_by' => auth()->id(),
                     'verified_at' => now(),
                 ]);
 
-                // Mark billing as paid
                 $payment->billing->markAsPaid();
-
-                Notification::where('type', 'billing')
-                    ->where('rent_id', $payment->billing->rent_id)
-                    ->update(['status' => 'read']);
 
                 $message = 'Pembayaran berhasil dikonfirmasi';
             } else {
-                // Reject payment
                 $payment->update([
                     'status' => 'rejected',
                     'verified_by' => auth()->id(),
@@ -324,7 +340,6 @@ class BillingController extends Controller
                     'rejection_reason' => $validated['rejection_reason'],
                 ]);
 
-                // Set billing back to unpaid
                 $payment->billing->update(['status' => 'unpaid']);
 
                 $message = 'Pembayaran ditolak';
@@ -340,7 +355,7 @@ class BillingController extends Controller
     }
 
     /**
-     * Manual mark as paid
+     * Mark as paid
      */
     public function markAsPaid(Billing $billing)
     {
@@ -351,7 +366,6 @@ class BillingController extends Controller
         try {
             DB::beginTransaction();
 
-            // Create manual payment record
             Payment::create([
                 'user_id' => $billing->user_id,
                 'billing_id' => $billing->id,
@@ -376,7 +390,9 @@ class BillingController extends Controller
     }
 
     /**
-     * Bulk generate billings for all active tenants
+     * Bulk generate billings
+     * 
+     * tempat_kos_id otomatis terisi untuk setiap billing
      */
     public function bulkGenerate(Request $request)
     {
@@ -389,9 +405,20 @@ class BillingController extends Controller
         try {
             DB::beginTransaction();
 
-            $activeRents = Rent::with(['user', 'room'])
-                ->where('status', 'active')
-                ->get();
+            /** @var \App\Models\User $user */
+            $user = auth()->user();
+
+            // Get active rents (otomatis filtered)
+            $activeRentsQuery = Rent::with(['user', 'room'])
+                ->where('status', 'active');
+
+            if (!$user->isSuperAdmin()) {
+                // Sudah ter-filter via Global Scope
+            } else {
+                $activeRentsQuery->withoutTempatKosScope();
+            }
+
+            $activeRents = $activeRentsQuery->get();
 
             $created = 0;
             $skipped = 0;
@@ -408,7 +435,7 @@ class BillingController extends Controller
                     continue;
                 }
 
-                // Create billing
+                // Create billing (tempat_kos_id auto-filled)
                 $billing = new Billing();
                 $billing->rent_id = $rent->id;
                 $billing->user_id = $rent->user_id;
@@ -428,7 +455,6 @@ class BillingController extends Controller
 
                 $billing->due_date = $validated['due_date'];
                 $billing->status = 'unpaid';
-                            
                 $billing->tipe = 'bulanan';
 
                 $billing->save();

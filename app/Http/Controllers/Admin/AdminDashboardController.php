@@ -3,49 +3,52 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\User;
 use App\Models\Room;
 use App\Models\Rent;
 use App\Models\Billing;
 use App\Models\Notification;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class AdminDashboardController extends Controller
 {
     public function index()
     {
-        // ==========================
-        // STATISTIK USER
-        // ==========================
-        $totalUsers = User::where('role', 'user')->count();
+        /** @var \App\Models\User $user */
+        $user = auth()->user();
 
-        $newUsersThisMonth = User::where('role', 'user')
-            ->whereMonth('created_at', now()->month)
-            ->whereYear('created_at', now()->year)
-            ->count();
-
-        $recentUsers = User::where('role', 'user')
-            ->latest()
-            ->take(5)
-            ->get();
+        // Validasi kepemilikan kos (Admin wajib punya tempat_kos_id)
+        if (!$user->isSuperAdmin() && !$user->tempat_kos_id) {
+            abort(403, 'Anda tidak memiliki akses ke kos manapun.');
+        }
 
         // ==========================
-        // STATISTIK KAMAR
+        // STATISTIK KAMAR (MULTI-TENANT)
         // ==========================
-        $totalRooms = Room::count();
-        $occupiedRooms = Room::where('status', 'occupied')->count();
-        $availableRooms = Room::where('status', 'available')->count();
-        $maintenanceRooms = Room::where('status', 'maintenance')->count();
+        $roomsQuery = $user->isSuperAdmin()
+            ? Room::withoutTempatKosScope()
+            : Room::where('tempat_kos_id', $user->tempat_kos_id);
+
+        $totalRooms = (clone $roomsQuery)->count();
+        $occupiedRooms = (clone $roomsQuery)->where('status', 'occupied')->count();
+        $availableRooms = (clone $roomsQuery)->where('status', 'available')->count();
+        $maintenanceRooms = (clone $roomsQuery)->where('status', 'maintenance')->count();
 
         // ==========================
-        // STATISTIK PENDAPATAN
+        // STATISTIK PENDAPATAN BULANAN (MULTI-TENANT)
         // ==========================
-        $monthlyIncome = Billing::where('status', 'paid')
+        $billingQueryMonthly = $user->isSuperAdmin()
+            ? Billing::withoutTempatKosScope()
+            : Billing::where('tempat_kos_id', $user->tempat_kos_id);
+
+        $monthlyIncome = (clone $billingQueryMonthly)
+            ->where('status', 'paid')
             ->whereMonth('created_at', now()->month)
             ->whereYear('created_at', now()->year)
             ->sum('total_amount');
 
-        $lastMonthIncome = Billing::where('status', 'paid')
+        $lastMonthIncome = (clone $billingQueryMonthly)
+            ->where('status', 'paid')
             ->whereMonth('created_at', now()->subMonth()->month)
             ->whereYear('created_at', now()->subMonth()->year)
             ->sum('total_amount');
@@ -55,16 +58,43 @@ class AdminDashboardController extends Controller
             : 0;
 
         // ==========================
-        // TAGIHAN PENDING
+        // STATISTIK PENDAPATAN TAHUNAN (MULTI-TENANT)
         // ==========================
-        $pendingBills = Billing::where('status', 'pending')->count();
+        $billingQueryYearly = $user->isSuperAdmin()
+            ? Billing::withoutTempatKosScope()
+            : Billing::where('tempat_kos_id', $user->tempat_kos_id);
 
-        $pendingBillsThisMonth = Billing::where('status', 'pending')
+        $yearlyIncome = (clone $billingQueryYearly)
+            ->where('status', 'paid')
+            ->whereYear('created_at', now()->year)
+            ->sum('total_amount');
+
+        $lastYearIncome = (clone $billingQueryYearly)
+            ->where('status', 'paid')
+            ->whereYear('created_at', now()->subYear()->year)
+            ->sum('total_amount');
+
+        $yearlyIncomeChangePercent = $lastYearIncome > 0
+            ? round((($yearlyIncome - $lastYearIncome) / $lastYearIncome) * 100)
+            : 0;
+
+        // ==========================
+        // TAGIHAN PENDING (MULTI-TENANT)
+        // ==========================
+        $billingQueryPending = $user->isSuperAdmin()
+            ? Billing::withoutTempatKosScope()
+            : Billing::where('tempat_kos_id', $user->tempat_kos_id);
+
+        $pendingBills = (clone $billingQueryPending)->where('status', 'pending')->count();
+
+        $pendingBillsThisMonth = (clone $billingQueryPending)
+            ->where('status', 'pending')
             ->whereMonth('created_at', now()->month)
             ->whereYear('created_at', now()->year)
             ->count();
 
-        $pendingBillsLastMonth = Billing::where('status', 'pending')
+        $pendingBillsLastMonth = (clone $billingQueryPending)
+            ->where('status', 'pending')
             ->whereMonth('created_at', now()->subMonth()->month)
             ->whereYear('created_at', now()->subMonth()->year)
             ->count();
@@ -74,60 +104,118 @@ class AdminDashboardController extends Controller
             : 0;
 
         // ==========================
-        // INFO KOS
+        // INFO KOS (MULTI-TENANT)
         // ==========================
-        $kosInfo = \App\Models\KosInfo::first();
+        $kosInfoQuery = $user->isSuperAdmin()
+            ? \App\Models\KosInfo::withoutTempatKosScope()
+            : \App\Models\KosInfo::where('tempat_kos_id', $user->tempat_kos_id);
+
+        $kosInfo = $kosInfoQuery->first();
 
         // ==========================
-        // BOOKING PENDING
+        // BOOKING PENDING (MULTI-TENANT)
         // ==========================
-        $pendingBookings = Rent::where('status', 'pending')
+        $pendingBookingsQuery = $user->isSuperAdmin()
+            ? Rent::withoutTempatKosScope()
+            : Rent::where('tempat_kos_id', $user->tempat_kos_id);
+
+        $pendingBookings = (clone $pendingBookingsQuery)
+            ->where('status', 'pending')
             ->with(['user', 'room'])
             ->latest()
             ->take(5)
             ->get();
 
-        $pendingBookingsCount = Rent::where('status', 'pending')->count();
+        $pendingBookingsCount = (clone $pendingBookingsQuery)
+            ->where('status', 'pending')
+            ->count();
 
         // ==========================
-        // CHECKOUT REQUEST (USER)
+        // CHECKOUT REQUEST (MULTI-TENANT)
         // ==========================
-        $checkoutRequests = Rent::where('status', 'checkout_requested')
+        $checkoutRequestsQuery = $user->isSuperAdmin()
+            ? Rent::withoutTempatKosScope()
+            : Rent::where('tempat_kos_id', $user->tempat_kos_id);
+
+        $checkoutRequests = (clone $checkoutRequestsQuery)
+            ->where('status', 'checkout_requested')
             ->with(['user', 'room'])
             ->latest()
             ->take(5)
             ->get();
 
-        $checkoutRequestsCount = Rent::where('status', 'checkout_requested')->count();
+        $checkoutRequestsCount = (clone $checkoutRequestsQuery)
+            ->where('status', 'checkout_requested')
+            ->count();
 
         // ==========================
-        // NOTIFIKASI BARU
+        // NOTIFIKASI BARU (MULTI-TENANT)
         // ==========================
-        $activities = Notification::with('user')
+        $activitiesQuery = $user->isSuperAdmin()
+            ? Notification::withoutTempatKosScope()
+            : Notification::where('tempat_kos_id', $user->tempat_kos_id);
+
+        $activities = (clone $activitiesQuery)
+            ->with('user')
             ->latest()
             ->take(7)
             ->get();
 
-        $todayNotifications = Notification::where('status', 'pending')->count();
+        $todayNotifications = (clone $activitiesQuery)
+            ->where('status', 'pending')
+            ->count();
 
-        $notifications = Notification::where('user_id', auth()->id())
+        $notifications = Notification::where('user_id', $user->id)
             ->where('status', 'pending')
             ->orderBy('created_at', 'desc')
             ->take(10)
             ->get();
 
-        // ==========================
-        // FIX UTAMA (UNTUK BLADE)
-        // ==========================
-        $overdueNotifications = Notification::where('status', 'pending')
+        $overdueNotifications = (clone $activitiesQuery)
+            ->where('status', 'pending')
             ->whereNotNull('due_date')
             ->latest()
             ->take(10)
             ->get();
 
+        // ==========================
+        // DATA UNTUK CHART PENDAPATAN 6 BULAN (MULTI-TENANT)
+        // ==========================
+        $monthlyRevenueLabels = [];
+        $monthlyRevenueData = [];
+
+        for ($i = 5; $i >= 0; $i--) {
+            $date = now()->subMonths($i);
+            
+            $billingQueryChart = $user->isSuperAdmin()
+                ? Billing::withoutTempatKosScope()
+                : Billing::where('tempat_kos_id', $user->tempat_kos_id);
+
+            $revenue = (clone $billingQueryChart)
+                ->where('status', 'paid')
+                ->whereYear('created_at', $date->year)
+                ->whereMonth('created_at', $date->month)
+                ->sum('total_amount');
+
+            $monthlyRevenueLabels[] = $date->format('M Y');
+            $monthlyRevenueData[] = round($revenue / 1000000, 1); // Konversi ke juta
+        }
+
+        // ==========================
+        // DATA UNTUK CHART STATUS PEMBAYARAN (MULTI-TENANT)
+        // ==========================
+        $paymentStatusQuery = $user->isSuperAdmin()
+            ? Billing::withoutTempatKosScope()
+            : Billing::where('tempat_kos_id', $user->tempat_kos_id);
+
+        $paidCount = (clone $paymentStatusQuery)->where('status', 'paid')->count();
+        $unpaidCount = (clone $paymentStatusQuery)->where('status', 'unpaid')->count();
+        $overdueCount = (clone $paymentStatusQuery)->where('status', 'overdue')->count();
+        $pendingCount = (clone $paymentStatusQuery)->where('status', 'pending')->count();
+
+        $paymentStatusData = [$paidCount, $unpaidCount, $overdueCount, $pendingCount];
+
         return view('admin.dashboard', compact(
-            'totalUsers',
-            'newUsersThisMonth',
             'totalRooms',
             'occupiedRooms',
             'availableRooms',
@@ -135,11 +223,13 @@ class AdminDashboardController extends Controller
             'monthlyIncome',
             'lastMonthIncome',
             'incomeChangePercent',
+            'yearlyIncome',
+            'lastYearIncome',
+            'yearlyIncomeChangePercent',
             'pendingBills',
             'pendingBillsThisMonth',
             'pendingBillsLastMonth',
             'pendingGrowth',
-            'recentUsers',
             'kosInfo',
             'pendingBookings',
             'pendingBookingsCount',
@@ -148,7 +238,10 @@ class AdminDashboardController extends Controller
             'todayNotifications',
             'activities',
             'notifications',
-            'overdueNotifications'
+            'overdueNotifications',
+            'monthlyRevenueLabels',
+            'monthlyRevenueData',
+            'paymentStatusData'
         ));
     }
 }

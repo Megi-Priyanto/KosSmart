@@ -7,14 +7,13 @@
 @section('content')
 <div class="space-y-6">
 
-    <!-- Back Button -->
-    <a href="{{ route('admin.billing.index') }}" 
-       class="inline-flex items-center text-yellow-400 hover:text-yellow-500 transition-colors font-semibold">
-        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
-        </svg>
-        Kembali ke Daftar Tagihan
-    </a>
+    <!-- Page Header -->
+    <div class="flex items-center justify-between mb-4">
+        <a href="{{ route('admin.billing.index') }}" 
+           class="px-5 py-3 bg-gradient-to-r from-yellow-500 to-orange-600 text-white font-semibold rounded-lg hover:from-yellow-600 hover:to-orange-700 transition-all shadow-lg flex items-center justify-center">
+            Kembali ke Daftar Tagihan
+        </a>
+    </div>
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
         
@@ -79,46 +78,19 @@
 
                 <!-- Cost Breakdown -->
                 <div class="p-6">
-                    <h4 class="text-sm font-bold text-slate-100 mb-4 uppercase tracking-wide">Rincian Biaya</h4>
-                    
+                    <h3 class="text-xl font-bold text-white flex items-center mb-4">
+                        <div class="p-2 bg-gradient-to-br from-slate-700 to-slate-600 rounded-lg border-2 border-slate-500 mr-3 shadow-lg">
+                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                            </svg>
+                        </div>
+                        Rincian Biaya
+                    </h3>
                     <div class="space-y-3">
                         <div class="flex justify-between items-center py-3 bg-slate-900 px-4 rounded-lg border border-slate-700">
                             <span class="text-sm text-slate-300 font-medium">Biaya Sewa</span>
                             <span class="text-base font-bold text-white">Rp {{ number_format($billing->rent_amount, 0, ',', '.') }}</span>
                         </div>
-
-                        @if($billing->electricity_cost > 0)
-                        <div class="flex justify-between items-center py-3 bg-slate-900 px-4 rounded-lg border border-slate-700">
-                            <span class="text-sm text-slate-300 font-medium">Listrik</span>
-                            <span class="text-base font-bold text-white">Rp {{ number_format($billing->electricity_cost, 0, ',', '.') }}</span>
-                        </div>
-                        @endif
-
-                        @if($billing->water_cost > 0)
-                        <div class="flex justify-between items-center py-3 bg-slate-900 px-4 rounded-lg border border-slate-700">
-                            <span class="text-sm text-slate-300 font-medium">Air</span>
-                            <span class="text-base font-bold text-white">Rp {{ number_format($billing->water_cost, 0, ',', '.') }}</span>
-                        </div>
-                        @endif
-
-                        @if($billing->maintenance_cost > 0)
-                        <div class="flex justify-between items-center py-3 bg-slate-900 px-4 rounded-lg border border-slate-700">
-                            <span class="text-sm text-slate-300 font-medium">Maintenance</span>
-                            <span class="text-base font-bold text-white">Rp {{ number_format($billing->maintenance_cost, 0, ',', '.') }}</span>
-                        </div>
-                        @endif
-
-                        @if($billing->other_costs > 0)
-                        <div class="flex justify-between items-center py-3 bg-slate-900 px-4 rounded-lg border border-slate-700">
-                            <span class="text-sm text-slate-300 font-medium">
-                                Biaya Lain-lain
-                                @if($billing->other_costs_description)
-                                    <span class="block text-xs text-slate-500 mt-1">{{ $billing->other_costs_description }}</span>
-                                @endif
-                            </span>
-                            <span class="text-base font-bold text-white">Rp {{ number_format($billing->other_costs, 0, ',', '.') }}</span>
-                        </div>
-                        @endif
 
                         <div class="flex justify-between items-center py-3 border-t-2 border-slate-600 px-4">
                             <span class="text-sm font-bold text-slate-300">Subtotal</span>
@@ -132,9 +104,9 @@
                         </div>
                         @endif
 
-                        <div class="flex justify-between items-center py-4 border-t-2 border-blue-600 bg-gradient-to-r from-blue-900/20 to-blue-900/10 px-6 rounded-lg">
+                        <div class="flex justify-between items-center py-4 border-t-2 border-yellow-600 bg-gradient-to-r from-yellow-900/20 to-yellow-900/10 px-6 rounded-lg">
                             <span class="text-lg font-bold text-white">Total Tagihan</span>
-                            <span class="text-3xl font-bold text-orange-400">Rp {{ number_format($billing->total_amount, 0, ',', '.') }}</span>
+                            <span class="text-3xl font-bold text-yellow-500">Rp {{ number_format($billing->total_amount, 0, ',', '.') }}</span>
                         </div>
                     </div>
                 </div>

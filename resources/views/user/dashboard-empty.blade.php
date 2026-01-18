@@ -200,58 +200,6 @@
     </div>
 @endif
 
-<!-- Social Media Section -->
-<div class="flex justify-center gap-6 mt-12 mb-12">
-
-    <!-- Instagram -->
-    <a href="https://www.instagram.com/USERNAME_KAMU"
-       target="_blank"
-       class="flex flex-col items-center gap-2 text-sm text-gray-500 hover:text-white transition">
-    
-        <div class="w-14 h-14 rounded-full flex items-center justify-center shadow-lg hover:scale-105 transition"
-             style="background: radial-gradient(circle at top left, #c4c4c4, #292c30);">
-            <svg class="w-7 h-7 text-white" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M7.75 2h8.5A5.75 5.75 0 0122 7.75v8.5A5.75 5.75 0 0116.25 22h-8.5A5.75 5.75 0 012 16.25v-8.5A5.75 5.75 0 017.75 2zm0 1.5A4.25 4.25 0 003.5 7.75v8.5A4.25 4.25 0 007.75 20.5h8.5a4.25 4.25 0 004.25-4.25v-8.5A4.25 4.25 0 0016.25 3.5h-8.5z"/>
-                <path d="M12 7a5 5 0 100 10 5 5 0 000-10zm0 1.5a3.5 3.5 0 110 7 3.5 3.5 0 010-7z"/>
-                <circle cx="17.5" cy="6.5" r="1"/>
-            </svg>
-        </div>
-    
-        <span>Instagram</span>
-    </a>
-
-    <!-- Twitter -->
-    <a href="https://twitter.com/USERNAME_KAMU"
-       target="_blank"
-       class="flex flex-col items-center gap-2 text-sm text-gray-500 hover:text-white transition">
-    
-        <div class="w-14 h-14 rounded-full flex items-center justify-center shadow-lg hover:scale-105 transition"
-             style="background: radial-gradient(circle at top left, #c4c4c4, #292c30);">
-            <svg class="w-7 h-7 text-white" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M23 3a10.9 10.9 0 01-3.14 1.53A4.48 4.48 0 0016 3a4.48 4.48 0 00-4.47 4.48c0 .35.04.7.11 1.03A12.94 12.94 0 013 4s-4 9 5 13a13.07 13.07 0 01-7 2c9 5 20 0 20-11.5a4.5 4.5 0 00-.08-.83A7.72 7.72 0 0023 3z"/>
-            </svg>
-        </div>
-    
-        <span>Twitter</span>
-    </a>
-
-    <!-- YouTube -->
-    <a href="https://www.youtube.com/@USERNAME_KAMU"
-       target="_blank"
-       class="flex flex-col items-center gap-2 text-sm text-gray-500 hover:text-white transition">
-    
-        <div class="w-14 h-14 rounded-full flex items-center justify-center shadow-lg hover:scale-105 transition"
-             style="background: radial-gradient(circle at top left, #c4c4c4, #292c30);">
-            <svg class="w-7 h-7 text-white" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M23.498 6.186a2.958 2.958 0 00-2.08-2.093C19.61 3.5 12 3.5 12 3.5s-7.61 0-9.418.593A2.958 2.958 0 00.502 6.186C0 8.002 0 12 0 12s0 3.998.502 5.814a2.958 2.958 0 002.08 2.093C4.39 20.5 12 20.5 12 20.5s7.61 0 9.418-.593a2.958 2.958 0 002.08-2.093C24 15.998 24 12 24 12s0-3.998-.502-5.814zM9.75 15.02V8.98L15.5 12l-5.75 3.02z"/>
-            </svg>
-        </div>
-    
-        <span>Youtube</span>
-    </a>
-
-</div>
-
 <!-- Info Box -->
 <div class="mt-12 bg-yellow-50 border border-yellow-200 rounded-xl p-6">
     <div class="flex items-start">

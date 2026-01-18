@@ -157,15 +157,25 @@ class Billing extends Model
     }
 
     /**
-     * Accessor: Get status badge class
+     * Accessor: Get status badge class (Dark UI Friendly)
      */
     public function getStatusBadgeAttribute(): string
     {
         return match ($this->status) {
-            'paid' => 'bg-green-100 text-green-800',
-            'pending' => 'bg-yellow-100 text-yellow-800',
-            'overdue' => 'bg-red-100 text-red-800',
-            default => 'bg-gray-100 text-gray-800',
+            'paid' =>
+            'bg-emerald-500/15 text-emerald-400 border border-emerald-500/30',
+
+            'pending' =>
+            'bg-amber-500/15 text-amber-400 border border-amber-500/30',
+
+            'overdue' =>
+            'bg-red-500/15 text-red-400 border border-red-500/30',
+
+            'unpaid' =>
+            'bg-slate-500/15 text-slate-300 border border-slate-500/30',
+
+            default =>
+            'bg-slate-500/15 text-slate-300 border border-slate-500/30',
         };
     }
 
@@ -205,10 +215,18 @@ class Billing extends Model
     public function getFormattedPeriodAttribute(): string
     {
         $months = [
-            1 => 'Januari', 2 => 'Februari', 3 => 'Maret',
-            4 => 'April', 5 => 'Mei', 6 => 'Juni',
-            7 => 'Juli', 8 => 'Agustus', 9 => 'September',
-            10 => 'Oktober', 11 => 'November', 12 => 'Desember'
+            1 => 'Januari',
+            2 => 'Februari',
+            3 => 'Maret',
+            4 => 'April',
+            5 => 'Mei',
+            6 => 'Juni',
+            7 => 'Juli',
+            8 => 'Agustus',
+            9 => 'September',
+            10 => 'Oktober',
+            11 => 'November',
+            12 => 'Desember'
         ];
 
         return $months[$this->billing_month] . ' ' . $this->billing_year;

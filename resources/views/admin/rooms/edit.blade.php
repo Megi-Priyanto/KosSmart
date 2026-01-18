@@ -7,12 +7,11 @@
 @section('content')
 
 <div class="w-full mx-auto">
-    <!-- Back Button -->
-    <div class="mb-6">
-        <a href="{{ route('admin.rooms.index') }}" class="inline-flex items-center text-yellow-400 hover:text-yellow-500 transition-colors font-medium">
-            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
-            </svg>
+    
+    <!-- Page Header -->
+    <div class="flex items-center justify-between mb-4">
+        <a href="{{ route('admin.rooms.index') }}" 
+           class="px-5 py-3 bg-gradient-to-r from-yellow-500 to-orange-600 text-white font-semibold rounded-lg hover:from-yellow-600 hover:to-orange-700 transition-all shadow-lg flex items-center justify-center">
             Kembali ke Daftar Kamar
         </a>
     </div>
@@ -167,7 +166,7 @@
                         @error('jenis_sewa')
                         <p class="text-red-400 text-sm mt-1.5">{{ $message }}</p>
                         @enderror
-                        <div class="mt-3 p-3 bg-blue-500/10 border-2 border-blue-500/40 rounded-lg">
+                        <div class="mt-3 p-3 bg-yellow-500/10 border-2 border-yellow-500/40 rounded-lg">
                             <p class="text-sm text-slate-200 items-center">
                                 Periode sewa saat ini: <strong class="text-orange-400 font-bold">{{ $room->jenis_sewa_label }}</strong>
                             </p>
@@ -181,8 +180,14 @@
                         <input type="checkbox" name="has_window" value="1" 
                                {{ old('has_window', $room->has_window) ? 'checked' : '' }}
                                id="has_window"
-                               class="w-6 h-6 bg-slate-900 border-2 border-slate-600 text-orange-500 rounded-lg focus:ring-2 focus:ring-orange-500 cursor-pointer transition-all">
-                        <span class="ml-3 text-base font-semibold text-slate-200 group-hover:text-orange-400 transition-colors">
+                               class="w-5 h-5
+                                    accent-amber-500
+                                    bg-slate-700 border-slate-600
+                                    rounded
+                                    focus:ring-2 focus:ring-amber-500
+                                    focus:ring-offset-0
+                                    mt-0.5">
+                        <span class="ml-3 text-base font-semibold text-slate-200">
                             Kamar memiliki jendela
                         </span>
                     </label>
@@ -321,7 +326,7 @@
                         </select>
                         
                         @if($room->currentRent)
-                        <div class="mt-3 p-3 bg-blue-500/10 border-2 border-blue-500/40 rounded-lg">
+                        <div class="mt-3 p-3 bg-yellow-500/10 border-2 border-yellow-500/40 rounded-lg">
                             <span class="text-sm font-semibold text-slate-300 flex items-center">
                                 <svg class="w-4 h-4 mr-2 text-slate-200" fill="currentColor" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
@@ -517,8 +522,8 @@
                     </div>
                     
                     <!-- Info Box -->
-                    <div class="flex items-start space-x-3 bg-blue-400/10 border-2 border-blue-400/40 rounded-xl p-4 mb-5">
-                        <svg class="w-6 h-6 text-blue-400 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                    <div class="flex items-start space-x-3 bg-yellow-400/10 border-2 border-yellow-400/40 rounded-xl p-4 mb-5">
+                        <svg class="w-6 h-6 text-yellow-400 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                         </svg>
                         <div>
@@ -586,7 +591,7 @@
                 <!-- Update Summary -->
                 <div x-show="markedForDeletion.length > 0 || imagePreviews.length > 0" 
                      x-transition
-                     class="mt-6 p-6 bg-gradient-to-br bg-blue-400/10 border-2 border-blue-400/40 rounded-xl">
+                     class="mt-6 p-6 bg-gradient-to-br bg-yellow-400/10 border-2 border-yellow-400/40 rounded-xl">
                     <div class="flex items-start space-x-4">
                         <svg class="w-8 h-8 text-slate-400 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
@@ -607,7 +612,7 @@
                                     <p class="text-3xl font-black text-green-400" x-text="imagePreviews.length"></p>
                                 </div>
                             </div>
-                            <div class="mt-4 pt-4 border-t-2 border-blue-500/30">
+                            <div class="mt-4 pt-4 border-t-2 border-yellow-500/30">
                                 <p class="text-slate-200 font-bold text-lg">
                                     <span class="text-2xl font-black text-slate-300" x-text="totalAfterUpdate"></span> 
                                     <span>foto setelah update</span>
@@ -620,7 +625,7 @@
         </div>
         
         <!-- Actions -->
-        <div class="flex flex-col sm:flex-row justify-between items-center gap-4 mt-8 mb-8">
+        <div class="flex justify-end space-x-4 mt-6">
             <!-- Tombol Batal -->
             <a href="{{ route('admin.rooms.index') }}"
                class="w-full sm:w-auto px-8 py-4 border-3 border-slate-600 text-slate-300 bg-slate-800 rounded-xl hover:bg-slate-700 hover:border-slate-500 transition-all font-bold flex items-center justify-center shadow-lg hover:scale-105">
@@ -632,7 +637,12 @@
          
             <!-- Tombol Simpan -->
             <button type="submit"
-                    class="w-full sm:w-auto px-6 py-4 bg-gradient-to-r from-yellow-500 via-orange-600 to-orange-700 text-white rounded-xl hover:from-yellow-600 hover:via-orange-700 hover:to-orange-600 transition-all shadow-2xl hover:shadow-orange-500/30 flex items-center justify-center font-black text-lg hover:scale-105">
+                    class="inline-flex items-center gap-2
+                    bg-gradient-to-r from-yellow-500 to-orange-600
+                    text-white font-semibold
+                    px-5 py-3 rounded-lg
+                    hover:from-yellow-600 hover:to-orange-700
+                    transition-all shadow-lg">
                 <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path>
                 </svg>

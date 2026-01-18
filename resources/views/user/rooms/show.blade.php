@@ -544,7 +544,7 @@
 <!-- Back to List Button (Mobile) -->
 <div class="mt-8 lg:hidden">
     <a href="{{ route('user.rooms.index', ['tempat_kos_id' => $tempatKos->id]) }}"
-       class="block w-full text-center px-6 py-3 border border-gray-300 font-bold text-white rounded-lg bg-yellow-500 hover:bg-yellow-600 flex items-center justify-center space-x-2">
+       class="w-full px-4 py-3 bg-gradient-to-r from-yellow-500 to-orange-600 text-white font-semibold rounded-lg hover:from-yellow-600 hover:to-orange-700 transition-all shadow-lg flex items-center justify-center">
         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
         </svg>
