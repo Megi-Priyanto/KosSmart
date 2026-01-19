@@ -15,16 +15,22 @@ class BookingController extends Controller
 {
     public function create(Room $room)
     {
-        if (!$room->isAvailable()) {
+        // Validasi kamar HANYA tersedia untuk booking jika statusnya 'available'
+        if ($room->status !== 'available') {
+            $message = match($room->status) {
+                'occupied' => 'Maaf, kamar ini sudah terisi.',
+                'maintenance' => 'Maaf, kamar sedang dalam perbaikan.',
+                default => 'Maaf, kamar ini tidak tersedia.'
+            };
+            
             return redirect()
                 ->route('user.rooms.index')
-                ->with('error', 'Maaf, kamar ini sudah tidak tersedia.');
+                ->with('error', $message);
         }
 
         $room->load('kosInfo');
         $depositAmount = $room->price * 0.5;
 
-        // Payment methods configuration
         $paymentMethods = [
             'manual_transfer' => [
                 'label' => 'Transfer Bank',
@@ -94,7 +100,15 @@ class BookingController extends Controller
             'agreement.accepted' => 'Anda harus menyetujui syarat dan ketentuan',
         ]);
 
-        if (!$room->isAvailable()) {
+        // Validasi status room HARUS available
+        if ($room->status !== 'available') {
+            return back()
+                ->with('error', 'Maaf, kamar sudah tidak tersedia untuk booking.')
+                ->withInput();
+        }
+
+        // Double check race condition
+        if ($room->currentRent()->exists()) {
             return back()
                 ->with('error', 'Maaf, kamar sudah disewa orang lain.')
                 ->withInput();
@@ -117,26 +131,16 @@ class BookingController extends Controller
                 ->store('deposits', 'public');
 
             $depositAmount = $room->price * 0.5;
-
-            // Load kosInfo
             $room->load('kosInfo');
 
-            // Validasi kosInfo
-            if (!$room->kosInfo) {
-                throw new \Exception('Informasi kos tidak ditemukan.');
+            if (!$room->kosInfo || !$room->kosInfo->tempat_kos_id) {
+                throw new \Exception('Informasi kos tidak valid.');
             }
 
-            if (!$room->kosInfo->tempat_kos_id) {
-                throw new \Exception('ID tempat kos tidak valid.');
-            }
-
-            // Log untuk debugging
             Log::info('Creating booking', [
                 'user_id' => Auth::id(),
                 'room_id' => $room->id,
                 'tempat_kos_id' => $room->kosInfo->tempat_kos_id,
-                'payment_method' => $validated['payment_method'],
-                'payment_sub_method' => $validated['payment_sub_method'] ?? 'qris',
             ]);
 
             // Create rent
@@ -155,16 +159,19 @@ class BookingController extends Controller
                 'notes' => 'Bukti DP: ' . $depositProofPath,
             ]);
 
+            // KUNCI UTAMA: AUTO UPDATE STATUS ROOM → 'occupied'
+            $room->update(['status' => 'occupied']);
+
             Log::info('Booking created successfully', [
                 'rent_id' => $rent->id,
-                'tempat_kos_id' => $rent->tempat_kos_id,
+                'room_status_updated' => 'occupied',
             ]);
 
             DB::commit();
 
             return redirect()
                 ->route('user.dashboard')
-                ->with('success', 'Booking berhasil! Menunggu konfirmasi admin.');
+                ->with('success', 'Booking berhasil! Kamar telah direservasi. Menunggu konfirmasi admin.');
 
         } catch (\Exception $e) {
             DB::rollBack();
@@ -173,17 +180,15 @@ class BookingController extends Controller
                 Storage::disk('public')->delete($depositProofPath);
             }
 
-            // Log error
             Log::error('Booking failed', [
                 'error' => $e->getMessage(),
-                'trace' => $e->getTraceAsString(),
                 'user_id' => Auth::id(),
                 'room_id' => $room->id,
             ]);
 
             return back()
                 ->withInput()
-                ->with('error', 'Terjadi kesalahan saat memproses booking: ' . $e->getMessage());
+                ->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
         }
     }
 
@@ -212,5 +217,98 @@ class BookingController extends Controller
 
         $booking->load('room');
         return view('user.booking.show', compact('booking'));
+    }
+
+    /**
+     * CANCEL BOOKING - Kembalikan status room ke 'available'
+     */
+    public function cancel(Rent $booking)
+    {
+        if ($booking->user_id !== Auth::id()) {
+            abort(403, 'Anda tidak memiliki akses ke booking ini.');
+        }
+
+        if ($booking->status !== 'pending') {
+            return redirect()->back()
+                ->with('error', 'Booking tidak dapat dibatalkan karena sudah dikonfirmasi.');
+        }
+
+        DB::beginTransaction();
+        try {
+            $booking->update([
+                'status' => 'cancelled',
+                'end_date' => now()
+            ]);
+
+            // Kembalikan status room ke 'available'
+            $booking->room->update(['status' => 'available']);
+
+            Log::info('Booking cancelled', [
+                'rent_id' => $booking->id,
+                'room_status_updated' => 'available',
+            ]);
+
+            DB::commit();
+
+            return redirect()->route('user.dashboard')
+                ->with('success', 'Booking berhasil dibatalkan. Kamar kembali tersedia.');
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            
+            Log::error('Booking cancellation failed', [
+                'error' => $e->getMessage(),
+                'rent_id' => $booking->id,
+            ]);
+
+            return redirect()->back()
+                ->with('error', 'Gagal membatalkan booking: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * REQUEST CHECKOUT - Status room tetap 'occupied' sampai admin approve
+     */
+    public function requestCheckout(Rent $booking)
+    {
+        if ($booking->user_id !== Auth::id()) {
+            abort(403, 'Anda tidak memiliki akses ke booking ini.');
+        }
+
+        if ($booking->status !== 'active') {
+            return redirect()->back()
+                ->with('error', 'Hanya booking aktif yang dapat checkout.');
+        }
+
+        DB::beginTransaction();
+        try {
+            $booking->update([
+                'status' => 'checkout_requested',
+                'checkout_request_date' => now()
+            ]);
+
+            // Status room TETAP 'occupied' sampai admin approve
+            // Setelah admin approve, baru room->update(['status' => 'available'])
+
+            Log::info('Checkout requested', [
+                'rent_id' => $booking->id,
+            ]);
+
+            DB::commit();
+
+            return redirect()->route('user.dashboard')
+                ->with('success', 'Permintaan checkout dikirim. Menunggu persetujuan admin.');
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            
+            Log::error('Checkout request failed', [
+                'error' => $e->getMessage(),
+                'rent_id' => $booking->id,
+            ]);
+
+            return redirect()->back()
+                ->with('error', 'Gagal request checkout: ' . $e->getMessage());
+        }
     }
 }

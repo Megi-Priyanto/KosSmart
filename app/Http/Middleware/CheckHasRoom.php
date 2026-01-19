@@ -15,11 +15,13 @@ class CheckHasRoom
         // Cek apakah user memiliki sewa aktif
         $hasRoom = $user->rents()
             ->whereIn('status', ['active', 'checkout_requested'])
+            ->whereNull('end_date')
             ->exists();
 
-        if (!$user->hasActiveRoom()) {
+        if (!$hasRoom) {
+            // KUNCI PERBAIKAN: Redirect ke user.dashboard
             return redirect()
-                ->route('user.rooms.index')
+                ->route('user.dashboard')  // ← UBAH INI!
                 ->with('info', 'Anda belum memiliki kamar.');
         }
 

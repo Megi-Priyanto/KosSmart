@@ -26,6 +26,8 @@ class CheckNoRoom
             ->exists();
         
         if ($hasActiveRoom) {
+            // PERBAIKAN: Redirect ke DASHBOARD, bukan langsung ke room.detail
+            // Dashboard akan otomatis mengarahkan ke halaman yang tepat
             return redirect()
                 ->route('user.dashboard')
                 ->with('info', 'Anda sudah menyewa kamar.');

@@ -11,33 +11,46 @@ return new class extends Migration
         Schema::create('payments', function (Blueprint $table) {
             $table->id();
 
-            // Relasi user
-            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
+            // ================= RELASI =================
+            $table->foreignId('user_id')
+                ->constrained()
+                ->cascadeOnDelete();
 
-            // Relasi ke billing
-            $table->foreignId('billing_id')->nullable()->constrained()->nullOnDelete();
+            $table->foreignId('billing_id')
+                ->nullable()
+                ->constrained()
+                ->nullOnDelete();
 
-            // Data pembayaran
+            // ================= DATA PEMBAYARAN =================
             $table->decimal('amount', 10, 2);
-            $table->string('payment_method')->nullable();
+
+            $table->string('payment_method')->nullable();      // bank / e-wallet
+            $table->string('payment_type')->nullable();        // transfer / cash
+            $table->string('payment_sub_method')->nullable();  // BCA / DANA / dll
+
             $table->text('payment_proof')->nullable();
 
-            // Status pembayaran
-            $table->enum('status', ['pending', 'confirmed', 'rejected'])->default('pending');
+            // ================= STATUS =================
+            $table->enum('status', ['pending', 'confirmed', 'rejected'])
+                ->default('pending');
 
-            // Tanggal dan catatan
+            // ================= TANGGAL & CATATAN =================
             $table->date('payment_date')->nullable();
             $table->text('notes')->nullable();
 
-            // Verifikasi admin
-            $table->foreignId('verified_by')->nullable()->constrained('users')->nullOnDelete();
+            // ================= VERIFIKASI ADMIN =================
+            $table->foreignId('verified_by')
+                ->nullable()
+                ->constrained('users')
+                ->nullOnDelete();
+
             $table->timestamp('verified_at')->nullable();
             $table->text('rejection_reason')->nullable();
 
-            // Soft delete (tambahan)
+            // ================= SOFT DELETE =================
             $table->softDeletes();
 
-            // created_at & updated_at
+            // ================= TIMESTAMP =================
             $table->timestamps();
         });
     }

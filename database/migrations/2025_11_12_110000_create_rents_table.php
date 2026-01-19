@@ -11,33 +11,66 @@ return new class extends Migration
         Schema::create('rents', function (Blueprint $table) {
             $table->id();
 
-            // Relasi
-            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('room_id')->constrained()->cascadeOnDelete();
+            // ================= RELASI =================
+            $table->foreignId('user_id')
+                ->constrained()
+                ->cascadeOnDelete();
 
-            // Info sewa
+            $table->foreignId('room_id')
+                ->constrained()
+                ->cascadeOnDelete();
+
+            // ================= PERIODE SEWA =================
             $table->date('start_date');
             $table->date('end_date')->nullable();
 
+            // ================= BIAYA =================
             $table->decimal('deposit_paid', 10, 2)->default(0);
             $table->decimal('monthly_rent', 10, 2);
 
-            $table->enum('status', ['pending', 'active','checkout_requested','checked_out', 'completed', 'expired', 'cancelled'])
-                ->default('pending');
+            // ================= STATUS SEWA =================
+            $table->enum('status', [
+                'pending',
+                'active',
+                'checkout_requested',
+                'checked_out',
+                'completed',
+                'expired',
+                'cancelled'
+            ])->default('pending');
 
-            $table->text('notes')->nullable();
+            // ================= CATATAN =================
+            $table->text('notes')->nullable();        // catatan user
+            $table->text('admin_notes')->nullable();  // catatan admin
 
-            // Tambahan dari migration kedua
-            $table->text('admin_notes')->nullable();
+            // ================= APPROVAL =================
             $table->timestamp('approved_at')->nullable();
             $table->foreignId('approved_by')
                 ->nullable()
                 ->constrained('users')
                 ->nullOnDelete();
 
+            // ================= PAYMENT METHOD =================
+            $table->string('payment_method')->nullable();
+            $table->string('payment_sub_method')->nullable();
+
+            // ================= DP (DOWN PAYMENT) =================
+            $table->enum('dp_payment_status', ['pending', 'approved', 'rejected'])
+                ->default('pending');
+
+            $table->boolean('dp_paid')->default(false);
+            $table->timestamp('dp_verified_at')->nullable();
+            $table->foreignId('dp_verified_by')
+                ->nullable()
+                ->constrained('users')
+                ->nullOnDelete();
+
+            $table->text('dp_rejection_reason')->nullable();
+
+            // ================= TIMESTAMP =================
             $table->timestamps();
 
-            // Index
+            // ================= INDEX =================
             $table->index(['user_id', 'status']);
             $table->index(['room_id', 'status']);
         });

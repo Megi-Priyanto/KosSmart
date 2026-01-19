@@ -75,8 +75,8 @@ class KosInfoSeeder extends Seeder
         }
 
         $this->command->info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
-        $this->command->info("✓ {$tempatKosList->count()} KosInfo berhasil dibuat");
-        $this->command->info("⚠ Semua KosInfo masih NONAKTIF");
-        $this->command->info("💡 Aktifkan melalui menu Admin → Informasi Kos");
+        $this->command->info("{$tempatKosList->count()} KosInfo berhasil dibuat");
+        $this->command->info("Semua KosInfo masih NONAKTIF");
+        $this->command->info("Aktifkan melalui menu Admin → Informasi Kos");
     }
 }

@@ -37,7 +37,7 @@ class UserDashboardController extends Controller
             ->latest()
             ->first();
 
-        // Jika user masih punya kamar
+        // Jika user masih punya kamar AKTIF
         if ($activeRent) {
 
             // Riwayat pembayaran (5 terakhir)
@@ -54,12 +54,14 @@ class UserDashboardController extends Controller
         }
 
         // ==========================
-        // USER BELUM PUNYA KAMAR
+        // USER BELUM/TIDAK PUNYA KAMAR LAGI
+        // (Termasuk setelah checkout disetujui)
         // ==========================
 
         // Cek booking pending
         $pendingRent = $user->rents()
             ->where('status', 'pending')
+            ->with('room')
             ->latest()
             ->first();
 
@@ -91,13 +93,14 @@ class UserDashboardController extends Controller
             ->paginate(12)
             ->withQueryString();
 
-        // Daftar kota
+        // Daftar kota untuk dropdown filter
         $kotaList = TempatKos::where('status', 'active')
             ->select('kota')
             ->distinct()
             ->orderBy('kota')
             ->pluck('kota');
 
+        // PENTING: Pastikan menggunakan view yang benar
         return view(
             'user.dashboard-empty',
             compact('tempatKos', 'kotaList', 'pendingRent')
@@ -129,11 +132,12 @@ class UserDashboardController extends Controller
                 ->with('error', 'Anda tidak memiliki kamar aktif');
         }
 
+        // GUNAKAN VIEW YANG SESUAI DENGAN FILE DI PROJECT ANDA
         return view(
-            'user.rooms.room-detail',
+            'user.rooms.room-detail', // ← SESUAIKAN dengan nama file view Anda
             [
                 'room'       => $activeRent->room,
-                'activeRent' => $activeRent
+                'activeRent' => $activeRent,
             ]
         );
     }

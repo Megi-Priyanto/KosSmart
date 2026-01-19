@@ -6,34 +6,36 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    public function up()
+    public function up(): void
     {
         Schema::create('notifications', function (Blueprint $table) {
             $table->id();
 
-            // Jenis notifikasi: booking, overdue, pembayaran, dsb
-            $table->string('type')->default('general'); // ← DITAMBAHKAN DEFAULT
-
-            // Judul notifikasi
+            $table->string('type')->default('general');
             $table->string('title')->nullable();
-
-            // Isi pesan
             $table->text('message')->nullable();
 
-            // User yang menerima notifikasi
-            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->foreignId('user_id')
+                ->constrained()
+                ->cascadeOnDelete();
 
-            // Optional relasi ke rent
-            $table->foreignId('rent_id')->nullable()->constrained()->onDelete('set null');
+            // 🔹 billing USER (penyewa kos)
+            $table->foreignId('billing_id')
+                ->nullable()
+                ->constrained('billings')
+                ->nullOnDelete();
 
-            // Optional relasi ke room
-            $table->foreignId('room_id')->nullable()->constrained()->onDelete('set null');
+            // 🔹 billing ADMIN (superadmin → admin)
+            $table->foreignId('admin_billing_id')
+                ->nullable()
+                ->constrained('admin_billings')
+                ->nullOnDelete();
 
-            // Optional tanggal jatuh tempo
+            $table->foreignId('rent_id')->nullable()->constrained()->nullOnDelete();
+            $table->foreignId('room_id')->nullable()->constrained()->nullOnDelete();
+
             $table->date('due_date')->nullable();
-
-            // Status notifikasi
-            $table->enum('status', ['pending', 'read'])->default('pending');
+            $table->string('status', 20)->default('unread');
 
             $table->timestamps();
         });

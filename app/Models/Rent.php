@@ -299,7 +299,7 @@ class Rent extends Model
         $start = Carbon::parse($this->start_date);
         $now   = now();
 
-        // ⬇️ PAKSA INTEGER (BUKAN FLOAT)
+        // PAKSA INTEGER (BUKAN FLOAT)
         $totalHours = (int) $start->diffInHours($now);
 
         // < 24 jam → tampil JAM

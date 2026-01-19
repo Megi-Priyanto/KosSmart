@@ -18,6 +18,8 @@ class Notification extends Model
         'user_id',
         'rent_id',
         'room_id',
+        'billing_id',
+        'admin_billing_id',
         'due_date',
         'status',
     ];
@@ -26,81 +28,70 @@ class Notification extends Model
         'due_date' => 'datetime',
     ];
 
-    /**
-     * Relasi: Notification belongs to Tempat Kos
-     */
     public function tempatKos(): BelongsTo
     {
         return $this->belongsTo(TempatKos::class);
     }
 
-    /**
-     * Relasi: Notification belongs to User
-     */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
-    /**
-     * Relasi: Notification belongs to Rent
-     */
     public function rent(): BelongsTo
     {
         return $this->belongsTo(Rent::class);
     }
 
-    /**
-     * Relasi: Notification belongs to Room
-     */
     public function room(): BelongsTo
     {
         return $this->belongsTo(Room::class);
     }
 
     /**
-     * Scope: Unread notifications
+     * Relasi untuk User Billing (penyewa kos)
      */
+    public function billing(): BelongsTo
+    {
+        return $this->belongsTo(Billing::class, 'billing_id');
+    }
+
+    /**
+     * Relasi untuk Admin Billing (superadmin → admin)
+     */
+    public function adminBilling(): BelongsTo
+    {
+        return $this->belongsTo(AdminBilling::class, 'admin_billing_id');
+    }
+
+    // Scopes
     public function scopeUnread($query)
     {
         return $query->where('status', 'unread');
     }
 
-    /**
-     * Scope: Read notifications
-     */
     public function scopeRead($query)
     {
         return $query->where('status', 'read');
     }
 
-    /**
-     * Scope: Filter by type
-     */
     public function scopeOfType($query, string $type)
     {
         return $query->where('type', $type);
     }
 
-    /**
-     * Helper: Mark as read
-     */
+    // Helpers
     public function markAsRead(): bool
     {
         return $this->update(['status' => 'read']);
     }
 
-    /**
-     * Helper: Mark as unread
-     */
     public function markAsUnread(): bool
     {
         return $this->update(['status' => 'unread']);
     }
 
-    /**
-     * Accessor: Get type label
-     */
+    // Accessors
     public function getTypeLabelAttribute(): string
     {
         return match($this->type) {
@@ -113,9 +104,6 @@ class Notification extends Model
         };
     }
 
-    /**
-     * Accessor: Get type icon
-     */
     public function getTypeIconAttribute(): string
     {
         return match($this->type) {

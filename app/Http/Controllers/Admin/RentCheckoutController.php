@@ -24,28 +24,28 @@ class RentCheckoutController extends Controller
 
         DB::transaction(function () use ($rent) {
 
-            // 1. Selesaikan sewa (baik dari admin langsung atau approve user)
+            // Selesaikan sewa (baik dari admin langsung atau approve user)
             $rent->update([
                 'status'   => 'completed',
                 'end_date' => now(),
             ]);
 
-            // 2. KAMAR WAJIB JADI MAINTENANCE
+            // KAMAR WAJIB JADI MAINTENANCE
             $rent->room->update([
                 'status' => 'maintenance',
             ]);
 
-            // 3. PERBAIKAN: Update notifikasi checkout jadi 'read'
+            // Update notifikasi checkout jadi 'read'
             Notification::where('rent_id', $rent->id)
                 ->where('type', 'checkout')
                 ->where('status', 'pending')
                 ->update(['status' => 'read']);
 
-            // 4. PERBAIKAN: Kirim notifikasi ke user bahwa checkout disetujui
+            // PENTING: Kirim notifikasi ke user bahwa checkout disetujui
             Notification::create([
                 'type'    => 'checkout_approved',
                 'title'   => 'Checkout Disetujui',
-                'message' => 'Permintaan checkout Anda telah disetujui. Terima kasih telah menggunakan layanan kami.',
+                'message' => 'Permintaan checkout Anda telah disetujui. Terima kasih telah menggunakan layanan kami. Silakan pilih kamar baru jika Anda ingin menyewa lagi.',
                 'user_id' => $rent->user_id,
                 'rent_id' => $rent->id,
                 'room_id' => $rent->room_id,
@@ -55,6 +55,6 @@ class RentCheckoutController extends Controller
 
         return redirect()
             ->route('admin.rooms.show', $rent->room_id)
-            ->with('success', 'Checkout berhasil. Kamar masuk status maintenance.');
+            ->with('success', 'Checkout berhasil disetujui. Kamar masuk status maintenance dan user dapat memilih kamar baru.');
     }
 }

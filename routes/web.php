@@ -20,6 +20,9 @@ use App\Http\Controllers\Admin\AdminProfileController;
 use App\Http\Controllers\Admin\BookingManagementController;
 use App\Http\Controllers\User\UserProfileController;
 use App\Http\Controllers\Admin\NotificationController;
+use App\Http\Controllers\Admin\AdminPaymentController;
+use App\Http\Controllers\SuperAdmin\SuperAdminBillingController;
+use App\Http\Controllers\SuperAdmin\SuperAdminNotificationController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -174,6 +177,14 @@ Route::middleware(['auth', 'verified', 'super.admin'])
         // User Management (Super Admin only)
         Route::resource('users', \App\Http\Controllers\SuperAdmin\UserController::class);
 
+        // Billing Management
+        Route::resource('billing', SuperAdminBillingController::class)->except(['edit', 'update']);
+        Route::post('billing/{billing}/verify', [SuperAdminBillingController::class, 'verify'])->name('billing.verify');
+        
+        // Notifications
+        Route::get('notifications', [SuperAdminNotificationController::class, 'index'])->name('notifications.index');
+        Route::post('notifications/mark-all-read', [SuperAdminNotificationController::class, 'markAllRead'])->name('notifications.mark-all-read');
+
         // System Settings
         Route::prefix('settings')->name('settings.')->group(function () {
             Route::get('/', [\App\Http\Controllers\SuperAdmin\SettingController::class, 'index'])
@@ -312,4 +323,9 @@ Route::middleware(['auth', 'verified', 'admin.kos'])
             Route::get('/notifications/{notification}', 'detail')->name('notifications.detail');
             Route::post('/notifications/item/{item}/process', 'processItem')->name('notifications.process');
         });
+
+        // Admin Payments
+        Route::get('payments', [AdminPaymentController::class, 'index'])->name('payments.index');
+        Route::get('payments/{billing}', [AdminPaymentController::class, 'show'])->name('payments.show');
+        Route::post('payments/{billing}/pay', [AdminPaymentController::class, 'pay'])->name('payments.pay');
     });
