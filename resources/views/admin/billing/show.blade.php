@@ -400,7 +400,7 @@
             @csrf
             <input type="hidden" name="action" value="reject">
             <div class="mb-6">
-                <label class="block text-sm font-semibold text-slate-300 mb-3">Alasan Penolakan <span class="text-red-400">*</span></label>
+                <label class="block text-sm font-semibold text-slate-300 mb-3">Alasan Penolakan <span class="text-red-400"></span></label>
                 <textarea name="rejection_reason" 
                           required 
                           rows="4" 

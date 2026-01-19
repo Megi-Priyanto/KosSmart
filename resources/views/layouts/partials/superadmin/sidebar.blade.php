@@ -72,15 +72,27 @@
             <span x-show="sidebarOpen">Kelola User</span>
         </a>
 
-        <!-- Laporan Global -->
-        <a href="#" 
+         <!-- Tagihan Admin -->
+        <a href="{{ route('superadmin.billing.index') }}" 
            class="flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-700 transition-colors 
-                  {{ request()->routeIs('superadmin.reports.*') ? 'bg-gray-700 text-yellow-400' : 'text-gray-300' }}">
+                  {{ request()->routeIs('superadmin.billing.*') ? 'bg-gray-700 text-yellow-400' : 'text-gray-300' }}">
             <svg class="w-6 h-6 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                       d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/>
             </svg>
-            <span x-show="sidebarOpen">Tagihan</span>
+            
+            @php
+                $unpaidBilling = \App\Models\AdminBilling::unpaid()->count();
+            @endphp
+            
+            <div class="flex justify-between items-center flex-1" x-show="sidebarOpen">
+                <span>Tagihan</span>
+                @if($unpaidBilling > 0)
+                    <span class="px-2 py-1 bg-yellow-600 text-white rounded-full text-xs">
+                        {{ $unpaidBilling }}
+                    </span>
+                @endif
+            </div>
         </a>
         
         <!-- Pengaturan Sistem -->

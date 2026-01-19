@@ -47,7 +47,7 @@
                 
                     <div class="space-y-4">
                         @foreach($rents as $rent)
-                            @include('user.checkout.partials.checkout-card', [
+                            @include('user.status.partials.checkout-card', [
                                 'rent' => $rent
                             ])
                         @endforeach

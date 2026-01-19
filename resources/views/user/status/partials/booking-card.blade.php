@@ -63,24 +63,6 @@
         </div>
     </div>
 
-    <!-- INFO TAMBAHAN -->
-    <div class="mt-4 text-sm rounded-lg px-4 py-3
-        {{ $isPending ? 'bg-yellow-50 text-yellow-700' : '' }}
-        {{ $isActive ? 'bg-green-50 text-green-700' : '' }}
-        {{ $isFinished ? 'bg-gray-50 text-gray-600' : '' }}
-        {{ $isCanceled ? 'bg-red-50 text-red-700' : '' }}
-    ">
-        @if ($isPending)
-            Booking Anda sedang menunggu persetujuan admin.
-        @elseif ($isActive)
-            Booking aktif dan kamar siap ditempati.
-        @elseif ($isFinished)
-            Booking telah selesai. Terima kasih telah menyewa.
-        @elseif ($isCanceled)
-            Booking dibatalkan oleh admin.
-        @endif
-    </div>
-
     <!-- ACTION -->
     <div class="mt-6 flex justify-end">
         <a href="{{ route('user.status.booking', ['rent' => $rent->id]) }}"

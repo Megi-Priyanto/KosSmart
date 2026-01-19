@@ -1,13 +1,16 @@
 @php
-    $isUnpaid   = $billing->status === 'unpaid';
-    $isPending  = $billing->status === 'pending';
-    $isPaid     = $billing->status === 'paid';
+    $isUnpaid   = $billing->dynamic_status === 'unpaid';
+    $isPending  = $billing->dynamic_status === 'pending';
+    $isPaid     = $billing->dynamic_status === 'paid';
+    $isRejected = $billing->dynamic_status === 'rejected';
+    $isOverdue  = $billing->dynamic_status === 'overdue';
 @endphp
 
 <div class="bg-white rounded-xl shadow p-6 border
     {{ $isUnpaid ? 'border-red-400' : '' }}
     {{ $isPending ? 'border-yellow-400' : '' }}
     {{ $isPaid ? 'border-green-500' : '' }}
+    {{ $isRejected ? 'border-red-600' : '' }}
 ">
 
     <div class="flex justify-between items-center mb-4">
@@ -29,6 +32,10 @@
             <span class="px-3 py-1 text-sm bg-yellow-100 text-yellow-700 rounded-full">
                 Menunggu Verifikasi
             </span>
+        @elseif($isRejected)
+            <span class="px-3 py-1 text-sm bg-red-200 text-red-800 rounded-full font-semibold">
+                Pembayaran Ditolak
+            </span>
         @elseif($isPaid)
             <span class="px-3 py-1 text-sm bg-green-100 text-green-700 rounded-full">
                 Pembayaran Berhasil
@@ -48,6 +55,7 @@
            class="px-4 py-2 rounded-lg text-sm font-medium
                 {{ $isUnpaid ? 'bg-red-100 text-red-700 hover:bg-red-200' : '' }}
                 {{ $isPending ? 'bg-yellow-100 text-yellow-700 hover:bg-yellow-200' : '' }}
+                {{ $isRejected ? 'bg-red-200 text-red-800 hover:bg-red-300' : '' }}
                 {{ $isPaid ? 'bg-green-100 text-green-700 hover:bg-green-200' : '' }}">
             Lihat Detail
         </a>

@@ -3,21 +3,24 @@
 @section('title', 'Bayar Tagihan')
 
 @section('content')
-<div class="max-w-4xl mx-auto space-y-6"
+<div class="space-y-6"
      x-data="paymentForm()"
      x-init="
         if(!selectedMethod) selectedMethod = null;
         if(!selectedSubMethod) selectedSubMethod = null;
      ">
 
-    <!-- Back Button -->
-    <a href="{{ route('user.billing.index') }}" 
-       class="inline-flex items-center text-sm text-yellow-400 hover:text-yellow-500">
-        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
-        </svg>
-        Kembali ke Daftar Tagihan
-    </a>
+    <!-- Page Header -->
+    <div class="flex items-center justify-between mb-2">
+        <div>
+            <h1 class="text-2xl font-bold text-gray-800">Pembayaran Kamar {{ $billing->room->room_number }}</h1>
+            <p class="text-sm text-gray-600 mt-1">Lengkapi formulir di bawah ini untuk melakukan pembayaran</p>
+        </div>
+        <a href="{{ route('user.billing.index') }}"  
+           class="px-4 py-2 bg-gradient-to-r from-yellow-500 to-orange-600 text-white font-semibold rounded-lg hover:from-yellow-600 hover:to-orange-700 transition-all shadow-lg flex items-center justify-center">
+            Kembali ke Daftar Tagihan
+        </a>
+    </div>
 
     <!-- Billing Summary -->
     <div class="bg-gradient-to-br from-yellow-400 to-orange-500 rounded-lg shadow-lg p-8 text-white">

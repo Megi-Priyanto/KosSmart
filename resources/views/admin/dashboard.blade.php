@@ -10,6 +10,59 @@
 
 @section('content')
 
+<!-- Alert Tagihan Overdue -->
+@php
+    $overdueNotifications = \App\Models\Notification::where('user_id', Auth::id())
+        ->where('type', 'billing')
+        ->where('status', 'unread')
+        ->whereNotNull('due_date')
+        ->whereDate('due_date', '<', now())
+        ->latest()
+        ->get();
+@endphp
+
+@if($overdueNotifications->count() > 0)
+<div class="mb-6 px-6 py-5 bg-slate-800 border border-red-500/40 rounded-xl shadow-sm">
+    <div class="flex items-start gap-4">
+        <div class="p-2 bg-red-500/20 rounded-lg">
+            <svg class="w-6 h-6 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+            </svg>
+        </div>
+        <div class="flex-1">
+            <h3 class="font-semibold text-red-300 mb-1">
+                Tagihan Operasional Terlambat!
+            </h3>
+            <p class="text-sm text-slate-300 mb-4">
+                Anda memiliki {{ $overdueNotifications->count() }} tagihan yang sudah melewati jatuh tempo. Segera lakukan pembayaran.
+            </p>
+            <div class="space-y-2 mb-4">
+                @foreach($overdueNotifications->take(2) as $notif)
+                <div class="flex items-center justify-between px-3 py-2 bg-slate-900 border border-slate-700 rounded-lg">
+                    <div>
+                        <p class="text-sm font-medium text-white">{{ $notif->title }}</p>
+                        <p class="text-xs text-slate-400">{{ $notif->message }}</p>
+                    </div>
+                    @if($notif->billing_id)
+                    <a href="{{ route('admin.payments.show', $notif->billing_id) }}" 
+                       class="text-sm font-medium text-red-400 hover:text-red-300">
+                        Bayar →
+                    </a>
+                    @endif
+                </div>
+                @endforeach
+            </div>
+            <a href="{{ route('admin.payments.index') }}" class="inline-flex items-center text-sm font-medium text-red-400 hover:text-red-300">
+                Lihat Semua Tagihan
+                <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                </svg>
+            </a>
+        </div>
+    </div>
+</div>
+@endif
+
 <!-- Alert Booking Pending -->
 @if(isset($pendingBookingsCount) && $pendingBookingsCount > 0)
 <div class="mb-6 px-6 py-5 bg-slate-800 border border-yellow-500/40 rounded-xl shadow-sm">

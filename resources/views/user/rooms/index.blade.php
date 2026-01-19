@@ -76,21 +76,26 @@
             @endif
         </div>
 
-        <!-- Stats (HANYA STATISTIK KAMAR) -->
-        <div class="grid grid-cols-3 gap-4 pt-4 border-t border-white/20">
+        <!-- Stats -->
+        <div class="grid grid-cols-4 gap-4 pt-4 border-t border-white/20">
             <div class="text-center">
                 <div class="text-lg sm:text-xl font-bold">{{ $totalRooms }}</div>
                 <div class="text-xs sm:text-sm text-white/80">Total Kamar</div>
             </div>
         
             <div class="text-center">
-                <div class="text-2xl font-bold">{{ $availableRooms }}</div>
-                <div class="text-sm text-white/80">Tersedia</div>
+                <div class="text-lg sm:text-xl font-bold">{{ $availableRooms }}</div>
+                <div class="text-xs sm:text-sm text-white/80">Tersedia</div>
             </div>
         
             <div class="text-center">
-                <div class="text-2xl font-bold">{{ $occupiedRooms }}</div>
-                <div class="text-sm text-white/80">Terisi</div>
+                <div class="text-lg sm:text-xl font-bold">{{ $occupiedRooms }}</div>
+                <div class="text-xs sm:text-sm text-white/80">Terisi</div>
+            </div>
+            
+            <div class="text-center">
+                <div class="text-lg sm:text-xl font-bold">{{ $maintenanceRooms ?? 0 }}</div>
+                <div class="text-xs sm:text-sm text-white/80">Maintenance</div>
             </div>
         </div>
     </div>
@@ -100,7 +105,6 @@
 <div class="bg-white rounded-xl shadow-md border border-yellow-200 p-4 sm:p-5 mb-6">
     <form method="GET" action="{{ route('user.rooms.index') }}" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
         
-        <!-- Hidden input untuk preserve tempat_kos_id -->
         @if(request('tempat_kos_id'))
             <input type="hidden" name="tempat_kos_id" value="{{ request('tempat_kos_id') }}">
         @endif
@@ -231,15 +235,17 @@
 </div>
 
 <!-- Daftar Kamar -->
-@if($rooms->count() > 0)
+@if($rooms && $rooms->count() > 0)
 <div class="mb-6 flex justify-between items-center">
-    <h2 class="text-2xl font-bold text-gray-800">Kamar Tersedia</h2>
+    <h2 class="text-2xl font-bold text-gray-800">Daftar Kamar</h2>
     <p class="text-gray-600">{{ $rooms->total() }} kamar ditemukan</p>
 </div>
 
 <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-8">
     @foreach($rooms as $room)
-        <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden hover:shadow-lg transition-all">
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden hover:shadow-lg transition-all
+                    {{ $room->status === 'occupied' ? 'opacity-75' : '' }}
+                    {{ $room->status === 'maintenance' ? 'opacity-60' : '' }}">
             <div class="h-36 sm:h-40 w-full relative overflow-hidden">
                 @php
                     $images = is_array($room->images) ? $room->images : json_decode($room->images, true);
@@ -261,11 +267,22 @@
                     </span>
                 </div>
             
-                @if($room->status === 'available')
-                    <div class="absolute top-4 right-4 bg-green-500 text-white px-3 py-1 rounded-full text-xs font-semibold">
-                        Tersedia
-                    </div>
-                @endif
+                <!-- BADGE STATUS DINAMIS -->
+                <div class="absolute top-4 right-4">
+                    @if($room->status === 'available')
+                        <span class="bg-green-500 text-white px-3 py-1 rounded-full text-xs font-semibold">
+                            Tersedia
+                        </span>
+                    @elseif($room->status === 'occupied')
+                        <span class="bg-blue-500 text-white px-3 py-1 rounded-full text-xs font-semibold">
+                            Terisi
+                        </span>
+                    @elseif($room->status === 'maintenance')
+                        <span class="bg-orange-500 text-white px-3 py-1 rounded-full text-xs font-semibold">
+                            Maintenance
+                        </span>
+                    @endif
+                </div>
             </div>
         
             <div class="p-3 sm:p-4">
@@ -295,9 +312,23 @@
                     </div>
                 </div>
                 
-                <a href="{{ route('user.rooms.show', $room->id) }}" class="block w-full text-center bg-gradient-to-r from-yellow-500 to-orange-600 text-white font-semibold py-1.5 rounded-md text-sm hover:from-yellow-600 hover:to-orange-700 transition shadow-md">
-                    Lihat Detail
-                </a>
+                <!-- ✅ BUTTON DISESUAIKAN DENGAN STATUS -->
+                @if($room->status === 'available')
+                    <a href="{{ route('user.rooms.show', $room->id) }}" 
+                       class="block w-full text-center bg-gradient-to-r from-yellow-500 to-orange-600 text-white font-semibold py-1.5 rounded-md text-sm hover:from-yellow-600 hover:to-orange-700 transition shadow-md">
+                        Lihat Detail
+                    </a>
+                @elseif($room->status === 'occupied')
+                    <button disabled
+                       class="block w-full text-center bg-gray-300 text-gray-600 font-semibold py-1.5 rounded-md text-sm cursor-not-allowed">
+                        Sudah Terisi
+                    </button>
+                @elseif($room->status === 'maintenance')
+                    <button disabled
+                       class="block w-full text-center bg-orange-200 text-orange-700 font-semibold py-1.5 rounded-md text-sm cursor-not-allowed">
+                        Sedang Maintenance
+                    </button>
+                @endif
             </div>
         </div>
     @endforeach
@@ -314,9 +345,9 @@
         <svg class="w-16 h-16 mx-auto text-gray-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
         </svg>
-        <h3 class="text-xl font-bold text-gray-700 mb-2">Belum Ada Kamar Tersedia</h3>
+        <h3 class="text-xl font-bold text-gray-700 mb-2">Belum Ada Kamar</h3>
         <p class="text-gray-500 mb-6">
-            Saat ini tidak ada kamar yang tersedia di tempat kos ini.
+            Saat ini tidak ada kamar yang terdaftar di tempat kos ini.
         </p>
         <a href="{{ route('user.dashboard') }}" 
            class="inline-block bg-yellow-500 hover:bg-yellow-600 text-white font-medium px-6 py-3 rounded-lg transition">

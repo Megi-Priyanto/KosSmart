@@ -22,12 +22,12 @@ class StatusController extends Controller
     {
         $userId = auth()->id();
 
-        // SEMUA RIWAYAT CHECKOUT USER
+        // PERBAIKAN: Tambahkan 'completed' untuk checkout yang sudah disetujui
         $checkouts = Rent::where('user_id', $userId)
             ->whereIn('status', [
-                'checkout_requested',
-                'checkout_approved',
-                'checkout_rejected'
+                'checkout_requested',  // Pending (menunggu approval admin)
+                'completed',           // APPROVED (checkout berhasil)
+                'checkout_rejected'    // Ditolak
             ])
             ->with('room')
             ->latest()

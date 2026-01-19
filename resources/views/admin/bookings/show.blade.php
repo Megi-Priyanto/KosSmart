@@ -247,14 +247,14 @@
                 
                 <!-- Payment Validation Info -->
                 <div class="mt-4 p-4 rounded-lg
-                    @if($booking->payment_method === 'manual_transfer') bg-blue-500/10 border border-blue-500/30
+                    @if($booking->payment_method === 'manual_transfer') bg-yellow-500/10 border border-yellow-500/30
                     @elseif($booking->payment_method === 'e_wallet') bg-green-500/10 border border-green-500/30
-                    @else bg-purple-500/10 border border-purple-500/30
+                    @else bg-yellow-500/10 border border-yellow-500/30
                     @endif">
                     <p class="text-sm
-                        @if($booking->payment_method === 'manual_transfer') text-blue-300
+                        @if($booking->payment_method === 'manual_transfer') text-yellow-300
                         @elseif($booking->payment_method === 'e_wallet') text-green-300
-                        @else text-purple-300
+                        @else text-yellow-300
                         @endif">
                         <strong>Validasi:</strong> Pastikan bukti pembayaran sesuai dengan metode 
                         <strong>{{ $booking->payment_method_label }}</strong>
@@ -402,7 +402,7 @@
                         @csrf
                         <div class="mb-3">
                             <label class="block text-sm font-medium text-slate-300 mb-2">
-                                Alasan Penolakan <span class="text-red-400">*</span>
+                                Alasan Penolakan <span class="text-red-400"></span>
                             </label>
                             <textarea name="admin_notes" rows="3" 
                                       class="w-full bg-slate-900 border border-slate-700 text-white rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-red-500 focus:border-red-500"

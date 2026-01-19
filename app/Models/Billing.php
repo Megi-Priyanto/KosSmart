@@ -58,6 +58,12 @@ class Billing extends Model
         'billing_month' => 'integer',
     ];
 
+    protected $appends = [
+        'status_badge',
+        'status_label',
+        'is_overdue',
+    ];
+
     /**
      * Relasi: Billing belongs to Tempat Kos
      */
@@ -96,6 +102,38 @@ class Billing extends Model
     public function payments(): HasMany
     {
         return $this->hasMany(Payment::class);
+    }
+
+    /**
+     * Accessor: Get dynamic status based on payment
+     */
+    public function getDynamicStatusAttribute()
+    {
+        // Jika billing sudah paid
+        if ($this->attributes['status'] === 'paid') {
+            return 'paid';
+        }
+
+        // Cek payment terbaru
+        $latestPayment = $this->latestPayment;
+
+        if ($latestPayment && $latestPayment->status === 'rejected') {
+            return 'rejected';
+        }
+
+        if ($latestPayment && $latestPayment->status === 'pending') {
+            return 'pending';
+        }
+
+        if ($latestPayment && $latestPayment->status === 'approved') {
+            return 'paid';
+        }
+
+        if ($this->due_date && $this->due_date->isPast() && $this->attributes['status'] !== 'paid') {
+            return 'overdue';
+        }
+
+        return $this->attributes['status'] ?? 'unpaid';
     }
 
     /**
@@ -161,12 +199,16 @@ class Billing extends Model
      */
     public function getStatusBadgeAttribute(): string
     {
-        return match ($this->status) {
+        // Gunakan dynamic_status bukan $this->status
+        return match ($this->dynamic_status) {
             'paid' =>
             'bg-emerald-500/15 text-emerald-400 border border-emerald-500/30',
 
             'pending' =>
             'bg-amber-500/15 text-amber-400 border border-amber-500/30',
+
+            'rejected' =>  // ← TAMBAHKAN INI
+            'bg-rose-500/15 text-rose-400 border border-rose-500/30',
 
             'overdue' =>
             'bg-red-500/15 text-red-400 border border-red-500/30',
@@ -184,9 +226,11 @@ class Billing extends Model
      */
     public function getStatusLabelAttribute(): string
     {
-        return match ($this->status) {
+        // Gunakan dynamic_status bukan $this->status
+        return match ($this->dynamic_status) {
             'paid' => 'Lunas',
             'pending' => 'Menunggu Konfirmasi',
+            'rejected' => 'Pembayaran Ditolak',
             'overdue' => 'Terlambat',
             'unpaid' => 'Belum Dibayar',
             default => 'Unknown',

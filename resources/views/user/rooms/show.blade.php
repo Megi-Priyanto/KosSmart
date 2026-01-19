@@ -4,6 +4,35 @@
 
 @section('content')
 
+<!-- Alert Error (Kos Belum Aktif) -->
+@if(session('error'))
+<div class="mb-6 px-6 py-4 bg-red-50 border-l-4 border-red-400 rounded-r-lg animate-pulse">
+    <div class="flex items-start">
+        <svg class="w-6 h-6 text-red-400 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+        </svg>
+        <div>
+            <h3 class="text-lg font-semibold text-red-800 mb-1">Tidak Dapat Menampilkan Detail</h3>
+            <p class="text-sm text-red-700">
+                {{ session('error') }}
+            </p>
+        </div>
+    </div>
+</div>
+@endif
+
+<!-- Alert Success -->
+@if(session('success'))
+<div class="mb-6 px-6 py-4 bg-green-50 border-l-4 border-green-400 rounded-r-lg">
+    <div class="flex items-start">
+        <svg class="w-6 h-6 text-green-400 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+        </svg>
+        <p class="text-sm text-green-700">{{ session('success') }}</p>
+    </div>
+</div>
+@endif
+
 <!-- Breadcrumb -->
 <div class="mb-6">
     <nav class="flex" aria-label="Breadcrumb">
@@ -16,29 +45,61 @@
                     Dashboard
                 </a>
             </li>
-            <li>
-                <div class="flex items-center">
-                    <svg class="w-4 h-4 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
-                    </svg>
-                    @if(isset($tempatKos))
-                        <a href="{{ route('user.rooms.index', ['tempat_kos_id' => $tempatKos->id]) }}">
-                            Cari Kamar
-                        </a>
-                    @endif
-                </div>
-            </li>
             <li aria-current="page">
                 <div class="flex items-center">
                     <svg class="w-4 h-4 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
                         <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
                     </svg>
-                    <span class="ml-1 text-sm text-yellow-500 font-medium">Kamar {{ $room->room_number }}</span>
+                    <span class="ml-1 text-sm text-yellow-500 font-medium">Cari Kamar</span>
                 </div>
             </li>
         </ol>
     </nav>
 </div>
+
+<!-- Card Header Daftar Kamar Kos -->
+@if($tempatKos)
+<div class="bg-gradient-to-r from-yellow-400 via-yellow-500 to-orange-500 rounded-xl shadow-lg p-6 mb-8 text-white">
+    <div class="flex items-center justify-between">
+        <div>
+            <h1 class="text-3xl font-bold text-white mb-2">Daftar Kamar Kos</h1>
+            <p class="text-white flex items-center">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                </svg>
+                {{ $tempatKos->alamat }}, {{ $tempatKos->kota }}, {{ $tempatKos->provinsi }}
+            </p>
+        </div>
+        <div class="grid grid-cols-4 gap-4 pt-4 border-t border-white/20">
+            <div class="text-center">
+                <div class="text-2xl font-bold">{{ $totalRooms ?? 0 }}</div>
+                <div class="text-sm text-white/80">Total</div>
+            </div>
+        
+            <div class="text-center">
+                <div class="text-2xl font-bold">{{ $availableRooms ?? 0 }}</div>
+                <div class="text-sm text-white/80">Tersedia</div>
+            </div>
+        
+            <div class="text-center">
+                <div class="text-2xl font-bold">{{ $occupiedRooms ?? 0 }}</div>
+                <div class="text-sm text-white/80">Terisi</div>
+            </div>
+
+            <div class="text-center">
+                <div class="text-2xl font-bold">{{ $maintenanceRooms ?? 0 }}</div>
+                <div class="text-sm text-white/80">Maintenance</div>
+            </div>
+        </div>
+    </div>
+</div>
+@else
+<div class="bg-gradient-to-r from-yellow-400 via-yellow-500 to-orange-500 rounded-xl shadow-lg p-6 mb-8 text-white">
+    <h1 class="text-3xl font-bold text-white mb-2">Daftar Kamar Kos</h1>
+    <p class="text-white">Pilih kamar yang sesuai dengan kebutuhan Anda</p>
+</div>
+@endif
 
 <!-- Main Content -->
 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
@@ -570,15 +631,14 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     });
 });
 
-// Auto hide notification after 3 seconds
 setTimeout(() => {
-    const alerts = document.querySelectorAll('.alert-auto-hide');
+    const alerts = document.querySelectorAll('.animate-pulse');
     alerts.forEach(alert => {
         alert.style.transition = 'opacity 0.5s';
         alert.style.opacity = '0';
         setTimeout(() => alert.remove(), 500);
     });
-}, 3000);
+}, 5000);
 </script>
 @endpush
 
