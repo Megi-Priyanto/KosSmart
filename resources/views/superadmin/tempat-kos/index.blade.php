@@ -8,60 +8,69 @@
 <div class="space-y-6">
 
     <!-- Filter & Search -->
-    <div class="bg-slate-800 rounded-xl p-6 border border-slate-700">
-        <form method="GET" action="{{ route('superadmin.tempat-kos.index') }}" class="flex flex-col md:flex-row gap-4">
-            
-            <!-- Search -->
-            <div class="flex-1">
-                <input type="text" 
+   <div class="bg-slate-800 rounded-xl border border-slate-700 p-6">
+        <div class="flex flex-col md:flex-row gap-4 items-end justify-between">
+
+            <form method="GET" action="{{ route('superadmin.tempat-kos.index') }}" class="flex-1 flex flex-wrap gap-3">
+
+                <!-- Search -->
+                <div class="flex-1">
+                    <input type="text" 
                        name="search" 
                        value="{{ request('search') }}"
                        placeholder="Cari nama kos, kota, atau alamat..."
-                       class="w-full px-4 py-2 bg-slate-700 border border-slate-600 rounded-lg text-slate-100 placeholder-slate-400 focus:ring-2 focus:ring-yellow-500 focus:border-transparent">
-            </div>
+                       class="w-full px-4 py-2 bg-slate-900 border border-slate-700 rounded-lg text-white text-sm focus:outline-none focus:border-yellow-500 flex-1 min-w-[200px]">
+                </div>
 
-            <!-- Filter Status -->
-            <select name="status" 
-                    class="px-4 py-2 bg-slate-700 border border-slate-600 rounded-lg text-slate-100 focus:ring-2 focus:ring-yellow-500 focus:border-transparent">
-                <option value="">Semua Status</option>
-                <option value="active" {{ request('status') === 'active' ? 'selected' : '' }}>Aktif</option>
-                <option value="inactive" {{ request('status') === 'inactive' ? 'selected' : '' }}>Tidak Aktif</option>
-            </select>
+                <!-- Filter Status -->
+                <select name="status" 
+                        class="px-4 py-2 bg-slate-900 border border-slate-700 rounded-lg text-white text-sm focus:outline-none focus:border-yellow-500">
+                    <option value="">Semua Status</option>
+                    <option value="active" {{ request('status') === 'active' ? 'selected' : '' }}>Aktif</option>
+                    <option value="inactive" {{ request('status') === 'inactive' ? 'selected' : '' }}>Tidak Aktif</option>
+                </select>
 
-            <!-- Buttons -->
-            <div class="flex gap-2">
-                <button type="submit" 
-                        class="px-6 py-2 bg-yellow-500 hover:bg-yellow-600 text-white rounded-lg font-medium transition">
-                    <svg class="w-5 h-5 inline-block mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                <!-- Buttons -->
+                <div class="flex gap-2">
+                    <button type="submit" 
+                        class="inline-flex items-center gap-2
+                            bg-gradient-to-r from-yellow-500 to-orange-600
+                            text-white font-semibold
+                            px-5 py-2 rounded-lg
+                            hover:from-yellow-600 hover:to-orange-700
+                            transition-all shadow-lg">
+                        <svg class="w-5 h-5 inline-block mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                        </svg>
+                        Cari
+                    </button>
+
+                    @if(request()->hasAny(['search', 'status']))
+                    <a href="{{ route('superadmin.tempat-kos.index') }}" 
+                       class="px-6 py-2 bg-slate-600 hover:bg-slate-500 text-white rounded-lg font-medium transition">
+                        Reset
+                    </a>
+                    @endif
+                </div>
+            </form>
+
+            <!-- Action Bar -->
+            <div class="flex gap-3">
+                <a href="{{ route('superadmin.tempat-kos.create') }}" 
+                    class="inline-flex items-center gap-2
+                        bg-gradient-to-r from-yellow-500 to-orange-600
+                        text-white font-semibold
+                        px-5 py-2 rounded-lg
+                        hover:from-yellow-600 hover:to-orange-700
+                        transition-all shadow-lg">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
                     </svg>
-                    Cari
-                </button>
-                
-                @if(request()->hasAny(['search', 'status']))
-                <a href="{{ route('superadmin.tempat-kos.index') }}" 
-                   class="px-6 py-2 bg-slate-600 hover:bg-slate-500 text-white rounded-lg font-medium transition">
-                    Reset
+                    Tambah Tempat Kos
                 </a>
-                @endif
             </div>
-        </form>
-    </div>
-
-    <!-- Action Bar -->
-    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-        <div>
-            <h3 class="text-xl font-semibold text-slate-100">Daftar Tempat Kos</h3>
-            <p class="text-sm text-slate-400 mt-1">Total: {{ $tempatKos->total() }} tempat kos</p>
+            
         </div>
-        
-        <a href="{{ route('superadmin.tempat-kos.create') }}" 
-           class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white rounded-lg font-medium transition shadow-lg">
-            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
-            </svg>
-            Tambah Tempat Kos
-        </a>
     </div>
 
     <!-- Table -->

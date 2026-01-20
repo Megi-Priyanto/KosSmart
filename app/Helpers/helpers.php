@@ -1,6 +1,6 @@
 <?php
 
-use App\Models\Setting;
+use App\Models\AppSetting;
 
 if (!function_exists('setting')) {
     /**
@@ -12,7 +12,7 @@ if (!function_exists('setting')) {
      */
     function setting($key, $default = null)
     {
-        return Setting::get($key, $default);
+        return AppSetting::get($key, $default);
     }
 }
 
@@ -24,47 +24,7 @@ if (!function_exists('settings')) {
      */
     function settings()
     {
-        return Setting::allSettings();
-    }
-}
-
-if (!function_exists('update_setting')) {
-    /**
-     * Update or create a setting
-     *
-     * @param string $key
-     * @param mixed $value
-     * @return bool
-     */
-    function update_setting($key, $value)
-    {
-        return Setting::set($key, $value);
-    }
-}
-
-if (!function_exists('has_setting')) {
-    /**
-     * Check if setting exists
-     *
-     * @param string $key
-     * @return bool
-     */
-    function has_setting($key)
-    {
-        return Setting::has($key);
-    }
-}
-
-if (!function_exists('remove_setting')) {
-    /**
-     * Remove a setting
-     *
-     * @param string $key
-     * @return bool
-     */
-    function remove_setting($key)
-    {
-        return Setting::remove($key);
+        return AppSetting::getAllSettings();
     }
 }
 
@@ -80,6 +40,29 @@ if (!function_exists('app_name')) {
     }
 }
 
+if (!function_exists('image_setting')) {
+    function image_setting(string $key, string $default)
+    {
+        $path = setting($key);
+
+        if ($path) {
+            return asset('storage/' . ltrim($path, '/'));
+        }
+
+        return asset($default);
+    }
+}
+
+function carousel_tenant($index)
+{
+    return image_setting("carousel_tenant_{$index}", 'images/Carousel Tenant.png');
+}
+
+function hero_image_empty()
+{
+    return image_setting('hero_image_empty', 'images/image1.png');
+}
+
 if (!function_exists('app_logo')) {
     /**
      * Get application logo URL
@@ -88,8 +71,7 @@ if (!function_exists('app_logo')) {
      */
     function app_logo()
     {
-        $logo = setting('app_logo');
-        return $logo ? asset('storage/images/' . $logo) : asset('images/logo.png');
+        return image_setting('app_logo', 'images/logo.png');
     }
 }
 
@@ -204,5 +186,27 @@ if (!function_exists('is_overdue')) {
         $gracedDate = $dueDate->addDays($gracePeriod);
 
         return now()->gt($gracedDate);
+    }
+}
+
+if (!function_exists('carousel_image')) {
+    function carousel_image($index)
+    {
+        return carousel_tenant($index);
+    }
+}
+
+function carousel_image($index)
+{
+    return image_setting("carousel_tenant_{$index}", 'images/Carousel Tenant.png');
+}
+
+if (!function_exists('tenant_dashboard_image')) {
+    function tenant_dashboard_image()
+    {
+        return image_setting(
+            'tenant_dashboard_image',
+            'images/Carousel Tenant.png'
+        );
     }
 }

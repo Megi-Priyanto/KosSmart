@@ -11,7 +11,7 @@
     <!-- Total Tagihan -->
     <div class="bg-slate-800 p-6 rounded-lg border border-slate-700
         transition-all duration-300 ease-out
-        hover:-translate-y-1 hover:shadow-lg hover:border-purple-500 hover:bg-slate-700">
+        hover:-translate-y-1 hover:shadow-lg hover:border-blue-500 hover:bg-slate-700">
 
         <div class="flex items-center justify-between">
             <div>
@@ -19,8 +19,8 @@
                 <p class="text-2xl font-bold text-slate-100">{{ $stats['total_billings'] }}</p>
                 <p class="text-sm text-slate-100">Rp {{ number_format($stats['total_amount'], 0, ',', '.') }}</p>
             </div>
-            <div class="w-12 h-12 bg-purple-500/10 rounded-lg flex items-center justify-center">
-                <svg class="w-6 h-6 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div class="w-12 h-12 bg-blue-500/10 rounded-lg flex items-center justify-center">
+                <svg class="w-6 h-6 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                 </svg>
             </div>
@@ -30,7 +30,7 @@
     <!-- Lunas -->
     <div class="bg-slate-800 p-6 rounded-lg border border-slate-700
         transition-all duration-300 ease-out
-        hover:-translate-y-1 hover:shadow-lg hover:border-purple-500 hover:bg-slate-700">
+        hover:-translate-y-1 hover:shadow-lg hover:border-green-500 hover:bg-slate-700">
 
         <div class="flex items-center justify-between">
             <div>
@@ -49,7 +49,7 @@
     <!-- Belum Dibayar -->
     <div class="bg-slate-800 p-6 rounded-lg border border-slate-700
         transition-all duration-300 ease-out
-        hover:-translate-y-1 hover:shadow-lg hover:border-purple-500 hover:bg-slate-700">
+        hover:-translate-y-1 hover:shadow-lg hover:border-orange-500 hover:bg-slate-700">
 
         <div class="flex items-center justify-between">
             <div>
@@ -68,7 +68,7 @@
     <!-- Terlambat -->
     <div class="bg-slate-800 p-6 rounded-lg border border-slate-700
         transition-all duration-300 ease-out
-        hover:-translate-y-1 hover:shadow-lg hover:border-purple-500 hover:bg-slate-700">
+        hover:-translate-y-1 hover:shadow-lg hover:border-red-500 hover:bg-slate-700">
 
         <div class="flex items-center justify-between">
             <div>
@@ -227,24 +227,24 @@
 
 <!-- Table -->
 <div class="bg-slate-800 rounded-xl border border-slate-700 overflow-hidden">
-    @if($billings->count() > 0)
     <div class="overflow-x-auto">
         <table class="w-full">
+
             <thead class="bg-slate-800/80 border-b border-slate-700">
                 <tr>
-                    <th class="px-6 py-4 text-left text-xs font-semibold text-slate-400 uppercase">ID</th>
-                    <th class="px-6 py-4 text-left text-xs font-semibold text-slate-400 uppercase">Penyewa</th>
-                    <th class="px-6 py-4 text-left text-xs font-semibold text-slate-400 uppercase">Kamar</th>
-                    <th class="px-6 py-4 text-left text-xs font-semibold text-slate-400 uppercase">Periode</th>
-                    <th class="px-6 py-4 text-left text-xs font-semibold text-slate-400 uppercase">Jatuh Tempo</th>
-                    <th class="px-6 py-4 text-left text-xs font-semibold text-slate-400 uppercase">Total</th>
-                    <th class="px-6 py-4 text-left text-xs font-semibold text-slate-400 uppercase">Status</th>
-                    <th class="px-6 py-4 text-center text-xs font-semibold text-slate-400 uppercase">Aksi</th>
+                    <th class="px-6 py-3 text-left text-xs font-semibold text-slate-400 uppercase">ID</th>
+                    <th class="px-6 py-3 text-left text-xs font-semibold text-slate-400 uppercase">Penyewa</th>
+                    <th class="px-6 py-3 text-left text-xs font-semibold text-slate-400 uppercase">Kamar</th>
+                    <th class="px-6 py-3 text-left text-xs font-semibold text-slate-400 uppercase">Periode</th>
+                    <th class="px-6 py-3 text-left text-xs font-semibold text-slate-400 uppercase">Jatuh Tempo</th>
+                    <th class="px-6 py-3 text-left text-xs font-semibold text-slate-400 uppercase">Total</th>
+                    <th class="px-6 py-3 text-left text-xs font-semibold text-slate-400 uppercase">Status</th>
+                    <th class="px-6 py-3 text-center text-xs font-semibold text-slate-400 uppercase">Aksi</th>
                 </tr>
             </thead>
 
             <tbody class="bg-slate-800 divide-y divide-slate-700">
-                @foreach($billings as $billing)
+                @forelse($billings as $billing)
                 <tr class="odd:bg-slate-800 even:bg-slate-800/70 hover:bg-slate-700/60 transition">
                 
                     <!-- ID -->
@@ -276,7 +276,7 @@
                 
                     <!-- Due Date -->
                     <td class="px-6 py-4 text-sm text-slate-300">
-                        {{ $billing->due_date->format('d M Y') }}
+                        {{ $billing->due_date->translatedFormat('d F Y') }}
                         @if($billing->is_overdue)
                         <span class="block text-xs text-red-400 mt-1">
                             ({{ abs($billing->days_until_due) }} hari terlambat)
@@ -292,7 +292,7 @@
                             </p>
                             @if($billing->status === 'paid' && $billing->paid_date)
                             <p class="text-xs text-slate-400">
-                                Dibayar: {{ $billing->paid_date->format('d M Y') }}
+                                Dibayar: {{ $billing->paid_date->translatedFormat('d F Y') }}
                             </p>
                             @endif
                         </div>
@@ -352,43 +352,27 @@
                         </a>
                     </td>
                 </tr>
-                @endforeach
+                @empty
+                <tr>
+                    <td colspan="7" class="px-6 py-12 text-center text-gray-500">
+                        <svg class="w-16 h-16 mx-auto text-slate-600 mb-4"
+                             fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                        </svg>
+                        <p class="text-lg font-medium mb-2">Tidak ada data</p>
+                        <p class="text-sm">Belum ada tagihan yang sesuai dengan filter</p>
+                    </td>
+                </tr>
+                @endforelse
             </tbody>
 
         </table>
     </div>
     
-    <!-- Pagination -->
+    @if($billings->hasPages())
     <div class="px-6 py-4 border-t border-slate-700 bg-slate-800">
         {{ $billings->links() }}
-    </div>
-
-    @else
-    <!-- Empty State -->
-    <div class="bg-slate-800 border border-slate-700 rounded-xl text-center py-16">
-        <svg class="w-24 h-24 mx-auto text-slate-500 mb-4"
-             fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                  d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-        </svg>
-
-        <h3 class="text-xl font-semibold text-slate-200 mb-2">
-            Tidak Ada Data
-        </h3>
-
-        <p class="text-slate-400 mb-6">
-            Tidak ada tagihan yang sesuai dengan filter
-        </p>
-
-        <a href="{{ route('admin.reports.index') }}"
-           class="inline-flex items-center gap-2
-                        bg-gradient-to-r from-yellow-500 to-orange-600
-                        text-white font-semibold
-                        px-5 py-2 rounded-lg
-                        hover:from-yellow-600 hover:to-orange-700
-                        transition-all shadow-lg">
-            Reset Filter
-        </a>
     </div>
     @endif
     

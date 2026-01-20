@@ -107,9 +107,7 @@
     </div>
 
     <!-- Action Bar -->
-    <div class="bg-slate-800 p-4 rounded-lg border border-slate-700
-            transition-all duration-300 ease-out
-            hover:shadow-md hover:border-slate-600">
+    <div class="bg-slate-800 rounded-xl border border-slate-700 p-6 mb-6">
             
         <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <div class="flex flex-col md:flex-row gap-3 flex-1">
@@ -212,13 +210,11 @@
     </div>
 
     <!-- Billings Table -->
-    <div class="bg-slate-800 rounded-lg border border-slate-700 overflow-hidden
-            transition-all duration-300 ease-out
-            hover:shadow-lg hover:border-slate-600">
-
+    <div class="bg-slate-800 rounded-xl border border-slate-700 overflow-hidden">
         <div class="overflow-x-auto">
             <table class="w-full">
-                <thead class="bg-slate-900 border-b border-slate-700">
+
+                <thead class="bg-slate-800/80 border-b border-slate-700">
                     <tr>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Periode</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Penghuni</th>
@@ -226,7 +222,7 @@
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Total</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Jatuh Tempo</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Status</th>
-                        <th class="px-6 py-3 text-right text-xs font-medium text-gray-400 uppercase tracking-wider">Aksi</th>
+                        <th class="px-6 py-3 text-center text-xs font-medium text-gray-400 uppercase tracking-wider">Aksi</th>
                     </tr>
                 </thead>
 
@@ -259,16 +255,16 @@
                                 {{ $billing->status_label }}
                             </span>
                         </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                            <div class="flex items-center justify-end gap-3">
+                        <td class="px-6 py-4 whitespace-nowrap text-center text-sm font-medium">
+                            <div class="flex items-center justify-center gap-3">
                             
                                 {{-- DETAIL --}}
                                 <a href="{{ route('admin.billing.show', $billing) }}"
-                                   class="w-10 h-10 rounded-xl 
-                                          bg-blue-600/20 text-blue-400
-                                          flex items-center justify-center
-                                          hover:bg-blue-600/30 hover:-translate-y-0.5
-                                          transition-all duration-200">
+                                       class="inline-flex w-10 h-10 rounded-xl 
+                                              bg-blue-600/20 text-blue-400
+                                              items-center justify-center
+                                              hover:bg-blue-600/30 hover:-translate-y-0.5
+                                              transition-all duration-200">
                                     {{-- ICON PLUS / EYE --}}
                                     <svg xmlns="http://www.w3.org/2000/svg" 
                                          class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -285,11 +281,11 @@
                                 {{-- EDIT --}}
                                 @if($billing->status !== 'paid')
                                     <a href="{{ route('admin.billing.edit', $billing) }}"
-                                       class="w-10 h-10 rounded-xl 
-                                              bg-yellow-500/20 text-yellow-400
-                                              flex items-center justify-center
-                                              hover:bg-yellow-500/30 hover:-translate-y-0.5
-                                              transition-all duration-200">
+                                           class="inline-flex w-10 h-10 rounded-xl 
+                                                  bg-yellow-500/20 text-yellow-400
+                                                  items-center justify-center
+                                                  hover:bg-yellow-500/30 hover:-translate-y-0.5
+                                                  transition-all duration-200">
                                         {{-- ICON PLUS / EDIT --}}
                                         <svg xmlns="http://www.w3.org/2000/svg" 
                                              class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -306,15 +302,16 @@
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="7" class="px-6 py-8 text-center text-gray-400 bg-slate-800">
+                        <td colspan="7" class="px-6 py-12 text-center text-gray-500">
                             <svg class="mx-auto h-16 w-16 text-slate-500"
-                                 fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                      d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586
-                                         a1 1 0 01.707.293l5.414 5.414
-                                         a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                     fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                          d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586
+                                             a1 1 0 01.707.293l5.414 5.414
+                                             a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                             </svg>
-                            <p class="mt-2">Tidak ada tagihan</p>
+                            <p class="text-lg font-medium mb-2">Tidak ada Tagihan</p>
+                            <p class="text-sm">Belum ada tagihan yang perlu diproses</p>
                         </td>
                     </tr>
                     @endforelse

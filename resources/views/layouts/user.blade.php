@@ -46,8 +46,8 @@
     <!-- MAIN CONTENT -->
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
-        <!-- Flash Success -->
-        @if(session('success'))
+        <!-- Flash Success (tampil hanya jika TIDAK ADA booking pending) -->
+        @if(session('success') && !isset($pendingRent))
         <div class="mb-6 p-4 bg-green-50 border-l-4 border-green-500 rounded-lg flex items-center">
             <p class="text-green-700 font-medium">{{ session('success') }}</p>
         </div>

@@ -49,28 +49,31 @@
 
         {{-- HISTORY BOOKING --}}
         <div>
-        
-            @forelse($historyBookings as $month => $rents)
-                <div class="mb-8">
-                    <h3 class="text-lg font-semibold mb-3 text-gray-600">
-                        {{ $month }}
-                    </h3>
-                
-                    <div class="space-y-4">
-                        @foreach($rents as $rent)
-                            @include('user.status.partials.booking-card', [
-                                'rent' => $rent
-                            ])
-                        @endforeach
+            @if($historyBookings->isNotEmpty())
+                @foreach($historyBookings as $month => $rents)
+                    <div class="mb-8">
+                        <h3 class="text-lg font-semibold mb-3 text-gray-600">
+                            {{ $month }}
+                        </h3>
+                    
+                        <div class="space-y-4">
+                            @foreach($rents as $rent)
+                                @include('user.status.partials.booking-card', [
+                                    'rent' => $rent
+                                ])
+                            @endforeach
+                        </div>
                     </div>
-                </div>
-            @empty
+                @endforeach
+                
+            @elseif(!$currentBooking)
+                {{-- hanya muncul jika TIDAK ADA pending --}}
                 <div class="text-center py-16 bg-white rounded-xl shadow border">
                     <p class="text-gray-500">
                         Belum ada riwayat booking
                     </p>
                 </div>
-            @endforelse
+            @endif
         </div>
 
     @endif

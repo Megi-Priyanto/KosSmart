@@ -5,16 +5,18 @@
 @section('page-description', 'Perbarui informasi tempat kos')
 
 @section('content')
-<div class="max-w-4xl mx-auto">
+<div class="space-y-6">
 
-    <!-- Back Button -->
-    <div class="mb-6">
-        <a href="{{ route('superadmin.tempat-kos.show', $tempatKos) }}" 
-           class="inline-flex items-center text-slate-400 hover:text-slate-200 transition">
-            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
-            </svg>
-            Kembali ke Detail
+    <!-- Page Header -->
+    <div class="flex items-center justify-between">
+        <a href="{{ route('superadmin.tempat-kos.index') }}" 
+           class="inline-flex items-center gap-2
+                    bg-gradient-to-r from-yellow-500 to-orange-600
+                    text-white font-semibold
+                    px-5 py-2 rounded-lg
+                    hover:from-yellow-600 hover:to-orange-700
+                    transition-all shadow-lg">
+            Kembali ke Daftar User
         </a>
     </div>
 
@@ -38,7 +40,7 @@
                 <!-- Nama Kos -->
                 <div class="md:col-span-2">
                     <label class="block text-sm font-medium text-slate-300 mb-2">
-                        Nama Tempat Kos <span class="text-red-400">*</span>
+                        Nama Tempat Kos <span class="text-red-400"></span>
                     </label>
                     <input type="text" 
                            name="nama_kos" 
@@ -81,7 +83,7 @@
                 <!-- Status -->
                 <div class="md:col-span-2">
                     <label class="block text-sm font-medium text-slate-300 mb-2">
-                        Status <span class="text-red-400">*</span>
+                        Status <span class="text-red-400"></span>
                     </label>
                     <div class="flex gap-4">
                         <label class="flex items-center cursor-pointer">
@@ -122,7 +124,7 @@
                 <!-- Alamat -->
                 <div class="md:col-span-2">
                     <label class="block text-sm font-medium text-slate-300 mb-2">
-                        Alamat <span class="text-red-400">*</span>
+                        Alamat <span class="text-red-400"></span>
                     </label>
                     <textarea name="alamat" 
                               rows="3"
@@ -136,7 +138,7 @@
                 <!-- Kota -->
                 <div>
                     <label class="block text-sm font-medium text-slate-300 mb-2">
-                        Kota <span class="text-red-400">*</span>
+                        Kota <span class="text-red-400"></span>
                     </label>
                     <input type="text" 
                            name="kota" 
@@ -151,7 +153,7 @@
                 <!-- Provinsi -->
                 <div>
                     <label class="block text-sm font-medium text-slate-300 mb-2">
-                        Provinsi <span class="text-red-400">*</span>
+                        Provinsi <span class="text-red-400"></span>
                     </label>
                     <input type="text" 
                            name="provinsi" 
@@ -204,7 +206,7 @@
                     <input type="file" 
                            name="logo" 
                            accept="image/*"
-                           class="w-full px-4 py-2 bg-slate-700 border border-slate-600 rounded-lg text-slate-100 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-yellow-500 file:text-white hover:file:bg-yellow-600 @error('logo') border-red-500 @enderror"
+                           class="w-full px-4 py-2 bg-slate-700 border border-slate-600 rounded-lg text-slate-100 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-slate-500 file:text-white hover:file:bg-slate-600 @error('logo') border-red-500 @enderror"
                            onchange="previewLogo(event)">
                     <p class="mt-1 text-xs text-slate-400">Upload logo baru untuk mengganti. Format: JPG, PNG. Maksimal 2MB</p>
                     @error('logo')
@@ -227,7 +229,12 @@
                 Batal
             </a>
             <button type="submit" 
-                    class="px-6 py-3 bg-gradient-to-r from-yellow-600 to-orange-600 hover:from-yellow-700 hover:to-orange-700 text-white rounded-lg font-medium transition shadow-lg">
+                    class="inline-flex items-center gap-2
+                                bg-gradient-to-r from-yellow-500 to-orange-600
+                                text-white font-semibold
+                                px-5 py-3 rounded-lg
+                                hover:from-yellow-600 hover:to-orange-700
+                                transition-all shadow-lg">
                 <svg class="w-5 h-5 inline-block mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
                 </svg>

@@ -564,40 +564,45 @@ function roomForm() {
         removeFacility(index) {
             this.facilities.splice(index, 1);
         },
-        
+
         previewImages(event) {
             this.imagePreviews = [];
-            const files = event.target.files;
-            this.selectedFiles = files;
-            
-            const maxFiles = Math.min(files.length, 10);
-            
-            if (files.length > 10) {
-                alert('Maksimal 10 gambar!\nHanya 10 gambar pertama yang akan diupload.');
-            }
-            
-            for (let i = 0; i < maxFiles; i++) {
-                const file = files[i];
-                
+            const input = event.target;
+            const files = Array.from(input.files);
+
+            const dataTransfer = new DataTransfer();
+
+            files.slice(0, 10).forEach(file => {
                 if (file.size > 5120 * 1024) {
-                    alert(`File "${file.name}" terlalu besar!\nMaksimal 5MB per file.`);
-                    continue;
+                    alert(`File "${file.name}" terlalu besar!`);
+                    return;
                 }
-                
+            
+                dataTransfer.items.add(file);
+            
                 const reader = new FileReader();
-                reader.onload = (e) => {
+                reader.onload = e => {
                     this.imagePreviews.push(e.target.result);
                 };
                 reader.readAsDataURL(file);
-            }
+            });
+        
+            input.files = dataTransfer.files;
         },
         
         removePreview(index) {
+            const input = document.getElementById('images-input');
+            const files = Array.from(input.files);
+            const dataTransfer = new DataTransfer();
+                
+            files.forEach((file, i) => {
+                if (i !== index) {
+                    dataTransfer.items.add(file);
+                }
+            });
+        
+            input.files = dataTransfer.files;
             this.imagePreviews.splice(index, 1);
-            
-            if (this.imagePreviews.length === 0) {
-                document.getElementById('images-input').value = '';
-            }
         }
     }
 }

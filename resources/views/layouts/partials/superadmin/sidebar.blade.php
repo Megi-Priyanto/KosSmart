@@ -8,10 +8,10 @@
         <div class="flex items-center space-x-3" x-show="sidebarOpen">
             <a href="{{ route('superadmin.dashboard') }}"
                class="flex items-center space-x-3">
-                <img src="{{ asset('images/logo.png') }}"
+                <img src="{{ app_logo() }}"
                     class="w-9 h-9 rounded-full object-cover">
                 <span class="text-xl font-bold text-yellow-400">
-                    KosSmart
+                    {{ app_name() }}
                 </span>
             </a>
         </div>
@@ -49,6 +49,17 @@
             </svg>
             <span x-show="sidebarOpen">Dashboard</span>
         </a>
+
+        <!-- Kelola User -->
+        <a href="{{ route('superadmin.users.index') }}" 
+           class="flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-700 transition-colors 
+                  {{ request()->routeIs('superadmin.users.*') ? 'bg-gray-700 text-yellow-400' : 'text-gray-300' }}">
+            <svg class="w-6 h-6 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                      d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
+            </svg>
+            <span x-show="sidebarOpen">Kelola User</span>
+        </a>
         
         <!-- Kelola Tempat Kos -->
         <a href="{{ route('superadmin.tempat-kos.index') }}" 
@@ -61,18 +72,7 @@
             <span x-show="sidebarOpen">Kelola Tempat Kos</span>
         </a>
 
-        <!-- Kelola User -->
-        <a href="{{ route('superadmin.users.index') }}" 
-           class="flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-700 transition-colors 
-                  {{ request()->routeIs('superadmin.users.*') ? 'bg-gray-700 text-yellow-400' : 'text-gray-300' }}">
-            <svg class="w-6 h-6 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-                      d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
-            </svg>
-            <span x-show="sidebarOpen">Kelola User</span>
-        </a>
-
-         <!-- Tagihan Admin -->
+        <!-- Tagihan Admin -->
         <a href="{{ route('superadmin.billing.index') }}" 
            class="flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-700 transition-colors 
                   {{ request()->routeIs('superadmin.billing.*') ? 'bg-gray-700 text-yellow-400' : 'text-gray-300' }}">
@@ -80,19 +80,7 @@
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                       d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/>
             </svg>
-            
-            @php
-                $unpaidBilling = \App\Models\AdminBilling::unpaid()->count();
-            @endphp
-            
-            <div class="flex justify-between items-center flex-1" x-show="sidebarOpen">
-                <span>Tagihan</span>
-                @if($unpaidBilling > 0)
-                    <span class="px-2 py-1 bg-yellow-600 text-white rounded-full text-xs">
-                        {{ $unpaidBilling }}
-                    </span>
-                @endif
-            </div>
+            <span x-show="sidebarOpen">Kelola Tagihan</span>
         </a>
         
         <!-- Pengaturan Sistem -->
@@ -105,7 +93,7 @@
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
                       d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
             </svg>
-            <span x-show="sidebarOpen">Pengaturan Sistem</span>
+            <span x-show="sidebarOpen">Kelola Pengaturan</span>
         </a>
         
     </nav>

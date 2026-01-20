@@ -8,10 +8,10 @@
         <div class="flex items-center space-x-3" x-show="sidebarOpen">
             <a href="{{ route('admin.dashboard') }}"
                class="flex items-center space-x-3">
-                <img src="{{ asset('images/logo.png') }}"
+                <img src="{{ app_logo() }}"
                     class="w-9 h-9 rounded-full object-cover">
                 <span class="text-xl font-bold text-yellow-400">
-                    KosSmart
+                    {{ app_name() }}
                 </span>
             </a>
         </div>
@@ -83,6 +83,22 @@
             </svg>
             <span x-show="sidebarOpen">Kelola Booking</span>
         </a>
+
+        <!-- Cancle Booking -->
+        <a href="{{ route('admin.cancel-bookings.index') }}" 
+           class="flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-700 transition-colors {{ request()->routeIs('admin.cancel-bookings.*') ? 'bg-gray-700 text-yellow-400' : 'text-gray-300' }}">
+            <svg class="w-6 h-6 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                     d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            <span>Cancle Booking</span>
+
+            @if($pendingCancelCount ?? 0 > 0)
+            <span class="ml-auto px-2 py-1 bg-red-500 text-white text-xs font-bold rounded-full">
+                {{ $pendingCancelCount }}
+            </span>
+            @endif
+        </a>
         
         <!-- Tagihan Penghuni -->
         <a href="{{ route('admin.billing.index') }}" 
@@ -124,11 +140,6 @@
             
             <div class="flex justify-between items-center flex-1" x-show="sidebarOpen">
                 <span>Tagihan Operasional</span>
-                @if($unpaidOperationalBilling > 0)
-                    <span class="px-2 py-1 bg-red-600 text-white rounded-full text-xs">
-                        {{ $unpaidOperationalBilling }}
-                    </span>
-                @endif
             </div>
         </a>
         

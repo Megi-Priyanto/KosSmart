@@ -41,12 +41,15 @@
     @endif
 
     <!-- Statistics Cards -->
-    <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
-        <div class="bg-slate-800 rounded-xl p-6 border border-slate-700">
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+        <div class="bg-slate-800 p-6 rounded-lg border border-slate-700
+            transition-all duration-300 ease-out
+            hover:-translate-y-1 hover:shadow-lg hover:border-blue-500 hover:bg-slate-700">
+
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-slate-400 text-sm">Total Tagihan</p>
-                    <p class="text-3xl font-bold text-white mt-2">{{ $stats['total'] }}</p>
+                    <p class="text-sm text-slate-400">Total Tagihan</p>
+                    <p class="text-2xl font-bold text-slate-100">{{ $stats['total'] }}</p>
                 </div>
                 <div class="w-12 h-12 bg-blue-500/20 rounded-lg flex items-center justify-center">
                     <svg class="w-6 h-6 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -56,11 +59,14 @@
             </div>
         </div>
 
-        <div class="bg-slate-800 rounded-xl p-6 border border-yellow-500/40">
+        <div class="bg-slate-800 p-6 rounded-lg border border-slate-700
+            transition-all duration-300 ease-out
+            hover:-translate-y-1 hover:shadow-lg hover:border-yellow-500 hover:bg-slate-700">
+
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-slate-400 text-sm">Belum Dibayar</p>
-                    <p class="text-3xl font-bold text-yellow-400 mt-2">{{ $stats['unpaid'] }}</p>
+                    <p class="text-sm text-slate-400">Belum Dibayar</p>
+                    <p class="text-2xl font-bold text-slate-100>{{ $stats['unpaid'] }}</p>
                 </div>
                 <div class="w-12 h-12 bg-yellow-500/20 rounded-lg flex items-center justify-center">
                     <svg class="w-6 h-6 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -70,11 +76,14 @@
             </div>
         </div>
 
-        <div class="bg-slate-800 rounded-xl p-6 border border-red-500/40">
+        <div class="bg-slate-800 p-6 rounded-lg border border-slate-700
+            transition-all duration-300 ease-out
+            hover:-translate-y-1 hover:shadow-lg hover:border-red-500 hover:bg-slate-700">
+
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-slate-400 text-sm">Terlambat</p>
-                    <p class="text-3xl font-bold text-red-400 mt-2">{{ $stats['overdue'] }}</p>
+                    <p class="text-sm text-slate-400">Terlambat</p>
+                    <p class="text-2xl font-bold text-slate-100">{{ $stats['overdue'] }}</p>
                 </div>
                 <div class="w-12 h-12 bg-red-500/20 rounded-lg flex items-center justify-center">
                     <svg class="w-6 h-6 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -84,11 +93,14 @@
             </div>
         </div>
 
-        <div class="bg-slate-800 rounded-xl p-6 border border-green-500/40">
+        <div class="bg-slate-800 p-6 rounded-lg border border-slate-700
+            transition-all duration-300 ease-out
+            hover:-translate-y-1 hover:shadow-lg hover:border-green-500 hover:bg-slate-700">
+
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-slate-400 text-sm">Lunas</p>
-                    <p class="text-3xl font-bold text-green-400 mt-2">{{ $stats['paid'] }}</p>
+                    <p class="text-sm text-slate-400">Lunas</p>
+                    <p class="text-2xl font-bold text-slate-100">{{ $stats['paid'] }}</p>
                 </div>
                 <div class="w-12 h-12 bg-green-500/20 rounded-lg flex items-center justify-center">
                     <svg class="w-6 h-6 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -101,22 +113,20 @@
 
     <!-- Billings Table -->
     <div class="bg-slate-800 rounded-xl border border-slate-700 overflow-hidden">
-        <div class="p-6 border-b border-slate-700">
-            <h3 class="text-lg font-semibold text-white">Riwayat Tagihan</h3>
-        </div>
-
         <div class="overflow-x-auto">
             <table class="w-full">
-                <thead class="bg-slate-900">
+
+                <thead class="bg-slate-800/80 border-b border-slate-700">
                     <tr>
-                        <th class="px-6 py-4 text-left text-xs font-medium text-slate-300 uppercase">Periode</th>
-                        <th class="px-6 py-4 text-left text-xs font-medium text-slate-300 uppercase">Jumlah</th>
-                        <th class="px-6 py-4 text-center text-xs font-medium text-slate-300 uppercase">Jatuh Tempo</th>
-                        <th class="px-6 py-4 text-center text-xs font-medium text-slate-300 uppercase">Status</th>
-                        <th class="px-6 py-4 text-center text-xs font-medium text-slate-300 uppercase">Aksi</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-slate-400 uppercase">Periode</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-slate-400 uppercase">Jumlah</th>
+                        <th class="px-6 py-3 text-center text-xs font-medium text-slate-400 uppercase">Jatuh Tempo</th>
+                        <th class="px-6 py-3 text-center text-xs font-medium text-slate-400 uppercase">Status</th>
+                        <th class="px-6 py-3 text-center text-xs font-medium text-slate-400 uppercase">Aksi</th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-slate-700">
+
+                <tbody class="bg-slate-800 divide-y divide-slate-700">
                     @forelse($billings as $billing)
                     <tr class="hover:bg-slate-700/50 transition">
                         <td class="px-6 py-4">
@@ -134,7 +144,7 @@
                         </td>
                         <td class="px-6 py-4 text-center">
                             <span class="text-sm text-slate-300">
-                                {{ $billing->due_date->format('d M Y') }}
+                                {{ $billing->due_date->translatedFormat('d F Y') }}
                             </span>
                             @if($billing->isOverdue())
                                 <p class="text-xs text-red-400 mt-1">
@@ -151,19 +161,34 @@
                             </span>
                         </td>
                         <td class="px-6 py-4 text-center">
-                            <a href="{{ route('admin.payments.show', $billing) }}" 
-                               class="text-yellow-400 hover:text-yellow-300 text-sm font-medium">
-                                Detail
+                            <a href="{{ route('admin.payments.show', $billing) }}"
+                               class="inline-flex w-10 h-10 rounded-xl 
+                                      bg-blue-600/20 text-blue-400
+                                      items-center justify-center
+                                      hover:bg-blue-600/30 hover:-translate-y-0.5
+                                      transition-all duration-200">
+                                {{-- ICON PLUS / EYE --}}
+                                <svg xmlns="http://www.w3.org/2000/svg" 
+                                     class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                          d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                          d="M2.458 12C3.732 7.943 7.523 5 12 5
+                                             c4.478 0 8.268 2.943 9.542 7
+                                             -1.274 4.057-5.064 7-9.542 7
+                                             -4.477 0-8.268-2.943-9.542-7z"/>
+                                </svg>
                             </a>
                         </td>
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="5" class="px-6 py-12 text-center">
+                        <td colspan="7" class="px-6 py-12 text-center text-gray-500">
                             <svg class="w-16 h-16 mx-auto text-slate-600 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
                             </svg>
                             <p class="text-slate-400">Tidak ada tagihan</p>
+                            <p class="text-sm">Belum ada tagihan yang perlu di bayar</p>
                         </td>
                     </tr>
                     @endforelse

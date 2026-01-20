@@ -141,7 +141,7 @@
                 <tr class="hover:bg-slate-700/40 {{ $booking->status == 'pending' ? 'bg-yellow-500/10' : '' }}">
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-100">
 
-                        {{ $booking->created_at->format('d M Y, H:i') }}
+                        {{ $booking->created_at->translatedFormat('d F Y, H:i') }}
                         <p class="text-xs text-slate-400">{{ $booking->created_at->diffForHumans() }}</p>
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap">
@@ -158,7 +158,7 @@
                         </div>
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-100">
-                        {{ $booking->start_date->format('d M Y') }}
+                        {{ $booking->start_date->translatedFormat('d F Y') }}
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-100">
                         Rp {{ number_format($booking->deposit_paid, 0, ',', '.') }}

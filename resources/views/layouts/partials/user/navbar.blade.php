@@ -6,10 +6,10 @@
             <!-- Logo -->
             <a href="{{ route('user.dashboard') }}"
                class="flex items-center space-x-3">
-                <img src="{{ asset('images/logo.png') }}"
+                <img src="{{ app_logo() }}"
                     class="w-9 h-9 rounded-full object-cover">
-
-                <span class="text-xl font-bold text-gray-800">KosSmart</span>
+                        
+                <span class="text-xl font-bold text-gray-800">{{ app_name() }}</span>
             </a>
 
             <!-- Menu Desktop -->

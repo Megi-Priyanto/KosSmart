@@ -43,8 +43,8 @@
                         <p class="text-sm font-medium text-white">{{ $notif->title }}</p>
                         <p class="text-xs text-slate-400">{{ $notif->message }}</p>
                     </div>
-                    @if($notif->billing_id)
-                    <a href="{{ route('admin.payments.show', $notif->billing_id) }}" 
+                    @if($notif->admin_billing_id)
+                    <a href="{{ route('admin.payments.show', $notif->admin_billing_id) }}" 
                        class="text-sm font-medium text-red-400 hover:text-red-300">
                         Bayar →
                     </a>
@@ -63,13 +63,79 @@
 </div>
 @endif
 
+<!-- Alert Tagihan Baru dari Super Admin -->
+@php
+    $newBillingNotifications = \App\Models\Notification::where('user_id', Auth::id())
+        ->where('type', 'billing')
+        ->where('status', 'unread')
+        ->whereNotNull('admin_billing_id')
+        ->whereNull('due_date')
+        ->orWhere(function($q) {
+            $q->where('user_id', Auth::id())
+              ->where('type', 'billing')
+              ->where('status', 'unread')
+              ->whereNotNull('due_date')
+              ->whereDate('due_date', '>=', now());
+        })
+        ->latest()
+        ->get();
+@endphp
+
+@if($newBillingNotifications->count() > 0)
+<div class="mb-6 px-6 py-5 bg-slate-800 border border-yellow-500/40 rounded-xl shadow-sm">
+    <div class="flex items-start gap-4">
+        <div class="p-2 bg-yellow-500/20 rounded-lg">
+            <svg class="w-6 h-6 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                      d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+            </svg>
+        </div>
+        <div class="flex-1">
+            <h3 class="font-semibold text-yellow-300 mb-1">
+                {{ $newBillingNotifications->count() }} Tagihan Operasional Baru
+            </h3>
+            <p class="text-sm text-slate-300 mb-4">
+                Anda memiliki tagihan operasional baru dari Super Admin yang perlu dibayar.
+            </p>
+            <div class="space-y-2 mb-4">
+                @foreach($newBillingNotifications->take(2) as $notif)
+                <div class="flex items-center justify-between px-3 py-2 bg-slate-900 border border-slate-700 rounded-lg hover:border-yellow-400/50 transition">
+                    <div>
+                        <p class="text-sm font-medium text-white">{{ $notif->title }}</p>
+                        <p class="text-xs text-slate-400">{{ $notif->message }}</p>
+                        @if($notif->due_date)
+                        <p class="text-xs text-slate-500 mt-1">
+                            Jatuh tempo: {{ $notif->due_date->format('d M Y') }}
+                        </p>
+                        @endif
+                    </div>
+                    @if($notif->admin_billing_id)
+                    <a href="{{ route('admin.payments.show', $notif->admin_billing_id) }}" 
+                       class="text-sm font-medium text-yellow-400 hover:text-yellow-300">
+                        Lihat →
+                    </a>
+                    @endif
+                </div>
+                @endforeach
+            </div>
+            <a href="{{ route('admin.payments.index') }}" class="inline-flex items-center text-sm font-medium text-yellow-400 hover:text-yellow-300">
+                Lihat Semua Tagihan
+                <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                </svg>
+            </a>
+        </div>
+    </div>
+</div>
+@endif
+
 <!-- Alert Booking Pending -->
 @if(isset($pendingBookingsCount) && $pendingBookingsCount > 0)
 <div class="mb-6 px-6 py-5 bg-slate-800 border border-yellow-500/40 rounded-xl shadow-sm">
     <div class="flex items-start gap-4">
         <div class="p-2 bg-yellow-500/20 rounded-lg">
             <svg class="w-6 h-6 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
             </svg>
         </div>
         <div class="flex-1">
@@ -116,13 +182,73 @@
 </div>
 @endif
 
+<!-- Alert Cancel Booking -->
+@php
+    $cancelBookings = \App\Models\Rent::where('status', 'cancel_booking')
+        ->with(['user', 'room'])
+        ->latest()
+        ->take(5)
+        ->get();
+    $cancelBookingsCount = \App\Models\Rent::where('status', 'cancel_booking')->count();
+@endphp
+
+@if($cancelBookingsCount > 0)
+<div class="mb-6 px-6 py-5 bg-slate-800 border border-red-500/40 rounded-xl shadow-sm">
+    <div class="flex items-start gap-4">
+        <div class="p-2 bg-red-500/20 rounded-lg">
+            <svg class="w-6 h-6 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+            </svg>
+        </div>
+        <div class="flex-1">
+            <h3 class="font-semibold text-red-300 mb-1">
+                {{ $cancelBookingsCount }} Pembatalan Booking
+            </h3>
+            <p class="text-sm text-slate-300 mb-4">
+                Terdapat permintaan pembatalan booking yang perlu ditinjau dan diproses.
+            </p>
+            <div class="space-y-2 mb-4">
+                @foreach($cancelBookings as $booking)
+                <div class="flex items-center justify-between px-3 py-2 bg-slate-900 border border-slate-700 rounded-lg hover:border-red-400/50 transition">
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 bg-red-500/20 rounded-full flex items-center justify-center">
+                            <span class="text-xs font-bold text-red-300">
+                                {{ $booking->room->room_number }}
+                            </span>
+                        </div>
+                        <div>
+                            <p class="text-sm font-medium text-white">
+                                {{ $booking->user->name }}
+                            </p>
+                            <p class="text-xs text-slate-400">
+                                Dibatalkan {{ $booking->updated_at->diffForHumans() }}
+                            </p>
+                        </div>
+                    </div>
+                    <a href="{{ route('admin.bookings.show', $booking) }}" class="text-sm font-medium text-red-400 hover:text-red-300">
+                        Proses →
+                    </a>
+                </div>
+                @endforeach
+            </div>
+            <a href="{{ route('admin.bookings.index') }}" class="inline-flex items-center text-sm font-medium text-red-400 hover:text-red-300">
+                Lihat Semua Pembatalan
+                <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                </svg>
+            </a>
+        </div>
+    </div>
+</div>
+@endif
+
 <!-- Alert Checkout Request -->
 @if(isset($checkoutRequestsCount) && $checkoutRequestsCount > 0)
 <div class="mb-6 px-6 py-5 bg-slate-800 border border-orange-500/40 rounded-xl shadow-sm">
     <div class="flex items-start gap-4">
         <div class="p-2 bg-orange-500/20 rounded-lg">
             <svg class="w-6 h-6 text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-6h13M9 7h13M5 12h.01"/>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
             </svg>
         </div>
         <div class="flex-1">
@@ -158,6 +284,57 @@
             </div>
             <a href="{{ route('admin.rooms.index') }}" class="inline-flex items-center text-sm font-medium text-orange-400 hover:text-orange-300">
                 Lihat Semua Checkout
+                <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                </svg>
+            </a>
+        </div>
+    </div>
+</div>
+@endif
+
+<!-- Alert Pembayaran Pending -->
+@if(isset($pendingPaymentsCount) && $pendingPaymentsCount > 0)
+<div class="mb-6 px-6 py-5 bg-slate-800 border border-blue-500/40 rounded-xl shadow-sm">
+    <div class="flex items-start gap-4">
+        <div class="p-2 bg-blue-500/20 rounded-lg">
+            <svg class="w-6 h-6 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/>
+            </svg>
+        </div>
+        <div class="flex-1">
+            <h3 class="font-semibold text-blue-300 mb-1">
+                {{ $pendingPaymentsCount }} Pembayaran Menunggu Verifikasi
+            </h3>
+            <p class="text-sm text-slate-300 mb-4">
+                Terdapat pembayaran dari penyewa yang menunggu verifikasi Anda.
+            </p>
+            <div class="space-y-2 mb-4">
+                @foreach($pendingPayments as $payment)
+                <div class="flex items-center justify-between px-3 py-2 bg-slate-900 border border-slate-700 rounded-lg hover:border-blue-400/50 transition">
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 bg-blue-500/20 rounded-full flex items-center justify-center">
+                            <span class="text-xs font-bold text-blue-300">
+                                {{ $payment->billing->room->room_number }}
+                            </span>
+                        </div>
+                        <div>
+                            <p class="text-sm font-medium text-white">
+                                {{ $payment->user->name }}
+                            </p>
+                            <p class="text-xs text-slate-400">
+                                Rp {{ number_format($payment->amount, 0, ',', '.') }} • {{ $payment->created_at->diffForHumans() }}
+                            </p>
+                        </div>
+                    </div>
+                    <a href="{{ route('admin.billing.show', $payment->billing_id) }}" class="text-sm font-medium text-blue-400 hover:text-blue-300">
+                        Proses →
+                    </a>
+                </div>
+                @endforeach
+            </div>
+            <a href="{{ route('admin.billing.index') }}" class="inline-flex items-center text-sm font-medium text-blue-400 hover:text-blue-300">
+                Lihat Semua Pembayaran
                 <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
                 </svg>

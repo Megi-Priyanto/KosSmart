@@ -18,70 +18,22 @@
 </div>
 @endif
 
-<!-- Carousel Banner -->
-<div id="dashboardCarousel"
-     class="carousel slide mb-8 rounded-2xl overflow-hidden shadow-sm"
-     data-bs-ride="carousel"
-     data-bs-interval="4000">
+<!-- Hero Image Tenant -->
+<div class="relative mb-8 rounded-2xl overflow-hidden shadow-lg"
+     style="height: clamp(220px, 35vw, 450px);">
 
-    <!-- Indicators -->
-    <div class="carousel-indicators">
-        <button type="button" data-bs-target="#dashboardCarousel" data-bs-slide-to="0" class="active"></button>
-        <button type="button" data-bs-target="#dashboardCarousel" data-bs-slide-to="1"></button>
-        <button type="button" data-bs-target="#dashboardCarousel" data-bs-slide-to="2"></button>
-    </div>
+    <img src="{{ tenant_dashboard_image() }}"
+         alt="Dashboard Tenant"
+         class="absolute inset-0 w-full h-full object-cover"
+         style="filter: brightness(0.6);">
 
-    <div class="carousel-inner">
-        <!-- Slide 1 -->
-        <div class="carousel-item active">
-            <div class="relative w-100 overflow-hidden rounded-2xl"
-                 style="height:clamp(220px, 35vw, 450px);">
-
-                <!-- Background blur -->
-                <img src="{{ asset('images/Carousel Tenant.png') }}"
-                     class="absolute inset-0 w-full h-full"
-                     style="object-fit:cover; filter:blur(18px) brightness(0.6);">
-
-                <!-- Gambar utama (utuh, tidak terpotong) -->
-                <img src="{{ asset('images/Carousel Tenant.png') }}"
-                     class="relative z-10 mx-auto h-full"
-                     style="object-fit:contain;">
-            </div>
-        </div>
-
-        <!-- Slide 2 -->
-        <div class="carousel-item">
-            <div class="relative w-100 overflow-hidden rounded-2xl"
-                 style="height:clamp(220px, 35vw, 450px);">
-
-                <!-- Background blur -->
-                <img src="{{ asset('images/Carousel Tenant.png') }}"
-                     class="absolute inset-0 w-full h-full"
-                     style="object-fit:cover; filter:blur(18px) brightness(0.6);">
-
-                <!-- Gambar utama (utuh, tidak terpotong) -->
-                <img src="{{ asset('images/Carousel Tenant.png') }}"
-                     class="relative z-10 mx-auto h-full"
-                     style="object-fit:contain;">
-            </div>
-        </div>
-
-        <!-- Slide 3 -->
-        <div class="carousel-item">
-            <div class="relative w-100 overflow-hidden rounded-2xl"
-                 style="height:clamp(220px, 35vw, 450px);">
-
-                <!-- Background blur -->
-                <img src="{{ asset('images/Carousel Tenant.png') }}"
-                     class="absolute inset-0 w-full h-full"
-                     style="object-fit:cover; filter:blur(18px) brightness(0.6);">
-
-                <!-- Gambar utama (utuh, tidak terpotong) -->
-                <img src="{{ asset('images/Carousel Tenant.png') }}"
-                     class="relative z-10 mx-auto h-full"
-                     style="object-fit:contain;">
-            </div>
-        </div>
+    <div class="relative z-10 flex flex-col items-center justify-center h-full text-white px-4 text-center">
+        <h1 class="text-2xl sm:text-3xl font-bold mb-2">
+            Selamat Datang
+        </h1>
+        <p class="text-sm sm:text-base text-gray-200 max-w-2xl">
+            Semoga hari Anda menyenangkan di kos pilihan Anda
+        </p>
     </div>
 </div>
 

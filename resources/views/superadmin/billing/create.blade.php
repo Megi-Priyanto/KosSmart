@@ -5,7 +5,21 @@
 @section('page-description', 'Generate tagihan operasional untuk admin kos')
 
 @section('content')
-<div class="max-w-4xl mx-auto">
+<div class="space-y-6">
+
+    <!-- Page Header -->
+    <div class="flex items-center justify-between">
+        <a href="{{ route('superadmin.billing.index') }}" 
+           class="inline-flex items-center gap-2
+                    bg-gradient-to-r from-yellow-500 to-orange-600
+                    text-white font-semibold
+                    px-5 py-2 rounded-lg
+                    hover:from-yellow-600 hover:to-orange-700
+                    transition-all shadow-lg">
+            Kembali ke Daftar Tagihan
+        </a>
+    </div>
+
     <div class="bg-slate-800 rounded-xl border border-slate-700 p-8">
         
         <form action="{{ route('superadmin.billing.store') }}" method="POST" x-data="billingForm()">
@@ -55,7 +69,7 @@
             <!-- Select Tempat Kos (if selected type) -->
             <div x-show="billingType === 'selected'" x-transition class="mb-6">
                 <label class="block text-sm font-medium text-slate-300 mb-3">
-                    Pilih Tempat Kos <span class="text-red-400">*</span>
+                    Pilih Tempat Kos <span class="text-red-400"></span>
                 </label>
                 <div class="space-y-2 max-h-64 overflow-y-auto border border-slate-700 rounded-lg p-4 bg-slate-900">
                     @foreach($tempatKosList as $kos)
@@ -81,7 +95,7 @@
                 <!-- Amount -->
                 <div>
                     <label class="block text-sm font-medium text-slate-300 mb-2">
-                        Jumlah Tagihan <span class="text-red-400">*</span>
+                        Jumlah Tagihan <span class="text-red-400"></span>
                     </label>
                     <div class="relative">
                         <span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">Rp</span>
@@ -101,14 +115,14 @@
                 <!-- Due Date -->
                 <div>
                     <label class="block text-sm font-medium text-slate-300 mb-2">
-                        Jatuh Tempo <span class="text-red-400">*</span>
+                        Jatuh Tempo <span class="text-red-400"></span>
                     </label>
                     <input type="date" 
                            name="due_date" 
                            value="{{ old('due_date', now()->addDays(7)->format('Y-m-d')) }}"
                            required
                            min="{{ now()->addDay()->format('Y-m-d') }}"
-                           class="w-full px-4 py-3 bg-slate-900 border border-slate-700 rounded-lg text-white focus:outline-none focus:border-yellow-500">
+                           class="w-full px-4 py-3 bg-slate-900 border border-slate-700 rounded-lg text-white focus:outline-none focus:border-yellow-500 [color-scheme:dark]">
                     @error('due_date')
                         <p class="mt-2 text-sm text-red-400">{{ $message }}</p>
                     @enderror
@@ -117,7 +131,7 @@
                 <!-- Billing Month -->
                 <div>
                     <label class="block text-sm font-medium text-slate-300 mb-2">
-                        Bulan Tagihan <span class="text-red-400">*</span>
+                        Bulan Tagihan <span class="text-red-400"></span>
                     </label>
                     <select name="billing_month" 
                             required
@@ -136,7 +150,7 @@
                 <!-- Billing Year -->
                 <div>
                     <label class="block text-sm font-medium text-slate-300 mb-2">
-                        Tahun Tagihan <span class="text-red-400">*</span>
+                        Tahun Tagihan <span class="text-red-400"></span>
                     </label>
                     <select name="billing_year" 
                             required
@@ -168,13 +182,18 @@
             </div>
 
             <!-- Actions -->
-            <div class="flex items-center justify-between pt-6 border-t border-slate-700">
+            <div class="flex justify-end space-x-4 mt-6">
                 <a href="{{ route('superadmin.billing.index') }}" 
                    class="px-6 py-3 bg-slate-700 hover:bg-slate-600 text-white rounded-lg font-medium transition">
                     Batal
                 </a>
                 <button type="submit" 
-                        class="px-6 py-3 bg-yellow-500 hover:bg-yellow-600 text-white rounded-lg font-medium transition flex items-center gap-2">
+                        class="inline-flex items-center gap-2
+                            bg-gradient-to-r from-yellow-500 to-orange-600
+                            text-white font-semibold
+                            px-5 py-3 rounded-lg
+                            hover:from-yellow-600 hover:to-orange-700
+                            transition-all shadow-lg">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
                     </svg>

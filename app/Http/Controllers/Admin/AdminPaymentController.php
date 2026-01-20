@@ -50,7 +50,7 @@ class AdminPaymentController extends Controller
             abort(403, 'Anda tidak memiliki akses ke tagihan ini.');
         }
 
-        // ✅ Ambil payment methods yang aktif
+        // Ambil payment methods yang aktif
         $paymentMethods = PaymentMethod::active()->get()->groupBy('type');
 
         return view('admin.payments.show', compact('billing', 'paymentMethods'));
@@ -90,17 +90,25 @@ class AdminPaymentController extends Controller
             $filename = 'payment_' . $billing->id . '_' . time() . '.' . $file->extension();
             $path = $file->storeAs('payment_proofs', $filename, 'public');
 
-            // ✅ Ambil nama metode pembayaran
+            // Ambil nama metode pembayaran
             $paymentMethod = PaymentMethod::find($validated['payment_method']);
 
             $billing->update([
                 'status' => 'pending',
                 'payment_proof' => $path,
-                'payment_method' => $paymentMethod->name, // Simpan nama metode
+                'payment_method' => $paymentMethod->name,
                 'paid_at' => now(),
                 'payment_notes' => $validated['payment_notes'] ?? null,
             ]);
 
+            // UPDATE: Mark SEMUA notifikasi terkait billing ini sebagai read
+            Notification::where('admin_billing_id', $billing->id)
+                ->where('user_id', $user->id)
+                ->where('type', 'billing')
+                ->where('status', 'unread')
+                ->update(['status' => 'read']);
+
+            // Buat notifikasi baru untuk Super Admin
             $superAdmins = User::where('role', 'super_admin')->get();
 
             foreach ($superAdmins as $superAdmin) {

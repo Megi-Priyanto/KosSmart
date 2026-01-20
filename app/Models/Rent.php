@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Carbon\Carbon;
 
 class Rent extends Model
@@ -331,5 +332,15 @@ class Rent extends Model
         return $months > 0
             ? "{$years} tahun {$months} bulan"
             : "{$years} tahun";
+    }
+
+    public function cancelBooking(): HasOne
+    {
+        return $this->hasOne(CancelBooking::class);
+    }
+
+    public function hasPendingCancel(): bool
+    {
+        return $this->cancelBooking()->where('status', 'pending')->exists();
     }
 }

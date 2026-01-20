@@ -318,8 +318,8 @@
                             <a href="{{ route('admin.kos.show', $kos->id) }}"
                                class="inline-flex items-center justify-center
                                       w-10 h-10 rounded-xl
-                                      bg-purple-600/20 text-purple-400
-                                      hover:bg-purple-600/30 hover:-translate-y-0.5
+                                      bg-blue-600/20 text-blue-400
+                                      hover:bg-blue-600/30 hover:-translate-y-0.5
                                       transition-all duration-200"
                                title="Lihat Detail">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -398,18 +398,12 @@
                 @endforeach
             </div>
         @else
-            <div class="text-center py-12">
-                <svg class="w-16 h-16 text-slate-500 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div class="text-center py-12 text-gray-500">
+                <svg class="w-16 h-16 mx-auto text-slate-600 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"></path>
                 </svg>
-                <p class="text-gray-500 mb-4">Belum ada data kos tersimpan</p>
-                <a href="{{ route('admin.kos.create') }}" 
-                   class="inline-flex items-center px-5 py-2.5 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700 transition-colors font-medium">
-                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
-                        </svg>
-                    Tambah Kos Pertama
-                </a>
+                <p class="text-lg font-medium mb-2">Belum ada data kos tersimpan</p>
+                <p class="text-sm">Belum ada booking yang perlu diproses</p>
             </div>
         @endif
     </div>

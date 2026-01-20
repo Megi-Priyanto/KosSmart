@@ -7,7 +7,7 @@ use App\Models\TempatKos;
 use App\Models\User;
 use App\Models\Room;
 use App\Models\Rent;
-use App\Models\Billing;
+use App\Models\AdminBilling;
 use Illuminate\Http\Request;
 
 class SuperAdminDashboardController extends Controller
@@ -31,12 +31,11 @@ class SuperAdminDashboardController extends Controller
             ? round(($totalKamarTerisi / $totalKamar) * 100, 1)
             : 0;
 
-        // Pendapatan bulan ini (global)
-        $monthlyIncome = Billing::withoutTempatKosScope()
-            ->where('status', 'paid')
-            ->whereMonth('created_at', now()->month)
-            ->whereYear('created_at', now()->year)
-            ->sum('total_amount');
+        // FIX: Pendapatan bulan ini dari tagihan admin yang sudah dibayar (status 'paid')
+        $monthlyIncome = AdminBilling::where('status', 'paid')
+            ->whereMonth('paid_at', now()->month)
+            ->whereYear('paid_at', now()->year)
+            ->sum('amount');
 
         // List tempat kos dengan statistik
         $tempatKosList = TempatKos::withCount([

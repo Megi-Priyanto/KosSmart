@@ -6,34 +6,138 @@
 
 <!-- Notifikasi Booking Pending -->
 @if(isset($pendingRent))
-<div class="mb-6 bg-yellow-50 border-l-4 border-yellow-500 p-6 rounded-lg">
-    <div class="flex items-start">
-        <svg class="w-6 h-6 text-yellow-500 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-        </svg>
-        <div class="flex-1">
-            <h3 class="font-bold text-yellow-800 mb-2">Booking Anda Sedang Diproses</h3>
-            <p class="text-sm text-yellow-700 mb-2">
-                Booking kamar <strong>{{ $pendingRent->room->room_number }}</strong> sedang ditinjau oleh admin. 
-                Anda akan dihubungi dalam 1x24 jam.
-            </p>
+<div x-data="{ showCancelModal: false }">
+    
+    <div class="mb-6 bg-yellow-50 border-l-4 border-yellow-500 p-6 rounded-lg">
+        <div class="flex items-start justify-between">
+            <div class="flex items-start flex-1">
+                <svg class="w-6 h-6 text-yellow-500 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                <div>
+                    <h3 class="font-bold text-yellow-800 mb-2">Booking Anda Sedang Diproses</h3>
+                    <p class="text-sm text-yellow-700 mb-2">
+                        Booking kamar <strong>{{ $pendingRent->room->room_number }}</strong> sedang ditinjau oleh admin. 
+                        Anda akan dihubungi dalam 1x24 jam.
+                    </p>
+                </div>
+            </div>
+            
+            <!-- Tombol Cancel (hanya muncul jika belum ada cancel request) -->
+            @if(!$pendingRent->hasPendingCancel())
+            <button @click="showCancelModal = true" 
+                    class="ml-4 px-4 py-2 bg-red-500 text-white text-sm font-semibold rounded-lg hover:bg-red-600 transition-all shadow-lg whitespace-nowrap">
+                Batalkan Booking
+            </button>
+            @else
+            <span class="ml-4 px-4 py-2 bg-orange-100 text-orange-700 text-sm font-semibold rounded-lg whitespace-nowrap">
+                Pembatalan Sedang Diproses
+            </span>
+            @endif
         </div>
     </div>
+
+    <!-- Modal Cancel Booking -->
+    <div x-show="showCancelModal"
+         x-cloak
+         class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4"
+         @click.self="showCancelModal = false">
+        
+        <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-xl font-bold text-gray-800">Batalkan Booking</h3>
+                <button @click="showCancelModal = false" class="text-gray-400 hover:text-gray-600">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+
+            <form action="{{ route('user.booking.cancel.store', $pendingRent) }}" method="POST">
+                @csrf
+
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                        Nama Bank <span class="text-red-500"></span>
+                    </label>
+                    <select name="bank_name" required
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500">
+                        <option value="">Pilih Bank</option>
+                        <option value="BCA">BCA</option>
+                        <option value="BNI">BNI</option>
+                        <option value="BRI">BRI</option>
+                        <option value="Mandiri">Mandiri</option>
+                        <option value="CIMB Niaga">CIMB Niaga</option>
+                        <option value="Bank Lainnya">Bank Lainnya</option>
+                    </select>
+                </div>
+
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                        Nomor Rekening <span class="text-red-500"></span>
+                    </label>
+                    <input type="text" name="account_number" required
+                           class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500"
+                           placeholder="Contoh: 1234567890">
+                </div>
+
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                        Nama Pemilik Rekening <span class="text-red-500"></span>
+                    </label>
+                    <input type="text" name="account_holder_name" required
+                           class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500"
+                           placeholder="Contoh: JOHN DOE">
+                </div>
+
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                        Alasan Pembatalan (Opsional)
+                    </label>
+                    <textarea name="cancel_reason" rows="3"
+                              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500"
+                              placeholder="Jelaskan alasan Anda membatalkan booking..."></textarea>
+                </div>
+
+                <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-3 mb-4">
+                    <p class="text-sm text-yellow-800">
+                        <strong>Catatan:</strong> Setelah Anda mengajukan pembatalan, admin akan memproses pengembalian dana DP sebesar 
+                        <strong>Rp {{ number_format($pendingRent->deposit_paid, 0, ',', '.') }}</strong> ke rekening yang Anda cantumkan.
+                    </p>
+                </div>
+
+                <div class="flex gap-3">
+                    <button type="button" @click="showCancelModal = false"
+                            class="flex-1 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition">
+                        Batal
+                    </button>
+                    <button type="submit"
+                            onclick="return confirm('Yakin ingin membatalkan booking? Dana DP akan dikembalikan oleh admin.')"
+                            class="flex-1 px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition font-semibold">
+                        Ajukan Pembatalan
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
 </div>
 @endif
 
-<!-- Hero Section -->
-<div class="relative mb-6 rounded-2xl overflow-hidden shadow-lg" style="height: 240px;">
-    <img src="{{ asset('images/image1.png') }}" 
+<!-- Hero Image Tenant -->
+<div class="relative mb-8 rounded-2xl overflow-hidden shadow-lg"
+     style="height: clamp(220px, 35vw, 450px);">
+
+    <img src="{{ hero_image_empty() }}"
          alt="Hero" 
          class="absolute inset-0 w-full h-full object-cover"
          style="filter: brightness(0.6);">
-    
-    <div class="relative z-10 flex flex-col items-center justify-center h-full text-white px-4">
-        <h1 class="text-2xl sm:text-3xl font-bold mb-2 font-bold mb-3 text-center">
+
+    <div class="relative z-10 flex flex-col items-center justify-center h-full text-white px-4 text-center">
+        <h1 class="text-2xl sm:text-3xl font-bold mb-2">
             Temukan Kos Impian Anda
         </h1>
-        <p class="text-sm sm:text-base text-gray-200 text-center max-w-2xl">
+        <p class="text-sm sm:text-base text-gray-200 max-w-2xl">
             Pilih dari {{ $tempatKos->total() }} tempat kos terbaik yang tersedia
         </p>
     </div>

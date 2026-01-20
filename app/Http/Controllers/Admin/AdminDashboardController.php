@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Room;
 use App\Models\Rent;
 use App\Models\Billing;
+use App\Models\Payment;
 use App\Models\Notification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -124,10 +125,30 @@ class AdminDashboardController extends Controller
             ->with(['user', 'room'])
             ->latest()
             ->take(5)
-            ->get();
+            ->get()
+            ->filter(fn($item) => $item->user && $item->room);
 
         $pendingBookingsCount = (clone $pendingBookingsQuery)
             ->where('status', 'pending')
+            ->count();
+
+        // ==========================
+        // CANCEL BOOKING (MULTI-TENANT)
+        // ==========================
+        $cancelBookingsQuery = $user->isSuperAdmin()
+            ? Rent::withoutTempatKosScope()
+            : Rent::where('tempat_kos_id', $user->tempat_kos_id);
+
+        $cancelBookings = (clone $cancelBookingsQuery)
+            ->where('status', 'cancel_booking')
+            ->with(['user', 'room'])
+            ->latest()
+            ->take(5)
+            ->get()
+            ->filter(fn($item) => $item->user && $item->room);
+
+        $cancelBookingsCount = (clone $cancelBookingsQuery)
+            ->where('status', 'cancel_booking')
             ->count();
 
         // ==========================
@@ -142,10 +163,30 @@ class AdminDashboardController extends Controller
             ->with(['user', 'room'])
             ->latest()
             ->take(5)
-            ->get();
+            ->get()
+            ->filter(fn($item) => $item->user && $item->room);
 
         $checkoutRequestsCount = (clone $checkoutRequestsQuery)
             ->where('status', 'checkout_requested')
+            ->count();
+
+        // ==========================
+        // PENDING PAYMENTS (MULTI-TENANT)
+        // ==========================
+        $pendingPaymentsQuery = $user->isSuperAdmin()
+            ? Payment::withoutTempatKosScope()
+            : Payment::where('tempat_kos_id', $user->tempat_kos_id);
+
+        $pendingPayments = (clone $pendingPaymentsQuery)
+            ->where('status', 'pending')
+            ->with(['user', 'billing.room'])
+            ->latest()
+            ->take(5)
+            ->get()
+            ->filter(fn($item) => $item->user && $item->billing && $item->billing->room);
+
+        $pendingPaymentsCount = (clone $pendingPaymentsQuery)
+            ->where('status', 'pending')
             ->count();
 
         // ==========================
@@ -186,7 +227,7 @@ class AdminDashboardController extends Controller
 
         for ($i = 5; $i >= 0; $i--) {
             $date = now()->subMonths($i);
-            
+
             $billingQueryChart = $user->isSuperAdmin()
                 ? Billing::withoutTempatKosScope()
                 : Billing::where('tempat_kos_id', $user->tempat_kos_id);
@@ -233,8 +274,12 @@ class AdminDashboardController extends Controller
             'kosInfo',
             'pendingBookings',
             'pendingBookingsCount',
+            'cancelBookings',
+            'cancelBookingsCount',
             'checkoutRequests',
             'checkoutRequestsCount',
+            'pendingPayments',
+            'pendingPaymentsCount', 
             'todayNotifications',
             'activities',
             'notifications',

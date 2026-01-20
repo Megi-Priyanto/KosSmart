@@ -111,6 +111,13 @@ Route::middleware(['auth', 'verified', 'role:user'])->group(function () {
         Route::get('/checkout', [StatusController::class, 'checkout'])->name('checkout');
     });
 
+    // User Cancel Booking Routes
+    Route::post('/booking/{rent}/cancel', [\App\Http\Controllers\User\UserCancelBookingController::class, 'store'])
+        ->name('user.booking.cancel.store');
+    
+    Route::get('/booking/cancel/status', [\App\Http\Controllers\User\UserCancelBookingController::class, 'status'])
+        ->name('user.booking.cancel.status');
+
     // ==============================
     // UNTUK USER YANG BELUM PUNYA KAMAR
     // ==============================
@@ -180,7 +187,7 @@ Route::middleware(['auth', 'verified', 'super.admin'])
         // Billing Management
         Route::resource('billing', SuperAdminBillingController::class)->except(['edit', 'update']);
         Route::post('billing/{billing}/verify', [SuperAdminBillingController::class, 'verify'])->name('billing.verify');
-        
+
         // Notifications
         Route::get('notifications', [SuperAdminNotificationController::class, 'index'])->name('notifications.index');
         Route::post('notifications/mark-all-read', [SuperAdminNotificationController::class, 'markAllRead'])->name('notifications.mark-all-read');
@@ -189,16 +196,8 @@ Route::middleware(['auth', 'verified', 'super.admin'])
         Route::prefix('settings')->name('settings.')->group(function () {
             Route::get('/', [\App\Http\Controllers\SuperAdmin\SettingController::class, 'index'])
                 ->name('index');
-            Route::put('/general', [\App\Http\Controllers\SuperAdmin\SettingController::class, 'updateGeneral'])
-                ->name('general.update');
-            Route::post('/backup', [\App\Http\Controllers\SuperAdmin\SettingController::class, 'backup'])
-                ->name('backup');
-            Route::post('/cache/clear', [\App\Http\Controllers\SuperAdmin\SettingController::class, 'clearCache'])
-                ->name('cache.clear');
-            Route::post('/optimize', [\App\Http\Controllers\SuperAdmin\SettingController::class, 'optimize'])
-                ->name('optimize');
-            Route::post('/migrate', [\App\Http\Controllers\SuperAdmin\SettingController::class, 'migrate'])
-                ->name('migrate');
+            Route::put('/update', [\App\Http\Controllers\SuperAdmin\SettingController::class, 'update'])
+                ->name('update');
         });
     });
 
@@ -328,4 +327,18 @@ Route::middleware(['auth', 'verified', 'admin.kos'])
         Route::get('payments', [AdminPaymentController::class, 'index'])->name('payments.index');
         Route::get('payments/{billing}', [AdminPaymentController::class, 'show'])->name('payments.show');
         Route::post('payments/{billing}/pay', [AdminPaymentController::class, 'pay'])->name('payments.pay');
+
+        Route::get('/cancel-bookings', [\App\Http\Controllers\Admin\AdminCancelBookingController::class, 'index'])
+        ->name('cancel-bookings.index');
+    
+        // Admin Cancel Booking Routes
+        Route::get('/cancel-bookings/{cancelBooking}/refund', [\App\Http\Controllers\Admin\AdminCancelBookingController::class, 'showRefundForm'])
+            ->name('cancel-bookings.refund-form');
+
+        Route::post('/cancel-bookings/{cancelBooking}/refund', [\App\Http\Controllers\Admin\AdminCancelBookingController::class, 'processRefund'])
+            ->name('cancel-bookings.refund.process');
+
+        Route::post('/cancel-bookings/{cancelBooking}/reject', [\App\Http\Controllers\Admin\AdminCancelBookingController::class, 'reject'])
+            ->name('cancel-bookings.reject');
+            
     });

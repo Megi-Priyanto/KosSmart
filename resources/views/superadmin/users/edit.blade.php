@@ -5,16 +5,18 @@
 @section('page-description', 'Perbarui informasi user')
 
 @section('content')
-<div class="max-w-4xl mx-auto">
+<div class="space-y-6">
 
-    <!-- Back Button -->
-    <div class="mb-6">
-        <a href="{{ route('superadmin.users.show', $user) }}" 
-           class="inline-flex items-center text-slate-400 hover:text-slate-200 transition">
-            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
-            </svg>
-            Kembali ke Detail
+    <!-- Page Header -->
+    <div class="flex items-center justify-between">
+        <a href="{{ route('superadmin.users.index') }}" 
+           class="inline-flex items-center gap-2
+                    bg-gradient-to-r from-yellow-500 to-orange-600
+                    text-white font-semibold
+                    px-5 py-2 rounded-lg
+                    hover:from-yellow-600 hover:to-orange-700
+                    transition-all shadow-lg">
+            Kembali ke Daftar User
         </a>
     </div>
 
@@ -37,7 +39,7 @@
                 <!-- Nama -->
                 <div>
                     <label class="block text-sm font-medium text-slate-300 mb-2">
-                        Nama Lengkap <span class="text-red-400">*</span>
+                        Nama Lengkap <span class="text-red-400"></span>
                     </label>
                     <input type="text" 
                            name="name" 
@@ -52,7 +54,7 @@
                 <!-- Email -->
                 <div>
                     <label class="block text-sm font-medium text-slate-300 mb-2">
-                        Email <span class="text-red-400">*</span>
+                        Email <span class="text-red-400"></span>
                     </label>
                     <input type="email" 
                            name="email" 
@@ -81,7 +83,7 @@
                 <!-- Role -->
                 <div>
                     <label class="block text-sm font-medium text-slate-300 mb-2">
-                        Role <span class="text-red-400">*</span>
+                        Role <span class="text-red-400"></span>
                     </label>
                     <select name="role" 
                             id="roleSelect"
@@ -109,7 +111,7 @@
 
             <div>
                 <label class="block text-sm font-medium text-slate-300 mb-2">
-                    Pilih Tempat Kos <span class="text-red-400" id="requiredStar">*</span>
+                    Pilih Tempat Kos <span class="text-red-400" id="requiredStar"></span>
                 </label>
                 <select name="tempat_kos_id" 
                         id="tempatKosSelect"
@@ -167,8 +169,8 @@
                 </div>
             </div>
 
-            <div class="mt-4 p-3 bg-blue-500/10 border border-blue-500/30 rounded-lg">
-                <p class="text-xs text-blue-300">
+            <div class="mt-4 p-3 bg-yellow-500/10 border border-yellow-500/30 rounded-lg">
+                <p class="text-xs text-yellow-300">
                     Kosongkan field password jika tidak ingin mengubahnya. Password baru harus minimal 8 karakter.
                 </p>
             </div>
@@ -201,7 +203,12 @@
                 Batal
             </a>
             <button type="submit" 
-                    class="px-6 py-3 bg-gradient-to-r from-yellow-600 to-orange-600 hover:from-yellow-700 hover:to-orange-700 text-white rounded-lg font-medium transition shadow-lg">
+                     class="inline-flex items-center gap-2
+                            bg-gradient-to-r from-yellow-500 to-orange-600
+                            text-white font-semibold
+                            px-5 py-3 rounded-lg
+                            hover:from-yellow-600 hover:to-orange-700
+                            transition-all shadow-lg">
                 <svg class="w-5 h-5 inline-block mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
                 </svg>

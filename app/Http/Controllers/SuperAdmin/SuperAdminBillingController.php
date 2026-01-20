@@ -9,6 +9,7 @@ use App\Models\User;
 use App\Models\Notification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class SuperAdminBillingController extends Controller
 {
@@ -48,7 +49,6 @@ class SuperAdminBillingController extends Controller
             });
         }
 
-        // PERBAIKAN: Gunakan nama variabel plural
         $billings = $query->latest()->paginate(15)->withQueryString();
 
         // Statistics
@@ -59,7 +59,6 @@ class SuperAdminBillingController extends Controller
             'paid' => AdminBilling::paid()->count(),
         ];
 
-        // PERBAIKAN: Kirim $billings (plural)
         return view('superadmin.billing.index', compact('billings', 'stats'));
     }
 
@@ -97,8 +96,9 @@ class SuperAdminBillingController extends Controller
         try {
             DB::beginTransaction();
 
+            // FIX: Ambil tempat kos IDs sesuai tipe
             if ($validated['billing_type'] === 'all') {
-                $tempatKosIds = TempatKos::active()->pluck('id');
+                $tempatKosIds = TempatKos::active()->pluck('id')->toArray();
             } else {
                 $tempatKosIds = $validated['tempat_kos_ids'];
             }
@@ -106,28 +106,41 @@ class SuperAdminBillingController extends Controller
             $period = sprintf('%04d-%02d', $validated['billing_year'], $validated['billing_month']);
             $created = 0;
             $skipped = 0;
+            $errors = [];
 
             foreach ($tempatKosIds as $tempatKosId) {
+                // Cek apakah tempat kos ada
                 $tempatKos = TempatKos::find($tempatKosId);
+                
+                if (!$tempatKos) {
+                    $errors[] = "Tempat kos ID {$tempatKosId} tidak ditemukan";
+                    $skipped++;
+                    continue;
+                }
 
+                // FIX: Cari admin dengan benar
                 $admin = User::where('tempat_kos_id', $tempatKosId)
                     ->where('role', 'admin')
                     ->first();
 
                 if (!$admin) {
+                    $errors[] = "Tempat kos '{$tempatKos->nama_kos}' tidak memiliki admin";
                     $skipped++;
                     continue;
                 }
 
+                // Cek apakah tagihan periode ini sudah ada
                 $exists = AdminBilling::where('tempat_kos_id', $tempatKosId)
                     ->where('billing_period', $period)
                     ->exists();
 
                 if ($exists) {
+                    $errors[] = "Tagihan periode {$period} untuk '{$tempatKos->nama_kos}' sudah ada";
                     $skipped++;
                     continue;
                 }
 
+                // Buat tagihan
                 $billing = AdminBilling::create([
                     'tempat_kos_id' => $tempatKosId,
                     'admin_id' => $admin->id,
@@ -140,7 +153,7 @@ class SuperAdminBillingController extends Controller
                     'status' => 'unpaid',
                 ]);
 
-                // PERBAIKAN: Gunakan admin_billing_id
+                // Buat notifikasi untuk admin
                 Notification::create([
                     'tempat_kos_id' => $tempatKosId,
                     'type' => 'billing',
@@ -157,16 +170,39 @@ class SuperAdminBillingController extends Controller
 
             DB::commit();
 
-            $message = "Berhasil membuat {$created} tagihan.";
-            if ($skipped > 0) {
-                $message .= " {$skipped} dilewati (sudah ada atau tidak ada admin).";
+            // Pesan sukses yang lebih informatif
+            if ($created > 0) {
+                $message = "Berhasil membuat {$created} tagihan.";
+                if ($skipped > 0) {
+                    $message .= " {$skipped} dilewati.";
+                }
+                
+                // Log errors untuk debugging
+                if (!empty($errors)) {
+                    Log::info('Billing creation errors:', $errors);
+                }
+                
+                return redirect()
+                    ->route('superadmin.billing.index')
+                    ->with('success', $message);
+            } else {
+                // Jika tidak ada yang berhasil dibuat
+                $errorMessage = "Tidak ada tagihan yang berhasil dibuat. ";
+                if (!empty($errors)) {
+                    $errorMessage .= "Alasan: " . implode(', ', array_slice($errors, 0, 3));
+                    if (count($errors) > 3) {
+                        $errorMessage .= " dan " . (count($errors) - 3) . " lainnya.";
+                    }
+                }
+                
+                return back()
+                    ->withInput()
+                    ->with('error', $errorMessage);
             }
-
-            return redirect()
-                ->route('superadmin.billing.index')
-                ->with('success', $message);
         } catch (\Exception $e) {
             DB::rollBack();
+            Log::error('Billing creation failed: ' . $e->getMessage());
+            
             return back()
                 ->withInput()
                 ->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
@@ -194,12 +230,12 @@ class SuperAdminBillingController extends Controller
 
         try {
             DB::beginTransaction();
+            
             $billing->update([
                 'status' => 'paid',
                 'verified_by' => auth()->id(),
             ]);
 
-            // PERBAIKAN: Gunakan admin_billing_id
             Notification::create([
                 'tempat_kos_id' => $billing->tempat_kos_id,
                 'type' => 'payment',
@@ -225,9 +261,7 @@ class SuperAdminBillingController extends Controller
     public function destroy(AdminBilling $billing)
     {
         try {
-            // PERBAIKAN: Hapus berdasarkan admin_billing_id
             Notification::where('admin_billing_id', $billing->id)->delete();
-
             $billing->delete();
 
             return redirect()
