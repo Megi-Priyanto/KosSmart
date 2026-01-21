@@ -61,7 +61,7 @@ Route::middleware('guest')->group(function () {
 });
 
 // ==============================
-// EMAIL VERIFICATION
+// EMAIL VERIFICATION (REGISTER)
 // ==============================
 Route::prefix('verification')->name('verification.')->group(function () {
     // Halaman input OTP (tidak perlu auth, karena user baru register)
@@ -77,6 +77,32 @@ Route::prefix('verification')->name('verification.')->group(function () {
     Route::post('/otp/resend', [OtpVerificationController::class, 'resendOtp'])
         ->middleware('throttle:3,2') // Max 3 attempts per 2 minutes
         ->name('otp.resend');
+});
+
+// ==============================
+// EMAIL CHANGE VERIFICATION (TANPA AUTH)
+// ==============================
+// CRITICAL: Routes ini HARUS di luar middleware auth
+// karena user sudah logout setelah klik "Simpan Email"
+Route::prefix('user/profile/email')->name('user.profile.email.')->group(function () {
+    
+    // Halaman verifikasi OTP untuk email baru (user sudah logout)
+    Route::get('/verify', [UserProfileController::class, 'showEmailVerification'])
+        ->name('verify');
+    
+    // Proses verifikasi OTP
+    Route::post('/verify', [UserProfileController::class, 'verifyEmailChange'])
+        ->middleware('throttle:5,1')
+        ->name('verify.process');
+    
+    // Kirim ulang OTP
+    Route::post('/resend', [UserProfileController::class, 'resendEmailOtp'])
+        ->middleware('throttle:3,2')
+        ->name('resend');
+    
+    // Batal perubahan email
+    Route::post('/cancel', [UserProfileController::class, 'cancelEmailChange'])
+        ->name('cancel');
 });
 
 // ==============================
@@ -152,11 +178,24 @@ Route::middleware(['auth', 'verified', 'role:user'])->group(function () {
         });
     });
 
-    // Profil User
-    Route::get('/user/profile', [UserProfileController::class, 'index'])->name('user.profile');
-    Route::put('/user/profile', [UserProfileController::class, 'update'])->name('user.profile.update');
-    Route::put('/user/profile/password', [UserProfileController::class, 'updatePassword'])->name('user.profile.password');
-    Route::delete('/user/profile', [UserProfileController::class, 'destroy'])->name('user.profile.delete');
+    // ==============================
+    // PROFIL USER
+    // ==============================
+    Route::get('/user/profile', [UserProfileController::class, 'index'])
+        ->name('user.profile');
+    
+    Route::put('/user/profile', [UserProfileController::class, 'update'])
+        ->name('user.profile.update');
+    
+    Route::put('/user/profile/password', [UserProfileController::class, 'updatePassword'])
+        ->name('user.profile.password');
+    
+    Route::delete('/user/profile', [UserProfileController::class, 'destroy'])
+        ->name('user.profile.delete');
+    
+    // Request email change - PERLU AUTH (user masih login saat mengisi form)
+    Route::post('/user/profile/email/request', [UserProfileController::class, 'requestEmailChange'])
+        ->name('user.profile.email.request');
 });
 
 // ==============================

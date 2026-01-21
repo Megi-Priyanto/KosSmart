@@ -91,6 +91,7 @@ class AuthController extends Controller
             ])->with([
                 'unverified_email' => $user->email,
                 'unverified_name' => $user->name,
+                'show_verify_button' => true, // Flag untuk tampilkan tombol verifikasi
             ]);
         }
 

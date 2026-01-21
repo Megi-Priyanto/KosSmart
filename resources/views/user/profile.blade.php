@@ -76,7 +76,7 @@
                 $totalPayments = Auth::user()->payments()->where('status', 'confirmed')->count();
             @endphp
             <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-                <h3 class="text-sm font-semiboldtext-gray-800 mb-3">Statistik Saya</h3>
+                <h3 class="text-sm font-semibold text-gray-800 mb-3">Statistik Saya</h3>
                 
                 <div class="space-y-3">
                     <div class="flex justify-between items-center">
@@ -85,8 +85,7 @@
                     </div>
                     <div class="flex justify-between items-center">
                         <span class="text-xs text-gray-600">Lama Menyewa</span>
-                        <span class="text-sm font-medium text-gray-800">{{ $activeRent->duration_human }}
-                        </span>
+                        <span class="text-sm font-medium text-gray-800">{{ $activeRent->start_date->diffForHumans(null, true) }}</span>
                     </div>
                     <div class="flex justify-between items-center">
                         <span class="text-xs text-gray-600">Total Pembayaran</span>
@@ -132,28 +131,6 @@
                             @enderror
                         </div>
                         
-                        <!-- Email -->
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">
-                                Email <span class="text-red-500"></span>
-                            </label>
-                            <input type="email" 
-                                   name="email" 
-                                   value="{{ old('email', Auth::user()->email) }}"
-                                   class="w-full border border-gray-300 rounded-lg px-4 py-2 bg-gray-50"
-                                   readonly>
-                            @error('email')
-                            <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-                            @enderror
-                            
-                            @if(!Auth::user()->email_verified_at)
-                            <div class="mt-2 p-2 bg-yellow-50 border border-yellow-200 rounded text-sm text-yellow-700">
-                                Email belum diverifikasi. 
-                                <a href="{{ route('verification.notice') }}" class="underline font-medium">Verifikasi sekarang</a>
-                            </div>
-                            @endif
-                        </div>
-                        
                         <!-- Nomor Telepon -->
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-2">
@@ -174,11 +151,108 @@
                         <!-- Action Buttons (Hidden by default) -->
                         <div id="actions-personal" class="hidden pt-4 border-t border-gray-200 flex gap-3">
                             <button type="submit" 
-                                    class="px-3 py-1.5 bg-yellow-400 text-white rounded-md text-sm hover:bg-yellow-400 font-medium">
+                                    class="px-4 py-2 text-center bg-gradient-to-r from-yellow-500 to-orange-600 text-white font-semibold rounded-md text-sm hover:from-yellow-600 hover:to-orange-700 transition shadow-md">
                                 Simpan Perubahan
                             </button>
                             <button type="button" 
                                     onclick="cancelEdit('personal')"
+                                    class="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 font-medium">
+                                Batal
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            
+            <!-- Ubah Email -->
+            <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                <div class="flex items-center justify-between mb-6">
+                    <h3 class="text-sm sm:text-base font-semibold text-gray-800">Ubah Email</h3>
+                    <button onclick="toggleEdit('email')" 
+                            id="btn-edit-email"
+                            class="text-sm text-yellow-400 hover:text-yellow-500 font-medium">
+                        Ubah Email
+                    </button>
+                </div>
+                
+                <!-- Display Current Email -->
+                <div id="form-email-display">
+                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded-md">
+                        <div class="flex items-center">
+                            <svg class="w-5 h-5 text-gray-400 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                            </svg>
+                            <span class="text-sm text-gray-700">{{ Auth::user()->email }}</span>
+                        </div>
+                        
+                        @if(Auth::user()->email_verified_at)
+                            <span class="px-2.5 py-0.5 bg-green-100 text-green-700 text-xs font-semibold rounded-full">
+                                Terverifikasi
+                            </span>
+                        @else
+                            <span class="px-2.5 py-0.5 bg-yellow-100 text-yellow-700 text-xs font-semibold rounded-full">
+                                Belum Terverifikasi
+                            </span>
+                        @endif
+                    </div>
+                </div>
+                
+                <!-- Form Change Email -->
+                <form id="form-email" action="{{ route('user.profile.email.request') }}" method="POST" class="hidden">
+                    @csrf
+                    
+                    <div class="space-y-4">
+                        <!-- Current Email (Read Only) -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                Email Saat Ini
+                            </label>
+                            <input type="email" 
+                                   value="{{ Auth::user()->email }}"
+                                   class="w-full border border-gray-300 rounded-lg px-4 py-2 bg-gray-50"
+                                   readonly>
+                        </div>
+                        
+                        <!-- New Email -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                Email Baru <span class="text-red-500"></span>
+                            </label>
+                            <input type="email" 
+                                   name="new_email" 
+                                   class="w-full border border-gray-300 rounded-lg px-4 py-2 @error('new_email') border-red-500 @enderror"
+                                   placeholder="email_baru@example.com"
+                                   required>
+                            @error('new_email')
+                            <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                            @enderror
+                            <p class="text-xs text-gray-500 mt-1">Kode OTP akan dikirim ke email baru ini</p>
+                        </div>
+                        
+                        <!-- Warning -->
+                        <div class="p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+                            <div class="flex items-start">
+                                <svg class="w-5 h-5 text-yellow-600 mr-2 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                                </svg>
+                                <div>
+                                    <p class="text-sm text-yellow-700 font-medium">Perhatian</p>
+                                    <p class="text-xs text-yellow-600 mt-1">
+                                        Email Anda akan langsung berubah menjadi email baru. 
+                                        Anda harus memverifikasi dengan kode OTP yang dikirim ke email baru tersebut.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Action Buttons -->
+                        <div class="pt-4 border-t border-gray-200 flex gap-3">
+                            <button type="submit" 
+                                    class="px-4 py-2 bg-gradient-to-r from-yellow-500 to-orange-600 text-white font-semibold rounded-md text-sm hover:from-yellow-600 hover:to-orange-700 transition shadow-md">
+                                Simpan Email
+                            </button>
+                            <button type="button" 
+                                    onclick="cancelEdit('email')"
                                     class="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 font-medium">
                                 Batal
                             </button>
@@ -203,7 +277,7 @@
                         <svg class="w-5 h-5 text-gray-400 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
                         </svg>
-                       <span class="text-xs text-gray-600">••••••••••••</span>
+                        <span class="text-xs text-gray-600">••••••••••••</span>
                     </div>
                 </div>
                 
@@ -215,7 +289,7 @@
                         <!-- Current Password -->
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-2">
-                                Password Saat Ini <span class="text-red-500">*</span>
+                                Password Saat Ini <span class="text-red-500"></span>
                             </label>
                             <input type="password" 
                                    name="current_password" 
@@ -229,7 +303,7 @@
                         <!-- New Password -->
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-2">
-                                Password Baru <span class="text-red-500">*</span>
+                                Password Baru <span class="text-red-500"></span>
                             </label>
                             <input type="password" 
                                    name="password" 
@@ -244,7 +318,7 @@
                         <!-- Confirm Password -->
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-2">
-                                Konfirmasi Password Baru <span class="text-red-500">*</span>
+                                Konfirmasi Password Baru <span class="text-red-500"></span>
                             </label>
                             <input type="password" 
                                    name="password_confirmation" 
@@ -255,7 +329,7 @@
                         <!-- Action Buttons -->
                         <div class="pt-4 border-t border-gray-200 flex gap-3">
                             <button type="submit" 
-                                    class="px-4 py-2 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700 font-medium">
+                                    class="px-4 py-2 text-center bg-gradient-to-r from-yellow-500 to-orange-600 text-white font-semibold rounded-md text-sm hover:from-yellow-600 hover:to-orange-700 transition shadow-md">
                                 Simpan Password
                             </button>
                             <button type="button" 
@@ -387,6 +461,16 @@ function toggleEdit(formType) {
         
         // Hide edit button
         document.getElementById('btn-edit-password').classList.add('hidden');
+    } else if (formType === 'email') {
+        // UNTUK FORM EMAIL
+        // Hide display
+        document.getElementById('form-email-display').classList.add('hidden');
+        
+        // Show form
+        document.getElementById('form-email').classList.remove('hidden');
+        
+        // Hide edit button
+        document.getElementById('btn-edit-email').classList.add('hidden');
     }
 }
 
@@ -420,6 +504,19 @@ function cancelEdit(formType) {
         
         // Reset form
         document.getElementById('form-password').reset();
+    } else if (formType === 'email') {
+        // UNTUK FORM EMAIL
+        // Show display
+        document.getElementById('form-email-display').classList.remove('hidden');
+        
+        // Hide form
+        document.getElementById('form-email').classList.add('hidden');
+        
+        // Show edit button
+        document.getElementById('btn-edit-email').classList.remove('hidden');
+        
+        // Reset form
+        document.getElementById('form-email').reset();
     }
 }
 
