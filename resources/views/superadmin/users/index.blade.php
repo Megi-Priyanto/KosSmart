@@ -155,7 +155,7 @@
                         <td class="px-6 py-4 text-center">
                             @if($user->email_verified_at)
                                 <span class="inline-flex items-center px-2 py-1 rounded-full text-xs bg-green-500/20 text-green-400">
-                                    ✓ Verified
+                                    Verified
                                 </span>
                             @else
                                 <span class="inline-flex items-center px-2 py-1 rounded-full text-xs bg-orange-500/20 text-orange-400">

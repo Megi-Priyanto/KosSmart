@@ -312,7 +312,7 @@
                     </div>
                 </div>
                 
-                <!-- ✅ BUTTON DISESUAIKAN DENGAN STATUS -->
+                <!-- BUTTON DISESUAIKAN DENGAN STATUS -->
                 @if($room->status === 'available')
                     <a href="{{ route('user.rooms.show', $room->id) }}" 
                        class="block w-full text-center bg-gradient-to-r from-yellow-500 to-orange-600 text-white font-semibold py-1.5 rounded-md text-sm hover:from-yellow-600 hover:to-orange-700 transition shadow-md">

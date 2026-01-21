@@ -236,6 +236,13 @@ class SuperAdminBillingController extends Controller
                 'verified_by' => auth()->id(),
             ]);
 
+            // Mark notifikasi pembayaran dari admin sebagai read (untuk Super Admin)
+            Notification::where('admin_billing_id', $billing->id)
+                ->where('type', 'payment')
+                ->where('status', 'unread')
+                ->update(['status' => 'read']);
+
+            // Buat notifikasi baru untuk admin (konfirmasi verifikasi)
             Notification::create([
                 'tempat_kos_id' => $billing->tempat_kos_id,
                 'type' => 'payment',
@@ -261,7 +268,9 @@ class SuperAdminBillingController extends Controller
     public function destroy(AdminBilling $billing)
     {
         try {
+            // ✅ Hapus semua notifikasi terkait billing ini
             Notification::where('admin_billing_id', $billing->id)->delete();
+            
             $billing->delete();
 
             return redirect()

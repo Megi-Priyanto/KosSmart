@@ -7,6 +7,95 @@
 @section('content')
 <div class="space-y-6">
 
+    <!-- Alert Pembayaran Baru dari Admin -->
+    @php
+        // PERBAIKAN: Hanya tampilkan notifikasi dengan billing status 'pending'
+        $superAdminIds = \App\Models\User::where('role', 'super_admin')->pluck('id')->toArray();
+        
+        $paymentNotifications = \App\Models\Notification::where('type', 'payment')
+            ->where('status', 'unread')
+            ->whereIn('user_id', $superAdminIds)
+            ->where('title', 'Pembayaran Tagihan Baru')
+            ->whereNotNull('admin_billing_id')
+            ->whereHas('adminBilling', function($q) {
+                $q->where('status', 'pending');
+            })
+            ->with(['adminBilling.tempatKos', 'adminBilling.admin'])
+            ->latest()
+            ->get();
+    @endphp
+
+    @if($paymentNotifications->count() > 0)
+    <div class="mb-6 px-6 py-5 bg-slate-800 border border-blue-500/40 rounded-xl shadow-sm">
+        <div class="flex items-start gap-4">
+            <div class="p-2 bg-blue-500/20 rounded-lg">
+                <svg class="w-6 h-6 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                          d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/>
+                </svg>
+            </div>
+            <div class="flex-1">
+                <h3 class="font-semibold text-blue-300 mb-1">
+                    {{ $paymentNotifications->count() }} Pembayaran Baru Menunggu Verifikasi
+                </h3>
+                <p class="text-sm text-slate-300 mb-4">
+                    Admin telah mengirimkan bukti pembayaran tagihan operasional yang perlu Anda verifikasi.
+                </p>
+                <div class="space-y-2 mb-4">
+                    @foreach($paymentNotifications->take(2) as $notif)
+                    <div class="flex items-center justify-between px-3 py-2 bg-slate-900 border border-slate-700 rounded-lg hover:border-blue-400/50 transition">
+                        <div class="flex items-center gap-3">
+                            <div class="w-8 h-8 bg-blue-500/20 rounded-full flex items-center justify-center">
+                                <svg class="w-4 h-4 text-blue-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                          d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <p class="text-sm font-medium text-white">
+                                    @if($notif->adminBilling && $notif->adminBilling->admin)
+                                        {{ $notif->adminBilling->admin->name }}
+                                    @else
+                                        Admin
+                                    @endif
+                                </p>
+                                <p class="text-xs text-slate-400">
+                                    @if($notif->adminBilling && $notif->adminBilling->tempatKos)
+                                        {{ $notif->adminBilling->tempatKos->nama_kos }}
+                                    @endif
+                                </p>
+                                <p class="text-xs text-blue-400 mt-1">
+                                    @if($notif->adminBilling)
+                                        Rp {{ number_format($notif->adminBilling->amount, 0, ',', '.') }} • 
+                                        {{ \Carbon\Carbon::parse($notif->adminBilling->billing_period . '-01')->format('F Y') }}
+                                    @endif
+                                </p>
+                                <p class="text-xs text-slate-500 mt-1">
+                                    {{ $notif->created_at->diffForHumans() }}
+                                </p>
+                            </div>
+                        </div>
+                        @if($notif->admin_billing_id)
+                        <a href="{{ route('superadmin.billing.show', $notif->admin_billing_id) }}" 
+                           class="text-sm font-medium text-blue-400 hover:text-blue-300">
+                            Proses →
+                        </a>
+                        @endif
+                    </div>
+                    @endforeach
+                </div>
+                <a href="{{ route('superadmin.billing.index', ['status' => 'pending']) }}" 
+                   class="inline-flex items-center text-sm font-medium text-blue-400 hover:text-blue-300">
+                    Lihat Semua Pembayaran
+                    <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                    </svg>
+                </a>
+            </div>
+        </div>
+    </div>
+    @endif
+
     <!-- Statistik Cards -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         

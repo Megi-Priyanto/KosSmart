@@ -4,6 +4,7 @@ namespace App\Http\Controllers\SuperAdmin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Notification;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class SuperAdminNotificationController extends Controller
@@ -13,13 +14,28 @@ class SuperAdminNotificationController extends Controller
      */
     public function index()
     {
-        $notifications = Notification::whereIn('type', ['payment', 'billing'])
-            ->with(['user', 'adminBilling']) // ✅ Ganti 'billing' → 'adminBilling'
+        $superAdminIds = User::where('role', 'super_admin')->pluck('id')->toArray();
+
+        // Filter hanya notifikasi dengan billing status pending
+        $notifications = Notification::where('type', 'payment')
+            ->whereIn('user_id', $superAdminIds)
+            ->where('title', 'Pembayaran Tagihan Baru')
+            ->whereNotNull('admin_billing_id')
+            ->whereHas('adminBilling', function($q) {
+                $q->where('status', 'pending');
+            })
+            ->with(['adminBilling.tempatKos', 'adminBilling.admin'])
             ->latest()
             ->paginate(20);
 
         $unreadCount = Notification::where('type', 'payment')
             ->where('status', 'unread')
+            ->whereIn('user_id', $superAdminIds)
+            ->where('title', 'Pembayaran Tagihan Baru')
+            ->whereNotNull('admin_billing_id')
+            ->whereHas('adminBilling', function($q) {
+                $q->where('status', 'pending');
+            })
             ->count();
 
         return view('superadmin.notifications.index', compact('notifications', 'unreadCount'));
@@ -30,10 +46,18 @@ class SuperAdminNotificationController extends Controller
      */
     public function markAllRead()
     {
+        $superAdminIds = User::where('role', 'super_admin')->pluck('id')->toArray();
+
         Notification::where('type', 'payment')
             ->where('status', 'unread')
+            ->whereIn('user_id', $superAdminIds)
+            ->where('title', 'Pembayaran Tagihan Baru')
+            ->whereNotNull('admin_billing_id')
+            ->whereHas('adminBilling', function($q) {
+                $q->where('status', 'pending');
+            })
             ->update(['status' => 'read']);
 
-        return back()->with('success', 'Semua notifikasi telah ditandai dibaca');
+        return back()->with('success', 'Semua notifikasi pembayaran telah ditandai dibaca');
     }
 }
