@@ -20,6 +20,7 @@ class DatabaseSeeder extends Seeder
         UserSeeder::class,
         KosInfoSeeder::class,
         RoomSeeder::class,
+        AppSettingSeeder::class,
         ]);
     }
 }
