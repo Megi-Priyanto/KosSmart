@@ -11,6 +11,21 @@ return new class extends Migration
         Schema::create('notifications', function (Blueprint $table) {
             $table->id();
 
+            /*
+             |---------------------------------------------
+             | RELASI TEMPAT KOS (DITAMBAHKAN)
+             |---------------------------------------------
+             */
+            $table->foreignId('tempat_kos_id')
+                ->nullable()
+                ->constrained('tempat_kos')
+                ->cascadeOnDelete();
+
+            /*
+             |---------------------------------------------
+             | DATA NOTIFIKASI (KODE ASLI KAMU)
+             |---------------------------------------------
+             */
             $table->string('type')->default('general');
             $table->string('title')->nullable();
             $table->text('message')->nullable();
@@ -31,13 +46,29 @@ return new class extends Migration
                 ->constrained('admin_billings')
                 ->nullOnDelete();
 
-            $table->foreignId('rent_id')->nullable()->constrained()->nullOnDelete();
-            $table->foreignId('room_id')->nullable()->constrained()->nullOnDelete();
+            $table->foreignId('rent_id')
+                ->nullable()
+                ->constrained()
+                ->nullOnDelete();
+
+            $table->foreignId('room_id')
+                ->nullable()
+                ->constrained()
+                ->nullOnDelete();
 
             $table->date('due_date')->nullable();
             $table->string('status', 20)->default('unread');
 
             $table->timestamps();
+
+            /*
+             |---------------------------------------------
+             | INDEX
+             |---------------------------------------------
+             */
+            $table->index('tempat_kos_id');
+            $table->index(['user_id', 'status']);
+            $table->index('due_date');
         });
     }
 

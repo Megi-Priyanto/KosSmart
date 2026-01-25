@@ -8,14 +8,6 @@
 
 <div class="space-y-6">
 
-    <!-- Page Header -->
-    <div class="flex items-center justify-between mb-2">
-        <a href="{{ route('admin.cancel-bookings.index') }}" 
-           class="px-5 py-3 bg-gradient-to-r from-yellow-500 to-orange-600 text-white font-semibold rounded-lg hover:from-yellow-600 hover:to-orange-700 transition-all shadow-lg flex items-center justify-center">
-            Kembali ke Daftar Cancel Booking
-        </a>
-    </div>
-
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
         
         <!-- Main Form -->
@@ -127,11 +119,11 @@
 
                     <!-- Footer -->
                     <div class="p-6 bg-slate-900/50 border-t-2 border-slate-700">
-                        <button type="submit" 
+                        <button type="button"
                                 :disabled="!selectedMethod"
+                                @click="handleSubmit()"
                                 :class="selectedMethod ? 'bg-gradient-to-r from-yellow-500 to-orange-600 font-semibold rounded-lg hover:from-yellow-600 hover:to-orange-700' : 'bg-slate-600 cursor-not-allowed'"
-                                class="w-full px-5 py-3 text-white font-semibold rounded-lg transition-all shadow-lg"
-                                onclick="return confirm('Konfirmasi pengembalian dana? Pastikan semua data sudah benar.')">
+                                class="w-full px-5 py-3 text-white font-semibold rounded-lg transition-all shadow-lg">
                             Kembalikan Dana
                         </button>
                     </div>
@@ -282,6 +274,45 @@ function refundForm() {
                 };
                 reader.readAsDataURL(file);
             }
+        },
+        
+        handleSubmit() {
+            // Validasi
+            const form = this.$el.closest('form');
+            const amount = form.querySelector('[name=refund_amount]').value;
+            const account = form.querySelector('[name=refund_account_number]').value;
+            const proof = form.querySelector('[name=refund_proof]').files[0];
+            
+            // Cek field wajib
+            if (!this.selectedMethod) {
+                Alpine.store('modal').alert(
+                    'Silakan pilih metode pengembalian terlebih dahulu',
+                    'Metode Belum Dipilih',
+                    'warning'
+                );
+                return;
+            }
+            
+            if (!account || !amount || !proof) {
+                Alpine.store('modal').alert(
+                    'Mohon lengkapi semua field yang wajib diisi',
+                    'Data Tidak Lengkap',
+                    'warning'
+                );
+                return;
+            }
+            
+            // Show confirmation modal
+            Alpine.store('modal').open({
+                type: 'warning',
+                title: 'Konfirmasi Pengembalian Dana',
+                message: `Yakin proses refund sebesar Rp ${parseInt(amount).toLocaleString('id-ID')} via ${this.getMethodLabel()}? Pastikan semua data sudah benar.`,
+                confirmText: 'Ya, Kembalikan Dana',
+                showCancel: true,
+                onConfirm: () => {
+                    form.submit();
+                }
+            });
         }
     }
 }

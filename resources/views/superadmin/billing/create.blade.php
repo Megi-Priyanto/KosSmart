@@ -7,19 +7,6 @@
 @section('content')
 <div class="space-y-6">
 
-    <!-- Page Header -->
-    <div class="flex items-center justify-between">
-        <a href="{{ route('superadmin.billing.index') }}" 
-           class="inline-flex items-center gap-2
-                    bg-gradient-to-r from-yellow-500 to-orange-600
-                    text-white font-semibold
-                    px-5 py-2 rounded-lg
-                    hover:from-yellow-600 hover:to-orange-700
-                    transition-all shadow-lg">
-            Kembali ke Daftar Tagihan
-        </a>
-    </div>
-
     <div class="bg-slate-800 rounded-xl border border-slate-700 p-8">
         
         <form action="{{ route('superadmin.billing.store') }}" method="POST" x-data="billingForm()">

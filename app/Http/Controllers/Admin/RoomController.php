@@ -167,7 +167,15 @@ class RoomController extends Controller
             }
         ]);
 
-        return view('admin.rooms.show', compact('room'));
+        // ===== PERBAIKAN: Tidak perlu CheckoutRequest model =====
+        // Cukup cek status rent saja
+        $checkoutRequest = null;
+        if ($room->currentRent && $room->currentRent->status === 'checkout_requested') {
+            // Set dummy object atau gunakan rent itu sendiri
+            $checkoutRequest = $room->currentRent;
+        }
+
+        return view('admin.rooms.show', compact('room', 'checkoutRequest'));
     }
 
     /**
@@ -273,5 +281,92 @@ class RoomController extends Controller
 
         return redirect()->route('admin.rooms.index')
             ->with('success', "Kamar {$roomNumber} dan semua foto terkait berhasil dihapus");
+    }
+
+    /**
+     * Force checkout - Admin checkout penyewa secara langsung
+     */
+    public function forceCheckout(Room $room)
+    {
+        try {
+            // Cek apakah ada penyewa aktif
+            if (!$room->currentRent || $room->currentRent->status !== 'active') {
+                return redirect()->back()
+                    ->with('error', 'Tidak ada penyewa aktif di kamar ini.');
+            }
+
+            $tenant = $room->currentRent->user;
+
+            // Update status rent menjadi expired
+            $room->currentRent->update([
+                'status' => 'expired',
+                'end_date' => now(),
+            ]);
+
+            // Update status kamar menjadi maintenance
+            $room->update([
+                'status' => 'maintenance'
+            ]);
+
+            // Opsional: Buat notifikasi untuk penyewa
+            // \App\Models\Notification::create([...]);
+
+            return redirect()->back()
+                ->with('success', "Penyewa {$tenant->name} berhasil di-checkout. Kamar masuk status maintenance.");
+        } catch (\Exception $e) {
+            return redirect()->back()
+                ->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Approve checkout request dari user
+     */
+    public function approveCheckout(Room $room, $rentId)
+    {
+        try {
+            // Cari rent berdasarkan ID
+            $rent = \App\Models\Rent::findOrFail($rentId);
+
+            // Validasi bahwa rent adalah untuk kamar ini
+            if ($rent->room_id !== $room->id) {
+                return redirect()->back()
+                    ->with('error', 'Permintaan checkout tidak valid untuk kamar ini.');
+            }
+
+            // Validasi status rent
+            if ($rent->status !== 'checkout_requested') {
+                return redirect()->back()
+                    ->with('error', 'Status rent tidak valid untuk disetujui.');
+            }
+
+            $tenant = $rent->user;
+
+            // Update status rent menjadi expired
+            $rent->update([
+                'status' => 'expired',
+                'end_date' => now(),
+            ]);
+
+            // Update status kamar menjadi maintenance
+            $room->update([
+                'status' => 'maintenance'
+            ]);
+
+            // Opsional: Update notifikasi terkait
+            \App\Models\Notification::where('rent_id', $rent->id)
+                ->where('type', 'checkout')
+                ->where('status', 'pending')
+                ->update([
+                    'status' => 'approved',
+                    'updated_at' => now()
+                ]);
+
+            return redirect()->back()
+                ->with('success', "Permintaan checkout {$tenant->name} disetujui. Kamar masuk status maintenance.");
+        } catch (\Exception $e) {
+            return redirect()->back()
+                ->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
+        }
     }
 }

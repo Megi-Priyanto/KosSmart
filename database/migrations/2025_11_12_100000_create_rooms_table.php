@@ -11,21 +11,33 @@ return new class extends Migration
         Schema::create('rooms', function (Blueprint $table) {
             $table->id();
 
-            // Relasi kos
+            /*
+             |---------------------------------------------
+             | RELASI TEMPAT KOS (DITAMBAHKAN DI MIGRATION AWAL)
+             |---------------------------------------------
+             */
+            $table->foreignId('tempat_kos_id')
+                ->constrained('tempat_kos')
+                ->cascadeOnDelete();
+
+            /*
+             |---------------------------------------------
+             | RELASI KOS INFO
+             |---------------------------------------------
+             */
             $table->foreignId('kos_info_id')
-                  ->nullable()
-                  ->constrained('kos_info')
-                  ->nullOnDelete();
+                ->nullable()
+                ->constrained('kos_info')
+                ->nullOnDelete();
 
             // Data kamar
             $table->string('room_number')->unique();
             $table->string('floor');
-            $table->string('type'); // putra/putri/campur
+            $table->string('type'); // putra / putri / campur
             $table->integer('capacity')->default(1);
 
-            // Jenis sewa kamar (ditambahkan)
-            $table->enum('jenis_sewa', ['bulan', 'tahun'])
-                  ->default('bulan');
+            // Jenis sewa
+            $table->enum('jenis_sewa', ['bulan', 'tahun'])->default('bulan');
 
             // Fasilitas fisik
             $table->decimal('size', 8, 2)->nullable();
@@ -33,30 +45,24 @@ return new class extends Migration
 
             /*
              |---------------------------------------------
-             |   SISTEM SEWA (Bulanan / Tahunan)
+             | SISTEM SEWA
              |---------------------------------------------
-            */
-            // dipertahankan karena sudah ada
-            $table->enum('billing_cycle', ['monthly', 'yearly'])
-                  ->default('monthly');
+             */
+            $table->enum('billing_cycle', ['monthly', 'yearly'])->default('monthly');
+            $table->decimal('price', 10, 2)->nullable();
+            $table->decimal('yearly_price', 10, 2)->nullable();
 
-            $table->decimal('price', 10, 2)
-                  ->nullable(); // harga bulanan
-
-            $table->decimal('yearly_price', 10, 2)
-                  ->nullable(); // harga tahunan jika perlu
-
-            // Fasilitas tambahan & foto
+            // Fasilitas & media
             $table->json('facilities')->nullable();
             $table->json('images')->nullable();
 
-            // Deskripsi dan catatan
+            // Deskripsi
             $table->text('description')->nullable();
             $table->text('notes')->nullable();
 
-            // Status & perawatan
+            // Status kamar
             $table->enum('status', ['available', 'occupied', 'maintenance'])
-                  ->default('available');
+                ->default('available');
 
             $table->date('last_maintenance')->nullable();
 
@@ -65,22 +71,21 @@ return new class extends Migration
 
             /*
              |---------------------------------------------
-             |   FITUR NOTIFIKASI
+             | FITUR NOTIFIKASI
              |---------------------------------------------
-            */
+             */
             $table->string('notification_title')
-                  ->default('Notifikasi Tagihan Jatuh Tempo');
+                ->default('Notifikasi Tagihan Jatuh Tempo');
 
             $table->date('notification_date')->nullable();
 
             $table->enum('notification_status', ['pending', 'sent'])
-                  ->default('pending');
+                ->default('pending');
 
-            // Waktu tabel
             $table->timestamps();
 
             // Index
-            $table->index(['status', 'type']);
+            $table->index(['tempat_kos_id', 'status', 'type']);
             $table->index('floor');
             $table->index('notification_status');
         });

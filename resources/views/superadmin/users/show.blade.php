@@ -8,20 +8,7 @@
 <div class="space-y-6">
 
     <!-- Back & Actions -->
-    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-        <!-- Page Header -->
-        <div class="flex items-center justify-between">
-            <a href="{{ route('superadmin.users.index') }}" 
-               class="inline-flex items-center gap-2
-                        bg-gradient-to-r from-yellow-500 to-orange-600
-                        text-white font-semibold
-                        px-5 py-2 rounded-lg
-                        hover:from-yellow-600 hover:to-orange-700
-                        transition-all shadow-lg">
-                Kembali ke Daftar User
-            </a>
-        </div>
-
+    <div class="mb-6 flex justify-end items-center">
         <div class="flex gap-2">
             <a href="{{ route('superadmin.users.edit', $user) }}" 
                class="inline-flex items-center gap-2

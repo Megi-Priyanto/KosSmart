@@ -13,13 +13,14 @@ return new class extends Migration
             $table->string('nama_kos');
             $table->text('alamat');
             $table->string('kota', 100);
+            $table->string('kecamatan', 100)->nullable();
             $table->string('provinsi', 100);
             $table->string('kode_pos', 10)->nullable();
             $table->string('telepon', 20)->nullable();
             $table->string('email', 100)->nullable();
             $table->text('deskripsi')->nullable();
             $table->enum('status', ['active', 'inactive'])->default('active');
-            $table->json('fasilitas')->nullable(); // Array fasilitas umum
+            $table->json('fasilitas')->nullable();
             $table->string('logo')->nullable();
             $table->timestamps();
             $table->softDeletes();

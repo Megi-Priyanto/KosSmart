@@ -16,16 +16,8 @@ class ProfileController extends Controller
     public function index()
     {
         $user = Auth::user();
-        
-        // Statistik aktivitas
-        $stats = [
-            'total_tempat_kos' => \App\Models\TempatKos::count(),
-            'total_admin' => \App\Models\User::where('role', 'admin')->count(),
-            'total_user' => \App\Models\User::where('role', 'user')->count(),
-            'account_age_days' => $user->created_at->diffInDays(now()),
-        ];
 
-        return view('superadmin.profile.index', compact('user', 'stats'));
+        return view('superadmin.profile', compact('user'));
     }
 
     /**
@@ -56,7 +48,6 @@ class ProfileController extends Controller
             ]);
 
             return back()->with('success', 'Profile berhasil diperbarui!');
-
         } catch (\Exception $e) {
             return back()
                 ->withInput()
@@ -97,7 +88,6 @@ class ProfileController extends Controller
             ]);
 
             return back()->with('success', 'Password berhasil diperbarui!');
-
         } catch (\Exception $e) {
             return back()->with('error', 'Terjadi kesalahan saat memperbarui password.');
         }

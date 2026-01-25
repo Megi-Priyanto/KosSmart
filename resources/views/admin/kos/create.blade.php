@@ -7,14 +7,6 @@
 @section('content')
 
 <div class="w-full mx-auto">
-    
-    <!-- Page Header -->
-    <div class="flex items-center justify-between mb-4">
-        <a href="{{ route('admin.kos.index') }}" 
-           class="px-4 py-2 bg-gradient-to-r from-yellow-500 to-orange-600 text-white font-semibold rounded-lg hover:from-yellow-600 hover:to-orange-700 transition-all shadow-lg flex items-center justify-center">
-            Kembali ke Daftar Informasi
-        </a>
-    </div>
 
     {{-- Alert --}}
     @if(session('error'))

@@ -195,13 +195,39 @@
 
             <div class="flex justify-between items-center">
                 <span class="text-gray-600">Lama Sewa</span>
+
+                @php
+                    $start = \Carbon\Carbon::parse($rent->start_date);
+                    $end = $rent->end_date
+                        ? \Carbon\Carbon::parse($rent->end_date)
+                        : now();
+
+                    // Pastikan tidak minus
+                    if ($end->lessThan($start)) {
+                        $end = $start;
+                    }
+                
+                    $totalSeconds = $start->diffInSeconds($end);
+                
+                    $months = intdiv($totalSeconds, 2592000);
+                    $totalSeconds %= 2592000;
+                
+                    $days = intdiv($totalSeconds, 86400);
+                    $totalSeconds %= 86400;
+                
+                    $hours = intdiv($totalSeconds, 3600);
+                @endphp
+
                 <span class="font-medium text-gray-800">
-                    @if($rent->end_date)
-                        {{ \Carbon\Carbon::parse($rent->start_date)->diffInDays($rent->end_date) }} Hari
-                        ({{ \Carbon\Carbon::parse($rent->start_date)->diffInMonths($rent->end_date) }} Bulan)
-                    @else
-                        {{ \Carbon\Carbon::parse($rent->start_date)->diffInMonths(now()) }} Bulan
+                    @if($months > 0)
+                        {{ $months }} Bulan
                     @endif
+                
+                    @if($days > 0)
+                        {{ $days }} Hari
+                    @endif
+                
+                    {{ $hours }} Jam
                 </span>
             </div>
 

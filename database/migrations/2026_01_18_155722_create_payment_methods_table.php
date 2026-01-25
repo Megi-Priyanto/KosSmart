@@ -15,7 +15,7 @@ return new class extends Migration
             $table->string('account_number')->nullable();
             $table->string('account_name')->nullable();
             $table->text('instructions')->nullable();
-            $table->string('qr_code_path')->nullable(); // ✅ Path untuk QR Code QRIS
+            $table->string('qr_code_path')->nullable();
             $table->boolean('is_active')->default(true);
             $table->integer('order')->default(0);
             $table->timestamps();

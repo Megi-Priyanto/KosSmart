@@ -12,6 +12,76 @@
     <!-- Alpine.js -->
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     
+    <!-- Alpine Store (GLOBAL MODAL STATE) -->
+    <script>
+    document.addEventListener('alpine:init', () => {
+        Alpine.store('modal', {
+            show: false,
+            type: 'info',
+            title: '',
+            message: '',
+            confirmText: 'Oke',
+            showCancel: false,
+            onConfirm: null,
+            formId: null,
+
+            open(options) {
+                this.type = options.type || 'info';
+                this.title = options.title || 'Konfirmasi';
+                this.message = options.message || '';
+                this.confirmText = options.confirmText || (this.type === 'delete' ? 'Ya, Hapus' : 'Oke');
+                this.showCancel = options.showCancel !== undefined ? options.showCancel : (this.type === 'delete');
+                this.onConfirm = options.onConfirm || null;
+                this.formId = options.formId || null;
+                this.show = true;
+            },
+
+            close() {
+                this.show = false;
+                setTimeout(() => {
+                    this.type = 'info';
+                    this.title = '';
+                    this.message = '';
+                    this.onConfirm = null;
+                    this.formId = null;
+                }, 200);
+            },
+
+            confirm() {
+                if (this.onConfirm && typeof this.onConfirm === 'function') {
+                    this.onConfirm();
+                } else if (this.formId) {
+                    const form = document.getElementById(this.formId);
+                    if (form) {
+                        form.submit();
+                    }
+                }
+                this.close();
+            },
+
+            confirmDelete(message, formId, title = 'Hapus User?') {
+                this.open({
+                    type: 'delete',
+                    title: title,
+                    message: message,
+                    formId: formId,
+                    confirmText: 'Hapus'
+                });
+            },
+
+            alert(message, title = 'Pemberitahuan', type = 'info') {
+                this.open({
+                    type: type,
+                    title: title,
+                    message: message,
+                    showCancel: false,
+                    confirmText: 'Mengerti'
+                });
+            }
+        });
+    });
+    </script>
+    
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
@@ -74,8 +144,6 @@
     </div>
 
     @include('components.modal')
-    
-    @stack('scripts')
     
     @stack('scripts')
     

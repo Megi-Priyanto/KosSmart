@@ -11,7 +11,20 @@ return new class extends Migration
         Schema::create('payments', function (Blueprint $table) {
             $table->id();
 
-            // ================= RELASI =================
+            /*
+             |---------------------------------------------
+             | RELASI TEMPAT KOS (DITAMBAHKAN)
+             |---------------------------------------------
+             */
+            $table->foreignId('tempat_kos_id')
+                ->constrained('tempat_kos')
+                ->cascadeOnDelete();
+
+            /*
+             |---------------------------------------------
+             | RELASI UTAMA
+             |---------------------------------------------
+             */
             $table->foreignId('user_id')
                 ->constrained()
                 ->cascadeOnDelete();
@@ -21,24 +34,40 @@ return new class extends Migration
                 ->constrained()
                 ->nullOnDelete();
 
-            // ================= DATA PEMBAYARAN =================
+            /*
+             |---------------------------------------------
+             | DATA PEMBAYARAN
+             |---------------------------------------------
+             */
             $table->decimal('amount', 10, 2);
 
-            $table->string('payment_method')->nullable();      // bank / e-wallet
-            $table->string('payment_type')->nullable();        // transfer / cash
-            $table->string('payment_sub_method')->nullable();  // BCA / DANA / dll
+            $table->string('payment_method')->nullable();
+            $table->string('payment_type')->nullable();
+            $table->string('payment_sub_method')->nullable();
 
             $table->text('payment_proof')->nullable();
 
-            // ================= STATUS =================
+            /*
+             |---------------------------------------------
+             | STATUS
+             |---------------------------------------------
+             */
             $table->enum('status', ['pending', 'confirmed', 'rejected'])
                 ->default('pending');
 
-            // ================= TANGGAL & CATATAN =================
+            /*
+             |---------------------------------------------
+             | TANGGAL & CATATAN
+             |---------------------------------------------
+             */
             $table->date('payment_date')->nullable();
             $table->text('notes')->nullable();
 
-            // ================= VERIFIKASI ADMIN =================
+            /*
+             |---------------------------------------------
+             | VERIFIKASI ADMIN
+             |---------------------------------------------
+             */
             $table->foreignId('verified_by')
                 ->nullable()
                 ->constrained('users')
@@ -47,11 +76,22 @@ return new class extends Migration
             $table->timestamp('verified_at')->nullable();
             $table->text('rejection_reason')->nullable();
 
-            // ================= SOFT DELETE =================
+            /*
+             |---------------------------------------------
+             | SOFT DELETE & TIMESTAMP
+             |---------------------------------------------
+             */
             $table->softDeletes();
-
-            // ================= TIMESTAMP =================
             $table->timestamps();
+
+            /*
+             |---------------------------------------------
+             | INDEX
+             |---------------------------------------------
+             */
+            $table->index(['tempat_kos_id', 'status']);
+            $table->index('billing_id');
+            $table->index('user_id');
         });
     }
 

@@ -184,12 +184,11 @@
             <!-- Action Buttons -->
             <div class="flex gap-2">
                 <button type="button" 
-                        onclick="document.getElementById('bulkGenerateModal').classList.remove('hidden')"
-                        class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-medium text-center">
-                        <svg class="w-5 h-5 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                              d="M12 4v16m8-8H4"/>
-                        </svg>
+                        onclick="openGenerateModal()"
+                        class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-medium text-center flex items-center gap-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                    </svg>
                     Generate Massal
                 </button>
                 <a href="{{ route('admin.billing.create') }}"
@@ -330,69 +329,147 @@
 </div>
 
 <!-- Bulk Generate Modal -->
-<div id="bulkGenerateModal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
-    <div class="relative top-20 mx-auto p-5 border w-full max-w-md
-            bg-slate-800 rounded-lg border-slate-700
-            transform transition-all duration-300 ease-out
-            scale-95 opacity-0
-            [x-show]:scale-100 [x-show]:opacity-100">
+<div id="bulkGenerateModal" 
+     class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    
+    <div class="bg-slate-800 rounded-2xl shadow-2xl max-w-md w-full border border-slate-700 overflow-hidden transform transition-all duration-300 ease-out scale-95 opacity-0"
+         id="modalContent"
+         onclick="event.stopPropagation()">
 
-        <div class="flex justify-between items-center mb-4">
-            <h3 class="text-lg font-semibold text-gray-900">Generate Tagihan Massal</h3>
-            <button onclick="document.getElementById('bulkGenerateModal').classList.add('hidden')" 
-                    class="text-gray-400 hover:text-gray-600">
+        <!-- Header -->
+        <div class="flex justify-between items-center p-6 border-b border-slate-700">
+            <h3 class="text-xl font-bold text-white">Generate Tagihan Massal</h3>
+            <button type="button" 
+                    onclick="closeGenerateModal()" 
+                    class="text-slate-400 hover:text-white transition-colors">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                 </svg>
             </button>
         </div>
 
-        <form method="POST" action="{{ route('admin.billing.bulk-generate') }}">
+        <!-- Form -->
+        <form method="POST" action="{{ route('admin.billing.bulk-generate') }}" class="p-6">
             @csrf
             <div class="space-y-4">
+                <!-- Bulan -->
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Bulan</label>
-                    <select name="billing_month" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500">
+                    <label class="block text-sm font-semibold text-slate-300 mb-2">Bulan</label>
+                    <select name="billing_month" required 
+                            class="w-full px-4 py-3 bg-slate-900 border border-slate-700 text-white rounded-lg 
+                                   focus:ring-2 focus:ring-orange-500 focus:border-orange-500">
                         @for($m = 1; $m <= 12; $m++)
-                            <option value="{{ $m }}" {{ $m == now()->month ? 'selected' : '' }}>
+                            <option value="{{ $m }}" {{ $m == now()->month ? 'selected' : '' }} class="bg-slate-900">
                                 {{ DateTime::createFromFormat('!m', $m)->format('F') }}
                             </option>
                         @endfor
                     </select>
                 </div>
 
+                <!-- Tahun -->
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Tahun</label>
-                    <input type="number" name="billing_year" value="{{ now()->year }}" required min="2024" 
-                           class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500">
+                    <label class="block text-sm font-semibold text-slate-300 mb-2">Tahun</label>
+                    <input type="number" 
+                           name="billing_year" 
+                           value="{{ now()->year }}" 
+                           required 
+                           min="2024" 
+                           class="w-full px-4 py-3 bg-slate-900 border border-slate-700 text-white rounded-lg 
+                                  focus:ring-2 focus:ring-orange-500 focus:border-orange-500">
                 </div>
 
+                <!-- Jatuh Tempo -->
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Jatuh Tempo</label>
-                    <input type="date" name="due_date" required min="{{ now()->format('Y-m-d') }}"
-                           class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500">
+                    <label class="block text-sm font-semibold text-slate-300 mb-2">Jatuh Tempo</label>
+                    <input type="date" 
+                           name="due_date" 
+                           required 
+                           min="{{ now()->format('Y-m-d') }}"
+                           class="w-full px-4 py-3 bg-slate-900 border border-slate-700 text-white rounded-lg 
+                                  focus:ring-2 focus:ring-orange-500 focus:border-orange-500">
                 </div>
 
-                <div class="bg-blue-50 border-l-4 border-blue-400 p-4">
-                    <p class="text-sm text-blue-700">
-                        Tagihan akan dibuat untuk semua penyewa aktif dengan biaya sesuai harga kamar masing-masing.
-                    </p>
+                <!-- Info Box -->
+                <div class="bg-blue-500/10 border border-blue-500/30 rounded-lg p-4">
+                    <div class="flex items-start">
+                        <svg class="w-5 h-5 text-blue-400 mr-3 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                  d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                        <p class="text-sm text-blue-300">
+                            Tagihan akan dibuat untuk semua penyewa aktif dengan biaya sesuai harga kamar masing-masing.
+                        </p>
+                    </div>
                 </div>
             </div>
 
+            <!-- Buttons -->
             <div class="mt-6 flex gap-3">
                 <button type="button" 
-                        onclick="document.getElementById('bulkGenerateModal').classList.add('hidden')"
-                        class="flex-1 px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors">
+                        onclick="closeGenerateModal()"
+                        class="flex-1 px-4 py-3 bg-slate-700 hover:bg-slate-600 text-white rounded-lg font-semibold transition">
                     Batal
                 </button>
                 <button type="submit" 
-                        class="flex-1 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors">
+                        class="flex-1 px-4 py-3 bg-gradient-to-r from-yellow-500 to-orange-600 hover:from-yellow-600 hover:to-orange-700 text-white rounded-lg font-semibold transition shadow-lg">
                     Generate
                 </button>
             </div>
         </form>
     </div>
 </div>
+
+@push('scripts')
+<script>
+function openGenerateModal() {
+    const modal = document.getElementById('bulkGenerateModal');
+    const content = document.getElementById('modalContent');
+    
+    // Show modal
+    modal.classList.remove('hidden');
+    
+    // Trigger animation
+    setTimeout(() => {
+        content.classList.remove('scale-95', 'opacity-0');
+        content.classList.add('scale-100', 'opacity-100');
+    }, 10);
+    
+    // Prevent body scroll
+    document.body.style.overflow = 'hidden';
+}
+
+function closeGenerateModal() {
+    const modal = document.getElementById('bulkGenerateModal');
+    const content = document.getElementById('modalContent');
+    
+    // Trigger close animation
+    content.classList.remove('scale-100', 'opacity-100');
+    content.classList.add('scale-95', 'opacity-0');
+    
+    // Hide modal after animation
+    setTimeout(() => {
+        modal.classList.add('hidden');
+        document.body.style.overflow = 'auto';
+    }, 300);
+}
+
+// Close modal when clicking outside
+document.getElementById('bulkGenerateModal').addEventListener('click', function(e) {
+    if (e.target === this) {
+        closeGenerateModal();
+    }
+});
+
+// Close with Escape key
+document.addEventListener('keydown', function(event) {
+    if (event.key === 'Escape') {
+        const modal = document.getElementById('bulkGenerateModal');
+        if (!modal.classList.contains('hidden')) {
+            closeGenerateModal();
+        }
+    }
+});
+</script>
+@endpush
 
 @endsection

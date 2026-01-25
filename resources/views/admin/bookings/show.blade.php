@@ -8,14 +8,6 @@
 
 <div class="mb-6 flex justify-between items-center">
 
-    <!-- Page Header -->
-    <div class="flex items-center justify-between mb-2">
-        <a href="{{ route('admin.bookings.index') }}" 
-           class="px-5 py-3 bg-gradient-to-r from-yellow-500 to-orange-600 text-white font-semibold rounded-lg hover:from-yellow-600 hover:to-orange-700 transition-all shadow-lg flex items-center justify-center">
-            Kembali ke Daftar Booking
-        </a>
-    </div>
-
     <!-- Status Badge -->
     <div class="flex space-x-3">
         <span class="inline-flex items-center px-5 py-3 rounded-lg text-lg font-bold shadow-lg
@@ -358,65 +350,67 @@
             <h3 class="text-xl font-bold text-white mb-6 flex items-center pb-3 border-b-2 border-slate-700">
                 <div class="p-2 bg-gradient-to-br from-slate-700 to-slate-600 rounded-lg border-2 border-slate-500 mr-3 shadow-lg">
                     <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3 z"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
                     </svg>
                 </div>
                 Perlu Persetujuan
             </h3>
-            <p class="text-sm text-slate-300 mb-4">
-            Booking ini menunggu persetujuan Anda. Silakan verifikasi data dan bukti pembayaran sebelum menyetujui.
+            
+            <p class="text-sm text-slate-300 mb-6">
+                Booking ini menunggu persetujuan Anda. Silakan verifikasi data dan bukti pembayaran sebelum menyetujui.
             </p>
-
-            <!-- Approve Form -->
-            <form action="{{ route('admin.bookings.approve', $booking) }}" method="POST" class="mb-3">
-                @csrf
-                <div class="mb-3">
-                    <label class="block text-sm font-medium text-slate-300 mb-2">Catatan (Opsional)</label>
-                    <textarea name="admin_notes" rows="3" 
-                              class="w-full bg-slate-900 border border-slate-700 text-white rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-green-500 focus:border-green-500"
-                              placeholder="Contoh: Pembayaran telah diverifikasi, silakan hubungi kami untuk pengambilan kunci."></textarea>
-                </div>
-
-                <button type="submit" 
-                        onclick="return confirm('Yakin ingin menyetujui booking ini?')"
-                        class="w-full bg-green-600 text-white py-3 rounded-lg hover:bg-green-700 font-semibold flex items-center justify-center transition-all shadow-lg">
-                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+        
+            <!-- Container dengan Grid 2 Kolom -->
+            <div class="grid grid-cols-2 gap-3">
+                <!-- Form Setujui (Hidden) -->
+                <form id="approve-booking-{{ $booking->id }}" 
+                      action="{{ route('admin.bookings.approve', $booking) }}"
+                      method="POST"
+                      style="display: none;">
+                    @csrf
+                </form>
+            
+                <!-- Tombol Setujui Booking -->
+                <button type="button"
+                        @click="$store.modal.open({
+                            type: 'success',
+                            title: 'Setujui Booking?',
+                            message: 'Booking dari {{ $booking->user->name }} untuk Kamar {{ $booking->room->room_number }} akan disetujui. User akan mendapat notifikasi.',
+                            confirmText: 'Ya, Setujui',
+                            showCancel: true,
+                            formId: 'approve-booking-{{ $booking->id }}'
+                        })"
+                        class="w-full flex items-center justify-center gap-2 px-4 py-3 bg-green-600 hover:bg-green-700 text-white rounded-lg font-semibold transition shadow-lg">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                              d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                     </svg>
                     Setujui Booking
                 </button>
-            </form>
-
-            <!-- Reject Form -->
-            <div x-data="{ showReject: false }">
-                <button @click="showReject = !showReject"
-                        class="w-full bg-red-500 text-white py-3 rounded-lg hover:bg-red-500/30 font-semibold flex items-center justify-center transition-all shadow-lg">
-                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0"></path>
-                        </svg>
+            
+                <!-- Form Tolak (Hidden) -->
+                <form id="reject-booking-{{ $booking->id }}" 
+                      action="{{ route('admin.bookings.reject', $booking) }}"
+                      method="POST"
+                      style="display: none;">
+                    @csrf
+                    <input type="hidden" name="admin_notes" value="Ditolak oleh admin">
+                </form>
+            
+                <!-- Tombol Tolak Booking -->
+                <button type="button"
+                        @click="$store.modal.confirmDelete(
+                            'Booking dari {{ $booking->user->name }} akan DITOLAK. Tindakan ini tidak dapat dibatalkan. User akan mendapat notifikasi penolakan.',
+                            'reject-booking-{{ $booking->id }}',
+                            'Tolak Booking Ini?'
+                        )"
+                        class="w-full flex items-center justify-center gap-2 px-4 py-3 bg-red-600 hover:bg-red-700 text-white rounded-lg font-semibold transition shadow-lg">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                              d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
                     Tolak Booking
                 </button>
-
-                <div x-show="showReject" x-transition class="mt-3">
-                    <form action="{{ route('admin.bookings.reject', $booking) }}" method="POST">
-                        @csrf
-                        <div class="mb-3">
-                            <label class="block text-sm font-medium text-slate-300 mb-2">
-                                Alasan Penolakan <span class="text-red-400"></span>
-                            </label>
-                            <textarea name="admin_notes" rows="3" 
-                                      class="w-full bg-slate-900 border border-slate-700 text-white rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-red-500 focus:border-red-500"
-                                      placeholder="Jelaskan alasan penolakan..."
-                                      required></textarea>
-                        </div>
-
-                        <button type="submit" 
-                                onclick="return confirm('Yakin ingin menolak booking ini? Tindakan ini tidak dapat dibatalkan.')"
-                                class="w-full bg-red-600 text-white py-2 rounded-lg hover:bg-red-700 font-semibold transition-all shadow-lg">
-                            Konfirmasi Penolakan
-                        </button>
-                    </form>
-                </div>
             </div>
         </div>
         @endif

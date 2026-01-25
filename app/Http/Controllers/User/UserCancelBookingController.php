@@ -62,10 +62,11 @@ class UserCancelBookingController extends Controller
                 'status' => 'pending',
             ]);
 
-            // FIX: Ubah dari 'cancel_requested' menjadi 'cancel_booking'
-            $rent->update([
-                'status' => 'cancel_booking'  // DIPERBAIKI
-            ]);
+            // Biarkan status tetap 'pending' sampai admin memproses
+            // Admin yang akan mengupdate status menjadi 'cancelled' saat approve
+            
+            // HAPUS BARIS INI:
+            // $rent->update(['status' => 'cancel_booking']);
 
             // TAMBAHAN: Buat notifikasi untuk admin
             if ($admin) {

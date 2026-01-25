@@ -1,5 +1,4 @@
 <?php
-// database/migrations/2025_11_20_000001_create_kos_info_table.php
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
@@ -11,6 +10,12 @@ return new class extends Migration
     {
         Schema::create('kos_info', function (Blueprint $table) {
             $table->id();
+
+            // FK ke tempat_kos (SATUAN UTAMA)
+            $table->foreignId('tempat_kos_id')
+                ->constrained('tempat_kos')
+                ->cascadeOnDelete();
+
             $table->string('name');
             $table->text('address');
             $table->string('city', 100);
@@ -26,6 +31,7 @@ return new class extends Migration
             $table->time('checkin_time')->default('14:00:00');
             $table->time('checkout_time')->default('12:00:00');
             $table->boolean('is_active')->default(true);
+
             $table->timestamps();
         });
     }

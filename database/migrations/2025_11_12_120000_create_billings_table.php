@@ -11,21 +11,55 @@ return new class extends Migration
         Schema::create('billings', function (Blueprint $table) {
             $table->id();
 
-            $table->foreignId('rent_id')->constrained('rents')->cascadeOnDelete();
-            $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
-            $table->foreignId('room_id')->constrained('rooms')->cascadeOnDelete();
+            /*
+             |---------------------------------------------
+             | RELASI TEMPAT KOS (DITAMBAHKAN)
+             |---------------------------------------------
+             */
+            $table->foreignId('tempat_kos_id')
+                ->constrained('tempat_kos')
+                ->cascadeOnDelete();
 
-            // Tambahan untuk DP & Pelunasan
+            /*
+             |---------------------------------------------
+             | RELASI UTAMA
+             |---------------------------------------------
+             */
+            $table->foreignId('rent_id')
+                ->constrained('rents')
+                ->cascadeOnDelete();
+
+            $table->foreignId('user_id')
+                ->constrained('users')
+                ->cascadeOnDelete();
+
+            $table->foreignId('room_id')
+                ->constrained('rooms')
+                ->cascadeOnDelete();
+
+            /*
+             |---------------------------------------------
+             | TIPE TAGIHAN
+             |---------------------------------------------
+             */
             $table->enum('tipe', ['dp', 'pelunasan', 'bulanan']);
             $table->decimal('jumlah', 12, 2)->nullable();
             $table->string('keterangan')->nullable();
 
-            // Informasi Periode
+            /*
+             |---------------------------------------------
+             | PERIODE TAGIHAN
+             |---------------------------------------------
+             */
             $table->string('billing_period');
             $table->integer('billing_year');
             $table->integer('billing_month');
 
-            // Komponen Biaya
+            /*
+             |---------------------------------------------
+             | KOMPONEN BIAYA
+             |---------------------------------------------
+             */
             $table->decimal('rent_amount', 12, 2);
             $table->decimal('electricity_cost', 12, 2)->default(0);
             $table->decimal('water_cost', 12, 2)->default(0);
@@ -33,31 +67,57 @@ return new class extends Migration
             $table->decimal('other_costs', 12, 2)->default(0);
             $table->text('other_costs_description')->nullable();
 
-            // Total & Diskon
+            /*
+             |---------------------------------------------
+             | TOTAL & DISKON
+             |---------------------------------------------
+             */
             $table->decimal('subtotal', 12, 2);
             $table->decimal('discount', 12, 2)->default(0);
             $table->decimal('total_amount', 12, 2);
 
-            // Waktu & Status Pembayaran
+            /*
+             |---------------------------------------------
+             | STATUS PEMBAYARAN
+             |---------------------------------------------
+             */
             $table->date('due_date');
             $table->date('paid_date')->nullable();
             $table->enum('status', ['unpaid', 'pending', 'paid', 'overdue'])
                 ->default('unpaid');
 
-            // Catatan
+            /*
+             |---------------------------------------------
+             | CATATAN
+             |---------------------------------------------
+             */
             $table->text('admin_notes')->nullable();
             $table->text('user_notes')->nullable();
 
             $table->timestamps();
             $table->softDeletes();
 
-            // Indexes
+            /*
+             |---------------------------------------------
+             | INDEX
+             |---------------------------------------------
+             */
+            $table->index(['tempat_kos_id', 'status']);
             $table->index(['user_id', 'status']);
             $table->index(['billing_year', 'billing_month']);
             $table->index('due_date');
 
-            // Unique: per rent hanya boleh ada 1 billing per bulan
-            $table->unique(['rent_id', 'billing_year', 'billing_month', 'tipe']);
+            /*
+             |---------------------------------------------
+             | UNIQUE
+             |---------------------------------------------
+             */
+            $table->unique([
+                'rent_id',
+                'billing_year',
+                'billing_month',
+                'tipe'
+            ]);
         });
     }
 

@@ -28,7 +28,7 @@ class UserSeeder extends Seeder
             'phone' => '0812-3456-7890',
             'password' => Hash::make('SuperAdmin123!'),
             'role' => 'super_admin',
-            'tempat_kos_id' => null, // Super admin tidak terikat kos
+            'tempat_kos_id' => null,
             'email_verified_at' => now(),
         ]);
 
@@ -41,6 +41,7 @@ class UserSeeder extends Seeder
             'nama_kos' => 'Kos Mawar Indah',
             'alamat' => 'Jl. Mawar No. 123',
             'kota' => 'Bandung',
+            'kecamatan' => 'Sukajadi',
             'provinsi' => 'Jawa Barat',
             'kode_pos' => '40123',
             'telepon' => '022-1234567',
@@ -54,6 +55,7 @@ class UserSeeder extends Seeder
             'nama_kos' => 'Kos Melati Asri',
             'alamat' => 'Jl. Melati No. 456',
             'kota' => 'Jakarta',
+            'kecamatan' => 'Menteng',
             'provinsi' => 'DKI Jakarta',
             'kode_pos' => '12345',
             'telepon' => '021-9876543',
@@ -138,9 +140,9 @@ class UserSeeder extends Seeder
         // SUMMARY
         // ==============================
         $this->command->info('');
-        $this->command->info('═══════════════════════════════════════════');
+        $this->command->info('══════════════════════════════════════════');
         $this->command->info('  DATABASE SEEDED SUCCESSFULLY');
-        $this->command->info('═══════════════════════════════════════════');
+        $this->command->info('══════════════════════════════════════════');
         $this->command->info('');
         $this->command->info('SUPER ADMIN:');
         $this->command->info('  Email    : superadmin@kossmart.com');
@@ -160,9 +162,9 @@ class UserSeeder extends Seeder
         $this->command->info('');
         $this->command->info('TOTAL:');
         $this->command->info('  • 1 Super Admin');
-        $this->command->info('  • 2 Tempat Kos');
+        $this->command->info('  • 2 Tempat Kos (dengan Kecamatan)');
         $this->command->info('  • 2 Admin Kos');
         $this->command->info('  • 4 Users');
-        $this->command->info('═══════════════════════════════════════════');
+        $this->command->info('══════════════════════════════════════════');
     }
 }

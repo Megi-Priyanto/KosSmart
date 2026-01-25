@@ -395,40 +395,25 @@
                 <p class="text-sm text-red-700 mb-4">
                     Tindakan di bawah ini bersifat permanen dan tidak dapat dibatalkan.
                 </p>
-                
-                <button onclick="confirmDelete()" 
-                        class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 font-semibold text-sm">
+            
+                <!-- Hidden Form -->
+                <form id="delete-account-form" 
+                      action="{{ route('user.profile.delete') }}" 
+                      method="POST" 
+                      style="display: none;">
+                    @csrf
+                    @method('DELETE')
+                </form>
+            
+                <!-- Delete Button with Alpine Modal -->
+                <button type="button"
+                        x-data
+                        @click.prevent="handleDeleteAccount()"
+                        class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 font-semibold text-sm transition-colors cursor-pointer">
                     Hapus Akun
                 </button>
             </div>
             
-        </div>
-        
-    </div>
-    
-</div>
-
-<!-- Delete Confirmation Modal -->
-<div id="deleteModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
-    <div class="bg-white rounded-xl max-w-md w-full p-6">
-        <h3 class="text-sm font-semibold text-red-600 mb-3">Konfirmasi Hapus Akun</h3>
-        <p class="text-gray-700 mb-6">
-            Apakah Anda yakin ingin menghapus akun? Semua data Anda akan dihapus secara permanen dan tidak dapat dipulihkan.
-        </p>
-        
-        <div class="flex gap-3">
-            <button onclick="closeDeleteModal()" 
-                    class="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 font-medium">
-                Batal
-            </button>
-            <form action="{{ route('user.profile.delete') }}" method="POST" class="flex-1">
-                @csrf
-                @method('DELETE')
-                <button type="submit" 
-                        class="w-full px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 font-medium">
-                    Ya, Hapus Akun
-                </button>
-            </form>
         </div>
     </div>
 </div>
@@ -440,100 +425,73 @@
 // Toggle edit mode
 function toggleEdit(formType) {
     if (formType === 'personal') {
-        // Enable inputs
         document.querySelectorAll('#form-personal input').forEach(input => {
             input.removeAttribute('readonly');
             input.classList.remove('bg-gray-50');
             input.classList.add('bg-white');
         });
-        
-        // Show action buttons
         document.getElementById('actions-personal').classList.remove('hidden');
-        
-        // Hide edit button
         document.getElementById('btn-edit-personal').classList.add('hidden');
     } else if (formType === 'password') {
-        // Hide display
         document.getElementById('form-password-display').classList.add('hidden');
-        
-        // Show form
         document.getElementById('form-password').classList.remove('hidden');
-        
-        // Hide edit button
         document.getElementById('btn-edit-password').classList.add('hidden');
     } else if (formType === 'email') {
-        // UNTUK FORM EMAIL
-        // Hide display
         document.getElementById('form-email-display').classList.add('hidden');
-        
-        // Show form
         document.getElementById('form-email').classList.remove('hidden');
-        
-        // Hide edit button
         document.getElementById('btn-edit-email').classList.add('hidden');
     }
 }
 
-// Cancel edit
 function cancelEdit(formType) {
     if (formType === 'personal') {
-        // Disable inputs
         document.querySelectorAll('#form-personal input').forEach(input => {
             input.setAttribute('readonly', true);
             input.classList.add('bg-gray-50');
             input.classList.remove('bg-white');
         });
-        
-        // Hide action buttons
         document.getElementById('actions-personal').classList.add('hidden');
-        
-        // Show edit button
         document.getElementById('btn-edit-personal').classList.remove('hidden');
-        
-        // Reset form
         document.getElementById('form-personal').reset();
     } else if (formType === 'password') {
-        // Show display
         document.getElementById('form-password-display').classList.remove('hidden');
-        
-        // Hide form
         document.getElementById('form-password').classList.add('hidden');
-        
-        // Show edit button
         document.getElementById('btn-edit-password').classList.remove('hidden');
-        
-        // Reset form
         document.getElementById('form-password').reset();
     } else if (formType === 'email') {
-        // UNTUK FORM EMAIL
-        // Show display
         document.getElementById('form-email-display').classList.remove('hidden');
-        
-        // Hide form
         document.getElementById('form-email').classList.add('hidden');
-        
-        // Show edit button
         document.getElementById('btn-edit-email').classList.remove('hidden');
-        
-        // Reset form
         document.getElementById('form-email').reset();
     }
 }
 
-// Delete modal
-function confirmDelete() {
-    document.getElementById('deleteModal').classList.remove('hidden');
-}
-
-function closeDeleteModal() {
-    document.getElementById('deleteModal').classList.add('hidden');
-}
-
-// Close modal on ESC
-document.addEventListener('keydown', function(e) {
-    if (e.key === 'Escape') {
-        closeDeleteModal();
+// Delete Account Handler
+function handleDeleteAccount() {
+    // Fallback jika Alpine belum ready
+    if (typeof Alpine === 'undefined' || !Alpine.store('modal')) {
+        console.error('Alpine.js not ready');
+        if (confirm('Apakah Anda yakin ingin menghapus akun? Semua data Anda akan dihapus secara permanen dan tidak dapat dipulihkan.')) {
+            document.getElementById('delete-account-form').submit();
+        }
+        return;
     }
+    
+    // Gunakan Alpine modal
+    Alpine.store('modal').confirmDelete(
+        'Apakah Anda yakin ingin menghapus akun? Semua data Anda akan dihapus secara permanen dan tidak dapat dipulihkan.',
+        'delete-account-form',
+        'Konfirmasi Hapus Akun'
+    );
+}
+
+// Expose function to window
+window.handleDeleteAccount = handleDeleteAccount;
+
+// Debug: Check if Alpine is loaded
+document.addEventListener('alpine:init', () => {
+    console.log('Alpine initialized');
+    console.log('Modal store:', Alpine.store('modal'));
 });
 </script>
 @endpush

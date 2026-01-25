@@ -18,6 +18,7 @@ class TempatKos extends Model
         'nama_kos',
         'alamat',
         'kota',
+        'kecamatan',
         'provinsi',
         'kode_pos',
         'telepon',
@@ -61,16 +62,16 @@ class TempatKos extends Model
      * Relasi: Tempat Kos memiliki banyak Kamar
      */
     public function rooms(): HasManyThrough
-{
-    return $this->hasManyThrough(
-        Room::class,
-        KosInfo::class,
-        'tempat_kos_id', // FK di kos_info
-        'kos_info_id',   // FK di rooms
-        'id',            // PK tempat_kos
-        'id'             // PK kos_info
-    );
-}
+    {
+        return $this->hasManyThrough(
+            Room::class,
+            KosInfo::class,
+            'tempat_kos_id', // FK di kos_info
+            'kos_info_id',   // FK di rooms
+            'id',            // PK tempat_kos
+            'id'             // PK kos_info
+        );
+    }
 
     /**
      * Relasi: Tempat Kos memiliki banyak Rent
@@ -110,6 +111,22 @@ class TempatKos extends Model
     public function isActive(): bool
     {
         return $this->status === 'active';
+    }
+
+    /**
+     * Alamat Lengkap
+     */
+    public function getAlamatLengkapAttribute(): string
+    {
+        $parts = array_filter([
+            $this->alamat,
+            $this->kecamatan,
+            $this->kota,
+            $this->provinsi,
+            $this->kode_pos
+        ]);
+        
+        return implode(', ', $parts);
     }
 
     /**

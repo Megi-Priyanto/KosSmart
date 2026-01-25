@@ -325,28 +325,49 @@
                 {{-- Tombol Checkout --}}
                 @if(!$hasUnpaidBill && $activeRent->status === 'active')
                     <div class="pt-6 border-t border-gray-200">
-                        <form action="{{ route('user.rents.checkout.request', $activeRent->id) }}" 
+                        <form id="checkout-request-form" 
+                              action="{{ route('user.checkout.request', $activeRent) }}"
                               method="POST"
-                              onsubmit="return confirm('Yakin ingin mengajukan checkout? Permintaan ini harus disetujui admin.')">
+                              style="display: none;">
                             @csrf
-                            @method('PUT')
-                        
-                            <button type="submit"
-                                class="w-full inline-flex items-center justify-center px-4 py-3
-                                       bg-red-600 hover:bg-red-700 text-white font-semibold
-                                       rounded-xl transition-all shadow-lg">
-                                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                          d="M17 16l4-4m0 0l-4-4m4 4H7"/>
-                                </svg>
-                                Ajukan Checkout
-                            </button>
                         </form>
+                        
+                        <button type="button"
+                                onclick="handleCheckout()"
+                                class="inline-flex items-center gap-2 w-full px-6 py-3 bg-orange-600 hover:bg-orange-700 text-white rounded-lg font-semibold transition justify-center shadow-lg">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                      d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+                            </svg>
+                            Ajukan Checkout
+                        </button>
                     
                         <p class="text-xs text-gray-500 mt-3 text-center">
                             Checkout hanya bisa dilakukan setelah semua tagihan lunas
                         </p>
                     </div>
+                    
+                    <script>
+                    function handleCheckout() {
+                        // Cek apakah Alpine.js store tersedia
+                        if (window.Alpine && window.Alpine.store('modal')) {
+                            // Gunakan Alpine.js modal
+                            window.Alpine.store('modal').open({
+                                type: 'warning',
+                                title: 'Ajukan Checkout?',
+                                message: 'Anda akan mengajukan permintaan checkout dari Kamar {{ $activeRent->room->room_number }}. Admin akan meninjau permintaan Anda. Pastikan Anda sudah koordinasi dengan admin terkait jadwal checkout.',
+                                confirmText: 'Ya, Ajukan',
+                                showCancel: true,
+                                formId: 'checkout-request-form'
+                            });
+                        } else {
+                            // Fallback ke native confirm jika Alpine.js tidak tersedia
+                            if (confirm('Anda akan mengajukan permintaan checkout dari Kamar {{ $activeRent->room->room_number }}. Admin akan meninjau permintaan Anda. Pastikan Anda sudah koordinasi dengan admin terkait jadwal checkout.\n\nLanjutkan?')) {
+                                document.getElementById('checkout-request-form').submit();
+                            }
+                        }
+                    }
+                    </script>
                 @endif
 
             </div>

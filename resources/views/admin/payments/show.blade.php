@@ -8,14 +8,6 @@
 
 <div class="w-full mx-auto">
 
-    <!-- Page Header -->
-    <div class="flex items-center justify-between mb-4">
-        <a href="{{ route('admin.payments.index') }}" 
-           class="px-5 py-3 bg-gradient-to-r from-yellow-500 to-orange-600 text-white font-semibold rounded-lg hover:from-yellow-600 hover:to-orange-700 transition-all shadow-lg flex items-center justify-center">
-            Kembali ke Daftar Tagihan
-        </a>
-    </div>
-
     <!-- Vertical Layout -->
     <div class="space-y-6">
         

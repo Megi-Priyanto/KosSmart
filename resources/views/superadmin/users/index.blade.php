@@ -12,7 +12,6 @@
         <div class="flex flex-col md:flex-row gap-4 items-end justify-between">
             <form method="GET" action="{{ route('superadmin.users.index') }}" class="flex-1 flex flex-wrap gap-3">
 
-                <!-- Search -->
                 <div class="flex-1">
                     <input type="text" 
                            name="search" 
@@ -21,7 +20,6 @@
                           class="w-full px-4 py-2 bg-slate-900 border border-slate-700 rounded-lg text-white text-sm focus:outline-none focus:border-yellow-500 flex-1 min-w-[200px]">
                 </div>
 
-                <!-- Filter Role -->
                 <select name="role" 
                         class="px-4 py-2 bg-slate-900 border border-slate-700 rounded-lg text-white text-sm focus:outline-none focus:border-yellow-500">
                     <option value="">Semua Role</option>
@@ -30,7 +28,6 @@
                     <option value="user" {{ request('role') === 'user' ? 'selected' : '' }}>User/Penghuni</option>
                 </select>
 
-                <!-- Filter Tempat Kos -->
                 <select name="tempat_kos_id" 
                         class="px-4 py-2 bg-slate-900 border border-slate-700 rounded-lg text-white text-sm focus:outline-none focus:border-yellow-500">
                     <option value="">Semua Tempat Kos</option>
@@ -41,7 +38,6 @@
                     @endforeach
                 </select>
 
-                <!-- Buttons -->
                 <div class="flex gap-2">
                     <button type="submit" 
                         class="inline-flex items-center gap-2
@@ -64,7 +60,6 @@
                 </div>
             </form>
 
-            <!-- Action Bar -->
             <div class="flex gap-3">
                 <a href="{{ route('superadmin.users.create') }}" 
                     class="inline-flex items-center gap-2
@@ -100,7 +95,6 @@
                 <tbody class="divide-y divide-slate-700">
                     @forelse($users as $user)
                     <tr class="hover:bg-slate-700/50 transition">
-                        <!-- User -->
                         <td class="px-6 py-4">
                             <div class="flex items-center">
                                 <div class="w-10 h-10 rounded-full flex items-center justify-center mr-3 
@@ -115,13 +109,11 @@
                             </div>
                         </td>
 
-                        <!-- Kontak -->
                         <td class="px-6 py-4">
                             <div class="text-sm text-slate-300">{{ $user->email }}</div>
                             <div class="text-xs text-slate-500">{{ $user->phone ?? '-' }}</div>
                         </td>
 
-                        <!-- Role -->
                         <td class="px-6 py-4 text-center">
                             @if($user->role === 'super_admin')
                                 <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-red-500/20 text-red-400 border border-red-500/30">
@@ -141,7 +133,6 @@
                             @endif
                         </td>
 
-                        <!-- Tempat Kos -->
                         <td class="px-6 py-4">
                             @if($user->tempatKos)
                                 <div class="text-sm text-slate-300">{{ $user->tempatKos->nama_kos }}</div>
@@ -151,7 +142,6 @@
                             @endif
                         </td>
 
-                        <!-- Status -->
                         <td class="px-6 py-4 text-center">
                             @if($user->email_verified_at)
                                 <span class="inline-flex items-center px-2 py-1 rounded-full text-xs bg-green-500/20 text-green-400">
@@ -164,7 +154,6 @@
                             @endif
                         </td>
 
-                        <!-- Aksi -->
                         <td class="px-6 py-4">
                             <div class="flex items-center justify-center gap-2">
                                 <a href="{{ route('superadmin.users.show', $user) }}" 
@@ -185,7 +174,22 @@
                                 </a>
                                 
                                 @if($user->id !== auth()->id() && $user->role !== 'super_admin')
-                                <button onclick="confirmDelete({{ $user->id }})" 
+                                <!-- Hidden Form -->
+                                <form id="delete-user-{{ $user->id }}" 
+                                      action="{{ route('superadmin.users.destroy', $user) }}" 
+                                      method="POST" 
+                                      style="display: none;">
+                                    @csrf
+                                    @method('DELETE')
+                                </form>
+                                
+                                <!-- Delete Button with Alpine Modal -->
+                                <button type="button"
+                                        @click="$store.modal.confirmDelete(
+                                            'Tindakan ini tidak dapat dibatalkan. Semua data user akan terhapus.',
+                                            'delete-user-{{ $user->id }}',
+                                            'Hapus User?'
+                                        )"
                                         class="p-2 bg-red-500/20 hover:bg-red-500/30 text-red-400 rounded-lg transition"
                                         title="Hapus">
                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -210,7 +214,6 @@
             </table>
         </div>
 
-        <!-- Pagination -->
         @if($users->hasPages())
         <div class="px-6 py-4 border-t border-slate-700">
             {{ $users->links() }}
@@ -220,54 +223,4 @@
 
 </div>
 
-<!-- Delete Modal -->
-<div id="deleteModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
-    <div class="bg-slate-800 rounded-xl max-w-md w-full p-6 border border-slate-700">
-        <div class="text-center">
-            <div class="w-16 h-16 bg-red-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
-                <svg class="w-8 h-8 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
-                </svg>
-            </div>
-            <h3 class="text-xl font-semibold text-slate-100 mb-2">Hapus User?</h3>
-            <p class="text-slate-400 mb-6">Tindakan ini tidak dapat dibatalkan. Semua data user akan terhapus.</p>
-            
-            <div class="flex gap-3">
-                <button onclick="closeDeleteModal()" 
-                        class="flex-1 px-4 py-2 bg-slate-700 hover:bg-slate-600 text-slate-100 rounded-lg transition">
-                    Batal
-                </button>
-                <form id="deleteForm" method="POST" class="flex-1">
-                    @csrf
-                    @method('DELETE')
-                    <button type="submit" 
-                            class="w-full px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition">
-                        Hapus
-                    </button>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
-
-@push('scripts')
-<script>
-function confirmDelete(userId) {
-    const modal = document.getElementById('deleteModal');
-    const form = document.getElementById('deleteForm');
-    form.action = `/superadmin/users/${userId}`;
-    modal.classList.remove('hidden');
-}
-
-function closeDeleteModal() {
-    document.getElementById('deleteModal').classList.add('hidden');
-}
-
-document.addEventListener('keydown', function(e) {
-    if (e.key === 'Escape') {
-        closeDeleteModal();
-    }
-});
-</script>
-@endpush
 @endsection

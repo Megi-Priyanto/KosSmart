@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Rent;
 use App\Models\Billing;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 
 class StatusController extends Controller
@@ -22,29 +23,36 @@ class StatusController extends Controller
     {
         $userId = auth()->id();
 
-        // PERBAIKAN: Tambahkan 'completed' untuk checkout yang sudah disetujui
-        $checkouts = Rent::where('user_id', $userId)
+        // Query DENGAN filter status (tambahkan "expired")
+        $checkouts = Rent::withoutGlobalScopes()
+            ->where('user_id', $userId)
             ->whereIn('status', [
-                'checkout_requested',  // Pending (menunggu approval admin)
-                'completed',           // APPROVED (checkout berhasil)
-                'checkout_rejected'    // Ditolak
+                'checkout_requested',
+                'completed',
+                'checkout_rejected',
+                'expired'  // ← TAMBAHKAN INI
             ])
             ->with('room')
-            ->latest()
-            ->get()
-            ->groupBy(fn($rent) => $rent->updated_at->format('F Y'));
+            ->orderBy('updated_at', 'desc')
+            ->get();
+
+        // Group by month
+        $checkoutGroups = $checkouts->groupBy(function ($rent) {
+            return $rent->updated_at ? $rent->updated_at->format('F Y') : 'No Date';
+        });
 
         // DETAIL CHECKOUT
         $selectedCheckout = null;
         if ($request->filled('rent')) {
-            $selectedCheckout = Rent::where('id', $request->rent)
+            $selectedCheckout = Rent::withoutGlobalScopes()
+                ->where('id', $request->rent)
                 ->where('user_id', $userId)
                 ->with('room')
                 ->first();
         }
 
         return view('user.status.checkout', [
-            'checkoutGroups'   => $checkouts,
+            'checkoutGroups'   => $checkoutGroups,
             'selectedCheckout' => $selectedCheckout,
         ]);
     }

@@ -8,17 +8,7 @@
 <div class="space-y-6">
 
     <!-- Back & Actions -->
-    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-        <a href="{{ route('superadmin.tempat-kos.index') }}" 
-           class="inline-flex items-center gap-2
-                    bg-gradient-to-r from-yellow-500 to-orange-600
-                    text-white font-semibold
-                    px-5 py-2 rounded-lg
-                    hover:from-yellow-600 hover:to-orange-700
-                    transition-all shadow-lg">
-            Kembali ke Daftar Kos
-        </a>
-
+    <div class="mb-6 flex justify-end items-center">
         <div class="flex gap-2">
             <a href="{{ route('superadmin.tempat-kos.edit', $tempatKos) }}" 
                class="inline-flex items-center gap-2
@@ -56,7 +46,13 @@
                 <div class="flex items-start justify-between mb-4">
                     <div>
                         <h2 class="text-2xl font-bold text-slate-100">{{ $tempatKos->nama_kos }}</h2>
-                        <p class="text-slate-400 mt-1">{{ $tempatKos->kota }}, {{ $tempatKos->provinsi }}</p>
+                        <!-- ✅ TAMBAHAN: Tampilkan Alamat Lengkap dengan Kecamatan -->
+                        <p class="text-slate-400 mt-1">
+                            @if($tempatKos->kecamatan)
+                                Kec. {{ $tempatKos->kecamatan }}, 
+                            @endif
+                            {{ $tempatKos->kota }}, {{ $tempatKos->provinsi }}
+                        </p>
                     </div>
                     @if($tempatKos->status === 'active')
                         <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-500/20 text-green-400 border border-green-500/30">
@@ -116,19 +112,22 @@
             </div>
         </div>
 
-        <!-- Alamat -->
+        <!-- ✅ ALAMAT (DENGAN KECAMATAN) -->
         <div class="lg:col-span-2 bg-slate-800 rounded-xl p-6 border border-slate-700">
             <h3 class="text-lg font-semibold text-slate-100 mb-4 flex items-center">
                 <svg class="w-5 h-5 mr-2 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
                 </svg>
-                Alamat
+                Alamat Lengkap
             </h3>
             <div class="space-y-2">
                 <p class="text-slate-200">{{ $tempatKos->alamat }}</p>
                 <p class="text-sm text-slate-400">
-                    {{ $tempatKos->kota }}, {{ $tempatKos->provinsi }} 
+                    @if($tempatKos->kecamatan)
+                        Kec. {{ $tempatKos->kecamatan }}, 
+                    @endif
+                    {{ $tempatKos->kota }}, {{ $tempatKos->provinsi }}
                     @if($tempatKos->kode_pos)
                         {{ $tempatKos->kode_pos }}
                     @endif

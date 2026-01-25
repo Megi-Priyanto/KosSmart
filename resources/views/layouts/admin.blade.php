@@ -16,9 +16,72 @@
     <script>
     document.addEventListener('alpine:init', () => {
         Alpine.store('modal', {
-            deleteUser: false
-        })
-    })
+            show: false,
+            type: 'info', // delete, info, warning, success
+            title: '',
+            message: '',
+            confirmText: 'Oke',
+            showCancel: false,
+            onConfirm: null,
+            formId: null,
+
+            open(options) {
+                this.type = options.type || 'info';
+                this.title = options.title || 'Konfirmasi';
+                this.message = options.message || '';
+                this.confirmText = options.confirmText || (this.type === 'delete' ? 'Ya, Hapus' : 'Oke');
+                this.showCancel = options.showCancel !== undefined ? options.showCancel : (this.type === 'delete');
+                this.onConfirm = options.onConfirm || null;
+                this.formId = options.formId || null;
+                this.show = true;
+            },
+
+            close() {
+                this.show = false;
+                // Reset after animation
+                setTimeout(() => {
+                    this.type = 'info';
+                    this.title = '';
+                    this.message = '';
+                    this.onConfirm = null;
+                    this.formId = null;
+                }, 200);
+            },
+
+            confirm() {
+                if (this.onConfirm && typeof this.onConfirm === 'function') {
+                    this.onConfirm();
+                } else if (this.formId) {
+                    const form = document.getElementById(this.formId);
+                    if (form) {
+                        form.submit();
+                    }
+                }
+                this.close();
+            },
+
+            // Helper methods
+            confirmDelete(message, formId, title = 'Hapus Data?') {
+                this.open({
+                    type: 'delete',
+                    title: title,
+                    message: message,
+                    formId: formId,
+                    confirmText: 'Ya, Hapus'
+                });
+            },
+
+            alert(message, title = 'Pemberitahuan', type = 'info') {
+                this.open({
+                    type: type,
+                    title: title,
+                    message: message,
+                    showCancel: false,
+                    confirmText: 'Mengerti'
+                });
+            }
+        });
+    });
     </script>
     
     <!-- Google Fonts -->
@@ -44,34 +107,36 @@
             
             <main class="flex-1 overflow-y-auto p-6 bg-slate-900">
                 
-                    @if(session('success'))
-                    <div class="mb-6 px-6 py-4 
-                                bg-slate-800 border border-green-500/40
-                                rounded-xl flex items-center gap-3 shadow-sm">
+                @if(session('success'))
+                <div class="mb-6 px-6 py-4 
+                            bg-slate-800 border border-green-500/40
+                            rounded-xl flex items-center gap-3 shadow-sm">
 
-                        <svg class="w-5 h-5 text-green-400 flex-shrink-0"
-                             fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                  d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                        </svg>
-                    
-                        <p class="text-green-300 font-medium text-sm">
-                            {{ session('success') }}
-                        </p>
-                    </div>
-                    @endif
-                    
-                    @if(session('error'))
-                    <div class="mb-6 p-4 bg-red-50 border-l-4 border-red-500 rounded-lg flex items-center">
-                        <svg class="w-5 h-5 text-red-500 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                        </svg>
-                        <p class="text-red-700 font-medium">{{ session('error') }}</p>
-                    </div>
-                    @endif
-                    
-                    @yield('content')
+                    <svg class="w-5 h-5 text-green-400 flex-shrink-0"
+                         fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
                 
+                    <p class="text-green-300 font-medium text-sm">
+                        {{ session('success') }}
+                    </p>
+                </div>
+                @endif
+                
+                @if(session('error'))
+                <div class="mb-6 px-6 py-4 
+                            bg-slate-800 border border-red-500/40
+                            rounded-xl flex items-center gap-3 shadow-sm">
+                    <svg class="w-5 h-5 text-red-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    <p class="text-red-300 font-medium text-sm">{{ session('error') }}</p>
+                </div>
+                @endif
+                
+                @yield('content')
+            
             </main>
             
         </div>
@@ -79,8 +144,6 @@
     </div>
 
     @include('components.modal')
-    
-    @stack('scripts')
     
     @stack('scripts')
     

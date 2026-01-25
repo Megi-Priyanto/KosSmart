@@ -7,19 +7,6 @@
 @section('content')
 <div class="space-y-6">
 
-    <!-- Page Header -->
-    <div class="flex items-center justify-between">
-        <a href="{{ route('superadmin.tempat-kos.index') }}" 
-           class="inline-flex items-center gap-2
-                    bg-gradient-to-r from-yellow-500 to-orange-600
-                    text-white font-semibold
-                    px-5 py-2 rounded-lg
-                    hover:from-yellow-600 hover:to-orange-700
-                    transition-all shadow-lg">
-            Kembali ke Daftar User
-        </a>
-    </div>
-
     <form action="{{ route('superadmin.tempat-kos.update', $tempatKos) }}" 
           method="POST" 
           enctype="multipart/form-data"
@@ -135,21 +122,6 @@
                     @enderror
                 </div>
 
-                <!-- Kota -->
-                <div>
-                    <label class="block text-sm font-medium text-slate-300 mb-2">
-                        Kota <span class="text-red-400"></span>
-                    </label>
-                    <input type="text" 
-                           name="kota" 
-                           value="{{ old('kota', $tempatKos->kota) }}"
-                           class="w-full px-4 py-2 bg-slate-700 border border-slate-600 rounded-lg text-slate-100 placeholder-slate-400 focus:ring-2 focus:ring-yellow-500 focus:border-transparent @error('kota') border-red-500 @enderror"
-                           required>
-                    @error('kota')
-                        <p class="mt-1 text-sm text-red-400">{{ $message }}</p>
-                    @enderror
-                </div>
-
                 <!-- Provinsi -->
                 <div>
                     <label class="block text-sm font-medium text-slate-300 mb-2">
@@ -161,6 +133,36 @@
                            class="w-full px-4 py-2 bg-slate-700 border border-slate-600 rounded-lg text-slate-100 placeholder-slate-400 focus:ring-2 focus:ring-yellow-500 focus:border-transparent @error('provinsi') border-red-500 @enderror"
                            required>
                     @error('provinsi')
+                        <p class="mt-1 text-sm text-red-400">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <!-- Kota -->
+                <div>
+                    <label class="block text-sm font-medium text-slate-300 mb-2">
+                        Kota/Kabupaten <span class="text-red-400"></span>
+                    </label>
+                    <input type="text" 
+                           name="kota" 
+                           value="{{ old('kota', $tempatKos->kota) }}"
+                           class="w-full px-4 py-2 bg-slate-700 border border-slate-600 rounded-lg text-slate-100 placeholder-slate-400 focus:ring-2 focus:ring-yellow-500 focus:border-transparent @error('kota') border-red-500 @enderror"
+                           required>
+                    @error('kota')
+                        <p class="mt-1 text-sm text-red-400">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-slate-300 mb-2">
+                        Kecamatan <span class="text-red-400"></span>
+                    </label>
+                    <input type="text" 
+                           name="kecamatan" 
+                           value="{{ old('kecamatan', $tempatKos->kecamatan) }}"
+                           class="w-full px-4 py-2 bg-slate-700 border border-slate-600 rounded-lg text-slate-100 placeholder-slate-400 focus:ring-2 focus:ring-yellow-500 focus:border-transparent @error('kecamatan') border-red-500 @enderror"
+                           placeholder="Sukajadi"
+                           required>
+                    @error('kecamatan')
                         <p class="mt-1 text-sm text-red-400">{{ $message }}</p>
                     @enderror
                 </div>

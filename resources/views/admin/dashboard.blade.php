@@ -276,7 +276,7 @@
                             </p>
                         </div>
                     </div>
-                    <a href="{{ route('admin.rooms.show', $rent) }}" class="text-sm font-medium text-orange-400 hover:text-orange-300">
+                    <a href="{{ route('admin.rooms.show', $rent->room->id) }}" class="text-sm font-medium text-orange-400 hover:text-orange-300">
                         Proses →
                     </a>
                 </div>

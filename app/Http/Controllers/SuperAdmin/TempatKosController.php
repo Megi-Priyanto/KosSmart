@@ -30,6 +30,7 @@ class TempatKosController extends Controller
             $query->where(function ($q) use ($search) {
                 $q->where('nama_kos', 'like', "%{$search}%")
                     ->orWhere('kota', 'like', "%{$search}%")
+                    ->orWhere('kecamatan', 'like', "%{$search}%") // ✅ TAMBAHKAN
                     ->orWhere('alamat', 'like', "%{$search}%");
             });
         }
@@ -61,6 +62,7 @@ class TempatKosController extends Controller
             'nama_kos' => ['required', 'string', 'max:255'],
             'alamat' => ['required', 'string'],
             'kota' => ['required', 'string', 'max:100'],
+            'kecamatan' => ['required', 'string', 'max:100'], // ✅ TAMBAHKAN
             'provinsi' => ['required', 'string', 'max:100'],
             'kode_pos' => ['nullable', 'string', 'max:10'],
             'telepon' => ['nullable', 'string', 'max:20'],
@@ -71,6 +73,7 @@ class TempatKosController extends Controller
             'nama_kos.required' => 'Nama kos wajib diisi',
             'alamat.required' => 'Alamat wajib diisi',
             'kota.required' => 'Kota wajib diisi',
+            'kecamatan.required' => 'Kecamatan wajib diisi', // ✅ TAMBAHKAN
             'provinsi.required' => 'Provinsi wajib diisi',
             'logo.image' => 'File harus berupa gambar',
             'logo.max' => 'Ukuran logo maksimal 2MB',
@@ -149,6 +152,7 @@ class TempatKosController extends Controller
             'nama_kos' => ['required', 'string', 'max:255'],
             'alamat' => ['required', 'string'],
             'kota' => ['required', 'string', 'max:100'],
+            'kecamatan' => ['required', 'string', 'max:100'],
             'provinsi' => ['required', 'string', 'max:100'],
             'kode_pos' => ['nullable', 'string', 'max:10'],
             'telepon' => ['nullable', 'string', 'max:20'],

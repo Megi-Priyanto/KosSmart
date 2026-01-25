@@ -18,6 +18,76 @@
     <!-- Alpine.js -->
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 
+    <!-- Alpine Store -->
+    <script>
+    document.addEventListener('alpine:init', () => {
+        Alpine.store('modal', {
+            show: false,
+            type: 'info',
+            title: '',
+            message: '',
+            confirmText: 'Oke',
+            showCancel: false,
+            onConfirm: null,
+            formId: null,
+
+            open(options) {
+                this.type = options.type || 'info';
+                this.title = options.title || 'Konfirmasi';
+                this.message = options.message || '';
+                this.confirmText = options.confirmText || (this.type === 'delete' ? 'Ya, Hapus' : 'Oke');
+                this.showCancel = options.showCancel !== undefined ? options.showCancel : (this.type === 'delete');
+                this.onConfirm = options.onConfirm || null;
+                this.formId = options.formId || null;
+                this.show = true;
+            },
+
+            close() {
+                this.show = false;
+                setTimeout(() => {
+                    this.type = 'info';
+                    this.title = '';
+                    this.message = '';
+                    this.onConfirm = null;
+                    this.formId = null;
+                }, 200);
+            },
+
+            confirm() {
+                if (this.onConfirm && typeof this.onConfirm === 'function') {
+                    this.onConfirm();
+                } else if (this.formId) {
+                    const form = document.getElementById(this.formId);
+                    if (form) {
+                        form.submit();
+                    }
+                }
+                this.close();
+            },
+
+            confirmDelete(message, formId, title = 'Hapus Data?') {
+                this.open({
+                    type: 'delete',
+                    title: title,
+                    message: message,
+                    formId: formId,
+                    confirmText: 'Ya, Hapus'
+                });
+            },
+
+            alert(message, title = 'Pemberitahuan', type = 'info') {
+                this.open({
+                    type: type,
+                    title: title,
+                    message: message,
+                    showCancel: false,
+                    confirmText: 'Mengerti'
+                });
+            }
+        });
+    });
+    </script>
+
     <!-- Bootstrap Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
 
@@ -29,7 +99,6 @@
             font-family: 'Inter', sans-serif;
         }
 
-        /* memberi ruang agar konten tidak tertutup bottom navbar */
         @media (max-width: 768px) {
             body {
                 padding-bottom: 80px;
@@ -43,24 +112,20 @@
     
     @include('layouts.partials.user.navbar')
 
-    <!-- MAIN CONTENT -->
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
-        <!-- Flash Success (tampil hanya jika TIDAK ADA booking pending) -->
         @if(session('success') && !isset($pendingRent))
         <div class="mb-6 p-4 bg-green-50 border-l-4 border-green-500 rounded-lg flex items-center">
             <p class="text-green-700 font-medium">{{ session('success') }}</p>
         </div>
         @endif
 
-        <!-- Flash Error -->
         @if(session('error'))
         <div class="mb-6 p-4 bg-red-50 border-l-4 border-red-500 rounded-lg flex items-center">
             <p class="text-red-700 font-medium">{{ session('error') }}</p>
         </div>
         @endif
 
-        <!-- PAGE CONTENT -->
         @yield('content')
 
     </main>

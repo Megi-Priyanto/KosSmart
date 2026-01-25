@@ -7,16 +7,9 @@
 @section('content')
 
 <!-- Action Buttons -->
-<div class="mb-6 flex justify-between items-center">
-    
-    <!-- Page Header -->
-    <div class="flex items-center justify-between mb-2">
-        <a href="{{ route('admin.rooms.index') }}" 
-           class="px-5 py-3 bg-gradient-to-r from-yellow-500 to-orange-600 text-white font-semibold rounded-lg hover:from-yellow-600 hover:to-orange-700 transition-all shadow-lg flex items-center justify-center">
-            Kembali ke Daftar Kamar
-        </a>
-    </div>
-    
+<div class="mb-6 flex justify-end items-center">
+
+    <!-- Tombol Kanan: Edit & Hapus -->
     <div class="flex space-x-3">
         <a href="{{ route('admin.rooms.edit', $room) }}" 
            class="inline-flex items-center gap-2
@@ -31,20 +24,27 @@
             <span>Edit</span>
         </a>
         
-        <form action="{{ route('admin.rooms.destroy', $room) }}" 
-              method="POST" 
-              onsubmit="return confirm('Yakin ingin menghapus kamar {{ $room->room_number }}?')">
+        <form id="delete-room-{{ $room->id }}" 
+              action="{{ route('admin.rooms.destroy', $room) }}"
+              method="POST"
+              style="display: none;">
             @csrf
             @method('DELETE')
-            <button type="submit" 
-                    class="px-5 py-2.5 bg-red-600 text-white rounded-lg hover:bg-red-700 flex items-center space-x-2 transition-all shadow-lg"
-                    {{ $room->currentRent ? 'disabled' : '' }}>
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
-                </svg>
-                <span>Hapus</span>
-            </button>
         </form>
+        
+        <button type="button"
+                @click="$store.modal.confirmDelete(
+                    'Tindakan ini tidak dapat dibatalkan. Semua data kamar dan foto akan terhapus.',
+                    'delete-room-{{ $room->id }}',
+                    'Yakin hapus Kamar {{ $room->room_number }}?'
+                )"
+                class="inline-flex items-center gap-2 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg font-semibold transition">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                      d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+            </svg>
+            Hapus Kamar
+        </button>
     </div>
 </div>
 
@@ -394,60 +394,74 @@
                     <p class="font-bold text-xl text-yellow-500 mt-1">Rp {{ number_format($room->currentRent->monthly_rent, 0, ',', '.') }}</p>
                 </div>
             </div>
-            
-            <a href="{{ route('superadmin.users.show', $room->currentRent->user_id) }}" 
-               class="block w-full mt-6 text-center px-5 py-3 bg-gradient-to-r from-yellow-500 via-orange-600 to-orange-700 text-white font-semibold rounded-lg hover:from-yellow-600 hover:to-orange-600 transition-all shadow-lg text-sm">
-                Lihat Profil Penyewa
-                <svg class="w-4 h-4 inline ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-                </svg>
-            </a>
 
             {{-- TOMBOL CHECKOUT --}}
             @if($room->currentRent->status === 'active')
-                {{-- ADMIN CHECKOUT LANGSUNG --}}
-                <form action="{{ route('admin.rents.checkout', $room->currentRent->id) }}"
-                      method="POST"
-                      class="mt-6"
-                      onsubmit="return confirm('Checkout penyewa secara langsung?\nKamar akan masuk MAINTENANCE.')">
-                    @csrf
-                    @method('PUT')
+                <!-- Container Grid 2 Kolom untuk Checkout Paksa -->
+                <div class="mt-3">
+                    <form id="force-checkout-{{ $room->id }}" 
+                          action="{{ route('admin.rooms.checkout.force', $room) }}"
+                          method="POST"
+                          style="display: none;">
+                        @csrf
+                    </form>
                 
-                    <button type="submit" class="w-full px-5 py-3 bg-red-600 hover:bg-red-700 text-white font-bold rounded-lg transition-all">
-                        <svg class="w-5 h-5 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+                    <button type="button"
+                            @click="$store.modal.open({
+                                type: 'warning',
+                                title: 'Checkout Penyewa Secara Langsung?',
+                                message: 'Kamar akan otomatis masuk status MAINTENANCE setelah checkout paksa. Pastikan sudah koordinasi dengan penyewa.',
+                                confirmText: 'Ya, Checkout Paksa',
+                                showCancel: true,
+                                formId: 'force-checkout-{{ $room->id }}'
+                            })"
+                            class="w-full flex items-center justify-center gap-2 px-4 py-3 bg-orange-600 hover:bg-orange-700 text-white rounded-lg font-semibold transition shadow-lg">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                  d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
                         </svg>
-                        Checkout Langsung
+                        Checkout Paksa
                     </button>
-                </form>
+                </div>
             
             @elseif($room->currentRent->status === 'checkout_requested')
-                {{-- APPROVE CHECKOUT USER --}}
-                <div class="mt-6 space-y-3">
-                    {{-- Alert --}}
-                    <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-3">
-                        <div class="flex items-center text-sm text-yellow-800">
-                            <svg class="w-5 h-5 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
-                            </svg>
-                            <span class="font-medium">User telah mengajukan permintaan checkout</span>
-                        </div>
+            {{-- APPROVE CHECKOUT USER --}}
+            <div class="mt-6 space-y-3">
+                {{-- Alert --}}
+                <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-3">
+                    <div class="flex items-center justify-center text-sm text-yellow-800">
+                        <svg class="w-5 h-5 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                        </svg>
+                        <span class="font-medium">User telah mengajukan permintaan checkout</span>
                     </div>
+                </div>
+            
+                {{-- Tombol Approve --}}
+                <form id="approve-checkout-{{ $room->currentRent->id }}" 
+                      action="{{ route('admin.rooms.checkout.approve', [$room, $room->currentRent->id]) }}"
+                      method="POST"
+                      style="display: none;">
+                    @csrf
+                </form>
                 
-                    {{-- Tombol Approve --}}
-                    <form action="{{ route('admin.rents.checkout', $room->currentRent->id) }}"
-                          method="POST"
-                          onsubmit="return confirm('Setujui permintaan checkout user?\nKamar akan masuk MAINTENANCE dan user akan keluar dari kamar.')">
-                        @csrf
-                        @method('PUT')
-                    
-                        <button type="submit" class="w-full px-5 py-3 bg-green-600 hover:bg-green-700 text-white font-bold rounded-lg transition-all shadow-lg">
-                            <svg class="w-5 h-5 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                            </svg>
-                            Setujui Permintaan Checkout
-                        </button>
-                    </form>
+                <button type="button"
+                        @click="$store.modal.open({
+                            type: 'success',
+                            title: 'Setujui Permintaan Checkout?',
+                            message: 'User {{ $room->currentRent->user->name }} akan checkout dari kamar ini. Kamar akan masuk status MAINTENANCE.',
+                            confirmText: 'Ya, Setujui',
+                            showCancel: true,
+                            formId: 'approve-checkout-{{ $room->currentRent->id }}'
+                        })"
+                            class="w-full inline-flex items-center justify-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg font-semibold transition"
+
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                  d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                        Setujui Checkout
+                    </button>
                 </div>
             @endif
             

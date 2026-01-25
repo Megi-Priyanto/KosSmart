@@ -25,8 +25,20 @@
             
             <!-- Tombol Cancel (hanya muncul jika belum ada cancel request) -->
             @if(!$pendingRent->hasPendingCancel())
-            <button @click="showCancelModal = true" 
-                    class="ml-4 px-4 py-2 bg-red-500 text-white text-sm font-semibold rounded-lg hover:bg-red-600 transition-all shadow-lg whitespace-nowrap">
+            <form id="cancel-booking-{{ $pendingRent->id }}" 
+                  action="{{ route('user.booking.cancel.store', $pendingRent) }}"
+                  method="POST"
+                  style="display: none;">
+                @csrf
+            </form>
+
+            <button type="button"
+                    @click="showCancelModal = true"
+                    class="inline-flex items-center gap-2 ml-4 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg font-semibold transition justify-center">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                          d="M6 18L18 6M6 6l12 12"/>
+                </svg>
                 Batalkan Booking
             </button>
             @else
@@ -112,7 +124,11 @@
                         Batal
                     </button>
                     <button type="submit"
-                            onclick="return confirm('Yakin ingin membatalkan booking? Dana DP akan dikembalikan oleh admin.')"
+                            @click="$store.modal.alert(
+                                'Permintaan pembatalan Anda sedang diproses. Admin akan memverifikasi dan mengembalikan dana DP sesuai kebijakan.',
+                                'Pembatalan Diajukan',
+                                'success'
+                            )"
                             class="flex-1 px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition font-semibold">
                         Ajukan Pembatalan
                     </button>
@@ -235,13 +251,17 @@
                         {{ $kos->nama_kos }}
                     </h3>
 
-                    <!-- Lokasi -->
-                    <div class="flex items-start text-sm text-gray-600 mb-3">
+                    <div class="flex items-start text-xs sm:text-sm text-gray-600 mb-3">
                         <svg class="w-4 h-4 mr-1.5 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
                         </svg>
-                        <span class="line-clamp-2">{{ $kos->kota }}, {{ $kos->provinsi }}</span>
+                        <span class="line-clamp-2">
+                            @if($kos->kecamatan)
+                                Kec. {{ $kos->kecamatan }}, 
+                            @endif
+                            {{ $kos->kota }}, {{ $kos->provinsi }}
+                        </span>
                     </div>
 
                     <!-- Stats -->

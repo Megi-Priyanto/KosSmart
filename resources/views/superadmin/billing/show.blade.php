@@ -7,19 +7,6 @@
 @section('content')
 <div class="space-y-6">
 
-    <!-- Page Header -->
-    <div class="flex items-center justify-between">
-        <a href="{{ route('superadmin.billing.index') }}" 
-           class="inline-flex items-center gap-2
-                    bg-gradient-to-r from-yellow-500 to-orange-600
-                    text-white font-semibold
-                    px-5 py-2 rounded-lg
-                    hover:from-yellow-600 hover:to-orange-700
-                    transition-all shadow-lg">
-            Kembali ke Daftar Tagihan
-        </a>
-    </div>
-
     <!-- Billing Info Card -->
     <div class="bg-slate-800 rounded-xl border border-slate-700 overflow-hidden">
         <div class="p-6 border-b border-slate-700 flex items-center justify-between">
@@ -146,38 +133,54 @@
     <div class="flex justify-end space-x-4">
         <!-- Tombol Hapus: Hanya muncul jika status BUKAN pending atau paid -->
         @if($billing->status !== 'pending' && $billing->status !== 'paid')
-        <form action="{{ route('superadmin.billing.destroy', $billing) }}" method="POST" 
-              onsubmit="return confirm('Yakin ingin menghapus tagihan ini?')">
+        <form id="delete-billing-{{ $billing->id }}" 
+              action="{{ route('superadmin.billing.destroy', $billing) }}"
+              method="POST"
+              style="display: none;">
             @csrf
             @method('DELETE')
-            <button type="submit" 
-                    class="px-6 py-3 bg-red-600/20 hover:bg-red-600/30 text-red-400 rounded-lg font-medium transition flex items-center gap-2">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
-                </svg>
-                Hapus Tagihan
-            </button>
         </form>
+
+        <button type="button"
+                @click="$store.modal.confirmDelete(
+                    'Tagihan ini akan dihapus permanen dari sistem. Tindakan ini tidak dapat dibatalkan.',
+                    'delete-billing-{{ $billing->id }}',
+                    'Hapus Tagihan?'
+                )"
+                class="inline-flex items-center gap-2 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg font-semibold transition">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                      d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+            </svg>
+            Hapus Tagihan
+        </button>
         @endif
     
         <!-- Tombol Verifikasi: Hanya muncul jika status pending -->
         @if($billing->status === 'pending')
-        <form action="{{ route('superadmin.billing.verify', $billing) }}" method="POST"
-              onsubmit="return confirm('Yakin ingin memverifikasi pembayaran ini?')">
+        <form id="verify-payment-{{ $billing->id }}" 
+              action="{{ route('superadmin.billing.verify', $billing) }}"
+              method="POST"
+              style="display: none;">
             @csrf
-            <button type="submit" 
-                    class="inline-flex items-center gap-2
-                            bg-gradient-to-r from-yellow-500 to-orange-600
-                            text-white font-semibold
-                            px-5 py-3 rounded-lg
-                            hover:from-yellow-600 hover:to-orange-700
-                            transition-all shadow-lg">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-                </svg>
-                Verifikasi Pembayaran
-            </button>
         </form>
+        
+        <button type="button"
+                @click="$store.modal.open({
+                    type: 'success',
+                    title: 'Verifikasi Pembayaran?',
+                    message: 'Pembayaran dari {{ $billing->admin->name }} untuk {{ $billing->tempatKos->nama_kos }} sebesar Rp {{ number_format($billing->amount, 0, ',', '.') }} akan diverifikasi.',
+                    confirmText: 'Ya, Verifikasi',
+                    showCancel: true,
+                    formId: 'verify-payment-{{ $billing->id }}'
+                })"
+                class="inline-flex items-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg font-semibold transition">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                      d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+            Verifikasi Pembayaran
+        </button>
         @endif
     </div>
 

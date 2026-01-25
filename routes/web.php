@@ -85,21 +85,21 @@ Route::prefix('verification')->name('verification.')->group(function () {
 // CRITICAL: Routes ini HARUS di luar middleware auth
 // karena user sudah logout setelah klik "Simpan Email"
 Route::prefix('user/profile/email')->name('user.profile.email.')->group(function () {
-    
+
     // Halaman verifikasi OTP untuk email baru (user sudah logout)
     Route::get('/verify', [UserProfileController::class, 'showEmailVerification'])
         ->name('verify');
-    
+
     // Proses verifikasi OTP
     Route::post('/verify', [UserProfileController::class, 'verifyEmailChange'])
         ->middleware('throttle:5,1')
         ->name('verify.process');
-    
+
     // Kirim ulang OTP
     Route::post('/resend', [UserProfileController::class, 'resendEmailOtp'])
         ->middleware('throttle:3,2')
         ->name('resend');
-    
+
     // Batal perubahan email
     Route::post('/cancel', [UserProfileController::class, 'cancelEmailChange'])
         ->name('cancel');
@@ -126,9 +126,9 @@ Route::middleware(['auth', 'verified', 'role:user'])->group(function () {
         ->middleware('has.room')
         ->name('user.room.detail');
 
-    // Checkout User
-    Route::put('/rents/{rent}/checkout', [UserRentCheckoutController::class, 'requestCheckout'])
-        ->name('user.rents.checkout.request');
+    // Checkout User - Request checkout
+    Route::post('/user/rents/{rent}/checkout/request', [UserRentCheckoutController::class, 'requestCheckout'])
+        ->name('user.checkout.request');
 
     Route::prefix('status')->name('user.status.')->group(function () {
         Route::get('/', [StatusController::class, 'index'])->name('index');
@@ -140,7 +140,7 @@ Route::middleware(['auth', 'verified', 'role:user'])->group(function () {
     // User Cancel Booking Routes
     Route::post('/booking/{rent}/cancel', [\App\Http\Controllers\User\UserCancelBookingController::class, 'store'])
         ->name('user.booking.cancel.store');
-    
+
     Route::get('/booking/cancel/status', [\App\Http\Controllers\User\UserCancelBookingController::class, 'status'])
         ->name('user.booking.cancel.status');
 
@@ -183,16 +183,16 @@ Route::middleware(['auth', 'verified', 'role:user'])->group(function () {
     // ==============================
     Route::get('/user/profile', [UserProfileController::class, 'index'])
         ->name('user.profile');
-    
+
     Route::put('/user/profile', [UserProfileController::class, 'update'])
         ->name('user.profile.update');
-    
+
     Route::put('/user/profile/password', [UserProfileController::class, 'updatePassword'])
         ->name('user.profile.password');
-    
+
     Route::delete('/user/profile', [UserProfileController::class, 'destroy'])
         ->name('user.profile.delete');
-    
+
     // Request email change - PERLU AUTH (user masih login saat mengisi form)
     Route::post('/user/profile/email/request', [UserProfileController::class, 'requestEmailChange'])
         ->name('user.profile.email.request');
@@ -308,9 +308,17 @@ Route::middleware(['auth', 'verified', 'admin.kos'])
             'destroy' => 'rooms.destroy',
         ]);
 
+        // Checkout Routes
+        Route::post('/rooms/{room}/checkout/force', [AdminRoomController::class, 'forceCheckout'])
+            ->name('rooms.checkout.force');
+        
+        Route::post('/rooms/{room}/checkout/{checkoutRequest}/approve', [AdminRoomController::class, 'approveCheckout'])
+            ->name('rooms.checkout.approve');
+
         // Update Status Kamar
         Route::put('/rooms/{room}/status', [RoomStatusController::class, 'update'])
             ->name('rooms.status.update');
+        
         Route::post('/rooms/bulk-status', [RoomStatusController::class, 'bulkUpdate'])
             ->name('rooms.status.bulk');
 
@@ -334,9 +342,13 @@ Route::middleware(['auth', 'verified', 'admin.kos'])
             Route::put('/billing/{billing}', 'update')->name('billing.update');
             Route::delete('/billing/{billing}', 'destroy')->name('billing.destroy');
 
+            // Payment Actions
+            Route::post('/billing/{billing}/confirm-payment', 'confirmPayment')->name('billing.confirm-payment');
+            Route::post('/billing/{billing}/reject-payment', 'rejectPayment')->name('billing.reject-payment');
+            Route::post('/billing/{billing}/mark-paid', 'markAsPaid')->name('billing.mark-paid');
+
             // Payment verification
             Route::post('/billing/payment/{payment}/verify', 'verifyPayment')->name('billing.payment.verify');
-            Route::post('/billing/{billing}/mark-paid', 'markAsPaid')->name('billing.mark-paid');
 
             // Generate tagihan
             Route::post('/billing/bulk-generate', 'bulkGenerate')->name('billing.bulk-generate');
@@ -368,8 +380,8 @@ Route::middleware(['auth', 'verified', 'admin.kos'])
         Route::post('payments/{billing}/pay', [AdminPaymentController::class, 'pay'])->name('payments.pay');
 
         Route::get('/cancel-bookings', [\App\Http\Controllers\Admin\AdminCancelBookingController::class, 'index'])
-        ->name('cancel-bookings.index');
-    
+            ->name('cancel-bookings.index');
+
         // Admin Cancel Booking Routes
         Route::get('/cancel-bookings/{cancelBooking}/refund', [\App\Http\Controllers\Admin\AdminCancelBookingController::class, 'showRefundForm'])
             ->name('cancel-bookings.refund-form');
@@ -379,5 +391,4 @@ Route::middleware(['auth', 'verified', 'admin.kos'])
 
         Route::post('/cancel-bookings/{cancelBooking}/reject', [\App\Http\Controllers\Admin\AdminCancelBookingController::class, 'reject'])
             ->name('cancel-bookings.reject');
-            
     });

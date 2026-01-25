@@ -5,27 +5,7 @@
 @section('page-description', 'Kelola informasi akun Super Admin Anda')
 
 @section('content')
-<div class="max-w-5xl mx-auto space-y-6">
-
-    <!-- Statistik Aktivitas -->
-    <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
-        <div class="bg-gradient-to-br from-blue-600 to-blue-700 rounded-xl p-4 text-white">
-            <div class="text-3xl font-bold">{{ $stats['total_tempat_kos'] }}</div>
-            <div class="text-sm text-blue-100 mt-1">Tempat Kos</div>
-        </div>
-        <div class="bg-gradient-to-br from-purple-600 to-purple-700 rounded-xl p-4 text-white">
-            <div class="text-3xl font-bold">{{ $stats['total_admin'] }}</div>
-            <div class="text-sm text-purple-100 mt-1">Admin Kos</div>
-        </div>
-        <div class="bg-gradient-to-br from-green-600 to-green-700 rounded-xl p-4 text-white">
-            <div class="text-3xl font-bold">{{ $stats['total_user'] }}</div>
-            <div class="text-sm text-green-100 mt-1">Penghuni</div>
-        </div>
-        <div class="bg-gradient-to-br from-orange-600 to-orange-700 rounded-xl p-4 text-white">
-            <div class="text-3xl font-bold">{{ $stats['account_age_days'] }}</div>
-            <div class="text-sm text-orange-100 mt-1">Hari Aktif</div>
-        </div>
-    </div>
+<div class="space-y-6">
 
     <!-- Profile Information -->
     <div class="bg-slate-800 rounded-xl border border-slate-700 overflow-hidden">
@@ -46,7 +26,7 @@
                 <!-- Nama -->
                 <div>
                     <label class="block text-sm font-medium text-slate-300 mb-2">
-                        Nama Lengkap <span class="text-red-400">*</span>
+                        Nama Lengkap <span class="text-red-400"></span>
                     </label>
                     <input type="text" 
                            name="name" 
@@ -61,7 +41,7 @@
                 <!-- Email -->
                 <div>
                     <label class="block text-sm font-medium text-slate-300 mb-2">
-                        Email <span class="text-red-400">*</span>
+                        Email <span class="text-red-400"></span>
                     </label>
                     <input type="email" 
                            name="email" 
@@ -123,7 +103,12 @@
             <!-- Submit Button -->
             <div class="mt-6 flex justify-end">
                 <button type="submit" 
-                        class="px-6 py-3 bg-gradient-to-r from-yellow-600 to-orange-600 hover:from-yellow-700 hover:to-orange-700 text-white rounded-lg font-medium transition shadow-lg">
+                        class="inline-flex items-center gap-2
+                                bg-gradient-to-r from-yellow-500 to-orange-600
+                                text-white font-semibold
+                                px-5 py-3 rounded-lg
+                                hover:from-yellow-600 hover:to-orange-700
+                                transition-all shadow-lg">
                     <svg class="w-5 h-5 inline-block mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
                     </svg>
@@ -152,7 +137,7 @@
                 <!-- Current Password -->
                 <div>
                     <label class="block text-sm font-medium text-slate-300 mb-2">
-                        Password Saat Ini <span class="text-red-400">*</span>
+                        Password Saat Ini <span class="text-red-400"></span>
                     </label>
                     <input type="password" 
                            name="current_password" 
@@ -167,7 +152,7 @@
                 <!-- New Password -->
                 <div>
                     <label class="block text-sm font-medium text-slate-300 mb-2">
-                        Password Baru <span class="text-red-400">*</span>
+                        Password Baru <span class="text-red-400"></span>
                     </label>
                     <input type="password" 
                            name="password" 
@@ -185,7 +170,7 @@
                 <!-- Confirm Password -->
                 <div>
                     <label class="block text-sm font-medium text-slate-300 mb-2">
-                        Konfirmasi Password Baru <span class="text-red-400">*</span>
+                        Konfirmasi Password Baru <span class="text-red-400"></span>
                     </label>
                     <input type="password" 
                            name="password_confirmation" 
@@ -209,7 +194,7 @@
             <!-- Submit Button -->
             <div class="mt-6 flex justify-end">
                 <button type="submit" 
-                        class="px-6 py-3 bg-gradient-to-r from-red-600 to-pink-600 hover:from-red-700 hover:to-pink-700 text-white rounded-lg font-medium transition shadow-lg">
+                        class="px-5 py-3 bg-red-600 text-white font-medium rounded-lg hover:bg-red-700 transition">
                     <svg class="w-5 h-5 inline-block mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"/>
                     </svg>

@@ -278,6 +278,7 @@
                         @endif
                     </td>
 
+                    {{-- Dalam loop @forelse($rooms as $room) --}}
                     <td class="px-6 py-4 whitespace-nowrap text-center text-sm font-medium">
                         <div class="flex justify-center items-center gap-2">
                         
@@ -318,31 +319,37 @@
                                 </svg>
                             </a>
                         
-                            {{-- DELETE --}}
-                            <form action="{{ route('admin.rooms.destroy', $room) }}"
+                            {{-- DELETE dengan Alpine Modal --}}
+                            <form id="delete-room-{{ $room->id }}" 
+                                  action="{{ route('admin.rooms.destroy', $room) }}"
                                   method="POST"
-                                  onsubmit="return confirm('Yakin ingin menghapus kamar {{ $room->room_number }}?')">
+                                  style="display: inline;">
                                 @csrf
                                 @method('DELETE')
-                        
-                                <button type="submit"
-                                        class="inline-flex items-center justify-center
-                                               w-10 h-10 rounded-xl
-                                               bg-red-600/20 text-red-400
-                                               hover:bg-red-600/30 hover:-translate-y-0.5
-                                               transition-all duration-200"
-                                        title="Hapus">
-                        
-                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                              d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862
-                                                 a2 2 0 01-1.995-1.858L5 7
-                                                 m5 4v6m4-6v6
-                                                 M15 4a1 1 0 00-1-1h-4
-                                                 a1 1 0 00-1 1v3M4 7h16"/>
-                                    </svg>
-                                </button>
                             </form>
+                            
+                            <button type="button"
+                                    @click="$store.modal.confirmDelete(
+                                        'Tindakan ini tidak dapat dibatalkan. Semua data kamar akan terhapus.',
+                                        'delete-room-{{ $room->id }}',
+                                        'Yakin ingin menghapus kamar {{ $room->room_number }}?'
+                                    )"
+                                    class="inline-flex items-center justify-center
+                                           w-10 h-10 rounded-xl
+                                           bg-red-600/20 text-red-400
+                                           hover:bg-red-600/30 hover:-translate-y-0.5
+                                           transition-all duration-200"
+                                    title="Hapus">
+                        
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                          d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862
+                                             a2 2 0 01-1.995-1.858L5 7
+                                             m5 4v6m4-6v6
+                                             M15 4a1 1 0 00-1-1h-4
+                                             a1 1 0 00-1 1v3M4 7h16"/>
+                                </svg>
+                            </button>
                         
                         </div>
                     </td>

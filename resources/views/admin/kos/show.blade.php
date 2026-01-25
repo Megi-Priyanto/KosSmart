@@ -7,15 +7,7 @@
 @section('content')
     
 <!-- Action Buttons -->
-<div class="mb-6 flex justify-between items-center">
-
-    <!-- Page Header -->
-    <div class="flex items-center justify-between mb-2">
-        <a href="{{ route('admin.kos.index') }}" 
-           class="px-4 py-2 bg-gradient-to-r from-yellow-500 to-orange-600 text-white font-semibold rounded-lg hover:from-yellow-600 hover:to-orange-700 transition-all shadow-lg flex items-center justify-center">
-            Kembali ke Daftar Informasi
-        </a>
-    </div>
+<div class="mb-6 flex justify-end items-center">
         
     <div class="flex space-x-3">
         <a href="{{ route('admin.kos.edit', $kos->id) }}"

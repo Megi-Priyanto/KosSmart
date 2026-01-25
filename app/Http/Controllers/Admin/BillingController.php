@@ -80,7 +80,7 @@ class BillingController extends Controller
         } else {
             $billingBase = Billing::whereIn('tipe', ['pelunasan', 'bulanan']);
         }
-            
+
         $stats = [
             'total'   => (clone $billingBase)->count(),
             'unpaid'  => (clone $billingBase)->unpaid()->count(),
@@ -194,7 +194,7 @@ class BillingController extends Controller
             $billing->admin_notes = $validated['admin_notes'];
             $billing->status = 'unpaid';
             $billing->tipe = 'bulanan';
-                    
+
             $billing->save();
 
             DB::commit();
@@ -386,6 +386,93 @@ class BillingController extends Controller
         } catch (\Exception $e) {
             DB::rollBack();
             return back()->with('error', 'Gagal menandai tagihan: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Konfirmasi pembayaran dari user (status pending)
+     * Digunakan ketika user sudah upload bukti pembayaran
+     */
+    public function confirmPayment(Billing $billing)
+    {
+        // Validasi: Hanya billing pending yang bisa dikonfirmasi
+        if ($billing->status !== 'pending') {
+            return back()->with('error', 'Hanya tagihan dengan status "Menunggu Verifikasi" yang dapat dikonfirmasi.');
+        }
+
+        // Validasi: Harus ada payment terkait
+        $latestPayment = $billing->latestPayment;
+
+        if (!$latestPayment) {
+            return back()->with('error', 'Tidak ada data pembayaran untuk tagihan ini.');
+        }
+
+        try {
+            DB::beginTransaction();
+
+            // Update payment status
+            $latestPayment->update([
+                'status' => 'confirmed',
+                'verified_by' => auth()->id(),
+                'verified_at' => now(),
+            ]);
+
+            // Mark billing as paid
+            $billing->markAsPaid();
+
+            DB::commit();
+
+            return redirect()->route('admin.billing.index')
+                ->with('success', "Pembayaran dari {$billing->user->name} berhasil dikonfirmasi sebagai LUNAS.");
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            return back()->with('error', 'Gagal mengkonfirmasi pembayaran: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Tolak pembayaran dari user (status pending)
+     * User harus upload bukti pembayaran baru
+     */
+    public function rejectPayment(Billing $billing)
+    {
+        // Validasi: Hanya billing pending yang bisa ditolak
+        if ($billing->status !== 'pending') {
+            return back()->with('error', 'Hanya tagihan dengan status "Menunggu Verifikasi" yang dapat ditolak.');
+        }
+
+        // Validasi: Harus ada payment terkait
+        $latestPayment = $billing->latestPayment;
+
+        if (!$latestPayment) {
+            return back()->with('error', 'Tidak ada data pembayaran untuk tagihan ini.');
+        }
+
+        try {
+            DB::beginTransaction();
+
+            // Update payment status to rejected
+            $latestPayment->update([
+                'status' => 'rejected',
+                'verified_by' => auth()->id(),
+                'verified_at' => now(),
+                'rejection_reason' => 'Bukti pembayaran tidak valid atau tidak sesuai.',
+            ]);
+
+            // Kembalikan billing ke status unpaid
+            $billing->update([
+                'status' => 'unpaid',
+            ]);
+
+            DB::commit();
+
+            return redirect()->route('admin.billing.index')
+                ->with('success', "Pembayaran dari {$billing->user->name} telah ditolak. User harus upload bukti pembayaran baru.");
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            return back()->with('error', 'Gagal menolak pembayaran: ' . $e->getMessage());
         }
     }
 
