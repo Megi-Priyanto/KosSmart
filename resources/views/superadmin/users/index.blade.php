@@ -82,14 +82,15 @@
     <div class="bg-slate-800 rounded-xl border border-slate-700 overflow-hidden">
         <div class="overflow-x-auto">
             <table class="w-full">
-                <thead class="bg-slate-700">
+
+                <thead class="bg-slate-800/80 border-b border-slate-700">
                     <tr>
-                        <th class="px-6 py-4 text-left text-xs font-medium text-slate-300 uppercase">User</th>
-                        <th class="px-6 py-4 text-left text-xs font-medium text-slate-300 uppercase">Kontak</th>
-                        <th class="px-6 py-4 text-center text-xs font-medium text-slate-300 uppercase">Role</th>
-                        <th class="px-6 py-4 text-left text-xs font-medium text-slate-300 uppercase">Tempat Kos</th>
-                        <th class="px-6 py-4 text-center text-xs font-medium text-slate-300 uppercase">Status</th>
-                        <th class="px-6 py-4 text-center text-xs font-medium text-slate-300 uppercase">Aksi</th>
+                        <th class="px-4 py-3 text-left text-xs font-medium text-slate-400 uppercase">User</th>
+                        <th class="px-4 py-3 text-left text-xs font-medium text-slate-400 uppercase">Kontak</th>
+                        <th class="px-4 py-3 text-center text-xs font-medium text-slate-400 uppercase">Role</th>
+                        <th class="px-4 py-3 text-left text-xs font-medium text-slate-400 uppercase">Tempat Kos</th>
+                        <th class="px-4 py-3 text-center text-xs font-medium text-slate-400 uppercase">Status</th>
+                        <th class="px-4 py-3 text-center text-xs font-medium text-slate-400 uppercase">Aksi</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-700">

@@ -227,6 +227,16 @@ Route::middleware(['auth', 'verified', 'super.admin'])
         Route::resource('billing', SuperAdminBillingController::class)->except(['edit', 'update']);
         Route::post('billing/{billing}/verify', [SuperAdminBillingController::class, 'verify'])->name('billing.verify');
 
+        // Billing Report
+        Route::prefix('billing-report')->name('billing-report.')->group(function () {
+            Route::get('/', [\App\Http\Controllers\SuperAdmin\SuperAdminBillingReportController::class, 'index'])
+                ->name('index');
+            Route::get('/export-pdf', [\App\Http\Controllers\SuperAdmin\SuperAdminBillingReportController::class, 'exportPdf'])
+                ->name('export-pdf');
+            Route::get('/export-excel', [\App\Http\Controllers\SuperAdmin\SuperAdminBillingReportController::class, 'exportExcel'])
+                ->name('export-excel');
+        });
+
         // Notifications
         Route::get('notifications', [SuperAdminNotificationController::class, 'index'])->name('notifications.index');
         Route::post('notifications/mark-all-read', [SuperAdminNotificationController::class, 'markAllRead'])->name('notifications.mark-all-read');
@@ -392,3 +402,4 @@ Route::middleware(['auth', 'verified', 'admin.kos'])
         Route::post('/cancel-bookings/{cancelBooking}/reject', [\App\Http\Controllers\Admin\AdminCancelBookingController::class, 'reject'])
             ->name('cancel-bookings.reject');
     });
+    

@@ -268,7 +268,7 @@ class SuperAdminBillingController extends Controller
     public function destroy(AdminBilling $billing)
     {
         try {
-            // ✅ Hapus semua notifikasi terkait billing ini
+            // Hapus semua notifikasi terkait billing ini
             Notification::where('admin_billing_id', $billing->id)->delete();
             
             $billing->delete();

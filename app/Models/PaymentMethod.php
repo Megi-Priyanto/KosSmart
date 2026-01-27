@@ -12,7 +12,7 @@ class PaymentMethod extends Model
         'account_number',
         'account_name',
         'instructions',
-        'qr_code_path', // ✅ Tambahkan ini
+        'qr_code_path',
         'is_active',
         'order',
     ];

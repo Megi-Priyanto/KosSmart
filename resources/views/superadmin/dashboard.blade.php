@@ -220,7 +220,7 @@
                     <span class="text-xs text-slate-300 text-center">Tambah Admin</span>
                 </a>
 
-                <a href="#" 
+                <a href="{{ route('superadmin.billing-report.index') }}" 
                    class="flex flex-col items-center justify-center p-4 bg-slate-700 hover:bg-slate-600 rounded-lg transition">
                     <svg class="w-8 h-8 text-blue-400 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 

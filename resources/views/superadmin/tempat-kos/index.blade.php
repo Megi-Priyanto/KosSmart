@@ -77,21 +77,22 @@
     <div class="bg-slate-800 rounded-xl border border-slate-700 overflow-hidden">
         <div class="overflow-x-auto">
             <table class="w-full">
-                <thead class="bg-slate-700">
+
+                <thead class="bg-slate-800/80 border-b border-slate-700">
                     <tr>
-                        <th class="px-6 py-4 text-left text-xs font-medium text-slate-300 uppercase tracking-wider">
+                        <th class="px-4 py-3 text-left text-xs font-medium text-slate-300 uppercase tracking-wider">
                             Tempat Kos
                         </th>
-                        <th class="px-6 py-4 text-left text-xs font-medium text-slate-300 uppercase tracking-wider">
+                        <th class="px-4 py-3 text-left text-xs font-medium text-slate-300 uppercase tracking-wider">
                             Lokasi
                         </th>
-                        <th class="px-6 py-4 text-center text-xs font-medium text-slate-300 uppercase tracking-wider">
+                        <th class="px-4 py-3 text-center text-xs font-medium text-slate-300 uppercase tracking-wider">
                             Statistik
                         </th>
-                        <th class="px-6 py-4 text-center text-xs font-medium text-slate-300 uppercase tracking-wider">
+                        <th class="px-4 py-3 text-center text-xs font-medium text-slate-300 uppercase tracking-wider">
                             Status
                         </th>
-                        <th class="px-6 py-4 text-center text-xs font-medium text-slate-300 uppercase tracking-wider">
+                        <th class="px-4 py-3 text-center text-xs font-medium text-slate-300 uppercase tracking-wider">
                             Aksi
                         </th>
                     </tr>

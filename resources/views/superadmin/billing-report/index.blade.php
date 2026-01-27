@@ -1,4 +1,4 @@
-@extends('layouts.admin')
+@extends('layouts.superadmin')
 
 @section('title', 'Laporan Tagihan')
 @section('page-title', 'Laporan Tagihan')
@@ -12,11 +12,11 @@
     <div class="bg-slate-800 p-6 rounded-lg border border-slate-700
         transition-all duration-300 ease-out
         hover:-translate-y-1 hover:shadow-lg hover:border-blue-500 hover:bg-slate-700">
-
+        
         <div class="flex items-center justify-between">
             <div>
                 <p class="text-sm text-slate-400">Total Tagihan</p>
-                <p class="text-2xl font-bold text-slate-100">{{ $stats['total_billings'] }}</p>
+                <p class="text-2xl font-bold text-slate-100">{{ $stats['total_count'] }}</p>
                 <p class="text-sm text-slate-100">Rp {{ number_format($stats['total_amount'], 0, ',', '.') }}</p>
             </div>
             <div class="w-12 h-12 bg-blue-500/10 rounded-lg flex items-center justify-center">
@@ -26,12 +26,11 @@
             </div>
         </div>
     </div>
-    
+
     <!-- Lunas -->
     <div class="bg-slate-800 p-6 rounded-lg border border-slate-700
         transition-all duration-300 ease-out
         hover:-translate-y-1 hover:shadow-lg hover:border-green-500 hover:bg-slate-700">
-
         <div class="flex items-center justify-between">
             <div>
                 <p class="text-sm text-slate-400">Lunas</p>
@@ -45,12 +44,11 @@
             </div>
         </div>
     </div>
-    
+
     <!-- Belum Dibayar -->
     <div class="bg-slate-800 p-6 rounded-lg border border-slate-700
         transition-all duration-300 ease-out
         hover:-translate-y-1 hover:shadow-lg hover:border-orange-500 hover:bg-slate-700">
-
         <div class="flex items-center justify-between">
             <div>
                 <p class="text-sm text-slate-400">Belum Dibayar</p>
@@ -64,12 +62,11 @@
             </div>
         </div>
     </div>
-    
+
     <!-- Terlambat -->
     <div class="bg-slate-800 p-6 rounded-lg border border-slate-700
         transition-all duration-300 ease-out
         hover:-translate-y-1 hover:shadow-lg hover:border-red-500 hover:bg-slate-700">
-
         <div class="flex items-center justify-between">
             <div>
                 <p class="text-sm text-slate-400">Terlambat</p>
@@ -87,31 +84,31 @@
 
 <!-- Filter & Export Section -->
 <div class="bg-slate-800 rounded-xl border border-slate-700 p-6 mb-6">
-    <form method="GET" action="{{ route('admin.reports.index') }}">
+    <form method="GET" action="{{ route('superadmin.billing-report.index') }}">
         <div class="grid grid-cols-1 md:grid-cols-5 gap-4 mb-4">
 
-            <!-- Start Date -->
+            <!-- Date From -->
             <div>
                 <label class="block text-sm font-medium text-slate-300 mb-2">
                     Dari Tanggal
                 </label>
                 <input type="date" 
-                       name="start_date" 
-                       value="{{ request('start_date') }}"
-                       class="w-full bg-slate-900 text-slate-100
-                              border border-slate-700 rounded-lg px-4 py-2
-                              focus:ring-2 focus:ring-purple-500 focus:border-transparent
-                              [color-scheme:dark]">
+                   name="date_from" 
+                   value="{{ request('date_from') }}"
+                   class="w-full bg-slate-900 text-slate-100
+                        border border-slate-700 rounded-lg px-4 py-2
+                        focus:ring-2 focus:ring-purple-500 focus:border-transparent
+                        [color-scheme:dark]">
             </div>
-            
-            <!-- End Date -->
+
+            <!-- Date To -->
             <div>
                 <label class="block text-sm font-medium text-slate-300 mb-2">
                     Sampai Tanggal
                 </label>
                 <input type="date" 
-                       name="end_date" 
-                       value="{{ request('end_date') }}"
+                       name="date_to" 
+                       value="{{ request('date_to') }}"
                        class="w-full bg-slate-900 text-slate-100
                               border border-slate-700 rounded-lg px-4 py-2
                               focus:ring-2 focus:ring-purple-500 focus:border-transparent
@@ -123,55 +120,52 @@
                 <label class="block text-sm font-medium text-slate-300 mb-2">
                     Status
                 </label>
-                <select name="status"
-                    class="w-full h-[46px]
+                <select name="status" 
+                        class="w-full h-[46px]
                            bg-slate-900 text-slate-100
                            border border-slate-700 rounded-lg px-4
                            focus:ring-2 focus:ring-purple-500 focus:border-transparent">
-
                     <option value="">Semua Status</option>
-                    <option value="paid" {{ request('status') == 'paid' ? 'selected' : '' }}>Lunas</option>
-                    <option value="unpaid" {{ request('status') == 'unpaid' ? 'selected' : '' }}>Belum Dibayar</option>
-                    <option value="overdue" {{ request('status') == 'overdue' ? 'selected' : '' }}>Terlambat</option>
-                    <option value="pending" {{ request('status') == 'pending' ? 'selected' : '' }}>Pending</option>
+                    <option value="unpaid" {{ request('status') === 'unpaid' ? 'selected' : '' }}>Belum Dibayar</option>
+                    <option value="pending" {{ request('status') === 'pending' ? 'selected' : '' }}>Pending</option>
+                    <option value="paid" {{ request('status') === 'paid' ? 'selected' : '' }}>Lunas</option>
+                    <option value="overdue" {{ request('status') === 'overdue' ? 'selected' : '' }}>Terlambat</option>
                 </select>
             </div>
 
-            <!-- User -->
+            <!-- Penyewa (Admin) -->
             <div>
                 <label class="block text-sm font-medium text-slate-300 mb-2">
                     Penyewa
                 </label>
-                <select name="user_id"
-                    class="w-full h-[46px]
+                <select name="admin_id" 
+                        class="w-full h-[46px]
                            bg-slate-900 text-slate-100
                            border border-slate-700 rounded-lg px-4
                            focus:ring-2 focus:ring-purple-500 focus:border-transparent">
-
                     <option value="">Semua Penyewa</option>
-                    @foreach($users as $user)
-                        <option value="{{ $user->id }}" {{ request('user_id') == $user->id ? 'selected' : '' }}>
-                            {{ $user->name }}
+                    @foreach($adminsList as $admin)
+                        <option value="{{ $admin->id }}" {{ request('admin_id') == $admin->id ? 'selected' : '' }}>
+                            {{ $admin->name }} - {{ $admin->tempatKos->nama_kos ?? 'N/A' }}
                         </option>
                     @endforeach
                 </select>
             </div>
 
-            <!-- Room -->
+            <!-- Kamar (Tempat Kos) -->
             <div>
                 <label class="block text-sm font-medium text-slate-300 mb-2">
                     Kamar
                 </label>
-                <select name="room_id"
-                    class="w-full h-[46px]
+                <select name="tempat_kos_id" 
+                        class="w-full h-[46px]
                            bg-slate-900 text-slate-100
                            border border-slate-700 rounded-lg px-4
                            focus:ring-2 focus:ring-purple-500 focus:border-transparent">
-
                     <option value="">Semua Kamar</option>
-                    @foreach($rooms as $room)
-                        <option value="{{ $room->id }}" {{ request('room_id') == $room->id ? 'selected' : '' }}>
-                            Kamar {{ $room->room_number }}
+                    @foreach($tempatKosList as $tempatKos)
+                        <option value="{{ $tempatKos->id }}" {{ request('tempat_kos_id') == $tempatKos->id ? 'selected' : '' }}>
+                            {{ $tempatKos->nama_kos }}
                         </option>
                     @endforeach
                 </select>
@@ -181,8 +175,6 @@
 
         <!-- Buttons -->
         <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-
-            <!-- Filter / Reset -->
             <div class="flex space-x-2">
                 <button type="submit"
                     class="inline-flex items-center gap-2
@@ -198,7 +190,7 @@
                     Cari
                 </button>
 
-                <a href="{{ route('admin.reports.index') }}"
+                <a href="{{ route('superadmin.billing-report.index') }}"
                    class="px-6 py-2 rounded-lg border border-slate-600
                           text-slate-300 hover:bg-slate-700 transition">
                     Reset
@@ -207,13 +199,13 @@
 
             <!-- Export -->
             <div class="flex space-x-2">
-                <a href="{{ route('admin.reports.export-pdf', request()->all()) }}"
+                <a href="{{ route('superadmin.billing-report.export-pdf', request()->query()) }}"
                    class="bg-red-600 text-white px-6 py-2 rounded-lg
                           hover:bg-red-700 transition">
                     Export PDF
                 </a>
 
-                <a href="{{ route('admin.reports.export-excel', request()->all()) }}"
+                <a href="{{ route('superadmin.billing-report.export-excel', request()->query()) }}"
                    class="bg-green-600 text-white px-6 py-2 rounded-lg
                           hover:bg-green-700 transition">
                     Export Excel
@@ -224,111 +216,70 @@
     </form>
 </div>
 
-
-<!-- Table -->
+<!-- Data Table -->
 <div class="bg-slate-800 rounded-xl border border-slate-700 overflow-hidden">
     <div class="overflow-x-auto">
         <table class="w-full">
 
             <thead class="bg-slate-800/80 border-b border-slate-700">
                 <tr>
-                    <th class="px-6 py-3 text-left text-xs font-semibold text-slate-400 uppercase">ID</th>
-                    <th class="px-6 py-3 text-left text-xs font-semibold text-slate-400 uppercase">Penyewa</th>
-                    <th class="px-6 py-3 text-left text-xs font-semibold text-slate-400 uppercase">Kamar</th>
-                    <th class="px-6 py-3 text-left text-xs font-semibold text-slate-400 uppercase">Periode</th>
-                    <th class="px-6 py-3 text-left text-xs font-semibold text-slate-400 uppercase">Jatuh Tempo</th>
-                    <th class="px-6 py-3 text-left text-xs font-semibold text-slate-400 uppercase">Total</th>
-                    <th class="px-6 py-3 text-left text-xs font-semibold text-slate-400 uppercase">Status</th>
-                    <th class="px-6 py-3 text-center text-xs font-semibold text-slate-400 uppercase">Aksi</th>
+                    <th class="px-4 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">ID</th>
+                    <th class="px-4 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">Penyewa</th>
+                    <th class="px-4 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">Kamar</th>
+                    <th class="px-4 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">Periode</th>
+                    <th class="px-4 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">Jatuh Tempo</th>
+                    <th class="px-4 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">Total</th>
+                    <th class="px-4 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">Status</th>
+                    <th class="px-4 py-3 text-center text-xs font-medium text-slate-400 uppercase tracking-wider">Aksi</th>
                 </tr>
             </thead>
-
             <tbody class="bg-slate-800 divide-y divide-slate-700">
                 @forelse($billings as $billing)
-                <tr class="odd:bg-slate-800 even:bg-slate-800/70 hover:bg-slate-700/60 transition">
-                
-                    <!-- ID -->
-                    <td class="px-6 py-4 text-sm font-medium text-slate-100">
-                        #{{ $billing->id }}
+                <tr class="hover:bg-gray-700/50 transition">
+                    <td class="px-4 py-3 text-sm text-gray-300">#{{ $billing->id }}</td>
+                    <td class="px-4 py-3">
+                        <div class="text-sm font-medium text-white">{{ $billing->admin->name }}</div>
+                        <div class="text-xs text-gray-400">{{ $billing->admin->email }}</div>
                     </td>
-                
-                    <!-- User -->
-                    <td class="px-6 py-4">
-                        <div>
-                            <p class="text-sm font-medium text-slate-100">
-                                {{ $billing->user->name }}
-                            </p>
-                            <p class="text-xs text-slate-400">
-                                {{ $billing->user->email }}
-                            </p>
-                        </div>
+                    <td class="px-4 py-3 text-sm text-gray-300">
+                        {{ $billing->tempatKos->nama_kos ?? '-' }}
                     </td>
-                
-                    <!-- Room -->
-                    <td class="px-6 py-4 text-sm font-medium text-slate-100">
-                        Kamar {{ $billing->room->room_number }}
+                    <td class="px-4 py-3 text-sm text-gray-300">
+                        {{ \Carbon\Carbon::parse($billing->billing_period . '-01')->format('F Y') }}
                     </td>
-                
-                    <!-- Period -->
-                    <td class="px-6 py-4 text-sm text-slate-300">
-                        {{ $billing->formatted_period }}
-                    </td>
-                
-                    <!-- Due Date -->
-                    <td class="px-6 py-4 text-sm text-slate-300">
-                        {{ $billing->due_date->translatedFormat('d F Y') }}
-                        @if($billing->is_overdue)
-                        <span class="block text-xs text-red-400 mt-1">
-                            ({{ abs($billing->days_until_due) }} hari terlambat)
-                        </span>
+                    <td class="px-4 py-3 text-sm">
+                        <div class="text-gray-300">{{ $billing->due_date->format('d M Y') }}</div>
+                        @if($billing->isOverdue())
+                            <div class="text-xs text-red-400">({{ $billing->due_date->diffForHumans() }})</div>
                         @endif
                     </td>
-                
-                    <!-- Amount -->
-                    <td class="px-6 py-4">
-                        <div>
-                            <p class="text-sm font-bold text-slate-100">
-                                Rp {{ number_format($billing->total_amount, 0, ',', '.') }}
-                            </p>
-                            @if($billing->status === 'paid' && $billing->paid_date)
-                            <p class="text-xs text-slate-400">
-                                Dibayar: {{ $billing->paid_date->translatedFormat('d F Y') }}
-                            </p>
-                            @endif
-                        </div>
+                    <td class="px-4 py-3">
+                        <div class="text-sm font-medium text-white">Rp {{ number_format($billing->amount, 0, ',', '.') }}</div>
+                        @if($billing->paid_at)
+                            <div class="text-xs text-green-400">Dibayar: {{ $billing->paid_at->format('d M Y') }}</div>
+                        @endif
                     </td>
-                
-                    <!-- Status -->
-                    <td class="px-6 py-4">
+                    <td class="px-4 py-3">
                         @if($billing->status === 'paid')
-                        <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold
-                                     bg-green-500/15 text-green-400 border border-green-500/30">
-                            Lunas
-                        </span>
-                    
-                        @elseif($billing->is_overdue)
-                        <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold
-                                     bg-red-500/15 text-red-400 border border-red-500/30">
-                            Terlambat
-                        </span>
-                    
+                            <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-green-900/50 text-green-400 border border-green-700">
+                                Lunas
+                            </span>
                         @elseif($billing->status === 'pending')
-                        <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold
-                                     bg-yellow-500/15 text-yellow-400 border border-yellow-500/30">
-                            Pending
-                        </span>
-                    
+                            <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-blue-900/50 text-blue-400 border border-blue-700">
+                                Pending
+                            </span>
+                        @elseif($billing->isOverdue())
+                            <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-red-900/50 text-red-400 border border-red-700">
+                                Terlambat
+                            </span>
                         @else
-                        <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold
-                                     bg-orange-500/15 text-orange-400 border border-orange-500/30">
-                            Belum Dibayar
-                        </span>
+                            <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-yellow-900/50 text-yellow-400 border border-yellow-700">
+                                Belum Dibayar
+                            </span>
                         @endif
                     </td>
-                
-                    <!-- Action -->
                     <td class="px-6 py-4 whitespace-nowrap text-center text-sm">
-                        <a href="{{ route('admin.billing.show', $billing) }}"
+                        <a href="{{ route('superadmin.billing.show', $billing) }}" 
                            class="inline-flex items-center justify-center
                                   w-10 h-10 rounded-xl
                                   bg-blue-600/20 text-blue-400
@@ -354,29 +305,25 @@
                 </tr>
                 @empty
                 <tr>
-                    <td colspan="7" class="px-6 py-12 text-center text-gray-500">
-                        <svg class="w-16 h-16 mx-auto text-slate-600 mb-4"
-                             fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                  d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    <td colspan="8" class="px-4 py-8 text-center text-gray-400">
+                        <svg class="w-12 h-12 mx-auto mb-3 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
                         </svg>
-                        <p class="text-lg font-medium mb-2">Tidak ada data</p>
-                        <p class="text-sm">Belum ada tagihan yang sesuai dengan filter</p>
+                        <p>Tidak ada data tagihan yang ditemukan</p>
                     </td>
                 </tr>
                 @endforelse
             </tbody>
-
         </table>
     </div>
-    
+
     <!-- Pagination -->
     @if($billings->hasPages())
-    <div class="px-6 py-4 border-t border-slate-700 bg-slate-800">
+    <div class="px-4 py-3 border-t border-gray-700">
         {{ $billings->links() }}
     </div>
     @endif
-    
+
 </div>
 
 @endsection

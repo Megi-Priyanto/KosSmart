@@ -14,6 +14,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * @method bool isSuperAdmin()
+ * @method bool isAdmin()
+ * @method bool isUser()
  */
 class User extends Authenticatable implements MustVerifyEmail
 {
