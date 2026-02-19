@@ -85,7 +85,7 @@
                     </div>
                     <div class="flex justify-between items-center">
                         <span class="text-xs text-gray-600">Lama Menyewa</span>
-                        <span class="text-sm font-medium text-gray-800">{{ $activeRent->start_date->diffForHumans(null, true) }}</span>
+                        <span class="text-sm font-medium text-gray-800">{{ $activeRent->created_at->diffForHumans(null, true) }}</span>
                     </div>
                     <div class="flex justify-between items-center">
                         <span class="text-xs text-gray-600">Total Pembayaran</span>

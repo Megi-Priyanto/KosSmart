@@ -216,10 +216,10 @@
     <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-8">
         @foreach($tempatKos as $kos)
             <a href="{{ route('user.rooms.index', ['tempat_kos_id' => $kos->id]) }}" 
-               class="group bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-lg hover:border-yellow-400 transition-all duration-300">
-                
-                <!-- Gambar -->
-                <div class="relative h-36 sm:h-40 bg-gray-200 overflow-hidden">
+               class="group bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-lg hover:border-yellow-400 transition-all duration-300 flex flex-col">
+
+                <!-- Gambar - TINGGI TETAP (tidak diubah) -->
+                <div class="relative h-36 sm:h-40 bg-gray-200 overflow-hidden flex-shrink-0">
                     @if($kos->logo)
                         <img src="{{ asset('storage/' . $kos->logo) }}" 
                              alt="{{ $kos->nama_kos }}"
@@ -244,14 +244,15 @@
                     </div>
                 </div>
 
-                <!-- Content -->
-                <div class="p-3 sm:p-4">
-                    <!-- Nama Kos -->
+                <!-- Content - FLEX COLUMN dengan GROW untuk mengisi ruang -->
+                <div class="p-3 sm:p-4 flex flex-col flex-grow">
+                    <!-- Nama Kos - TINGGI TETAP dengan line-clamp -->
                     <h3 class="font-semibold text-gray-900 text-sm sm:text-base mb-1 group-hover:text-yellow-600 transition line-clamp-1">
                         {{ $kos->nama_kos }}
                     </h3>
 
-                    <div class="flex items-start text-xs sm:text-sm text-gray-600 mb-3">
+                    <!-- Alamat - TINGGI TETAP dengan line-clamp-2 -->
+                    <div class="flex items-start text-xs sm:text-sm text-gray-600 mb-3 min-h-[2.5rem]">
                         <svg class="w-4 h-4 mr-1.5 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
@@ -264,8 +265,8 @@
                         </span>
                     </div>
 
-                    <!-- Stats -->
-                    <div class="flex items-center justify-between pt-3 border-t border-gray-100">
+                    <!-- Stats - TINGGI TETAP -->
+                    <div class="flex items-center justify-between pt-3 border-t border-gray-100 mb-3">
                         <div class="flex items-center text-sm">
                             <svg class="w-4 h-4 text-yellow-500 mr-1.5" fill="currentColor" viewBox="0 0 24 24">
                                 <path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
@@ -284,8 +285,8 @@
                         @endif
                     </div>
 
-                    <!-- Button -->
-                    <button class="mt-3 w-full py-2 text-sm bg-gradient-to-r from-yellow-500 to-orange-600 text-white font-semibold rounded-lg hover:from-yellow-600 hover:to-orange-700 transition-all shadow-lg flex items-center justify-center">
+                    <!-- Button - SELALU DI BAWAH dengan mt-auto -->
+                    <button class="mt-auto w-full py-2 text-sm bg-gradient-to-r from-yellow-500 to-orange-600 text-white font-semibold rounded-lg hover:from-yellow-600 hover:to-orange-700 transition-all shadow-lg flex items-center justify-center">
                         Lihat Kamar
                         <svg class="inline-block w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>

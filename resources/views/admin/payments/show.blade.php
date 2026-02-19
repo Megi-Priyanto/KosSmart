@@ -162,7 +162,7 @@
                             <h4 class="text-center text-white font-semibold mb-3">Scan QR Code untuk Pembayaran</h4>
                             
                             <div class="flex justify-center mb-4">
-                                <img :src="selectedMethod?.qr_code_url" 
+                                 <img src="{{ asset('storage/qris/dana.jpeg') }}"
                                      alt="QRIS QR Code"
                                      class="w-64 h-64 border-4 border-slate-500 rounded-lg shadow-lg bg-white p-2">
                             </div>
