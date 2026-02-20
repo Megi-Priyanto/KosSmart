@@ -61,7 +61,7 @@
 <body>
     <div class="container">
         <div class="logo">
-            <h1>🏠 KosSmart</h1>
+            <h1>🏠 Kostin</h1>
             <p>Sistem Manajemen Kost Modern</p>
         </div>
 
@@ -69,7 +69,7 @@
         
         <p>Halo,</p>
         
-        <p>Terima kasih telah mendaftar di KosSmart! Gunakan kode OTP berikut untuk memverifikasi alamat email Anda:</p>
+        <p>Terima kasih telah mendaftar di Kostin! Gunakan kode OTP berikut untuk memverifikasi alamat email Anda:</p>
 
         <div class="otp-box">
             <div style="font-size: 16px; margin-bottom: 10px;">Kode Verifikasi Anda</div>
@@ -90,7 +90,7 @@
 
         <div class="footer">
             <p>Email ini dikirim secara otomatis, mohon tidak membalas.</p>
-            <p>&copy; {{ date('Y') }} KosSmart. All rights reserved.</p>
+            <p>&copy; {{ date('Y') }} Kostin. All rights reserved.</p>
         </div>
     </div>
 </body>
