@@ -10,125 +10,6 @@
 
 @section('content')
 
-<!-- Alert Tagihan Overdue -->
-@php
-    $overdueNotifications = \App\Models\Notification::where('user_id', Auth::id())
-        ->where('type', 'billing')
-        ->where('status', 'unread')
-        ->whereNotNull('due_date')
-        ->whereDate('due_date', '<', now())
-        ->latest()
-        ->get();
-@endphp
-
-@if($overdueNotifications->count() > 0)
-<div class="mb-6 px-6 py-5 bg-slate-800 border border-red-500/40 rounded-xl shadow-sm">
-    <div class="flex items-start gap-4">
-        <div class="p-2 bg-red-500/20 rounded-lg">
-            <svg class="w-6 h-6 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
-            </svg>
-        </div>
-        <div class="flex-1">
-            <h3 class="font-semibold text-red-300 mb-1">
-                Tagihan Operasional Terlambat!
-            </h3>
-            <p class="text-sm text-slate-300 mb-4">
-                Anda memiliki {{ $overdueNotifications->count() }} tagihan yang sudah melewati jatuh tempo. Segera lakukan pembayaran.
-            </p>
-            <div class="space-y-2 mb-4">
-                @foreach($overdueNotifications->take(2) as $notif)
-                <div class="flex items-center justify-between px-3 py-2 bg-slate-900 border border-slate-700 rounded-lg">
-                    <div>
-                        <p class="text-sm font-medium text-white">{{ $notif->title }}</p>
-                        <p class="text-xs text-slate-400">{{ $notif->message }}</p>
-                    </div>
-                    @if($notif->admin_billing_id)
-                    <a href="{{ route('admin.payments.show', $notif->admin_billing_id) }}" 
-                       class="text-sm font-medium text-red-400 hover:text-red-300">
-                        Bayar →
-                    </a>
-                    @endif
-                </div>
-                @endforeach
-            </div>
-            <a href="{{ route('admin.payments.index') }}" class="inline-flex items-center text-sm font-medium text-red-400 hover:text-red-300">
-                Lihat Semua Tagihan
-                <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-                </svg>
-            </a>
-        </div>
-    </div>
-</div>
-@endif
-
-<!-- Alert Tagihan Baru dari Super Admin -->
-@php
-    $newBillingNotifications = \App\Models\Notification::where('user_id', Auth::id())
-        ->where('type', 'billing')
-        ->where('status', 'unread')
-        ->whereNotNull('admin_billing_id')
-        ->whereNull('due_date')
-        ->orWhere(function($q) {
-            $q->where('user_id', Auth::id())
-              ->where('type', 'billing')
-              ->where('status', 'unread')
-              ->whereNotNull('due_date')
-              ->whereDate('due_date', '>=', now());
-        })
-        ->latest()
-        ->get();
-@endphp
-
-@if($newBillingNotifications->count() > 0)
-<div class="mb-6 px-6 py-5 bg-slate-800 border border-yellow-500/40 rounded-xl shadow-sm">
-    <div class="flex items-start gap-4">
-        <div class="p-2 bg-yellow-500/20 rounded-lg">
-            <svg class="w-6 h-6 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-                      d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
-            </svg>
-        </div>
-        <div class="flex-1">
-            <h3 class="font-semibold text-yellow-300 mb-1">
-                {{ $newBillingNotifications->count() }} Tagihan Operasional Baru
-            </h3>
-            <p class="text-sm text-slate-300 mb-4">
-                Anda memiliki tagihan operasional baru dari Super Admin yang perlu dibayar.
-            </p>
-            <div class="space-y-2 mb-4">
-                @foreach($newBillingNotifications->take(2) as $notif)
-                <div class="flex items-center justify-between px-3 py-2 bg-slate-900 border border-slate-700 rounded-lg hover:border-yellow-400/50 transition">
-                    <div>
-                        <p class="text-sm font-medium text-white">{{ $notif->title }}</p>
-                        <p class="text-xs text-slate-400">{{ $notif->message }}</p>
-                        @if($notif->due_date)
-                        <p class="text-xs text-slate-500 mt-1">
-                            Jatuh tempo: {{ $notif->due_date->format('d M Y') }}
-                        </p>
-                        @endif
-                    </div>
-                    @if($notif->admin_billing_id)
-                    <a href="{{ route('admin.payments.show', $notif->admin_billing_id) }}" 
-                       class="text-sm font-medium text-yellow-400 hover:text-yellow-300">
-                        Lihat →
-                    </a>
-                    @endif
-                </div>
-                @endforeach
-            </div>
-            <a href="{{ route('admin.payments.index') }}" class="inline-flex items-center text-sm font-medium text-yellow-400 hover:text-yellow-300">
-                Lihat Semua Tagihan
-                <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-                </svg>
-            </a>
-        </div>
-    </div>
-</div>
-@endif
-
 <!-- Alert Booking Pending -->
 @if(isset($pendingBookingsCount) && $pendingBookingsCount > 0)
 <div class="mb-6 px-6 py-5 bg-slate-800 border border-yellow-500/40 rounded-xl shadow-sm">
@@ -345,7 +226,8 @@
 @endif
 
 <!-- Statistics Cards -->
-<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+<div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mb-8">
+
     <!-- Total Kamar -->
     <a href="{{ route('admin.rooms.index') }}" class="bg-slate-800 p-6 rounded-lg border border-slate-700 transition-all duration-300 ease-out hover:-translate-y-1 hover:shadow-lg hover:border-purple-600 hover:bg-slate-700">
         <div class="flex items-center justify-between">
@@ -363,11 +245,13 @@
     </a>
 
     <!-- Pendapatan Bulanan -->
+    {{-- PERUBAHAN: Hanya muncul saat superadmin sudah cairkan dana (dari disbursement) --}}
     <a href="{{ route('admin.reports.index') }}" class="bg-slate-800 p-6 rounded-lg border border-slate-700 transition-all duration-300 ease-out hover:-translate-y-1 hover:shadow-lg hover:border-green-600 hover:bg-slate-700">
         <div class="flex items-center justify-between">
-            <div>
+            <div class="flex-1 min-w-0">
                 <p class="text-gray-300 text-sm font-medium">Pendapatan Bulanan</p>
                 <p class="text-3xl font-bold text-white mt-2">Rp {{ number_format($monthlyIncome ?? 0, 0, ',', '.') }}</p>
+
                 @if($incomeChangePercent > 0)
                     <p class="text-sm text-green-400 mt-1">↑ {{ $incomeChangePercent }}% dari bulan lalu</p>
                 @elseif($incomeChangePercent < 0)
@@ -375,8 +259,15 @@
                 @else
                     <p class="text-sm text-gray-400 mt-1">Tidak ada perubahan</p>
                 @endif
+
+                {{-- INFO: dana yang masih menunggu dari superadmin --}}
+                @if(($holdingAmount ?? 0) > 0)
+                <p class="text-xs text-amber-400 mt-1.5">
+                    🕐 Rp {{ number_format($holdingAmount, 0, ',', '.') }} menunggu pencairan
+                </p>
+                @endif
             </div>
-            <div class="bg-green-500/20 p-3 rounded-lg">
+            <div class="bg-green-500/20 p-3 rounded-lg flex-shrink-0 ml-2">
                 <svg class="w-8 h-8 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                 </svg>
@@ -385,11 +276,13 @@
     </a>
 
     <!-- Pendapatan Tahunan -->
+    {{-- PERUBAHAN: Hanya muncul saat superadmin sudah cairkan dana (dari disbursement) --}}
     <a href="{{ route('admin.reports.index') }}" class="bg-slate-800 p-6 rounded-lg border border-slate-700 transition-all duration-300 ease-out hover:-translate-y-1 hover:shadow-lg hover:border-blue-600 hover:bg-slate-700">
         <div class="flex items-center justify-between">
-            <div>
+            <div class="flex-1 min-w-0">
                 <p class="text-gray-300 text-sm font-medium">Pendapatan Tahunan</p>
                 <p class="text-3xl font-bold text-white mt-2">Rp {{ number_format($yearlyIncome ?? 0, 0, ',', '.') }}</p>
+
                 @if($yearlyIncomeChangePercent > 0)
                     <p class="text-sm text-green-400 mt-1">↑ {{ $yearlyIncomeChangePercent }}% dari tahun lalu</p>
                 @elseif($yearlyIncomeChangePercent < 0)
@@ -397,8 +290,10 @@
                 @else
                     <p class="text-sm text-gray-400 mt-1">Tidak ada perubahan</p>
                 @endif
+
+                <p class="text-xs text-slate-500 mt-1">Dana setelah dipotong fee platform</p>
             </div>
-            <div class="bg-blue-500/20 p-3 rounded-lg">
+            <div class="bg-blue-500/20 p-3 rounded-lg flex-shrink-0 ml-2">
                 <svg class="w-8 h-8 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
                 </svg>

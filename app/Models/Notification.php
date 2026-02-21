@@ -18,8 +18,8 @@ class Notification extends Model
         'user_id',
         'rent_id',
         'room_id',
+        'payment_id',
         'billing_id',
-        'admin_billing_id',
         'due_date',
         'status',
     ];
@@ -28,6 +28,11 @@ class Notification extends Model
         'due_date' => 'datetime',
     ];
 
+    /*
+    |--------------------------------------------------------------------------
+    | RELASI
+    |--------------------------------------------------------------------------
+    */
     public function tempatKos(): BelongsTo
     {
         return $this->belongsTo(TempatKos::class);
@@ -49,7 +54,7 @@ class Notification extends Model
     }
 
     /**
-     * Relasi untuk User Billing (penyewa kos)
+     * Relasi ke billing (tagihan penyewa kos)
      */
     public function billing(): BelongsTo
     {
@@ -57,14 +62,19 @@ class Notification extends Model
     }
 
     /**
-     * Relasi untuk Admin Billing (superadmin → admin)
+     * Relasi ke payment yang dikonfirmasi admin
+     * Digunakan untuk notifikasi superadmin → link ke disbursement
      */
-    public function adminBilling(): BelongsTo
+    public function payment(): BelongsTo
     {
-        return $this->belongsTo(AdminBilling::class, 'admin_billing_id');
+        return $this->belongsTo(Payment::class, 'payment_id');
     }
 
-    // Scopes
+    /*
+    |--------------------------------------------------------------------------
+    | SCOPES
+    |--------------------------------------------------------------------------
+    */
     public function scopeUnread($query)
     {
         return $query->where('status', 'unread');
@@ -80,7 +90,11 @@ class Notification extends Model
         return $query->where('type', $type);
     }
 
-    // Helpers
+    /*
+    |--------------------------------------------------------------------------
+    | HELPERS
+    |--------------------------------------------------------------------------
+    */
     public function markAsRead(): bool
     {
         return $this->update(['status' => 'read']);
@@ -91,28 +105,32 @@ class Notification extends Model
         return $this->update(['status' => 'unread']);
     }
 
-    // Accessors
+    /*
+    |--------------------------------------------------------------------------
+    | ACCESSORS
+    |--------------------------------------------------------------------------
+    */
     public function getTypeLabelAttribute(): string
     {
         return match($this->type) {
-            'booking' => 'Booking',
-            'billing' => 'Tagihan',
-            'payment' => 'Pembayaran',
+            'booking'  => 'Booking',
+            'billing'  => 'Tagihan',
+            'payment'  => 'Pembayaran',
             'checkout' => 'Checkout',
             'reminder' => 'Pengingat',
-            default => 'Notifikasi',
+            default    => 'Notifikasi',
         };
     }
 
     public function getTypeIconAttribute(): string
     {
         return match($this->type) {
-            'booking' => '📋',
-            'billing' => '💰',
-            'payment' => '💳',
+            'booking'  => '📋',
+            'billing'  => '💰',
+            'payment'  => '💳',
             'checkout' => '🚪',
             'reminder' => '⏰',
-            default => '🔔',
+            default    => '🔔',
         };
     }
 }

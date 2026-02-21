@@ -35,8 +35,8 @@ class ReportController extends Controller
 
         $this->applyFilters($query, $request);
 
-        $sortBy = $request->get('sort', 'due_date');
-        $sortOrder = $request->get('order', 'desc');
+        $sortBy = $request->get('sort', 'id');
+        $sortOrder = $request->get('order', 'asc');
         $query->orderBy($sortBy, $sortOrder);
 
         $billings = $query->paginate(20)->withQueryString();

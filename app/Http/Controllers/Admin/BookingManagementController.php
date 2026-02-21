@@ -11,35 +11,39 @@ use Illuminate\Support\Facades\DB;
 class BookingManagementController extends Controller
 {
     /**
-     * Display bookings
-     * 
-     * Global Scope otomatis filter berdasarkan tempat_kos_id
+     * Display bookings.
+     *
+     * Global Scope otomatis filter berdasarkan tempat_kos_id.
      */
     public function index(Request $request)
     {
         /** @var \App\Models\User $user */
         $user = auth()->user();
 
-        // Query builder
         if ($user->isSuperAdmin()) {
-            // Super Admin: Lihat semua booking
             $query = Rent::withoutTempatKosScope()->with(['user', 'room']);
         } else {
-            // Admin: Hanya booking di kos miliknya (auto-filtered)
             $query = Rent::with(['user', 'room']);
         }
 
-        // Filter by status
         if ($request->filled('status')) {
             $query->where('status', $request->status);
         } else {
             $query->whereIn('status', ['pending', 'active']);
         }
 
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->whereHas('user', fn($u) => $u->where('name', 'like', "%{$search}%")
+                    ->orWhere('email', 'like', "%{$search}%"))
+                    ->orWhereHas('room', fn($r) => $r->where('room_number', 'like', "%{$search}%"));
+            });
+        }
+
         $bookings = $query->latest()->paginate(15);
 
-        // Count pending (otomatis filtered)
-        $pendingCount = $user->isSuperAdmin() 
+        $pendingCount = $user->isSuperAdmin()
             ? Rent::withoutTempatKosScope()->where('status', 'pending')->count()
             : Rent::where('status', 'pending')->count();
 
@@ -47,21 +51,22 @@ class BookingManagementController extends Controller
     }
 
     /**
-     * Show booking detail
-     * 
-     * Model binding sudah ter-filter otomatis
+     * Show booking detail.
      */
     public function show(Rent $booking)
     {
-        // Model binding otomatis cek ownership via Global Scope
         $booking->load(['user', 'room.kosInfo', 'dpVerifier']);
         return view('admin.bookings.show', compact('booking'));
     }
 
     /**
-     * Approve booking
-     * 
-     * Model binding otomatis validasi ownership
+     * Approve booking.
+     *
+     * === PERUBAHAN UTAMA ===
+     * Billing DP yang dibuat saat approve:
+     * - status = 'paid' (karena user sudah bayar)
+     * - Payment DP dibuat dengan disbursement_status = 'holding'
+     * → Dana DP masuk ke holding Superadmin, bukan langsung ke Admin kos.
      */
     public function approve(Request $request, Rent $booking)
     {
@@ -73,91 +78,121 @@ class BookingManagementController extends Controller
             return back()->with('error', 'Booking ini sudah diproses sebelumnya.');
         }
 
-        // Validasi metode pembayaran
         if (!$booking->payment_method || !$booking->payment_sub_method) {
             return back()->with('error', 'Metode pembayaran tidak valid.');
         }
 
-        // Validasi bukti pembayaran
         if (!$booking->notes || !str_contains($booking->notes, 'Bukti DP:')) {
             return back()->with('error', 'Bukti pembayaran tidak ditemukan.');
         }
 
         DB::beginTransaction();
         try {
-            $year = now()->year;
-            $month = now()->month;
+            $year   = now()->year;
+            $month  = now()->month;
             $period = now()->format('Y-m');
 
-            // Update booking & payment status
+            // Update booking status
             $booking->update([
-                'status' => 'active',
-                'admin_notes' => $request->admin_notes,
-                'approved_at' => now(),
-                'approved_by' => Auth::id(),
-                'dp_paid' => true,
-                'dp_payment_status' => 'approved',
-                'dp_verified_at' => now(),
-                'dp_verified_by' => Auth::id(),
+                'status'             => 'active',
+                'admin_notes'        => $request->admin_notes,
+                'approved_at'        => now(),
+                'approved_by'        => Auth::id(),
+                'dp_paid'            => true,
+                'dp_payment_status'  => 'approved',
+                'dp_verified_at'     => now(),
+                'dp_verified_by'     => Auth::id(),
             ]);
 
             // Update room status
             $booking->room->update(['status' => 'occupied']);
 
-            // Hitung DP & Pelunasan
-            $harga = $booking->room->price;
-            $dp = $harga / 2;
-            $sisaPembayaran = $harga - $dp;
+            // Hitung DP & sisa pelunasan
+            $harga           = $booking->room->price;
+            $dp              = $harga / 2;
+            $sisaPembayaran  = $harga - $dp;
 
+            // ============================================================
             // Buat Billing DP (sudah dibayar)
             // tempat_kos_id otomatis terisi via trait
-            \App\Models\Billing::firstOrCreate(
+            // ============================================================
+            $billingDp = \App\Models\Billing::firstOrCreate(
                 [
-                    'rent_id' => $booking->id,
-                    'billing_year' => $year,
+                    'rent_id'       => $booking->id,
+                    'billing_year'  => $year,
                     'billing_month' => $month,
-                    'tipe' => 'dp',
+                    'tipe'          => 'dp',
                 ],
                 [
-                    'user_id' => $booking->user_id,
-                    'room_id' => $booking->room_id,
-                    'jumlah' => $dp,
-                    'status' => 'paid',
-                    'keterangan' => 'DP 50% sewa kamar via ' . $booking->payment_method_label . ' (' . $booking->payment_sub_method_label . ')',
+                    'user_id'        => $booking->user_id,
+                    'room_id'        => $booking->room_id,
+                    'jumlah'         => $dp,
+                    'status'         => 'paid',
+                    'keterangan'     => 'DP 50% sewa kamar via ' . $booking->payment_method_label . ' (' . $booking->payment_sub_method_label . ')',
                     'billing_period' => $period,
-                    'rent_amount' => $dp,
-                    'subtotal' => $dp,
-                    'discount' => 0,
-                    'total_amount' => $dp,
-                    'due_date' => now(),
-                    'paid_date' => now(),
+                    'rent_amount'    => $dp,
+                    'subtotal'       => $dp,
+                    'discount'       => 0,
+                    'total_amount'   => $dp,
+                    'due_date'       => now(),
+                    'paid_date'      => now(),
                 ]
             );
 
+            // ============================================================
+            // === PERUBAHAN UTAMA ===
+            // Buat Payment record untuk DP dengan disbursement_status = 'holding'
+            // Dana DP masuk ke platform (Superadmin) — belum ke Admin kos
+            // ============================================================
+            \App\Models\Payment::firstOrCreate(
+                [
+                    'billing_id' => $billingDp->id,
+                    'status'     => 'confirmed',
+                ],
+                [
+                    'tempat_kos_id'       => $booking->tempat_kos_id,
+                    'user_id'             => $booking->user_id,
+                    'amount'              => $dp,
+                    'payment_method'      => $booking->payment_method,
+                    'payment_type'        => $booking->payment_method,
+                    'payment_sub_method'  => $booking->payment_sub_method,
+                    'status'              => 'confirmed',
+                    'payment_date'        => now(),
+                    'notes'               => 'DP Booking - diverifikasi admin saat approve',
+                    'verified_by'         => Auth::id(),
+                    'verified_at'         => now(),
+                    // === HOLDING: Dana masuk ke platform, bukan langsung ke Admin ===
+                    'disbursement_status' => 'holding',
+                    'disbursement_id'     => null,
+                ]
+            );
+
+            // ============================================================
             // Buat Billing Pelunasan (belum dibayar)
+            // ============================================================
             \App\Models\Billing::firstOrCreate(
                 [
-                    'rent_id' => $booking->id,
-                    'billing_year' => $year,
+                    'rent_id'       => $booking->id,
+                    'billing_year'  => $year,
                     'billing_month' => $month,
-                    'tipe' => 'pelunasan',
+                    'tipe'          => 'pelunasan',
                 ],
                 [
-                    'user_id' => $booking->user_id,
-                    'room_id' => $booking->room_id,
-                    'jumlah' => $sisaPembayaran,
-                    'status' => 'unpaid',
-                    'keterangan' => 'Pelunasan 50% sisa pembayaran sewa kamar',
+                    'user_id'        => $booking->user_id,
+                    'room_id'        => $booking->room_id,
+                    'jumlah'         => $sisaPembayaran,
+                    'status'         => 'unpaid',
+                    'keterangan'     => 'Pelunasan 50% sisa pembayaran sewa kamar',
                     'billing_period' => $period,
-                    'rent_amount' => $sisaPembayaran,
-                    'subtotal' => $sisaPembayaran,
-                    'discount' => 0,
-                    'total_amount' => $sisaPembayaran,
-                    'due_date' => now()->addDays(5),
+                    'rent_amount'    => $sisaPembayaran,
+                    'subtotal'       => $sisaPembayaran,
+                    'discount'       => 0,
+                    'total_amount'   => $sisaPembayaran,
+                    'due_date'       => now()->addDays(5),
                 ]
             );
 
-            // Buat notifikasi
+            // Buat notifikasi pelunasan ke user
             app(\App\Http\Controllers\Admin\NotificationController::class)
                 ->createDpNotification($booking);
 
@@ -165,7 +200,7 @@ class BookingManagementController extends Controller
 
             return redirect()
                 ->route('admin.bookings.index')
-                ->with('success', "Pembayaran disetujui! Booking kamar {$booking->room->room_number} aktif.");
+                ->with('success', "Booking kamar {$booking->room->room_number} disetujui! Dana DP tercatat di platform.");
         } catch (\Exception $e) {
             DB::rollBack();
             return back()->with('error', 'Gagal menyetujui booking: ' . $e->getMessage());
@@ -173,7 +208,8 @@ class BookingManagementController extends Controller
     }
 
     /**
-     * Reject booking
+     * Reject booking.
+     * Tidak ada perubahan — booking yang di-reject tidak punya payment confirmed.
      */
     public function reject(Request $request, Rent $booking)
     {
@@ -189,40 +225,38 @@ class BookingManagementController extends Controller
 
         DB::beginTransaction();
         try {
-            // Update payment rejection
             $booking->update([
-                'dp_payment_status' => 'rejected',
-                'dp_rejection_reason' => $request->admin_notes,
-                'dp_verified_at' => now(),
-                'dp_verified_by' => Auth::id(),
-                'status' => 'cancelled',
-                'admin_notes' => $request->admin_notes,
-                'end_date' => now(),
-                'approved_by' => Auth::id(),
+                'dp_payment_status'    => 'rejected',
+                'dp_rejection_reason'  => $request->admin_notes,
+                'dp_verified_at'       => now(),
+                'dp_verified_by'       => Auth::id(),
+                'status'               => 'cancelled',
+                'admin_notes'          => $request->admin_notes,
+                'end_date'             => now(),
+                'approved_by'          => Auth::id(),
             ]);
 
-            // Kembalikan room status
             $booking->room->update(['status' => 'available']);
 
             DB::commit();
 
             return redirect()
                 ->route('admin.bookings.index')
-                ->with('success', "Pembayaran ditolak. Booking dibatalkan.");
+                ->with('success', 'Booking ditolak.');
         } catch (\Exception $e) {
             DB::rollBack();
-            return back()->with('error', 'Gagal menolak pembayaran: ' . $e->getMessage());
+            return back()->with('error', 'Gagal menolak booking: ' . $e->getMessage());
         }
     }
 
     /**
-     * Get pending count
+     * Get pending count.
      */
     public function getPendingCount()
     {
         /** @var \App\Models\User $user */
         $user = auth()->user();
-        
+
         return $user->isSuperAdmin()
             ? Rent::withoutTempatKosScope()->where('status', 'pending')->count()
             : Rent::where('status', 'pending')->count();

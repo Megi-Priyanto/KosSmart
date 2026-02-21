@@ -83,11 +83,27 @@
 
 <!-- Filters -->
 <div class="bg-slate-800 rounded-xl border border-slate-700 p-6 mb-6">
-    <form method="GET" class="flex gap-3 justify-end">
-        <select name="status" class="px-4 py-2 bg-slate-900 text-gray-100
-                border border-slate-700 rounded-lg
-                focus:ring-2 focus:ring-purple-500 focus:border-purple-500
-                transition-all duration-200">
+    <form method="GET" class="flex gap-3 items-center">
+        {{-- Search --}}
+        <div class="relative flex-1">
+            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                </svg>
+            </div>
+            <input type="text" name="search" value="{{ request('search') }}"
+                   placeholder="Cari nama penyewa atau nomor kamar..."
+                   class="w-full pl-10 pr-4 py-2 bg-slate-900 text-slate-100
+                          border border-slate-700 rounded-lg
+                          focus:ring-2 focus:ring-purple-500 focus:border-purple-500
+                          placeholder-slate-500 transition-all duration-200">
+        </div>
+
+        <div class="flex gap-3 flex-shrink-0">
+            <select name="status" class="px-4 py-2 bg-slate-900 text-gray-100
+                    border border-slate-700 rounded-lg
+                    focus:ring-2 focus:ring-purple-500 focus:border-purple-500
+                    transition-all duration-200">
 
             <option value="">Semua Status</option>
             <option value="pending" {{ request('status') == 'pending' ? 'selected' : '' }}>Pending</option>
@@ -95,27 +111,28 @@
             <option value="cancelled" {{ request('status') == 'cancelled' ? 'selected' : '' }}>Cancelled</option>
             <option value="expired" {{ request('status') == 'expired' ? 'selected' : '' }}>Expired</option>
         </select>
-        
-        <button type="submit"
-            class="inline-flex items-center gap-2
-                bg-gradient-to-r from-yellow-500 to-orange-600
-                text-white font-semibold
-                px-5 py-2 rounded-lg
-                hover:from-yellow-600 hover:to-orange-700
-                transition-all shadow-lg">
-            <svg class="w-5 h-5 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                      d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-            </svg>
-            Cari
-        </button>
-        
-        @if(request()->has('status'))
-        <a href="{{ route('admin.bookings.index') }}"
-           class="px-4 py-2 border border-slate-600 text-slate-300 hover:bg-slate-700 rounded-lg">
-            Reset
-        </a>
-        @endif
+
+            <button type="submit"
+                class="inline-flex items-center gap-2
+                    bg-gradient-to-r from-yellow-500 to-orange-600
+                    text-white font-semibold
+                    px-5 py-2 rounded-lg
+                    hover:from-yellow-600 hover:to-orange-700
+                    transition-all shadow-lg flex-shrink-0">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                </svg>
+                Cari
+            </button>
+
+            @if(request()->hasAny(['status', 'search']))
+            <a href="{{ route('admin.bookings.index') }}"
+               class="px-4 py-2 border border-slate-600 text-slate-300 hover:bg-slate-700 rounded-lg flex-shrink-0">
+                Reset
+            </a>
+            @endif
+        </div>
     </form>
 </div>
 

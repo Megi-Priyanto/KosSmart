@@ -121,27 +121,6 @@
             </svg>
             <span x-show="sidebarOpen">Kelola Laporan</span>
         </a>
-
-        <!-- Tagihan Operasional -->
-        <a href="{{ route('admin.payments.index') }}" 
-           class="flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-700 transition-colors 
-                  {{ request()->routeIs('admin.payments.*') ? 'bg-gray-700 text-yellow-400' : 'text-gray-300' }}">
-            <svg class="w-6 h-6 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                      d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/>
-            </svg>
-            
-            @php
-                // Badge untuk Tagihan Operasional (AdminBilling) yang unpaid
-                $unpaidOperationalBilling = \App\Models\AdminBilling::where('admin_id', Auth::id())
-                    ->where('status', 'unpaid')
-                    ->count();
-            @endphp
-            
-            <div class="flex justify-between items-center flex-1" x-show="sidebarOpen">
-                <span>Tagihan Operasional</span>
-            </div>
-        </a>
         
     </nav>
     

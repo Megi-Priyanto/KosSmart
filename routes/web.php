@@ -20,9 +20,7 @@ use App\Http\Controllers\Admin\AdminProfileController;
 use App\Http\Controllers\Admin\BookingManagementController;
 use App\Http\Controllers\User\UserProfileController;
 use App\Http\Controllers\Admin\NotificationController;
-use App\Http\Controllers\Admin\AdminPaymentController;
-use App\Http\Controllers\SuperAdmin\SuperAdminBillingController;
-use App\Http\Controllers\SuperAdmin\SuperAdminNotificationController;
+use App\Http\Controllers\SuperAdmin\DisbursementController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -223,11 +221,7 @@ Route::middleware(['auth', 'verified', 'super.admin'])
         // User Management (Super Admin only)
         Route::resource('users', \App\Http\Controllers\SuperAdmin\UserController::class);
 
-        // Billing Management
-        Route::resource('billing', SuperAdminBillingController::class)->except(['edit', 'update']);
-        Route::post('billing/{billing}/verify', [SuperAdminBillingController::class, 'verify'])->name('billing.verify');
-
-        // Billing Report
+        // Billing Report (Laporan Tagihan - tetap dipertahankan)
         Route::prefix('billing-report')->name('billing-report.')->group(function () {
             Route::get('/', [\App\Http\Controllers\SuperAdmin\SuperAdminBillingReportController::class, 'index'])
                 ->name('index');
@@ -238,8 +232,15 @@ Route::middleware(['auth', 'verified', 'super.admin'])
         });
 
         // Notifications
-        Route::get('notifications', [SuperAdminNotificationController::class, 'index'])->name('notifications.index');
-        Route::post('notifications/mark-all-read', [SuperAdminNotificationController::class, 'markAllRead'])->name('notifications.mark-all-read');
+        Route::get('notifications', [\App\Http\Controllers\SuperAdmin\SuperAdminNotificationController::class, 'index'])->name('notifications.index');
+        Route::post('notifications/mark-all-read', [\App\Http\Controllers\SuperAdmin\SuperAdminNotificationController::class, 'markAllRead'])->name('notifications.mark-all-read');
+
+        Route::post('notifications/{notification}/mark-read', function (\App\Models\Notification $notification) {
+            if ($notification->user_id === auth()->id()) {
+                $notification->markAsRead();
+            }
+            return response()->json(['success' => true]);
+        })->name('notifications.mark-read');
 
         // System Settings
         Route::prefix('settings')->name('settings.')->group(function () {
@@ -247,6 +248,38 @@ Route::middleware(['auth', 'verified', 'super.admin'])
                 ->name('index');
             Route::put('/update', [\App\Http\Controllers\SuperAdmin\SettingController::class, 'update'])
                 ->name('update');
+        });
+
+        // ============================================================
+        // DISBURSEMENT ROUTES
+        // Superadmin mencairkan dana holding ke admin kos
+        // ============================================================
+        Route::prefix('disbursements')->name('disbursements.')->group(function () {
+
+            // GET /superadmin/disbursements
+            // Dashboard: ringkasan holding & riwayat disbursement
+            Route::get('/', [DisbursementController::class, 'index'])
+                ->name('index');
+
+            // GET /superadmin/disbursements/create?tempat_kos_id=X
+            // Form: pilih payment holding untuk dicairkan
+            Route::get('/create', [DisbursementController::class, 'create'])
+                ->name('create');
+
+            // POST /superadmin/disbursements
+            // Proses: cairkan dana ke admin
+            Route::post('/', [DisbursementController::class, 'store'])
+                ->name('store');
+
+            // GET /superadmin/disbursements/{disbursement}
+            // Detail satu disbursement
+            Route::get('/{disbursement}', [DisbursementController::class, 'show'])
+                ->name('show');
+
+            // GET /superadmin/disbursements/holding-summary (AJAX)
+            // API endpoint untuk widget dashboard
+            Route::get('/api/holding-summary', [DisbursementController::class, 'holdingSummary'])
+                ->name('holding-summary');
         });
     });
 
@@ -384,11 +417,6 @@ Route::middleware(['auth', 'verified', 'admin.kos'])
             Route::post('/notifications/item/{item}/process', 'processItem')->name('notifications.process');
         });
 
-        // Admin Payments
-        Route::get('payments', [AdminPaymentController::class, 'index'])->name('payments.index');
-        Route::get('payments/{billing}', [AdminPaymentController::class, 'show'])->name('payments.show');
-        Route::post('payments/{billing}/pay', [AdminPaymentController::class, 'pay'])->name('payments.pay');
-
         Route::get('/cancel-bookings', [\App\Http\Controllers\Admin\AdminCancelBookingController::class, 'index'])
             ->name('cancel-bookings.index');
 
@@ -402,4 +430,3 @@ Route::middleware(['auth', 'verified', 'admin.kos'])
         Route::post('/cancel-bookings/{cancelBooking}/reject', [\App\Http\Controllers\Admin\AdminCancelBookingController::class, 'reject'])
             ->name('cancel-bookings.reject');
     });
-    

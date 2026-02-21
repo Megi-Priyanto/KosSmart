@@ -1,23 +1,23 @@
 @extends('layouts.superadmin')
 
-@section('title', 'Laporan Tagihan')
-@section('page-title', 'Laporan Tagihan')
-@section('page-description', 'Laporan lengkap semua tagihan dan pembayaran')
+@section('title', 'Laporan Pendapatan Platform')
+@section('page-title', 'Laporan Pendapatan Platform')
+@section('page-description', 'Laporan pendapatan platform dari fee pencairan dana')
 
 @section('content')
 
 <!-- Statistics Cards -->
 <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-    <!-- Total Tagihan -->
+    <!-- Total Pencairan -->
     <div class="bg-slate-800 p-6 rounded-lg border border-slate-700
         transition-all duration-300 ease-out
         hover:-translate-y-1 hover:shadow-lg hover:border-blue-500 hover:bg-slate-700">
         
         <div class="flex items-center justify-between">
             <div>
-                <p class="text-sm text-slate-400">Total Tagihan</p>
-                <p class="text-2xl font-bold text-slate-100">{{ $stats['total_count'] }}</p>
-                <p class="text-sm text-slate-100">Rp {{ number_format($stats['total_amount'], 0, ',', '.') }}</p>
+                <p class="text-sm text-slate-400">Total Pencairan</p>
+                <p class="text-2xl font-bold text-slate-100">{{ $stats['total_disbursement_count'] }}</p>
+                <p class="text-sm text-slate-100">Rp {{ number_format($stats['total_gross_amount'], 0, ',', '.') }}</p>
             </div>
             <div class="w-12 h-12 bg-blue-500/10 rounded-lg flex items-center justify-center">
                 <svg class="w-6 h-6 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -27,55 +27,55 @@
         </div>
     </div>
 
-    <!-- Lunas -->
+    <!-- Total Fee Platform -->
     <div class="bg-slate-800 p-6 rounded-lg border border-slate-700
         transition-all duration-300 ease-out
         hover:-translate-y-1 hover:shadow-lg hover:border-green-500 hover:bg-slate-700">
         <div class="flex items-center justify-between">
             <div>
-                <p class="text-sm text-slate-400">Lunas</p>
-                <p class="text-2xl font-bold text-slate-100">{{ $stats['paid_count'] }}</p>
-                <p class="text-sm text-slate-100">Rp {{ number_format($stats['paid_amount'], 0, ',', '.') }}</p>
+                <p class="text-sm text-slate-400">Total Fee Platform</p>
+                <p class="text-2xl font-bold text-slate-100">Rp {{ number_format($stats['total_fee_amount'], 0, ',', '.') }}</p>
+                <p class="text-sm text-slate-100">Pendapatan keseluruhan</p>
             </div>
             <div class="w-12 h-12 bg-green-500/10 rounded-lg flex items-center justify-center">
                 <svg class="w-6 h-6 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                 </svg>
             </div>
         </div>
     </div>
 
-    <!-- Belum Dibayar -->
+    <!-- Fee Bulan Ini -->
     <div class="bg-slate-800 p-6 rounded-lg border border-slate-700
         transition-all duration-300 ease-out
         hover:-translate-y-1 hover:shadow-lg hover:border-orange-500 hover:bg-slate-700">
         <div class="flex items-center justify-between">
             <div>
-                <p class="text-sm text-slate-400">Belum Dibayar</p>
-                <p class="text-2xl font-bold text-slate-100">{{ $stats['unpaid_count'] }}</p>
-                <p class="text-sm text-slate-100">Rp {{ number_format($stats['unpaid_amount'], 0, ',', '.') }}</p>
+                <p class="text-sm text-slate-400">Fee Bulan Ini</p>
+                <p class="text-2xl font-bold text-slate-100">Rp {{ number_format($stats['fee_this_month'], 0, ',', '.') }}</p>
+                <p class="text-sm text-slate-100">{{ $stats['count_this_month'] }} pencairan</p>
             </div>
             <div class="w-12 h-12 bg-orange-500/10 rounded-lg flex items-center justify-center">
                 <svg class="w-6 h-6 text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
                 </svg>
             </div>
         </div>
     </div>
 
-    <!-- Terlambat -->
+    <!-- Fee Tahun Ini -->
     <div class="bg-slate-800 p-6 rounded-lg border border-slate-700
         transition-all duration-300 ease-out
-        hover:-translate-y-1 hover:shadow-lg hover:border-red-500 hover:bg-slate-700">
+        hover:-translate-y-1 hover:shadow-lg hover:border-yellow-500 hover:bg-slate-700">
         <div class="flex items-center justify-between">
             <div>
-                <p class="text-sm text-slate-400">Terlambat</p>
-                <p class="text-2xl font-bold text-slate-100">{{ $stats['overdue_count'] }}</p>
-                <p class="text-sm text-slate-100">Rp {{ number_format($stats['overdue_amount'], 0, ',', '.') }}</p>
+                <p class="text-sm text-slate-400">Fee Tahun Ini</p>
+                <p class="text-2xl font-bold text-slate-100">Rp {{ number_format($stats['fee_this_year'], 0, ',', '.') }}</p>
+                <p class="text-sm text-slate-100">{{ now()->format('Y') }}</p>
             </div>
-            <div class="w-12 h-12 bg-red-500/10 rounded-lg flex items-center justify-center">
-                <svg class="w-6 h-6 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+            <div class="w-12 h-12 bg-yellow-500/10 rounded-lg flex items-center justify-center">
+                <svg class="w-6 h-6 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
                 </svg>
             </div>
         </div>
@@ -115,35 +115,17 @@
                               [color-scheme:dark]">
             </div>
 
-            <!-- Status -->
+            <!-- Admin (Pemilik Kos) -->
             <div>
                 <label class="block text-sm font-medium text-slate-300 mb-2">
-                    Status
-                </label>
-                <select name="status" 
-                        class="w-full h-[46px]
-                           bg-slate-900 text-slate-100
-                           border border-slate-700 rounded-lg px-4
-                           focus:ring-2 focus:ring-purple-500 focus:border-transparent">
-                    <option value="">Semua Status</option>
-                    <option value="unpaid" {{ request('status') === 'unpaid' ? 'selected' : '' }}>Belum Dibayar</option>
-                    <option value="pending" {{ request('status') === 'pending' ? 'selected' : '' }}>Pending</option>
-                    <option value="paid" {{ request('status') === 'paid' ? 'selected' : '' }}>Lunas</option>
-                    <option value="overdue" {{ request('status') === 'overdue' ? 'selected' : '' }}>Terlambat</option>
-                </select>
-            </div>
-
-            <!-- Penyewa (Admin) -->
-            <div>
-                <label class="block text-sm font-medium text-slate-300 mb-2">
-                    Penyewa
+                    Admin Kos
                 </label>
                 <select name="admin_id" 
                         class="w-full h-[46px]
                            bg-slate-900 text-slate-100
                            border border-slate-700 rounded-lg px-4
                            focus:ring-2 focus:ring-purple-500 focus:border-transparent">
-                    <option value="">Semua Penyewa</option>
+                    <option value="">Semua Admin</option>
                     @foreach($adminsList as $admin)
                         <option value="{{ $admin->id }}" {{ request('admin_id') == $admin->id ? 'selected' : '' }}>
                             {{ $admin->name }} - {{ $admin->tempatKos->nama_kos ?? 'N/A' }}
@@ -152,17 +134,17 @@
                 </select>
             </div>
 
-            <!-- Kamar (Tempat Kos) -->
+            <!-- Tempat Kos -->
             <div>
                 <label class="block text-sm font-medium text-slate-300 mb-2">
-                    Kamar
+                    Tempat Kos
                 </label>
                 <select name="tempat_kos_id" 
                         class="w-full h-[46px]
                            bg-slate-900 text-slate-100
                            border border-slate-700 rounded-lg px-4
                            focus:ring-2 focus:ring-purple-500 focus:border-transparent">
-                    <option value="">Semua Kamar</option>
+                    <option value="">Semua Tempat Kos</option>
                     @foreach($tempatKosList as $tempatKos)
                         <option value="{{ $tempatKos->id }}" {{ request('tempat_kos_id') == $tempatKos->id ? 'selected' : '' }}>
                             {{ $tempatKos->nama_kos }}
@@ -170,6 +152,9 @@
                     @endforeach
                 </select>
             </div>
+
+            <!-- Placeholder kolom ke-5 kosong agar grid tetap -->
+            <div class="hidden md:block"></div>
 
         </div>
 
@@ -224,69 +209,52 @@
             <thead class="bg-slate-800/80 border-b border-slate-700">
                 <tr>
                     <th class="px-4 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">ID</th>
-                    <th class="px-4 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">Penyewa</th>
-                    <th class="px-4 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">Kamar</th>
-                    <th class="px-4 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">Periode</th>
-                    <th class="px-4 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">Jatuh Tempo</th>
-                    <th class="px-4 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">Total</th>
-                    <th class="px-4 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">Status</th>
+                    <th class="px-4 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">Admin Kos</th>
+                    <th class="px-4 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">Tempat Kos</th>
+                    <th class="px-4 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">Jml Payment</th>
+                    <th class="px-4 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">Gross Amount</th>
+                    <th class="px-4 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">Fee Platform</th>
+                    <th class="px-4 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">Diterima Admin</th>
+                    <th class="px-4 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">Tanggal Cairkan</th>
                     <th class="px-4 py-3 text-center text-xs font-medium text-slate-400 uppercase tracking-wider">Aksi</th>
                 </tr>
             </thead>
             <tbody class="bg-slate-800 divide-y divide-slate-700">
-                @forelse($billings as $billing)
+                @forelse($disbursements as $disbursement)
                 <tr class="hover:bg-gray-700/50 transition">
-                    <td class="px-4 py-3 text-sm text-gray-300">#{{ $billing->id }}</td>
+                    <td class="px-4 py-3 text-sm text-gray-300">#{{ $disbursement->id }}</td>
                     <td class="px-4 py-3">
-                        <div class="text-sm font-medium text-white">{{ $billing->admin->name }}</div>
-                        <div class="text-xs text-gray-400">{{ $billing->admin->email }}</div>
+                        <div class="text-sm font-medium text-white">{{ $disbursement->admin->name }}</div>
+                        <div class="text-xs text-gray-400">{{ $disbursement->admin->email }}</div>
                     </td>
                     <td class="px-4 py-3 text-sm text-gray-300">
-                        {{ $billing->tempatKos->nama_kos ?? '-' }}
+                        {{ $disbursement->tempatKos->nama_kos ?? '-' }}
+                    </td>
+                    <td class="px-4 py-3 text-sm text-gray-300 text-center">
+                        {{ $disbursement->payment_count }}
                     </td>
                     <td class="px-4 py-3 text-sm text-gray-300">
-                        {{ \Carbon\Carbon::parse($billing->billing_period . '-01')->format('F Y') }}
-                    </td>
-                    <td class="px-4 py-3 text-sm">
-                        <div class="text-gray-300">{{ $billing->due_date->format('d M Y') }}</div>
-                        @if($billing->isOverdue())
-                            <div class="text-xs text-red-400">({{ $billing->due_date->diffForHumans() }})</div>
-                        @endif
+                        Rp {{ number_format($disbursement->gross_amount, 0, ',', '.') }}
                     </td>
                     <td class="px-4 py-3">
-                        <div class="text-sm font-medium text-white">Rp {{ number_format($billing->amount, 0, ',', '.') }}</div>
-                        @if($billing->paid_at)
-                            <div class="text-xs text-green-400">Dibayar: {{ $billing->paid_at->format('d M Y') }}</div>
-                        @endif
+                        <div class="text-sm font-bold text-green-400">
+                            Rp {{ number_format($disbursement->fee_amount, 0, ',', '.') }}
+                        </div>
+                        <div class="text-xs text-slate-400">{{ $disbursement->fee_percent }}%</div>
                     </td>
-                    <td class="px-4 py-3">
-                        @if($billing->status === 'paid')
-                            <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-green-900/50 text-green-400 border border-green-700">
-                                Lunas
-                            </span>
-                        @elseif($billing->status === 'pending')
-                            <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-blue-900/50 text-blue-400 border border-blue-700">
-                                Pending
-                            </span>
-                        @elseif($billing->isOverdue())
-                            <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-red-900/50 text-red-400 border border-red-700">
-                                Terlambat
-                            </span>
-                        @else
-                            <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-yellow-900/50 text-yellow-400 border border-yellow-700">
-                                Belum Dibayar
-                            </span>
-                        @endif
+                    <td class="px-4 py-3 text-sm text-gray-300">
+                        Rp {{ number_format($disbursement->total_amount, 0, ',', '.') }}
+                    </td>
+                    <td class="px-4 py-3 text-sm text-gray-300">
+                        {{ $disbursement->processed_at ? $disbursement->processed_at->format('d M Y') : '-' }}
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap text-center text-sm">
-                        <a href="{{ route('superadmin.billing.show', $billing) }}" 
+                        <a href="{{ route('superadmin.disbursements.show', $disbursement) }}" 
                            class="inline-flex items-center justify-center
                                   w-10 h-10 rounded-xl
                                   bg-blue-600/20 text-blue-400
                                   hover:bg-blue-600/30 hover:-translate-y-0.5
                                   transition-all duration-200">
-
-                            {{-- ICON DETAIL / EYE --}}
                             <svg xmlns="http://www.w3.org/2000/svg"
                                  class="w-5 h-5"
                                  fill="none"
@@ -305,11 +273,11 @@
                 </tr>
                 @empty
                 <tr>
-                    <td colspan="8" class="px-4 py-8 text-center text-gray-400">
+                    <td colspan="9" class="px-4 py-8 text-center text-gray-400">
                         <svg class="w-12 h-12 mx-auto mb-3 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
                         </svg>
-                        <p>Tidak ada data tagihan yang ditemukan</p>
+                        <p>Tidak ada data pencairan yang ditemukan</p>
                     </td>
                 </tr>
                 @endforelse
@@ -318,9 +286,9 @@
     </div>
 
     <!-- Pagination -->
-    @if($billings->hasPages())
+    @if($disbursements->hasPages())
     <div class="px-4 py-3 border-t border-gray-700">
-        {{ $billings->links() }}
+        {{ $disbursements->links() }}
     </div>
     @endif
 

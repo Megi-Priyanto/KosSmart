@@ -46,7 +46,6 @@
                 <div class="flex items-start justify-between mb-4">
                     <div>
                         <h2 class="text-2xl font-bold text-slate-100">{{ $tempatKos->nama_kos }}</h2>
-                        <!-- ✅ TAMBAHAN: Tampilkan Alamat Lengkap dengan Kecamatan -->
                         <p class="text-slate-400 mt-1">
                             @if($tempatKos->kecamatan)
                                 Kec. {{ $tempatKos->kecamatan }}, 

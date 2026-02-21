@@ -11,21 +11,13 @@ return new class extends Migration
         Schema::create('notifications', function (Blueprint $table) {
             $table->id();
 
-            /*
-             |---------------------------------------------
-             | RELASI TEMPAT KOS (DITAMBAHKAN)
-             |---------------------------------------------
-             */
+            // Relasi tempat kos
             $table->foreignId('tempat_kos_id')
                 ->nullable()
                 ->constrained('tempat_kos')
                 ->cascadeOnDelete();
 
-            /*
-             |---------------------------------------------
-             | DATA NOTIFIKASI (KODE ASLI KAMU)
-             |---------------------------------------------
-             */
+            // Data notifikasi
             $table->string('type')->default('general');
             $table->string('title')->nullable();
             $table->text('message')->nullable();
@@ -33,18 +25,6 @@ return new class extends Migration
             $table->foreignId('user_id')
                 ->constrained()
                 ->cascadeOnDelete();
-
-            // 🔹 billing USER (penyewa kos)
-            $table->foreignId('billing_id')
-                ->nullable()
-                ->constrained('billings')
-                ->nullOnDelete();
-
-            // 🔹 billing ADMIN (superadmin → admin)
-            $table->foreignId('admin_billing_id')
-                ->nullable()
-                ->constrained('admin_billings')
-                ->nullOnDelete();
 
             $table->foreignId('rent_id')
                 ->nullable()
@@ -56,19 +36,39 @@ return new class extends Migration
                 ->constrained()
                 ->nullOnDelete();
 
-            $table->date('due_date')->nullable();
+            /*
+             |--------------------------------------------------
+             | PAYMENT & BILLING (gabungan dari migration terpisah)
+             |
+             | Digunakan untuk notifikasi superadmin ketika admin
+             | konfirmasi pembayaran user (pelunasan / bulanan / tahunan).
+             | Dana otomatis masuk holding → superadmin cairkan via disbursement.
+             |--------------------------------------------------
+             */
+            $table->unsignedBigInteger('payment_id')
+                ->nullable()
+                ->comment('ID payment yang dikonfirmasi admin');
+
+            $table->unsignedBigInteger('billing_id')
+                ->nullable()
+                ->comment('ID billing terkait pembayaran');
+
+            /*
+             |--------------------------------------------------
+             | DUE DATE (gabungan dari migration terpisah)
+             |--------------------------------------------------
+             */
+            $table->timestamp('due_date')->nullable();
+
             $table->string('status', 20)->default('unread');
 
             $table->timestamps();
 
-            /*
-             |---------------------------------------------
-             | INDEX
-             |---------------------------------------------
-             */
+            // Index
             $table->index('tempat_kos_id');
             $table->index(['user_id', 'status']);
-            $table->index('due_date');
+            $table->index('payment_id');
+            $table->index('billing_id');
         });
     }
 

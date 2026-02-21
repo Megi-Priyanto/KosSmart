@@ -3,64 +3,72 @@
 namespace App\Http\Controllers\SuperAdmin;
 
 use App\Http\Controllers\Controller;
-use App\Models\AdminBilling;
+use App\Models\Disbursement;
 use App\Models\TempatKos;
 use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Maatwebsite\Excel\Facades\Excel;
 
 class SuperAdminBillingReportController extends Controller
 {
     /**
-     * Display billing report page
+     * Display billing report page (berbasis Disbursement / Pendapatan Platform Fee)
      */
     public function index(Request $request)
     {
-        $query = AdminBilling::with(['tempatKos', 'admin']);
+        $query = Disbursement::with(['tempatKos', 'admin', 'processor'])
+            ->where('status', 'processed');
 
-        // Filter by date range
+        // Filter by date range (berdasarkan processed_at)
         if ($request->filled('date_from')) {
-            $query->whereDate('due_date', '>=', $request->date_from);
+            $query->whereDate('processed_at', '>=', $request->date_from);
         }
 
         if ($request->filled('date_to')) {
-            $query->whereDate('due_date', '<=', $request->date_to);
+            $query->whereDate('processed_at', '<=', $request->date_to);
         }
 
-        // Filter by status
-        if ($request->filled('status') && $request->status !== 'all') {
-            if ($request->status === 'overdue') {
-                $query->overdue();
-            } else {
-                $query->where('status', $request->status);
-            }
-        }
-
-        // Filter by penyewa (admin/tempat kos)
+        // Filter by admin (pemilik kos)
         if ($request->filled('admin_id')) {
             $query->where('admin_id', $request->admin_id);
         }
 
-        // Filter by room (kamar) - via tempat_kos
+        // Filter by tempat kos
         if ($request->filled('tempat_kos_id')) {
             $query->where('tempat_kos_id', $request->tempat_kos_id);
         }
 
-        // Get billings with pagination
-        $billings = $query->orderBy('due_date', 'desc')->paginate(15)->withQueryString();
+        // Get disbursements with pagination
+        $disbursements = $query->orderBy('processed_at', 'desc')->paginate(15)->withQueryString();
 
-        // Calculate statistics
+        // Calculate statistics (Pendapatan Platform dari Fee)
+        $baseQuery = Disbursement::where('status', 'processed');
+
         $stats = [
-            'total_count' => AdminBilling::count(),
-            'total_amount' => AdminBilling::sum('amount'),
-            'paid_count' => AdminBilling::paid()->count(),
-            'paid_amount' => AdminBilling::paid()->sum('amount'),
-            'unpaid_count' => AdminBilling::unpaid()->count(),
-            'unpaid_amount' => AdminBilling::unpaid()->sum('amount'),
-            'overdue_count' => AdminBilling::overdue()->count(),
-            'overdue_amount' => AdminBilling::overdue()->sum('amount'),
+            'total_disbursement_count'  => (clone $baseQuery)->count(),
+            'total_gross_amount'        => (clone $baseQuery)->sum('gross_amount'),
+            'total_fee_amount'          => (clone $baseQuery)->sum('fee_amount'),           // pendapatan platform
+            'total_admin_amount'        => (clone $baseQuery)->sum('total_amount'),         // yang diterima admin
+
+            'fee_this_month'            => (clone $baseQuery)
+                ->whereMonth('processed_at', now()->month)
+                ->whereYear('processed_at', now()->year)
+                ->sum('fee_amount'),
+
+            'fee_this_year'             => (clone $baseQuery)
+                ->whereYear('processed_at', now()->year)
+                ->sum('fee_amount'),
+
+            'count_this_month'          => (clone $baseQuery)
+                ->whereMonth('processed_at', now()->month)
+                ->whereYear('processed_at', now()->year)
+                ->count(),
+
+            'gross_this_month'          => (clone $baseQuery)
+                ->whereMonth('processed_at', now()->month)
+                ->whereYear('processed_at', now()->year)
+                ->sum('gross_amount'),
         ];
 
         // Get filter options
@@ -72,7 +80,7 @@ class SuperAdminBillingReportController extends Controller
             ->get();
 
         return view('superadmin.billing-report.index', compact(
-            'billings',
+            'disbursements',
             'stats',
             'tempatKosList',
             'adminsList'
@@ -84,49 +92,35 @@ class SuperAdminBillingReportController extends Controller
      */
     public function exportPdf(Request $request)
     {
-        $query = AdminBilling::with(['tempatKos', 'admin']);
+        $query = Disbursement::with(['tempatKos', 'admin', 'processor'])
+            ->where('status', 'processed');
 
-        // Apply same filters as index
         if ($request->filled('date_from')) {
-            $query->whereDate('due_date', '>=', $request->date_from);
+            $query->whereDate('processed_at', '>=', $request->date_from);
         }
-
         if ($request->filled('date_to')) {
-            $query->whereDate('due_date', '<=', $request->date_to);
+            $query->whereDate('processed_at', '<=', $request->date_to);
         }
-
-        if ($request->filled('status') && $request->status !== 'all') {
-            if ($request->status === 'overdue') {
-                $query->overdue();
-            } else {
-                $query->where('status', $request->status);
-            }
-        }
-
         if ($request->filled('admin_id')) {
             $query->where('admin_id', $request->admin_id);
         }
-
         if ($request->filled('tempat_kos_id')) {
             $query->where('tempat_kos_id', $request->tempat_kos_id);
         }
 
-        $billings = $query->orderBy('due_date', 'desc')->get();
+        $disbursements = $query->orderBy('processed_at', 'desc')->get();
 
         $stats = [
-            'total_count' => $billings->count(),
-            'total_amount' => $billings->sum('amount'),
-            'paid_count' => $billings->where('status', 'paid')->count(),
-            'paid_amount' => $billings->where('status', 'paid')->sum('amount'),
-            'unpaid_count' => $billings->whereIn('status', ['unpaid', 'pending'])->count(),
-            'unpaid_amount' => $billings->whereIn('status', ['unpaid', 'pending'])->sum('amount'),
+            'total_disbursement_count' => $disbursements->count(),
+            'total_gross_amount'       => $disbursements->sum('gross_amount'),
+            'total_fee_amount'         => $disbursements->sum('fee_amount'),
+            'total_admin_amount'       => $disbursements->sum('total_amount'),
         ];
 
-        // Generate PDF using DomPDF
-        $pdf = Pdf::loadView('superadmin.billing-report.pdf', compact('billings', 'stats'));
-        
-        $filename = 'laporan-tagihan-operasional-' . now()->format('Y-m-d') . '.pdf';
-        
+        $pdf = Pdf::loadView('superadmin.billing-report.pdf', compact('disbursements', 'stats'));
+
+        $filename = 'laporan-pendapatan-platform-' . now()->format('Y-m-d') . '.pdf';
+
         return $pdf->download($filename);
     }
 
@@ -135,39 +129,27 @@ class SuperAdminBillingReportController extends Controller
      */
     public function exportExcel(Request $request)
     {
-        $query = AdminBilling::with(['tempatKos', 'admin']);
+        $query = Disbursement::with(['tempatKos', 'admin', 'processor'])
+            ->where('status', 'processed');
 
-        // Apply same filters
         if ($request->filled('date_from')) {
-            $query->whereDate('due_date', '>=', $request->date_from);
+            $query->whereDate('processed_at', '>=', $request->date_from);
         }
-
         if ($request->filled('date_to')) {
-            $query->whereDate('due_date', '<=', $request->date_to);
+            $query->whereDate('processed_at', '<=', $request->date_to);
         }
-
-        if ($request->filled('status') && $request->status !== 'all') {
-            if ($request->status === 'overdue') {
-                $query->overdue();
-            } else {
-                $query->where('status', $request->status);
-            }
-        }
-
         if ($request->filled('admin_id')) {
             $query->where('admin_id', $request->admin_id);
         }
-
         if ($request->filled('tempat_kos_id')) {
             $query->where('tempat_kos_id', $request->tempat_kos_id);
         }
 
-        $billings = $query->orderBy('due_date', 'desc')->get();
+        $disbursements = $query->orderBy('processed_at', 'desc')->get();
 
-        // Create Excel export using AdminBillingReportExport (for SuperAdmin → Admin)
         return Excel::download(
-            new \App\Exports\AdminBillingReportExport($billings),
-            'laporan-tagihan-operasional-' . now()->format('Y-m-d') . '.xlsx'
+            new \App\Exports\DisbursementReportExport($disbursements),
+            'laporan-pendapatan-platform-' . now()->format('Y-m-d') . '.xlsx'
         );
     }
 }
