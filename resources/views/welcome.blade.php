@@ -154,6 +154,7 @@
         </a>
         <a href="{{ route('home') }}" class="nav-link active">Beranda</a>
         <a href="{{ route('tentang') }}" class="nav-link">Tentang Kami</a>
+        <a href="{{ route('public.kos.index') }}" class="nav-link">Cari Kos</a>
     </div>
     <div class="nav-right">
         <div class="dropdown" id="dd-masuk">
@@ -419,7 +420,6 @@
         </div>
     </div>
 </div>
-
 
 <!-- ══════════════════════════════════════ FOOTER -->
 <footer>

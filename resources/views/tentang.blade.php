@@ -123,6 +123,7 @@
         </a>
         <a href="{{ route('home') }}" class="nav-link">Beranda</a>
         <a href="{{ route('tentang') }}" class="nav-link active">Tentang Kami</a>
+        <a href="{{ route('public.kos.index') }}" class="nav-link">Cari Kos</a>
     </div>
     <div class="nav-right">
         <div class="dropdown" id="dd-masuk">
@@ -313,7 +314,6 @@
     </div>
 </section>
 
-
 <!-- FOOTER -->
 <footer>
     <div class="footer-inner">
@@ -343,6 +343,7 @@
                 <h4>Navigasi</h4>
                 <a href="{{ route('home') }}">Beranda</a>
                 <a href="{{ route('tentang') }}">Tentang Kami</a>
+                <a href="{{ route('public.kos.index') }}">Cari Kos</a>
                 <a href="#">Kebijakan Privasi</a>
             </div>
         </div>

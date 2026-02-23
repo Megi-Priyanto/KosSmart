@@ -41,6 +41,23 @@ Route::get('/tentang', function () {
 })->name('tentang');
 
 // ==============================
+// PUBLIC KOS ROUTES (tanpa login)
+// ==============================
+Route::prefix('kos')->name('public.kos.')->group(function () {
+    // Daftar semua tempat kos
+    Route::get('/', [\App\Http\Controllers\PublicKosController::class, 'index'])
+        ->name('index');
+
+    // Daftar kamar dalam satu tempat kos
+    Route::get('/{tempatKos}/kamar', [\App\Http\Controllers\PublicKosController::class, 'rooms'])
+        ->name('rooms');
+
+    // Detail satu kamar
+    Route::get('/kamar/{room}', [\App\Http\Controllers\PublicKosController::class, 'roomDetail'])
+        ->name('room-detail');
+});
+
+// ==============================
 // GUEST ROUTES
 // ==============================
 Route::middleware('guest')->group(function () {
