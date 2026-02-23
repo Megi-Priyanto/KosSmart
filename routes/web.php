@@ -29,18 +29,32 @@ use Illuminate\Support\Facades\Route;
 |--------------------------------------------------------------------------
 */
 
-// Redirect root ke login
+// ==============================
+// [DIUBAH] Root → Landing Page Publik
+// ==============================
 Route::get('/', function () {
-    return redirect()->route('login');
-});
+    return view('welcome');
+})->name('home');
+
+Route::get('/tentang', function () {
+    return view('tentang');
+})->name('tentang');
 
 // ==============================
 // GUEST ROUTES
 // ==============================
 Route::middleware('guest')->group(function () {
-    // Login Routes
+    // Login USER biasa — hanya menerima role 'user'
     Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
     Route::post('/login', [AuthController::class, 'login']);
+
+    // Login ADMIN — hanya menerima role 'admin'
+    Route::get('/admin/login', [AuthController::class, 'showAdminLogin'])->name('admin.login');
+    Route::post('/admin/login', [AuthController::class, 'adminLogin']);
+
+    // Login SUPER ADMIN — hanya menerima role 'super_admin'
+    Route::get('/superadmin/login', [AuthController::class, 'showSuperAdminLogin'])->name('superadmin.login');
+    Route::post('/superadmin/login', [AuthController::class, 'superAdminLogin']);
 
     // Register Routes
     Route::get('/register', [RegisterController::class, 'showRegister'])->name('register');

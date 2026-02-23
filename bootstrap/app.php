@@ -39,11 +39,17 @@ return Application::configure(basePath: dirname(__DIR__))
 
         // Middleware alias
         $middleware->alias([
-            'role' => RoleMiddleware::class,
+            'role'        => RoleMiddleware::class,
             'super.admin' => SuperAdminMiddleware::class,
-            'admin.kos' => AdminKosMiddleware::class,
-            'no.room' => CheckNoRoom::class,
-            'has.room' => CheckHasRoom::class,
+            'admin.kos'   => AdminKosMiddleware::class,
+            'no.room'     => CheckNoRoom::class,
+            'has.room'    => CheckHasRoom::class,
+
+            // Override default Laravel 11:
+            // 'guest' default redirect ke '/home' (hardcoded string, bukan route)
+            'guest'    => \App\Http\Middleware\RedirectIfAuthenticated::class,
+            // 'verified' default redirect ke route('verification.notice') yang tidak ada
+            'verified' => \App\Http\Middleware\EnsureEmailIsVerified::class,
         ]);
 
         // Middleware group API
