@@ -11,7 +11,6 @@
     <div class="bg-slate-800 p-6 rounded-lg border border-slate-700
         transition-all duration-300 ease-out
         hover:-translate-y-1 hover:shadow-lg hover:border-purple-500 hover:bg-slate-700">
-
         <div class="flex items-center justify-between">
             <div>
                 <p class="text-sm text-slate-400">Total Booking</p>
@@ -24,11 +23,10 @@
             </div>
         </div>
     </div>
-    
+
     <div class="bg-slate-800 p-6 rounded-lg border border-slate-700
         transition-all duration-300 ease-out
         hover:-translate-y-1 hover:shadow-lg hover:border-yellow-500 hover:bg-slate-700">
-
         <div class="flex items-center justify-between">
             <div>
                 <p class="text-sm text-slate-400">Menunggu Approval</p>
@@ -41,11 +39,10 @@
             </div>
         </div>
     </div>
-    
+
     <div class="bg-slate-800 p-6 rounded-lg border border-slate-700
         transition-all duration-300 ease-out
         hover:-translate-y-1 hover:shadow-lg hover:border-green-500 hover:bg-slate-700">
-
         <div class="flex items-center justify-between">
             <div>
                 <p class="text-sm text-slate-400">Booking Aktif</p>
@@ -60,11 +57,10 @@
             </div>
         </div>
     </div>
-    
+
     <div class="bg-slate-800 p-6 rounded-lg border border-slate-700
         transition-all duration-300 ease-out
         hover:-translate-y-1 hover:shadow-lg hover:border-red-500 hover:bg-slate-700">
-
         <div class="flex items-center justify-between">
             <div>
                 <p class="text-sm text-slate-400">Dibatalkan</p>
@@ -84,7 +80,6 @@
 <!-- Filters -->
 <div class="bg-slate-800 rounded-xl border border-slate-700 p-6 mb-6">
     <form method="GET" class="flex gap-3 items-center">
-        {{-- Search --}}
         <div class="relative flex-1">
             <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                 <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -104,13 +99,12 @@
                     border border-slate-700 rounded-lg
                     focus:ring-2 focus:ring-purple-500 focus:border-purple-500
                     transition-all duration-200">
-
-            <option value="">Semua Status</option>
-            <option value="pending" {{ request('status') == 'pending' ? 'selected' : '' }}>Pending</option>
-            <option value="active" {{ request('status') == 'active' ? 'selected' : '' }}>Active</option>
-            <option value="cancelled" {{ request('status') == 'cancelled' ? 'selected' : '' }}>Cancelled</option>
-            <option value="expired" {{ request('status') == 'expired' ? 'selected' : '' }}>Expired</option>
-        </select>
+                <option value="">Semua Status</option>
+                <option value="pending"   {{ request('status') == 'pending'   ? 'selected' : '' }}>Pending</option>
+                <option value="active"    {{ request('status') == 'active'    ? 'selected' : '' }}>Active</option>
+                <option value="cancelled" {{ request('status') == 'cancelled' ? 'selected' : '' }}>Cancelled</option>
+                <option value="expired"   {{ request('status') == 'expired'   ? 'selected' : '' }}>Expired</option>
+            </select>
 
             <button type="submit"
                 class="inline-flex items-center gap-2
@@ -140,7 +134,6 @@
 <div class="bg-slate-800 rounded-xl border border-slate-700 overflow-hidden">
     <div class="overflow-x-auto">
         <table class="w-full">
-
             <thead class="bg-slate-800/80 border-b border-slate-700">
                 <tr>
                     <th class="px-6 py-3 text-left text-xs font-medium text-slate-400 uppercase">Tanggal Booking</th>
@@ -155,12 +148,21 @@
 
             <tbody class="bg-slate-800 divide-y divide-slate-700">
                 @forelse($bookings as $booking)
-                <tr class="hover:bg-slate-700/40 {{ $booking->status == 'pending' ? 'bg-yellow-500/10' : '' }}">
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-100">
+                @php
+                    $activeCancelBooking = $booking->cancelBookings
+                        ->whereIn('status', ['pending', 'admin_approved'])
+                        ->sortByDesc('created_at')
+                        ->values()
+                        ->first();
+                @endphp
+                <tr class="hover:bg-slate-700/40
+                    {{ $activeCancelBooking ? 'bg-orange-500/5' : ($booking->status == 'pending' ? 'bg-yellow-500/10' : '') }}">
 
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-100">
                         {{ $booking->created_at->translatedFormat('d F Y, H:i') }}
                         <p class="text-xs text-slate-400">{{ $booking->created_at->diffForHumans() }}</p>
                     </td>
+
                     <td class="px-6 py-4 whitespace-nowrap">
                         <div>
                             <p class="text-sm font-medium text-slate-200">{{ $booking->user->name }}</p>
@@ -168,28 +170,48 @@
                             <p class="text-xs text-slate-400">{{ $booking->user->phone ?? '-' }}</p>
                         </div>
                     </td>
+
                     <td class="px-6 py-4 whitespace-nowrap">
                         <div>
                             <p class="text-sm font-medium text-slate-200">Kamar {{ $booking->room->room_number }}</p>
                             <p class="text-xs text-slate-400">{{ $booking->room->floor }}</p>
                         </div>
                     </td>
+
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-100">
                         {{ $booking->start_date->translatedFormat('d F Y') }}
                     </td>
+
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-100">
                         Rp {{ number_format($booking->deposit_paid, 0, ',', '.') }}
                     </td>
+
                     <td class="px-6 py-4 whitespace-nowrap">
-                        <span class="px-3 py-1 text-xs font-semibold rounded-full
-                            @if($booking->status === 'pending') bg-yellow-500/10 text-yellow-400
-                            @elseif($booking->status === 'active') bg-green-500/10 text-green-400
-                            @elseif($booking->status === 'cancelled') bg-red-500/10 text-red-400
-                            @else bg-slate-500/10 text-slate-400
-                            @endif">
-                            {{ ucfirst($booking->status) }}
-                        </span>
+                        @if($activeCancelBooking)
+                            {{-- Ada cancel booking aktif --}}
+                            @if($activeCancelBooking->status === 'pending')
+                                <span class="px-3 py-1 text-xs font-semibold rounded-full
+                                             bg-orange-500/10 text-orange-400 border border-orange-500/30">
+                                    ⚠ Menunggu Persetujuan Cancel
+                                </span>
+                            @else
+                                <span class="px-3 py-1 text-xs font-semibold rounded-full
+                                             bg-amber-500/10 text-amber-400 border border-amber-500/30">
+                                    ✓ Cancel Disetujui Admin
+                                </span>
+                            @endif
+                        @else
+                            <span class="px-3 py-1 text-xs font-semibold rounded-full
+                                @if($booking->status === 'pending')   bg-yellow-500/10 text-yellow-400
+                                @elseif($booking->status === 'active')    bg-green-500/10 text-green-400
+                                @elseif($booking->status === 'cancelled') bg-red-500/10 text-red-400
+                                @else bg-slate-500/10 text-slate-400
+                                @endif">
+                                {{ ucfirst($booking->status) }}
+                            </span>
+                        @endif
                     </td>
+
                     <td class="px-6 py-4 whitespace-nowrap text-center text-sm">
                         <a href="{{ route('admin.bookings.show', $booking) }}"
                            class="inline-flex items-center justify-center
@@ -197,13 +219,8 @@
                                   bg-blue-600/20 text-blue-400
                                   hover:bg-blue-600/30 hover:-translate-y-0.5
                                   transition-all duration-200">
-
-                            {{-- ICON DETAIL / EYE --}}
-                            <svg xmlns="http://www.w3.org/2000/svg"
-                                 class="w-5 h-5"
-                                 fill="none"
-                                 viewBox="0 0 24 24"
-                                 stroke="currentColor">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5"
+                                 fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                       d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -219,7 +236,8 @@
                 <tr>
                     <td colspan="7" class="px-6 py-12 text-center text-gray-500">
                         <svg class="w-16 h-16 mx-auto text-slate-600 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
                         </svg>
                         <p class="text-lg font-medium mb-2">Tidak ada booking</p>
                         <p class="text-sm">Belum ada booking yang perlu diproses</p>
@@ -227,10 +245,9 @@
                 </tr>
                 @endforelse
             </tbody>
-
         </table>
     </div>
-    
+
     @if($bookings->hasPages())
     <div class="px-6 py-4 border-t border-slate-700 bg-slate-800">
         {{ $bookings->links() }}

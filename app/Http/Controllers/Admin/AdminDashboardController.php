@@ -37,8 +37,6 @@ class AdminDashboardController extends Controller
 
         // ==========================
         // PENDAPATAN BULANAN
-        // Dari Disbursement processed → hanya muncul saat Superadmin cairkan
-        // total_amount = yang diterima admin (sudah dipotong fee)
         // ==========================
         $disbQueryMonthly = $user->isSuperAdmin()
             ? Disbursement::query()
@@ -125,33 +123,54 @@ class AdminDashboardController extends Controller
 
         // ==========================
         // BOOKING PENDING
+        // PERBAIKAN: Keluarkan rent yang sudah ada cancel booking pending-nya
+        // Sehingga jika user mengajukan cancel booking (sebelum admin approve booking),
+        // notifikasi booking akan hilang dan digantikan notifikasi cancel booking
         // ==========================
         $pendingBookingsQuery = $user->isSuperAdmin()
             ? Rent::withoutTempatKosScope()
             : Rent::where('tempat_kos_id', $user->tempat_kos_id);
 
+        // Sub-query: ambil rent_id yang sudah ada pengajuan cancel booking pending
+        $cancelPendingRentIds = \App\Models\CancelBooking::where('status', 'pending')
+            ->pluck('rent_id')
+            ->toArray();
+
+        // PERBAIKAN: Exclude rent yang sudah ada cancel booking pending
         $pendingBookings = (clone $pendingBookingsQuery)
             ->where('status', 'pending')
+            ->whereNotIn('id', $cancelPendingRentIds)
             ->with(['user', 'room'])
-            ->latest()->take(5)->get()
+            ->latest()
+            ->take(5)
+            ->get()
             ->filter(fn($item) => $item->user && $item->room);
 
-        $pendingBookingsCount = (clone $pendingBookingsQuery)->where('status', 'pending')->count();
+        // PERBAIKAN: Count juga exclude rent yang sudah ada cancel booking pending
+        $pendingBookingsCount = (clone $pendingBookingsQuery)
+            ->where('status', 'pending')
+            ->whereNotIn('id', $cancelPendingRentIds)
+            ->count();
 
         // ==========================
         // CANCEL BOOKING
+        // Tampilkan yang masih pending (menunggu approval admin)
         // ==========================
-        $cancelBookingsQuery = $user->isSuperAdmin()
-            ? Rent::withoutTempatKosScope()
-            : Rent::where('tempat_kos_id', $user->tempat_kos_id);
+        $cancelBookingsPending = $user->isSuperAdmin()
+            ? \App\Models\CancelBooking::withoutTempatKosScope()
+                ->where('status', 'pending')
+                ->with(['rent.room', 'user'])
+                ->latest()->take(5)->get()
+                ->filter(fn($item) => $item->user && $item->rent && $item->rent->room)
+            : \App\Models\CancelBooking::where('tempat_kos_id', $user->tempat_kos_id)
+                ->where('status', 'pending')
+                ->with(['rent.room', 'user'])
+                ->latest()->take(5)->get()
+                ->filter(fn($item) => $item->user && $item->rent && $item->rent->room);
 
-        $cancelBookings = (clone $cancelBookingsQuery)
-            ->where('status', 'cancel_booking')
-            ->with(['user', 'room'])
-            ->latest()->take(5)->get()
-            ->filter(fn($item) => $item->user && $item->room);
-
-        $cancelBookingsCount = (clone $cancelBookingsQuery)->where('status', 'cancel_booking')->count();
+        $cancelBookingsCount = $user->isSuperAdmin()
+            ? \App\Models\CancelBooking::withoutTempatKosScope()->where('status', 'pending')->count()
+            : \App\Models\CancelBooking::where('tempat_kos_id', $user->tempat_kos_id)->where('status', 'pending')->count();
 
         // ==========================
         // CHECKOUT REQUEST
@@ -184,7 +203,7 @@ class AdminDashboardController extends Controller
         $pendingPaymentsCount = (clone $pendingPaymentsQuery)->where('status', 'pending')->count();
 
         // ==========================
-        // NOTIFIKASI (tanpa due_date & admin_billing)
+        // NOTIFIKASI
         // ==========================
         $activitiesQuery = $user->isSuperAdmin()
             ? Notification::withoutTempatKosScope()
@@ -244,7 +263,7 @@ class AdminDashboardController extends Controller
             'pendingBills', 'pendingBillsThisMonth', 'pendingBillsLastMonth', 'pendingGrowth',
             'kosInfo',
             'pendingBookings', 'pendingBookingsCount',
-            'cancelBookings', 'cancelBookingsCount',
+            'cancelBookingsPending', 'cancelBookingsCount',
             'checkoutRequests', 'checkoutRequestsCount',
             'pendingPayments', 'pendingPaymentsCount',
             'todayNotifications', 'activities', 'notifications',

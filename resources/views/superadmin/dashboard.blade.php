@@ -8,7 +8,87 @@
 <div class="space-y-6">
 
     {{-- ============================================================
-         CARD NOTIFIKASI: DANA MASUK DARI ADMIN (Pembayaran Dikonfirmasi)
+         CARD NOTIFIKASI 1: REFUND CANCEL BOOKING MENUNGGU DIPROSES
+         PERBAIKAN: Tambahkan card ini di dashboard superadmin agar
+         refund yang perlu ditindaklanjuti terlihat langsung di dashboard,
+         sama seperti card notifikasi dana masuk.
+    ============================================================ --}}
+    @php
+        $refundPendingNotifs = \App\Models\CancelBooking::withoutTempatKosScope()
+            ->where('status', 'admin_approved')
+            ->with(['rent.room', 'user', 'tempatKos'])
+            ->latest()
+            ->take(5)
+            ->get();
+
+        $refundPendingCount = \App\Models\CancelBooking::withoutTempatKosScope()
+            ->where('status', 'admin_approved')
+            ->count();
+    @endphp
+
+    @if($refundPendingCount > 0)
+    <div class="px-6 py-5 bg-slate-800 border border-orange-500/40 rounded-xl shadow-sm">
+        <div class="flex items-start gap-4">
+            <!-- Icon -->
+            <div class="p-2 bg-orange-500/20 rounded-lg flex-shrink-0">
+                <svg class="w-6 h-6 text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"/>
+                </svg>
+            </div>
+
+            <div class="flex-1">
+                <h3 class="font-semibold text-orange-300 mb-1">
+                    {{ $refundPendingCount }} Refund Cancel Booking Menunggu Diproses
+                </h3>
+                <p class="text-sm text-slate-300 mb-4">
+                    Admin kos telah menyetujui pembatalan booking. Silakan proses pengembalian dana DP ke rekening user.
+                </p>
+
+                <!-- List item refund -->
+                <div class="space-y-2 mb-4">
+                    @foreach($refundPendingNotifs as $cancel)
+                    <div class="flex items-center justify-between px-3 py-2.5 bg-slate-900 border border-slate-700 rounded-lg hover:border-orange-400/50 transition">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 bg-orange-500/20 rounded-full flex items-center justify-center flex-shrink-0">
+                                <span class="text-xs font-bold text-orange-300">
+                                    {{ $cancel->rent->room->room_number ?? '-' }}
+                                </span>
+                            </div>
+                            <div>
+                                <p class="text-sm font-medium text-white">
+                                    {{ $cancel->user->name }}
+                                    <span class="text-xs text-slate-400 ml-1">• {{ $cancel->tempatKos->nama_kos ?? '-' }}</span>
+                                </p>
+                                <p class="text-xs text-slate-400">
+                                    DP: <span class="text-orange-400 font-semibold">Rp {{ number_format($cancel->rent->deposit_paid ?? 0, 0, ',', '.') }}</span>
+                                    • {{ $cancel->bank_name }} {{ $cancel->account_number }}
+                                    • {{ $cancel->created_at->diffForHumans() }}
+                                </p>
+                            </div>
+                        </div>
+                        <a href="{{ route('superadmin.refunds.show', $cancel) }}"
+                           class="flex-shrink-0 text-sm font-medium text-orange-400 hover:text-orange-300 transition">
+                            Proses →
+                        </a>
+                    </div>
+                    @endforeach
+                </div>
+
+                <a href="{{ route('superadmin.refunds.index') }}"
+                   class="inline-flex items-center text-sm font-medium text-orange-400 hover:text-orange-300 transition">
+                    Lihat Semua Refund Pending
+                    <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                    </svg>
+                </a>
+            </div>
+        </div>
+    </div>
+    @endif
+
+    {{-- ============================================================
+         CARD NOTIFIKASI 2: DANA MASUK DARI ADMIN (Pembayaran Dikonfirmasi)
          Muncul hanya jika ada notifikasi yang belum diproses (holding)
     ============================================================ --}}
     @php
@@ -67,7 +147,6 @@
                     @endphp
                     <div class="flex items-center justify-between px-3 py-2.5 bg-slate-900 border border-slate-700 rounded-lg hover:border-yellow-400/50 transition">
                         <div class="flex items-center gap-3">
-                            <!-- Badge tipe -->
                             <div class="w-10 h-10 bg-yellow-500/20 rounded-full flex items-center justify-center flex-shrink-0">
                                 <svg class="w-5 h-5 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -85,8 +164,6 @@
                                 </p>
                             </div>
                         </div>
-
-                        <!-- Tombol Cairkan: langsung ke form create dengan payment pre-selected -->
                         <a href="{{ route('superadmin.disbursements.create', [
                                 'tempat_kos_id' => $notif->payment?->tempat_kos_id,
                                 'payment_id'    => $notif->payment?->id,

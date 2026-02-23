@@ -10,7 +10,22 @@
 
 @section('content')
 
+{{--
+    =====================================================================
+    PERBAIKAN UTAMA:
+    1. Alert Booking Pending: Hanya tampil jika TIDAK ada cancel booking pending
+       untuk rent yang sama. Ini sudah dihandle di controller dengan whereNotIn,
+       sehingga $pendingBookingsCount dan $pendingBookings sudah bersih.
+    2. Alert Cancel Booking: Menggunakan variable dari controller ($cancelBookingsPending
+       dan $cancelBookingsCount) — TIDAK lagi query ulang di blade untuk menghindari
+       duplikasi dan inkonsistensi data (terutama untuk SuperAdmin).
+    =====================================================================
+--}}
+
 <!-- Alert Booking Pending -->
+{{-- PERBAIKAN: Variable $pendingBookingsCount dan $pendingBookings sudah difilter
+     di controller, sehingga rent yang sudah ada cancel booking pending-nya
+     tidak akan muncul di sini --}}
 @if(isset($pendingBookingsCount) && $pendingBookingsCount > 0)
 <div class="mb-6 px-6 py-5 bg-slate-800 border border-yellow-500/40 rounded-xl shadow-sm">
     <div class="flex items-start gap-4">
@@ -64,16 +79,7 @@
 @endif
 
 <!-- Alert Cancel Booking -->
-@php
-    $cancelBookings = \App\Models\Rent::where('status', 'cancel_booking')
-        ->with(['user', 'room'])
-        ->latest()
-        ->take(5)
-        ->get();
-    $cancelBookingsCount = \App\Models\Rent::where('status', 'cancel_booking')->count();
-@endphp
-
-@if($cancelBookingsCount > 0)
+@if(isset($cancelBookingsCount) && $cancelBookingsCount > 0)
 <div class="mb-6 px-6 py-5 bg-slate-800 border border-red-500/40 rounded-xl shadow-sm">
     <div class="flex items-start gap-4">
         <div class="p-2 bg-red-500/20 rounded-lg">
@@ -83,38 +89,41 @@
         </div>
         <div class="flex-1">
             <h3 class="font-semibold text-red-300 mb-1">
-                {{ $cancelBookingsCount }} Pembatalan Booking
+                {{ $cancelBookingsCount }} Permintaan Pembatalan Booking
             </h3>
             <p class="text-sm text-slate-300 mb-4">
-                Terdapat permintaan pembatalan booking yang perlu ditinjau dan diproses.
+                User mengajukan pembatalan booking dan menunggu persetujuan Anda untuk proses pengembalian dana DP.
             </p>
+            @if(isset($cancelBookingsPending) && $cancelBookingsPending->count() > 0)
             <div class="space-y-2 mb-4">
-                @foreach($cancelBookings as $booking)
+                @foreach($cancelBookingsPending as $cancel)
                 <div class="flex items-center justify-between px-3 py-2 bg-slate-900 border border-slate-700 rounded-lg hover:border-red-400/50 transition">
                     <div class="flex items-center gap-3">
                         <div class="w-8 h-8 bg-red-500/20 rounded-full flex items-center justify-center">
                             <span class="text-xs font-bold text-red-300">
-                                {{ $booking->room->room_number }}
+                                {{ $cancel->rent->room->room_number ?? '-' }}
                             </span>
                         </div>
                         <div>
-                            <p class="text-sm font-medium text-white">
-                                {{ $booking->user->name }}
-                            </p>
+                            <p class="text-sm font-medium text-white">{{ $cancel->user->name }}</p>
                             <p class="text-xs text-slate-400">
-                                Dibatalkan {{ $booking->updated_at->diffForHumans() }}
+                                DP: Rp {{ number_format($cancel->rent->deposit_paid ?? 0, 0, ',', '.') }}
+                                • {{ $cancel->created_at->diffForHumans() }}
                             </p>
                         </div>
                     </div>
-                    <a href="{{ route('admin.bookings.show', $booking) }}" class="text-sm font-medium text-red-400 hover:text-red-300">
+                    <a href="{{ route('admin.cancel-bookings.show', $cancel) }}"
+                       class="text-sm font-medium text-red-400 hover:text-red-300">
                         Proses →
                     </a>
                 </div>
                 @endforeach
             </div>
-            <a href="{{ route('admin.bookings.index') }}" class="inline-flex items-center text-sm font-medium text-red-400 hover:text-red-300">
+            @endif
+            <a href="{{ route('admin.cancel-bookings.index') }}"
+               class="inline-flex items-center text-sm font-medium text-red-400 hover:text-red-300">
                 Lihat Semua Pembatalan
-                <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor">
+                <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
                 </svg>
             </a>
@@ -245,7 +254,6 @@
     </a>
 
     <!-- Pendapatan Bulanan -->
-    {{-- PERUBAHAN: Hanya muncul saat superadmin sudah cairkan dana (dari disbursement) --}}
     <a href="{{ route('admin.reports.index') }}" class="bg-slate-800 p-6 rounded-lg border border-slate-700 transition-all duration-300 ease-out hover:-translate-y-1 hover:shadow-lg hover:border-green-600 hover:bg-slate-700">
         <div class="flex items-center justify-between">
             <div class="flex-1 min-w-0">
@@ -260,7 +268,6 @@
                     <p class="text-sm text-gray-400 mt-1">Tidak ada perubahan</p>
                 @endif
 
-                {{-- INFO: dana yang masih menunggu dari superadmin --}}
                 @if(($holdingAmount ?? 0) > 0)
                 <p class="text-xs text-amber-400 mt-1.5">
                     🕐 Rp {{ number_format($holdingAmount, 0, ',', '.') }} menunggu pencairan
@@ -276,7 +283,6 @@
     </a>
 
     <!-- Pendapatan Tahunan -->
-    {{-- PERUBAHAN: Hanya muncul saat superadmin sudah cairkan dana (dari disbursement) --}}
     <a href="{{ route('admin.reports.index') }}" class="bg-slate-800 p-6 rounded-lg border border-slate-700 transition-all duration-300 ease-out hover:-translate-y-1 hover:shadow-lg hover:border-blue-600 hover:bg-slate-700">
         <div class="flex items-center justify-between">
             <div class="flex-1 min-w-0">
@@ -446,11 +452,11 @@
 document.addEventListener('DOMContentLoaded', function() {
     // Revenue Trend Chart - Line Chart
     const revenueCtx = document.getElementById('revenueChart').getContext('2d');
-    
+
     const monthlyRevenueLabels = {!! json_encode($monthlyRevenueLabels ?? ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun']) !!};
     const monthlyRevenueData = {!! json_encode($monthlyRevenueData ?? [15, 22, 18, 28, 32, 36]) !!};
     const paymentStatusData = {!! json_encode($paymentStatusData ?? [45, 12, 8, 5]) !!};
-    
+
     new Chart(revenueCtx, {
         type: 'line',
         data: {

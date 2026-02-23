@@ -72,17 +72,6 @@
             <span x-show="sidebarOpen">Kelola Tempat Kos</span>
         </a>
 
-        <!-- Laporan Tagihan -->
-        <a href="{{ route('superadmin.billing-report.index') }}" 
-           class="flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-700 transition-colors 
-                  {{ request()->routeIs('superadmin.billing-report.*') ? 'bg-gray-700 text-yellow-400' : 'text-gray-300' }}">
-            <svg class="w-6 h-6 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                      d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
-            </svg>
-            <span x-show="sidebarOpen">Laporan Fee</span>
-        </a>
-
         <!-- Kelola Pencairan Dana -->
         <a href="{{ route('superadmin.disbursements.index') }}" 
            class="flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-700 transition-colors 
@@ -92,6 +81,30 @@
                       d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
             </svg>
             <span x-show="sidebarOpen">Kelola Pencairan Dana</span>
+        </a>
+
+        <!-- Kelola Refund Cancel Booking -->
+        {{-- PERBAIKAN: Hapus badge angka dari menu sidebar.
+             Notifikasi refund seharusnya muncul di icon bell di header, bukan di sini. --}}
+        <a href="{{ route('superadmin.refunds.index') }}" 
+           class="flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-700 transition-colors 
+                  {{ request()->routeIs('superadmin.refunds.*') ? 'bg-gray-700 text-yellow-400' : 'text-gray-300' }}">
+            <svg class="w-6 h-6 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"/>
+            </svg>
+            <span x-show="sidebarOpen">Kelola Refund</span>
+        </a>
+
+        <!-- Laporan Fee Pencairan -->
+        <a href="{{ route('superadmin.billing-report.index') }}" 
+           class="flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-700 transition-colors 
+                  {{ request()->routeIs('superadmin.billing-report.*') ? 'bg-gray-700 text-yellow-400' : 'text-gray-300' }}">
+            <svg class="w-6 h-6 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+            </svg>
+            <span x-show="sidebarOpen">Kelola Laporan Fee</span>
         </a>
         
         <!-- Pengaturan Sistem -->
@@ -118,7 +131,6 @@
                 <span class="text-sm font-bold text-white">
                     {{ substr(Auth::user()->name, 0, 1) }}
                 </span>
-                <!-- Crown Icon -->
                 <div class="absolute -top-1 -right-1 w-4 h-4 bg-yellow-400 rounded-full flex items-center justify-center">
                     <svg class="w-3 h-3 text-yellow-900" fill="currentColor" viewBox="0 0 20 20">
                         <path d="M5 4a2 2 0 012-2h6a2 2 0 012 2v14l-5-2.5L5 18V4z"/>
@@ -131,9 +143,7 @@
                 <p class="text-sm font-semibold text-gray-100">
                     <span class="text-yellow-400">{{ Auth::user()->name }}</span>
                 </p>
-                <p class="text-xs text-gray-400">
-                    Super Admin
-                </p>
+                <p class="text-xs text-gray-400">Super Admin</p>
             </div>
             
             <!-- Logout -->

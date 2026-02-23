@@ -4,39 +4,51 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\CancelBooking;
+use App\Models\Notification;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Storage;
 
 class AdminCancelBookingController extends Controller
 {
     /**
-     * Display all cancel requests
+     * Display all cancel requests (untuk admin kos)
      */
     public function index(Request $request)
     {
         /** @var \App\Models\User $user */
         $user = auth()->user();
 
-        // Query builder
         if ($user->isSuperAdmin()) {
-            $query = CancelBooking::withoutTempatKosScope()
-                ->with(['rent.room', 'user']);
+            $query = CancelBooking::withoutTempatKosScope()->with(['rent.room', 'user']);
         } else {
             $query = CancelBooking::with(['rent.room', 'user']);
         }
 
-        // Filter by status
+        // Filter status
         if ($request->filled('status')) {
             $query->where('status', $request->status);
         } else {
-            $query->whereIn('status', ['pending', 'approved']);
+            $query->whereIn('status', ['pending', 'admin_approved', 'approved']);
         }
 
-        $cancelBookings = $query->latest()->paginate(15);
+        // Filter search — nama user, email, atau nomor kamar
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->whereHas('user', fn($u) =>
+                    $u->where('name', 'like', "%{$search}%")
+                      ->orWhere('email', 'like', "%{$search}%")
+                )->orWhereHas('rent.room', fn($r) =>
+                    $r->where('room_number', 'like', "%{$search}%")
+                );
+            });
+        }
 
-        // Count pending
+        // withQueryString() agar parameter search/status ikut terbawa saat pindah halaman
+        $cancelBookings = $query->latest()->paginate(15)->withQueryString();
+
         $pendingCount = $user->isSuperAdmin()
             ? CancelBooking::withoutTempatKosScope()->where('status', 'pending')->count()
             : CancelBooking::where('status', 'pending')->count();
@@ -45,153 +57,81 @@ class AdminCancelBookingController extends Controller
     }
 
     /**
-     * Show refund form
+     * Show detail + form approve untuk admin
      */
-    public function showRefundForm(CancelBooking $cancelBooking)
+    public function show(CancelBooking $cancelBooking)
     {
-        if ($cancelBooking->status !== 'pending') {
-            return back()->with('error', 'Pembatalan ini sudah diproses sebelumnya.');
-        }
-
         $cancelBooking->load(['rent.room', 'user']);
-
-        // Payment methods untuk refund
-        $refundMethods = [
-            'manual_transfer' => [
-                'label' => 'Transfer Bank',
-                'options' => [
-                    'bca' => ['name' => 'BCA'],
-                    'bni' => ['name' => 'BNI'],
-                    'mandiri' => ['name' => 'Mandiri'],
-                ]
-            ],
-            'e_wallet' => [
-                'label' => 'E-Wallet',
-                'options' => [
-                    'dana' => ['name' => 'DANA'],
-                    'ovo' => ['name' => 'OVO'],
-                    'gopay' => ['name' => 'GoPay'],
-                ]
-            ],
-        ];
-
-        // Default refund amount = DP yang sudah dibayar
-        $defaultRefundAmount = $cancelBooking->rent->deposit_paid;
-
-        return view('admin.cancel-bookings.refund-form', compact(
-            'cancelBooking',
-            'refundMethods',
-            'defaultRefundAmount'
-        ));
+        return view('admin.cancel-bookings.show', compact('cancelBooking'));
     }
 
     /**
-     * Process refund
+     * Admin MENYETUJUI cancel booking → forward ke superadmin untuk proses refund
+     *
+     * - Update status rent  → 'cancelled'
+     * - Update status room  → 'available'
      */
-    public function processRefund(Request $request, CancelBooking $cancelBooking)
+    public function approve(Request $request, CancelBooking $cancelBooking)
     {
         if ($cancelBooking->status !== 'pending') {
             return back()->with('error', 'Pembatalan ini sudah diproses sebelumnya.');
         }
 
         $validated = $request->validate([
-            'refund_method' => 'required|in:manual_transfer,e_wallet',
-            'refund_sub_method' => 'required|string',
-            'refund_account_number' => 'required|string|max:50',
-            'refund_amount' => 'required|numeric|min:0',
-            'refund_proof' => 'required|image|mimes:jpeg,png,jpg|max:5120',
-            'admin_notes' => 'nullable|string|max:1000',
-        ], [
-            'refund_method.required' => 'Metode pengembalian wajib dipilih',
-            'refund_sub_method.required' => 'Sub-metode wajib dipilih',
-            'refund_account_number.required' => 'Nomor rekening tujuan wajib diisi',
-            'refund_amount.required' => 'Jumlah pengembalian wajib diisi',
-            'refund_proof.required' => 'Bukti transfer wajib diunggah',
+            'admin_approval_notes' => 'nullable|string|max:1000',
         ]);
 
         try {
             DB::beginTransaction();
 
-            // Upload bukti transfer
-            $proofPath = $request->file('refund_proof')
-                ->store('refund-proofs', 'public');
-
-            // Update cancel booking
+            // 1. Update status cancel booking → admin_approved
             $cancelBooking->update([
-                'status' => 'approved',
-                'refund_method' => $validated['refund_method'],
-                'refund_sub_method' => $validated['refund_sub_method'],
-                'refund_account_number' => $validated['refund_account_number'],
-                'refund_amount' => $validated['refund_amount'],
-                'refund_proof' => $proofPath,
-                'admin_notes' => $validated['admin_notes'],
-                'processed_by' => Auth::id(),
-                'processed_at' => now(),
+                'status'               => 'admin_approved',
+                'admin_approval_notes' => $validated['admin_approval_notes'],
+                'approved_by_admin'    => Auth::id(),
+                'admin_approved_at'    => now(),
             ]);
 
-            // Update rent status ke 'cancelled'
-            $cancelBooking->rent->update([
-                'status' => 'cancelled',
-                'end_date' => now(),
-            ]);
+            // 2. Update status rent → cancelled & room → available
+            $rent = $cancelBooking->rent;
+            if ($rent) {
+                $rent->update([
+                    'status'   => 'cancelled',
+                    'end_date' => now(),
+                ]);
 
-            // Kembalikan room status ke 'available'
-            $cancelBooking->rent->room->update(['status' => 'available']);
-
-            // Hapus billings yang belum dibayar
-            $cancelBooking->rent->billings()
-                ->whereIn('status', ['unpaid', 'pending', 'overdue'])
-                ->delete();
-
-            DB::commit();
-
-            return redirect()->route('admin.cancel-bookings.index')
-                ->with('success', 'Pengembalian dana berhasil diproses. User dapat melihat status di dashboard mereka.');
-
-        } catch (\Exception $e) {
-            DB::rollBack();
-
-            if (isset($proofPath)) {
-                Storage::disk('public')->delete($proofPath);
+                if ($rent->room) {
+                    $rent->room->update(['status' => 'available']);
+                }
             }
 
-            return back()->with('error', 'Gagal memproses refund: ' . $e->getMessage())->withInput();
-        }
-    }
-
-    /**
-     * Reject cancel request
-     */
-    public function reject(Request $request, CancelBooking $cancelBooking)
-    {
-        if ($cancelBooking->status !== 'pending') {
-            return back()->with('error', 'Pembatalan ini sudah diproses sebelumnya.');
-        }
-
-        $validated = $request->validate([
-            'admin_notes' => 'required|string|max:1000',
-        ], [
-            'admin_notes.required' => 'Alasan penolakan wajib diisi',
-        ]);
-
-        try {
-            DB::beginTransaction();
-
-            $cancelBooking->update([
-                'status' => 'rejected',
-                'admin_notes' => $validated['admin_notes'],
-                'processed_by' => Auth::id(),
-                'processed_at' => now(),
-            ]);
+            // 3. Kirim notifikasi ke SEMUA superadmin
+            $superAdmins = User::where('role', 'superadmin')->get();
+            foreach ($superAdmins as $superAdmin) {
+                Notification::create([
+                    'tempat_kos_id' => $cancelBooking->tempat_kos_id,
+                    'user_id'       => $superAdmin->id,
+                    'rent_id'       => $cancelBooking->rent_id,
+                    'room_id'       => $cancelBooking->rent->room_id ?? null,
+                    'type'          => 'cancel_refund',
+                    'title'         => 'Permintaan Refund Cancel Booking',
+                    'message'       => 'Admin ' . Auth::user()->name .
+                        ' telah menyetujui pembatalan booking user ' .
+                        $cancelBooking->user->name .
+                        '. Silakan proses pengembalian dana DP sebesar Rp ' .
+                        number_format($cancelBooking->rent->deposit_paid ?? 0, 0, ',', '.'),
+                    'status'        => 'unread',
+                ]);
+            }
 
             DB::commit();
 
             return redirect()->route('admin.cancel-bookings.index')
-                ->with('success', 'Permintaan pembatalan ditolak.');
+                ->with('success', 'Pembatalan booking disetujui. Status booking diubah ke Cancelled. Notifikasi refund telah dikirim ke Superadmin.');
 
         } catch (\Exception $e) {
             DB::rollBack();
-            return back()->with('error', 'Gagal menolak pembatalan: ' . $e->getMessage());
+            return back()->with('error', 'Gagal menyetujui pembatalan: ' . $e->getMessage());
         }
     }
 }

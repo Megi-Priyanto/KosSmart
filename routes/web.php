@@ -281,6 +281,23 @@ Route::middleware(['auth', 'verified', 'super.admin'])
             Route::get('/api/holding-summary', [DisbursementController::class, 'holdingSummary'])
                 ->name('holding-summary');
         });
+
+        // ============================================================
+        // REFUND CANCEL BOOKING ROUTES (Superadmin proses refund DP)
+        // ============================================================
+        Route::prefix('refunds')->name('refunds.')->group(function () {
+            // GET /superadmin/refunds - Daftar cancel booking yg butuh direfund
+            Route::get('/', [\App\Http\Controllers\SuperAdmin\SuperAdminRefundController::class, 'index'])
+                ->name('index');
+
+            // GET /superadmin/refunds/{cancelBooking} - Detail + form refund
+            Route::get('/{cancelBooking}', [\App\Http\Controllers\SuperAdmin\SuperAdminRefundController::class, 'show'])
+                ->name('show');
+
+            // POST /superadmin/refunds/{cancelBooking}/process - Proses refund
+            Route::post('/{cancelBooking}/process', [\App\Http\Controllers\SuperAdmin\SuperAdminRefundController::class, 'processRefund'])
+                ->name('process');
+        });
     });
 
 // ==============================
@@ -354,14 +371,14 @@ Route::middleware(['auth', 'verified', 'admin.kos'])
         // Checkout Routes
         Route::post('/rooms/{room}/checkout/force', [AdminRoomController::class, 'forceCheckout'])
             ->name('rooms.checkout.force');
-        
+
         Route::post('/rooms/{room}/checkout/{checkoutRequest}/approve', [AdminRoomController::class, 'approveCheckout'])
             ->name('rooms.checkout.approve');
 
         // Update Status Kamar
         Route::put('/rooms/{room}/status', [RoomStatusController::class, 'update'])
             ->name('rooms.status.update');
-        
+
         Route::post('/rooms/bulk-status', [RoomStatusController::class, 'bulkUpdate'])
             ->name('rooms.status.bulk');
 
@@ -420,13 +437,15 @@ Route::middleware(['auth', 'verified', 'admin.kos'])
         Route::get('/cancel-bookings', [\App\Http\Controllers\Admin\AdminCancelBookingController::class, 'index'])
             ->name('cancel-bookings.index');
 
-        // Admin Cancel Booking Routes
-        Route::get('/cancel-bookings/{cancelBooking}/refund', [\App\Http\Controllers\Admin\AdminCancelBookingController::class, 'showRefundForm'])
-            ->name('cancel-bookings.refund-form');
+        // Detail + form approve/reject untuk admin
+        Route::get('/cancel-bookings/{cancelBooking}', [\App\Http\Controllers\Admin\AdminCancelBookingController::class, 'show'])
+            ->name('cancel-bookings.show');
 
-        Route::post('/cancel-bookings/{cancelBooking}/refund', [\App\Http\Controllers\Admin\AdminCancelBookingController::class, 'processRefund'])
-            ->name('cancel-bookings.refund.process');
+        // Admin MENYETUJUI → forward ke superadmin
+        Route::post('/cancel-bookings/{cancelBooking}/approve', [\App\Http\Controllers\Admin\AdminCancelBookingController::class, 'approve'])
+            ->name('cancel-bookings.approve');
 
+        // Admin MENOLAK
         Route::post('/cancel-bookings/{cancelBooking}/reject', [\App\Http\Controllers\Admin\AdminCancelBookingController::class, 'reject'])
             ->name('cancel-bookings.reject');
     });
