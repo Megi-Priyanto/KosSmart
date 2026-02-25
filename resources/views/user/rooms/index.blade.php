@@ -334,6 +334,232 @@
     @endforeach
 </div>
 
+{{-- Rating --}}
+<style>
+    .ulasan-card {
+        background: #ffffff;
+        border: 1px solid #e5e7eb;
+        border-radius: 14px;
+        padding: 1.1rem;
+        transition: border-color 0.2s, box-shadow 0.2s;
+        display: flex;
+        flex-direction: column;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+    }
+    .ulasan-card:hover {
+        border-color: #fcd34d;
+        box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+    }
+
+    /* Batas teks 3 baris */
+    .komentar-box {
+        position: relative;
+        overflow: hidden;
+        max-height: 62px;
+        transition: max-height 0.4s ease;
+        flex-shrink: 0;
+    }
+    .komentar-box.is-open { max-height: 600px; }
+
+    /* Gradient fade ujung teks */
+    .komentar-fade-overlay {
+        position: absolute;
+        bottom: 0; left: 0; right: 0;
+        height: 32px;
+        background: linear-gradient(to bottom, transparent, #ffffff);
+        pointer-events: none;
+        transition: opacity 0.3s;
+    }
+    .komentar-box.is-open .komentar-fade-overlay { opacity: 0; }
+
+    /* "...selengkapnya" pojok kanan bawah */
+    .komentar-readmore {
+        position: absolute;
+        bottom: 0; right: 0;
+        font-size: 0.72rem;
+        font-weight: 700;
+        color: #d97706;
+        cursor: pointer;
+        background: #ffffff;
+        padding: 0 2px 1px 8px;
+    }
+    .komentar-box.is-open .komentar-readmore { display: none; }
+
+    /* Spacer dorong user-info ke bawah */
+    .ulasan-spacer { flex: 1; min-height: 0.5rem; }
+
+    /* User info selalu di paling bawah */
+    .ulasan-footer {
+        border-top: 1px solid #f3f4f6;
+        padding-top: 0.65rem;
+        margin-top: 0.6rem;
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+        flex-shrink: 0;
+    }
+
+    /* Rating bar */
+    .rating-bar-track {
+        flex: 1;
+        height: 8px;
+        background: #f3f4f6;
+        border-radius: 100px;
+        overflow: hidden;
+    }
+    .rating-bar-fill {
+        height: 100%;
+        background: linear-gradient(90deg, #f59e0b, #d97706);
+        border-radius: 100px;
+    }
+</style>
+
+@if(isset($totalUlasan) && $totalUlasan > 0)
+<section class="mt-12 pt-10 border-t border-gray-200">
+
+    {{-- Header --}}
+    <div class="flex items-center gap-3 mb-6">
+        <div class="w-10 h-10 bg-yellow-100 rounded-xl flex items-center justify-center">
+            <svg class="w-5 h-5 text-yellow-500" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+            </svg>
+        </div>
+        <div>
+            <h2 class="text-xl font-bold text-gray-800">Rating & Ulasan</h2>
+            <p class="text-sm text-gray-500">{{ $totalUlasan }} ulasan dari penghuni</p>
+        </div>
+    </div>
+
+    {{-- Ringkasan rating --}}
+    <div class="bg-white border border-gray-200 rounded-2xl shadow-sm p-6 mb-6"
+         style="display:grid;grid-template-columns:auto 1fr;gap:2.5rem;align-items:center;">
+
+        {{-- Angka rata-rata --}}
+        <div class="text-center" style="min-width:130px;">
+            <div style="font-size:4rem;font-weight:900;color:#f59e0b;line-height:1;">
+                {{ number_format($avgRating, 1) }}
+            </div>
+            <div style="display:flex;justify-content:center;gap:3px;margin:0.5rem 0;">
+                @for($i = 1; $i <= 5; $i++)
+                    <svg width="18" height="18" viewBox="0 0 24 24"
+                         fill="{{ $i <= round($avgRating) ? '#f59e0b' : '#e5e7eb' }}">
+                        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                    </svg>
+                @endfor
+            </div>
+            <div class="text-sm text-gray-400">dari {{ $totalUlasan }} ulasan</div>
+        </div>
+
+        {{-- Bar distribusi 5 → 1 --}}
+        <div style="display:flex;flex-direction:column;gap:0.55rem;">
+            @for($i = 5; $i >= 1; $i--)
+            <div style="display:flex;align-items:center;gap:0.65rem;">
+                <span class="text-xs text-gray-400" style="width:14px;text-align:right;flex-shrink:0;">{{ $i }}</span>
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="#f59e0b" style="flex-shrink:0;">
+                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                </svg>
+                <div class="rating-bar-track">
+                    <div class="rating-bar-fill" style="width:{{ $ratingDistribution[$i]['percent'] ?? 0 }}%;"></div>
+                </div>
+                <span class="text-xs text-gray-400" style="width:28px;text-align:right;flex-shrink:0;">
+                    {{ $ratingDistribution[$i]['count'] ?? 0 }}
+                </span>
+            </div>
+            @endfor
+        </div>
+    </div>
+
+    {{-- Kartu-kartu ulasan --}}
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        @foreach(($ulasanList ?? collect())->take(6) as $ulasan)
+        <div x-data="{
+                open: false,
+                overflow: false,
+                init() {
+                    this.$nextTick(() => {
+                        const el = this.$refs.teks;
+                        if (el) this.overflow = el.scrollHeight > 64;
+                    });
+                }
+             }"
+             class="ulasan-card">
+
+            {{-- Bintang --}}
+            <div style="display:flex;align-items:center;gap:2px;margin-bottom:0.6rem;flex-shrink:0;">
+                @for($i = 1; $i <= 5; $i++)
+                    <svg width="14" height="14" viewBox="0 0 24 24"
+                         fill="{{ $i <= $ulasan->rating ? '#f59e0b' : '#e5e7eb' }}">
+                        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                    </svg>
+                @endfor
+                <span style="font-size:0.72rem;font-weight:700;color:#d97706;margin-left:4px;">
+                    {{ number_format($ulasan->rating, 1) }}
+                </span>
+            </div>
+
+            {{-- Komentar: fixed 3 baris + fade + expand --}}
+            <div class="komentar-box" :class="{ 'is-open': open }">
+                <p x-ref="teks"
+                   class="text-sm text-gray-600"
+                   style="line-height:1.6;font-style:italic;">
+                    "{{ $ulasan->komentar ?: 'Tidak ada komentar.' }}"
+                </p>
+                <div class="komentar-fade-overlay" x-show="overflow"></div>
+                <span class="komentar-readmore"
+                      x-show="overflow"
+                      @click="open = true">
+                    ...selengkapnya
+                </span>
+            </div>
+
+            {{-- Sembunyikan --}}
+            <div x-show="open && overflow" style="margin-top:4px;flex-shrink:0;">
+                <button @click="open = false"
+                        class="text-xs font-bold text-yellow-600"
+                        style="background:none;border:none;cursor:pointer;padding:0;font-family:inherit;">
+                    ↑ Sembunyikan
+                </button>
+            </div>
+
+            {{-- Spacer --}}
+            <div class="ulasan-spacer"></div>
+
+            {{-- User info — SELALU di paling bawah --}}
+            <div class="ulasan-footer">
+                <div class="w-7 h-7 rounded-full bg-gradient-to-br from-yellow-400 to-orange-400 flex items-center justify-center text-white text-xs font-bold flex-shrink-0">
+                    {{ strtoupper(substr($ulasan->user?->name ?? 'U', 0, 1)) }}
+                </div>
+                <div>
+                    <p class="text-xs font-semibold text-gray-700" style="line-height:1.2;">
+                        {{ $ulasan->user?->name ?? 'Anonim' }}
+                    </p>
+                    <p class="text-xs text-gray-400">{{ $ulasan->created_at->diffForHumans() }}</p>
+                </div>
+            </div>
+        </div>
+        @endforeach
+    </div>
+
+    @if(isset($ulasanList) && $ulasanList->count() > 6)
+    <p class="text-center text-sm text-gray-400 mt-4">
+        Dan {{ $ulasanList->count() - 6 }} ulasan lainnya...
+    </p>
+    @endif
+
+</section>
+
+@else
+{{-- Belum ada ulasan --}}
+@if(isset($tempatKos))
+<section class="mt-10 p-6 bg-gray-50 border border-gray-200 rounded-2xl text-center">
+    <svg class="w-10 h-10 mx-auto mb-3 text-gray-300" fill="currentColor" viewBox="0 0 24 24">
+        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+    </svg>
+    <p class="text-sm text-gray-500">Belum ada ulasan untuk kos ini.</p>
+</section>
+@endif
+@endif
+
 <!-- Pagination -->
 <div class="mt-8">
     {{ $rooms->links() }}

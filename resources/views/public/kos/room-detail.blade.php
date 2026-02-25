@@ -1,18 +1,12 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Detail Kamar {{ $room->room_number }} - {{ $tempatKos->nama_kos }} - KosSmart</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+@extends('layouts.public')
+
+@section('title', 'Detail Kamar {{ $room->room_number }} - {{ $tempatKos->nama_kos }} - KosSmart')
+
+@push('head-scripts')
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
-    <style>
-        :root {
-            --bg:#111827; --surface:#1f2937; --card:#243040;
-            --amber:#f59e0b; --amber2:#fbbf24; --green:#34d399; --purple:#a78bfa;
-            --text:#f3f4f6; --muted:#9ca3af; --border:rgba(255,255,255,0.07);
+@endpush
+
+@push('page-styles')
         }
         *{margin:0;padding:0;box-sizing:border-box;}
         body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(--text);overflow-x:hidden;}
@@ -89,7 +83,7 @@
         </a>
         <a href="{{ route('home') }}" class="nav-link">Beranda</a>
         <a href="{{ route('tentang') }}" class="nav-link">Tentang Kami</a>
-        <a href="{{ route('public.kos.index') }}" class="nav-link active">Kos</a>
+        <a href="{{ route('public.kos.index') }}" class="nav-link active">Cari Kos</a>
     </div>
     <div class="nav-right">
         <div class="dropdown" id="dd-masuk">
@@ -128,7 +122,9 @@
                 </a>
             </div>
         </div>
-        <a href="{{ route('register') }}" class="btn-nav btn-amber-nav">Daftar Gratis</a>
+@endpush
+
+@section('content')
     </div>
 </nav>
 
@@ -288,7 +284,7 @@
 
             <!-- Kamar Lain -->
             @if($relatedRooms->count() > 0)
-            <div class="panel">
+            <div class="panel mb-6">
                 <div class="panel-body">
                     <h3 style="font-size:0.95rem;font-weight:700;margin-bottom:1rem;">Kamar Lain yang Tersedia</h3>
                     <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:0.75rem;">
@@ -374,55 +370,4 @@
     </div>
 </div>
 
-<footer style="background:var(--surface);border-top:1px solid var(--border);padding:2.5rem 2rem 1.5rem;margin-top:0;">
-    <div style="max-width:1152px;margin:0 auto;display:flex;justify-content:space-between;align-items:flex-start;gap:2rem;flex-wrap:wrap;">
-        <div style="max-width:260px;">
-            <div style="display:flex;align-items:center;gap:0.5rem;font-weight:800;font-size:1.05rem;margin-bottom:0.65rem;">
-                <div style="width:28px;height:28px;background:linear-gradient(135deg,var(--amber),#d97706);border-radius:7px;display:flex;align-items:center;justify-content:center;">
-                    <span class="material-symbols-rounded" style="font-size:15px!important;color:#111;font-variation-settings:'FILL' 1,'wght' 600,'GRAD' 0,'opsz' 20;">home</span>
-                </div>
-                KosSmart
-            </div>
-            <p style="color:var(--muted);font-size:0.82rem;line-height:1.7;">Platform manajemen kos modern untuk penghuni dan pemilik kos Indonesia.</p>
-        </div>
-        <div style="display:flex;gap:3rem;flex-wrap:wrap;">
-            <div>
-                <h4 style="font-size:0.82rem;font-weight:700;margin-bottom:0.9rem;">Penghuni</h4>
-                <a href="{{ route('register') }}" style="display:block;color:var(--muted);font-size:0.82rem;text-decoration:none;margin-bottom:0.4rem;transition:color 0.2s;" onmouseover="this.style.color='var(--amber)'" onmouseout="this.style.color='var(--muted)'">Daftar Akun</a>
-                <a href="{{ route('login') }}" style="display:block;color:var(--muted);font-size:0.82rem;text-decoration:none;margin-bottom:0.4rem;transition:color 0.2s;" onmouseover="this.style.color='var(--amber)'" onmouseout="this.style.color='var(--muted)'">Masuk</a>
-                <a href="{{ route('password.request') }}" style="display:block;color:var(--muted);font-size:0.82rem;text-decoration:none;margin-bottom:0.4rem;transition:color 0.2s;" onmouseover="this.style.color='var(--amber)'" onmouseout="this.style.color='var(--muted)'">Lupa Password</a>
-            </div>
-            <div>
-                <h4 style="font-size:0.82rem;font-weight:700;margin-bottom:0.9rem;">Pengelola</h4>
-                <a href="{{ route('admin.login') }}" style="display:block;color:var(--muted);font-size:0.82rem;text-decoration:none;margin-bottom:0.4rem;transition:color 0.2s;" onmouseover="this.style.color='var(--amber)'" onmouseout="this.style.color='var(--muted)'">Login Admin Kos</a>
-                <a href="{{ route('superadmin.login') }}" style="display:block;color:var(--muted);font-size:0.82rem;text-decoration:none;margin-bottom:0.4rem;transition:color 0.2s;" onmouseover="this.style.color='var(--amber)'" onmouseout="this.style.color='var(--muted)'">Login Super Admin</a>
-            </div>
-            <div>
-                <h4 style="font-size:0.82rem;font-weight:700;margin-bottom:0.9rem;">Navigasi</h4>
-                <a href="{{ route('home') }}" style="display:block;color:var(--muted);font-size:0.82rem;text-decoration:none;margin-bottom:0.4rem;transition:color 0.2s;" onmouseover="this.style.color='var(--amber)'" onmouseout="this.style.color='var(--muted)'">Beranda</a>
-                <a href="{{ route('tentang') }}" style="display:block;color:var(--muted);font-size:0.82rem;text-decoration:none;margin-bottom:0.4rem;transition:color 0.2s;" onmouseover="this.style.color='var(--amber)'" onmouseout="this.style.color='var(--muted)'">Tentang Kami</a>
-                <a href="{{ route('public.kos.index') }}" style="display:block;color:var(--muted);font-size:0.82rem;text-decoration:none;margin-bottom:0.4rem;transition:color 0.2s;" onmouseover="this.style.color='var(--amber)'" onmouseout="this.style.color='var(--muted)'">Cari Kos</a>
-            </div>
-        </div>
-    </div>
-    <div style="max-width:1152px;margin:1.5rem auto 0;padding-top:1.25rem;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;font-size:0.76rem;color:var(--muted);flex-wrap:wrap;gap:0.5rem;">
-        <span>© {{ date('Y') }} KosSmart. Dibuat untuk anak kos Indonesia.</span>
-        <span style="display:flex;gap:1rem;">
-            <a href="{{ route('home') }}" style="color:var(--muted);text-decoration:none;transition:color 0.2s;" onmouseover="this.style.color='var(--amber)'" onmouseout="this.style.color='var(--muted)'">Beranda</a>
-            <a href="{{ route('tentang') }}" style="color:var(--muted);text-decoration:none;transition:color 0.2s;" onmouseover="this.style.color='var(--amber)'" onmouseout="this.style.color='var(--muted)'">Tentang Kami</a>
-            <a href="{{ route('login') }}" style="color:var(--muted);text-decoration:none;transition:color 0.2s;" onmouseover="this.style.color='var(--amber)'" onmouseout="this.style.color='var(--muted)'">Masuk</a>
-        </span>
-    </div>
-</footer>
-
-<script>
-function toggleDD(id) {
-    document.querySelectorAll('.dropdown').forEach(d => { if (d.id !== id) d.classList.remove('open'); });
-    document.getElementById(id).classList.toggle('open');
-}
-document.addEventListener('click', e => {
-    if (!e.target.closest('.dropdown')) document.querySelectorAll('.dropdown').forEach(d => d.classList.remove('open'));
-});
-</script>
-</body>
-</html>
+@endsection

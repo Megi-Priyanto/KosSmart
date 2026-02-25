@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\TempatKos;
 use App\Models\Payment;
 use App\Models\Rent;
+use App\Models\Ulasan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -22,10 +23,6 @@ class UserDashboardController extends Controller
         // ==========================
         // CEK STATUS SEWA USER
         // ==========================
-        // User dengan status:
-        // - active
-        // - checkout_requested
-        // tetap dianggap tenant (masih bisa akses dashboard)
         $activeRent = Rent::tenant()
             ->where('user_id', $user->id)
             ->whereHas(
@@ -39,8 +36,6 @@ class UserDashboardController extends Controller
 
         // Jika user masih punya kamar AKTIF
         if ($activeRent) {
-
-            // Riwayat pembayaran (5 terakhir)
             $paymentHistory = Payment::where('user_id', $user->id)
                 ->with('billing')
                 ->latest()
@@ -54,8 +49,7 @@ class UserDashboardController extends Controller
         }
 
         // ==========================
-        // USER BELUM/TIDAK PUNYA KAMAR LAGI
-        // (Termasuk setelah checkout disetujui)
+        // USER BELUM/TIDAK PUNYA KAMAR
         // ==========================
 
         // Cek booking pending
@@ -65,13 +59,39 @@ class UserDashboardController extends Controller
             ->latest()
             ->first();
 
+        // ==========================
+        // CEK APAKAH ADA BILLING YANG PERLU DIULAS
+        // (billing paid, tipe pelunasan/bulanan, belum pernah review rent-nya)
+        // ==========================
+        $billingPerluDiulas = null;
+        $reviewedRentIds = Ulasan::where('user_id', $user->id)->pluck('rent_id')->toArray();
+
+        $billingPerluDiulas = \App\Models\Billing::where('user_id', $user->id)
+            ->where('status', 'paid')
+            ->whereIn('tipe', ['pelunasan', 'bulanan'])
+            ->whereNotIn('rent_id', $reviewedRentIds)
+            ->with(['room.kosInfo.tempatKos'])
+            ->latest('updated_at')
+            ->first();
+
+        // Ambil ulasan terbaru untuk semua kos (untuk tampil di dashboard)
+        $ulasanTerbaru = Ulasan::where('is_visible', true)
+            ->with(['user', 'tempatKos'])
+            ->latest()
+            ->take(6)
+            ->get();
+
         // Query tempat kos aktif
         $query = TempatKos::withCount([
             'rooms as total_kamar',
             'rooms as kamar_tersedia' => function ($q) {
                 $q->where('status', 'available');
             }
-        ])->where('status', 'active');
+        ])
+        ->with(['ulasan' => function ($q) {
+            $q->where('is_visible', true);
+        }])
+        ->where('status', 'active');
 
         // Search
         if ($request->filled('search')) {
@@ -93,6 +113,13 @@ class UserDashboardController extends Controller
             ->paginate(12)
             ->withQueryString();
 
+        // Hitung avg rating per kos
+        $tempatKos->each(function ($kos) {
+            $ulasan = $kos->ulasan->where('is_visible', true);
+            $kos->avg_rating   = $ulasan->count() > 0 ? round($ulasan->avg('rating'), 1) : null;
+            $kos->total_ulasan = $ulasan->count();
+        });
+
         // Daftar kota untuk dropdown filter
         $kotaList = TempatKos::where('status', 'active')
             ->select('kota')
@@ -100,10 +127,9 @@ class UserDashboardController extends Controller
             ->orderBy('kota')
             ->pluck('kota');
 
-        // PENTING: Pastikan menggunakan view yang benar
         return view(
             'user.dashboard-empty',
-            compact('tempatKos', 'kotaList', 'pendingRent')
+            compact('tempatKos', 'kotaList', 'pendingRent', 'billingPerluDiulas', 'ulasanTerbaru')
         );
     }
 
@@ -115,7 +141,6 @@ class UserDashboardController extends Controller
         /** @var \App\Models\User $user */
         $user = Auth::user();
 
-        // Ambil sewa aktif / checkout_requested
         $activeRent = Rent::tenant()
             ->where('user_id', $user->id)
             ->whereHas(
@@ -132,9 +157,8 @@ class UserDashboardController extends Controller
                 ->with('error', 'Anda tidak memiliki kamar aktif');
         }
 
-        // GUNAKAN VIEW YANG SESUAI DENGAN FILE DI PROJECT ANDA
         return view(
-            'user.rooms.room-detail', // ← SESUAIKAN dengan nama file view Anda
+            'user.rooms.room-detail',
             [
                 'room'       => $activeRent->room,
                 'activeRent' => $activeRent,

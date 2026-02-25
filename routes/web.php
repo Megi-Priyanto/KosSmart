@@ -173,6 +173,13 @@ Route::middleware(['auth', 'verified', 'role:user'])->group(function () {
     Route::get('/booking/cancel/status', [\App\Http\Controllers\User\UserCancelBookingController::class, 'status'])
         ->name('user.booking.cancel.status');
 
+    // Ulasan / Rating
+    Route::get('/billing/{billing}/ulasan', [\App\Http\Controllers\User\UlasanController::class, 'create'])
+        ->name('user.ulasan.create');
+
+    Route::post('/billing/{billing}/ulasan', [\App\Http\Controllers\User\UlasanController::class, 'store'])
+        ->name('user.ulasan.store');
+
     // ==============================
     // UNTUK USER YANG BELUM PUNYA KAMAR
     // ==============================

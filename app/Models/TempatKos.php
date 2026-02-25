@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Ulasan;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -125,7 +126,7 @@ class TempatKos extends Model
             $this->provinsi,
             $this->kode_pos
         ]);
-        
+
         return implode(', ', $parts);
     }
 
@@ -164,5 +165,21 @@ class TempatKos extends Model
     public function kosInfos(): HasMany
     {
         return $this->hasMany(KosInfo::class);
+    }
+
+    public function ulasan()
+    {
+        return $this->hasMany(Ulasan::class, 'tempat_kos_id');
+    }
+
+    public function getAvgRatingAttribute(): ?float
+    {
+        $avg = $this->ulasan()->where('is_visible', true)->avg('rating');
+        return $avg ? round($avg, 1) : null;
+    }
+
+    public function getTotalUlasanAttribute(): int
+    {
+        return $this->ulasan()->where('is_visible', true)->count();
     }
 }

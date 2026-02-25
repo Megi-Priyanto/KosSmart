@@ -340,6 +340,17 @@ class BillingController extends Controller
 
             DB::commit();
 
+            // Cek apakah ini billing pelunasan/bulanan dan belum ada ulasan
+            $sudahReview = \App\Models\Ulasan::where('user_id', $billing->user_id)
+                ->where('rent_id', $billing->rent_id)
+                ->exists();
+
+            // Jika belum review, simpan billing_id di session untuk notif di dashboard
+            if (!$sudahReview && in_array($billing->tipe, ['pelunasan', 'bulanan'])) {
+                // Notifikasi sudah otomatis muncul di dashboard-empty via $billingPerluDiulas
+                // Tidak perlu redirect paksa, cukup tampilkan banner
+            }
+
             return redirect()->route('admin.billing.index')
                 ->with('success', "Pembayaran dari {$billing->user->name} berhasil dikonfirmasi sebagai LUNAS. Dana masuk ke platform.");
         } catch (\Exception $e) {
@@ -400,7 +411,7 @@ class BillingController extends Controller
         }
 
         // Tentukan label tipe pembayaran
-        $tipeLabel = match($billing->tipe) {
+        $tipeLabel = match ($billing->tipe) {
             'pelunasan' => 'Pelunasan Booking',
             'bulanan'   => 'Tagihan Bulanan',
             'tahunan'   => 'Tagihan Tahunan',

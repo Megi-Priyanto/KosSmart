@@ -336,4 +336,9 @@ class Billing extends Model
             $this->update(['status' => 'overdue']);
         }
     }
+
+    public function ulasan()
+    {
+        return $this->hasOne(\App\Models\Ulasan::class, 'billing_id');
+    }
 }
