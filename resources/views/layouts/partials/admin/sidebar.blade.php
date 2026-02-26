@@ -124,38 +124,4 @@
         
     </nav>
     
-    <!-- Admin Profile (Bottom) -->
-    <div class="mt-auto border-t border-gray-700">
-        <div class="p-4 flex items-center space-x-3">
-            
-            <!-- Avatar -->
-            <div class="w-10 h-10 bg-yellow-500 bg-opacity-20 rounded-full flex items-center justify-center flex-shrink-0">
-                <span class="text-sm font-bold text-white">
-                    {{ substr(Auth::user()->name, 0, 1) }}
-                </span>
-            </div>
-            
-            <!-- Info -->
-            <div class="flex-1 leading-tight" x-show="sidebarOpen">
-                <p class="text-sm font-semibold text-gray-100">
-                    <span class="text-yellow-400">{{ Auth::user()->name }}</span>
-                </p>
-                <p class="text-xs text-gray-400">
-                    Admin Kos
-                </p>
-            </div>
-            
-            <!-- Logout -->
-            <form action="{{ route('logout') }}" method="POST">
-                @csrf
-                <button class="p-2 rounded-lg hover:bg-gray-700 transition" title="Keluar">
-                    <svg class="w-5 h-5 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                              d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a2 2 0 11-4 0v-1m0-8V7a2 2 0 114 0v1" />
-                    </svg>
-                </button>
-            </form>
-            
-        </div>
-    </div>
 </aside>

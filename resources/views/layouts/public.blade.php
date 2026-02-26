@@ -83,7 +83,7 @@
     <div class="nav-left">
         <a href="{{ route('home') }}" class="nav-logo">
             <img src="{{ app_logo() }}" alt="{{ app_name() }}"
-                 style="width:32px;height:32px;border-radius:8px;object-fit:cover;box-shadow:0 4px 12px rgba(245,158,11,0.35);">
+                 style="width:32px;height:32px;border-radius:50%;object-fit:cover;box-shadow:0 4px 12px rgba(245,158,11,0.35);">
             {{ app_name() }}
         </a>
         <a href="{{ route('home') }}" class="nav-link {{ request()->routeIs('home') ? 'active' : '' }}">Beranda</a>
@@ -140,7 +140,7 @@
         <div class="footer-brand">
             <div style="display:flex;align-items:center;gap:0.5rem;font-weight:800;font-size:1.05rem;">
                 <img src="{{ app_logo() }}" alt="{{ app_name() }}"
-                     style="width:28px;height:28px;border-radius:7px;object-fit:cover;">
+                     style="width:28px;height:28px;border-radius:50%;object-fit:cover;">
                 {{ app_name() }}
             </div>
             <p>Platform manajemen kos modern untuk penghuni dan pemilik kos Indonesia.</p>

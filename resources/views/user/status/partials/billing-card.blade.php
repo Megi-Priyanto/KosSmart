@@ -6,7 +6,7 @@
     $isOverdue  = $billing->dynamic_status === 'overdue';
 @endphp
 
-<div class="bg-white rounded-xl shadow p-6 border
+<div class="bg-[#1e293b] rounded-xl shadow p-6 border
     {{ $isUnpaid ? 'border-red-400' : '' }}
     {{ $isPending ? 'border-yellow-400' : '' }}
     {{ $isPaid ? 'border-green-500' : '' }}
@@ -15,7 +15,7 @@
 
     <div class="flex justify-between items-center mb-4">
         <div>
-            <h3 class="font-semibold text-gray-800">
+            <h3 class="font-semibold text-gray-100">
                 Kamar {{ $billing->room->room_number ?? '-' }}
             </h3>
             <p class="text-sm text-gray-500">
@@ -25,19 +25,19 @@
 
         {{-- BADGE --}}
         @if($isUnpaid)
-            <span class="px-3 py-1 text-sm bg-red-100 text-red-700 rounded-full">
+            <span class="px-3 py-1 text-sm bg-red-900/40 text-red-400 rounded-full">
                 Belum Dibayar
             </span>
         @elseif($isPending)
-            <span class="px-3 py-1 text-sm bg-yellow-100 text-yellow-700 rounded-full">
+            <span class="px-3 py-1 text-sm bg-yellow-900/30 text-yellow-400 rounded-full">
                 Menunggu Verifikasi
             </span>
         @elseif($isRejected)
-            <span class="px-3 py-1 text-sm bg-red-200 text-red-800 rounded-full font-semibold">
+            <span class="px-3 py-1 text-sm bg-red-900/50 text-red-300 rounded-full font-semibold">
                 Pembayaran Ditolak
             </span>
         @elseif($isPaid)
-            <span class="px-3 py-1 text-sm bg-green-100 text-green-700 rounded-full">
+            <span class="px-3 py-1 text-sm bg-green-900/40 text-green-400 rounded-full">
                 Pembayaran Berhasil
             </span>
         @endif
@@ -53,10 +53,10 @@
                 'from' => 'status'
             ]) }}"
            class="px-4 py-2 rounded-lg text-sm font-medium
-                {{ $isUnpaid ? 'bg-red-100 text-red-700 hover:bg-red-200' : '' }}
-                {{ $isPending ? 'bg-yellow-100 text-yellow-700 hover:bg-yellow-200' : '' }}
-                {{ $isRejected ? 'bg-red-200 text-red-800 hover:bg-red-300' : '' }}
-                {{ $isPaid ? 'bg-green-100 text-green-700 hover:bg-green-200' : '' }}">
+                {{ $isUnpaid ? 'bg-red-900/40 text-red-400 hover:bg-red-900/50' : '' }}
+                {{ $isPending ? 'bg-yellow-900/30 text-yellow-400 hover:bg-yellow-200' : '' }}
+                {{ $isRejected ? 'bg-red-900/50 text-red-300 hover:bg-red-300' : '' }}
+                {{ $isPaid ? 'bg-green-900/40 text-green-400 hover:bg-green-200' : '' }}">
             Lihat Detail
         </a>
     </div>

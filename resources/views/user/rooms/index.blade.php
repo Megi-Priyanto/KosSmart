@@ -102,7 +102,7 @@
 </div>
 
 <!-- Filter Section -->
-<div class="bg-white rounded-xl shadow-md border border-yellow-200 p-4 sm:p-5 mb-6">
+<div class="bg-[#1e293b] rounded-xl shadow-md border border-yellow-200 p-4 sm:p-5 mb-6">
     <form method="GET" action="{{ route('user.rooms.index') }}" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
         
         @if(request('tempat_kos_id'))
@@ -111,7 +111,7 @@
 
         <!-- FILTER TIPE KAMAR -->
         <div x-data="{ open:false, selected:'{{ request('type') ? ucfirst(request('type')) : 'Semua Tipe' }}' }" class="relative">
-            <label class="block text-sm font-semibold text-yellow-700 mb-2">
+            <label class="block text-sm font-semibold text-yellow-400 mb-2">
                 Tipe Kamar
             </label>
 
@@ -129,15 +129,15 @@
             </button>
 
             <ul x-show="open" @click.outside="open=false"
-                class="absolute z-20 w-full mt-1 bg-white border border-orange-300
+                class="absolute z-20 w-full mt-1 bg-[#1e293b] border border-orange-300
                        rounded-lg shadow-lg overflow-hidden">
                 <li @click="selected='Semua Tipe'; open=false"
-                    class="px-4 py-2 hover:bg-orange-100 cursor-pointer">
+                    class="px-4 py-2 hover:bg-orange-900/30 cursor-pointer">
                     Semua Tipe
                 </li>
                 @foreach($types as $type)
                     <li @click="selected='{{ ucfirst($type) }}'; open=false"
-                        class="px-4 py-2 hover:bg-orange-100 cursor-pointer">
+                        class="px-4 py-2 hover:bg-orange-900/30 cursor-pointer">
                         {{ ucfirst($type) }}
                     </li>
                 @endforeach
@@ -146,7 +146,7 @@
 
         <!-- FILTER LANTAI -->
         <div x-data="{ open:false, selected:'{{ request('floor') ?? 'Semua Lantai' }}' }" class="relative">
-            <label class="block text-sm font-semibold text-yellow-700 mb-2">
+            <label class="block text-sm font-semibold text-yellow-400 mb-2">
                 Lantai
             </label>
 
@@ -164,15 +164,15 @@
             </button>
 
             <ul x-show="open" @click.outside="open=false"
-                class="absolute z-20 w-full mt-1 bg-white border border-orange-300
+                class="absolute z-20 w-full mt-1 bg-[#1e293b] border border-orange-300
                        rounded-lg shadow-lg overflow-hidden">
                 <li @click="selected='Semua Lantai'; open=false"
-                    class="px-4 py-2 hover:bg-orange-100 cursor-pointer">
+                    class="px-4 py-2 hover:bg-orange-900/30 cursor-pointer">
                     Semua Lantai
                 </li>
                 @foreach($floors as $floor)
                     <li @click="selected='{{ $floor }}'; open=false"
-                        class="px-4 py-2 hover:bg-orange-100 cursor-pointer">
+                        class="px-4 py-2 hover:bg-orange-900/30 cursor-pointer">
                         {{ $floor }}
                     </li>
                 @endforeach
@@ -181,7 +181,7 @@
 
         <!-- FILTER HARGA -->
         <div x-data="{ open:false, selected:'{{ request('max_price') ? 'Rp ' . number_format(request('max_price'),0,',','.') : 'Tanpa Batas' }}', value:'{{ request('max_price') }}' }" class="relative">
-            <label class="block text-sm font-semibold text-yellow-700 mb-2">
+            <label class="block text-sm font-semibold text-yellow-400 mb-2">
                 Harga Max
             </label>
 
@@ -199,22 +199,22 @@
             </button>
 
             <ul x-show="open" @click.outside="open=false"
-                class="absolute z-20 w-full mt-1 bg-white border border-orange-300
+                class="absolute z-20 w-full mt-1 bg-[#1e293b] border border-orange-300
                        rounded-lg shadow-lg overflow-hidden">
                 <li @click="selected='Tanpa Batas'; value=''; open=false"
-                    class="px-4 py-2 hover:bg-orange-100 cursor-pointer">
+                    class="px-4 py-2 hover:bg-orange-900/30 cursor-pointer">
                     Tanpa Batas
                 </li>
                 <li @click="selected='Rp 1.000.000'; value='1000000'; open=false"
-                    class="px-4 py-2 hover:bg-orange-100 cursor-pointer">
+                    class="px-4 py-2 hover:bg-orange-900/30 cursor-pointer">
                     Rp 1.000.000
                 </li>
                 <li @click="selected='Rp 1.500.000'; value='1500000'; open=false"
-                    class="px-4 py-2 hover:bg-orange-100 cursor-pointer">
+                    class="px-4 py-2 hover:bg-orange-900/30 cursor-pointer">
                     Rp 1.500.000
                 </li>
                 <li @click="selected='Rp 2.000.000'; value='2000000'; open=false"
-                    class="px-4 py-2 hover:bg-orange-100 cursor-pointer">
+                    class="px-4 py-2 hover:bg-orange-900/30 cursor-pointer">
                     Rp 2.000.000
                 </li>
             </ul>
@@ -237,13 +237,13 @@
 <!-- Daftar Kamar -->
 @if($rooms && $rooms->count() > 0)
 <div class="mb-6 flex justify-between items-center">
-    <h2 class="text-2xl font-bold text-gray-800">Daftar Kamar</h2>
+    <h2 class="text-2xl font-bold text-gray-100">Daftar Kamar</h2>
     <p class="text-gray-600">{{ $rooms->total() }} kamar ditemukan</p>
 </div>
 
 <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-8">
     @foreach($rooms as $room)
-        <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden hover:shadow-lg transition-all
+        <div class="bg-[#1e293b] rounded-lg shadow-none border border-[#334155] overflow-hidden hover:shadow-lg transition-all
                     {{ $room->status === 'occupied' ? 'opacity-75' : '' }}
                     {{ $room->status === 'maintenance' ? 'opacity-60' : '' }}">
             <div class="h-36 sm:h-40 w-full relative overflow-hidden">
@@ -262,7 +262,7 @@
                 @endif
             
                 <div class="absolute top-4 left-4">
-                    <span class="bg-white px-3 py-1 rounded-full text-xs font-semibold">
+                    <span class="bg-[#1e293b] px-3 py-1 rounded-full text-xs font-semibold">
                         {{ ucfirst($room->type) }}
                     </span>
                 </div>
@@ -286,7 +286,7 @@
             </div>
         
             <div class="p-3 sm:p-4">
-                <h3 class="text-sm sm:text-base font-semibold text-gray-800 mb-2">Kamar {{ $room->room_number }}</h3>
+                <h3 class="text-sm sm:text-base font-semibold text-gray-100 mb-2">Kamar {{ $room->room_number }}</h3>
                 <p class="text-sm text-gray-600 mb-3">{{ $room->floor }} • {{ $room->size }} m²</p>
                 
                 @if($room->facilities)
@@ -298,7 +298,7 @@
                     @endphp
     
                     @foreach(array_slice($facilities ?? [], 0, 3) as $facility)
-                        <span class="px-2 py-1 bg-yellow-50 text-yellow-600 text-xs rounded-full">
+                        <span class="px-2 py-1 bg-yellow-900/20 text-yellow-600 text-xs rounded-full">
                             {{ $facility }}
                         </span>
                     @endforeach
@@ -325,7 +325,7 @@
                     </button>
                 @elseif($room->status === 'maintenance')
                     <button disabled
-                       class="block w-full text-center bg-orange-200 text-orange-700 font-semibold py-1.5 rounded-md text-sm cursor-not-allowed">
+                       class="block w-full text-center bg-orange-200 text-orange-400 font-semibold py-1.5 rounded-md text-sm cursor-not-allowed">
                         Sedang Maintenance
                     </button>
                 @endif
@@ -337,7 +337,7 @@
 {{-- Rating --}}
 <style>
     .ulasan-card {
-        background: #ffffff;
+        background: #1e293b;
         border: 1px solid #e5e7eb;
         border-radius: 14px;
         padding: 1.1rem;
@@ -380,7 +380,7 @@
         font-weight: 700;
         color: #d97706;
         cursor: pointer;
-        background: #ffffff;
+        background: #1e293b;
         padding: 0 2px 1px 8px;
     }
     .komentar-box.is-open .komentar-readmore { display: none; }
@@ -415,23 +415,23 @@
 </style>
 
 @if(isset($totalUlasan) && $totalUlasan > 0)
-<section class="mt-12 pt-10 border-t border-gray-200">
+<section class="mt-12 pt-10 border-t border-[#334155]">
 
     {{-- Header --}}
     <div class="flex items-center gap-3 mb-6">
-        <div class="w-10 h-10 bg-yellow-100 rounded-xl flex items-center justify-center">
+        <div class="w-10 h-10 bg-yellow-900/30 rounded-xl flex items-center justify-center">
             <svg class="w-5 h-5 text-yellow-500" fill="currentColor" viewBox="0 0 24 24">
                 <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
             </svg>
         </div>
         <div>
-            <h2 class="text-xl font-bold text-gray-800">Rating & Ulasan</h2>
+            <h2 class="text-xl font-bold text-gray-100">Rating & Ulasan</h2>
             <p class="text-sm text-gray-500">{{ $totalUlasan }} ulasan dari penghuni</p>
         </div>
     </div>
 
     {{-- Ringkasan rating --}}
-    <div class="bg-white border border-gray-200 rounded-2xl shadow-sm p-6 mb-6"
+    <div class="bg-[#1e293b] border border-[#334155] rounded-2xl shadow-none p-6 mb-6"
          style="display:grid;grid-template-columns:auto 1fr;gap:2.5rem;align-items:center;">
 
         {{-- Angka rata-rata --}}
@@ -447,21 +447,21 @@
                     </svg>
                 @endfor
             </div>
-            <div class="text-sm text-gray-400">dari {{ $totalUlasan }} ulasan</div>
+            <div class="text-sm text-gray-600">dari {{ $totalUlasan }} ulasan</div>
         </div>
 
         {{-- Bar distribusi 5 → 1 --}}
         <div style="display:flex;flex-direction:column;gap:0.55rem;">
             @for($i = 5; $i >= 1; $i--)
             <div style="display:flex;align-items:center;gap:0.65rem;">
-                <span class="text-xs text-gray-400" style="width:14px;text-align:right;flex-shrink:0;">{{ $i }}</span>
+                <span class="text-xs text-gray-600" style="width:14px;text-align:right;flex-shrink:0;">{{ $i }}</span>
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="#f59e0b" style="flex-shrink:0;">
                     <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
                 </svg>
                 <div class="rating-bar-track">
                     <div class="rating-bar-fill" style="width:{{ $ratingDistribution[$i]['percent'] ?? 0 }}%;"></div>
                 </div>
-                <span class="text-xs text-gray-400" style="width:28px;text-align:right;flex-shrink:0;">
+                <span class="text-xs text-gray-600" style="width:28px;text-align:right;flex-shrink:0;">
                     {{ $ratingDistribution[$i]['count'] ?? 0 }}
                 </span>
             </div>
@@ -530,10 +530,10 @@
                     {{ strtoupper(substr($ulasan->user?->name ?? 'U', 0, 1)) }}
                 </div>
                 <div>
-                    <p class="text-xs font-semibold text-gray-700" style="line-height:1.2;">
+                    <p class="text-xs font-semibold text-gray-200" style="line-height:1.2;">
                         {{ $ulasan->user?->name ?? 'Anonim' }}
                     </p>
-                    <p class="text-xs text-gray-400">{{ $ulasan->created_at->diffForHumans() }}</p>
+                    <p class="text-xs text-gray-600">{{ $ulasan->created_at->diffForHumans() }}</p>
                 </div>
             </div>
         </div>
@@ -541,7 +541,7 @@
     </div>
 
     @if(isset($ulasanList) && $ulasanList->count() > 6)
-    <p class="text-center text-sm text-gray-400 mt-4">
+    <p class="text-center text-sm text-gray-600 mt-4">
         Dan {{ $ulasanList->count() - 6 }} ulasan lainnya...
     </p>
     @endif
@@ -551,8 +551,8 @@
 @else
 {{-- Belum ada ulasan --}}
 @if(isset($tempatKos))
-<section class="mt-10 p-6 bg-gray-50 border border-gray-200 rounded-2xl text-center">
-    <svg class="w-10 h-10 mx-auto mb-3 text-gray-300" fill="currentColor" viewBox="0 0 24 24">
+<section class="mt-10 p-6 bg-[#0f172a] border border-[#334155] rounded-2xl text-center">
+    <svg class="w-10 h-10 mx-auto mb-3 text-gray-600" fill="currentColor" viewBox="0 0 24 24">
         <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
     </svg>
     <p class="text-sm text-gray-500">Belum ada ulasan untuk kos ini.</p>
@@ -567,11 +567,11 @@
 
 @else
     <!-- Empty State -->
-    <div class="text-center py-16 bg-white rounded-xl shadow-sm border border-gray-200">
-        <svg class="w-16 h-16 mx-auto text-gray-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <div class="text-center py-16 bg-[#1e293b] rounded-xl shadow-none border border-[#334155]">
+        <svg class="w-16 h-16 mx-auto text-gray-600 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
         </svg>
-        <h3 class="text-xl font-bold text-gray-700 mb-2">Belum Ada Kamar</h3>
+        <h3 class="text-xl font-bold text-gray-200 mb-2">Belum Ada Kamar</h3>
         <p class="text-gray-500 mb-6">
             Saat ini tidak ada kamar yang terdaftar di tempat kos ini.
         </p>

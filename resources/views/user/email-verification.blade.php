@@ -126,7 +126,7 @@
                 </svg>
             </div>
             <h1 class="text-3xl font-bold text-white mb-2">Verifikasi Email Baru</h1>
-            <p class="text-gray-400">Masukkan kode OTP yang telah dikirim</p>
+            <p class="text-gray-600">Masukkan kode OTP yang telah dikirim</p>
         </div>
         
         <!-- Card -->
@@ -159,9 +159,9 @@
             <!-- Email Info -->
             <div class="mb-6 space-y-3">
                 <!-- Old Email -->
-                <div class="p-4 bg-opacity-5 bg-white rounded-lg border border-gray-600">
-                    <p class="text-xs text-gray-400 mb-1">Email Lama</p>
-                    <p class="font-medium text-gray-300">{{ $oldEmail }}</p>
+                <div class="p-4 bg-opacity-5 bg-[#1e293b] rounded-lg border border-gray-600">
+                    <p class="text-xs text-gray-600 mb-1">Email Lama</p>
+                    <p class="font-medium text-gray-600">{{ $oldEmail }}</p>
                 </div>
                 
                 <!-- New Email (Highlight) -->
@@ -176,7 +176,7 @@
                 @csrf
                 
                 <div class="mb-6">
-                    <label class="block text-sm font-medium text-gray-300 mb-3 text-center">
+                    <label class="block text-sm font-medium text-gray-600 mb-3 text-center">
                         Masukkan Kode OTP (6 Digit)
                     </label>
                     
@@ -228,7 +228,7 @@
                 <button 
                     type="submit" 
                     id="resendBtn"
-                    class="btn-secondary w-full text-gray-300 font-semibold py-3 px-4 rounded-lg"
+                    class="btn-secondary w-full text-gray-600 font-semibold py-3 px-4 rounded-lg"
                     disabled
                 >
                     <span id="resendText">Kirim Ulang OTP</span>
@@ -240,7 +240,7 @@
             <div class="pt-4 border-t border-gray-700">
                 <button 
                     onclick="confirmCancel()" 
-                    class="w-full text-gray-400 hover:text-gray-300 font-medium py-2"
+                    class="w-full text-gray-600 hover:text-gray-600 font-medium py-2"
                 >
                     Batal & Logout
                 </button>
@@ -254,8 +254,8 @@
                     <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
                 </svg>
                 <div>
-                    <p class="text-gray-300 text-sm font-medium mb-1">Informasi Penting</p>
-                    <p class="text-gray-400 text-sm">
+                    <p class="text-gray-600 text-sm font-medium mb-1">Informasi Penting</p>
+                    <p class="text-gray-600 text-sm">
                         Jika Anda membatalkan proses ini, email akan tetap berubah menjadi email baru dalam status belum terverifikasi. Anda akan di-logout dan harus verifikasi saat login kembali.
                     </p>
                 </div>
@@ -268,8 +268,8 @@
                 <svg class="w-5 h-5 text-amber-500 mr-3 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                     <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
                 </svg>
-                <p class="text-gray-400 text-sm">
-                    <strong class="text-gray-300">Tips: </strong>Pastikan memeriksa folder spam jika email tidak masuk dalam beberapa menit.
+                <p class="text-gray-600 text-sm">
+                    <strong class="text-gray-600">Tips: </strong>Pastikan memeriksa folder spam jika email tidak masuk dalam beberapa menit.
                 </p>
             </div>
         </div>
@@ -292,7 +292,7 @@
                     </svg>
                 </div>
                 <h3 class="text-xl font-semibold text-white mb-2">Batalkan Perubahan Email?</h3>
-                <p class="text-sm text-gray-400 mb-6">
+                <p class="text-sm text-gray-600 mb-6">
                     Jika Anda membatalkan, email akan tetap berubah menjadi <strong class="text-white">{{ $newEmail }}</strong> 
                     dalam status <strong class="text-amber-400">belum terverifikasi</strong>. Anda akan di-logout dan harus verifikasi saat login kembali.
                 </p>
@@ -300,7 +300,7 @@
                 <div class="flex gap-3">
                     <button 
                         onclick="closeCancelModal()" 
-                        class="flex-1 px-4 py-2 btn-secondary text-gray-300 rounded-lg hover:bg-opacity-80"
+                        class="flex-1 px-4 py-2 btn-secondary text-gray-600 rounded-lg hover:bg-opacity-80"
                     >
                         Lanjutkan Verifikasi
                     </button>

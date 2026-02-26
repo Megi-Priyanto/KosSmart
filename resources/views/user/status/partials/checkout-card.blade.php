@@ -4,14 +4,14 @@
     $isRejected = $rent->status === 'checkout_rejected';
 @endphp
 
-<div class="bg-white rounded-xl shadow p-6 border
+<div class="bg-[#1e293b] rounded-xl shadow p-6 border
     {{ $isPending ? 'border-yellow-400' : '' }}
     {{ $isApproved ? 'border-green-500' : '' }}
     {{ $isRejected ? 'border-red-400' : '' }}
 ">
     <div class="flex justify-between items-center mb-4">
         <div>
-            <h3 class="font-semibold text-gray-800">
+            <h3 class="font-semibold text-gray-100">
                 Kamar {{ $rent->room->room_number ?? '-' }}
             </h3>
             <p class="text-sm text-gray-500">
@@ -20,15 +20,15 @@
         </div>
 
         @if($isPending)
-            <span class="px-3 py-1 text-sm bg-yellow-100 text-yellow-700 rounded-full font-medium">
+            <span class="px-3 py-1 text-sm bg-yellow-900/30 text-yellow-400 rounded-full font-medium">
                 Pending Checkout
             </span>
         @elseif($isApproved)
-            <span class="px-3 py-1 text-sm bg-green-100 text-green-700 rounded-full font-medium">
+            <span class="px-3 py-1 text-sm bg-green-900/40 text-green-400 rounded-full font-medium">
                 ✓ Checkout Berhasil
             </span>
         @elseif($isRejected)
-            <span class="px-3 py-1 text-sm bg-red-100 text-red-700 rounded-full font-medium">
+            <span class="px-3 py-1 text-sm bg-red-900/40 text-red-400 rounded-full font-medium">
                 ✗ Checkout Ditolak
             </span>
         @endif
@@ -56,9 +56,9 @@
     <div class="flex justify-end">
         <a href="{{ route('user.status.checkout', ['rent' => $rent->id]) }}"
            class="px-4 py-2 rounded-lg text-sm font-medium transition-colors
-           {{ $isPending ? 'bg-yellow-100 text-yellow-700 hover:bg-yellow-200' : '' }}
-           {{ $isApproved ? 'bg-green-100 text-green-700 hover:bg-green-200' : '' }}
-           {{ $isRejected ? 'bg-red-100 text-red-700 hover:bg-red-200' : '' }}">
+           {{ $isPending ? 'bg-yellow-900/30 text-yellow-400 hover:bg-yellow-200' : '' }}
+           {{ $isApproved ? 'bg-green-900/40 text-green-400 hover:bg-green-200' : '' }}
+           {{ $isRejected ? 'bg-red-900/40 text-red-400 hover:bg-red-900/50' : '' }}">
             Lihat Detail
         </a>
     </div>

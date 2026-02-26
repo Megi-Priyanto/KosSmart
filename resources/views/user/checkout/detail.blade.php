@@ -7,7 +7,7 @@
 <!-- Page Header -->
 <div class="flex items-center justify-between mb-6">
     <div>
-        <h1 class="text-2xl font-bold text-gray-800">Status Checkout Anda</h1>
+        <h1 class="text-2xl font-bold text-gray-100">Status Checkout Anda</h1>
         <p class="text-sm text-gray-600 mt-1">Detail permintaan checkout kamar</p>
     </div>
     <a href="{{ route('user.status.checkout') }}" 
@@ -24,25 +24,25 @@
         ======================================== --}}
     
     <!-- Alert Status Pending -->
-    <div class="mb-8 bg-yellow-50 border-l-4 border-yellow-500 p-6 rounded-lg shadow-sm">
+    <div class="mb-8 bg-yellow-900/20 border-l-4 border-yellow-500 p-6 rounded-lg shadow-none">
         <div class="flex items-start">
             <svg class="w-8 h-8 text-yellow-500 mr-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                       d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
             </svg>
             <div class="flex-1">
-                <h3 class="font-bold text-yellow-800 text-lg mb-2">
+                <h3 class="font-bold text-yellow-300 text-lg mb-2">
                     Permintaan Checkout Sedang Diproses
                 </h3>
-                <p class="text-yellow-700 mb-4">
+                <p class="text-yellow-400 mb-4">
                     Permintaan checkout Anda untuk kamar
                     <strong>{{ $rent->room->room_number ?? '-' }}</strong>
                     sedang ditinjau oleh admin.
                     Harap menunggu konfirmasi dalam 1x24 jam.
                 </p>
-                <div class="bg-yellow-100 rounded-lg p-4 mt-4">
-                    <p class="text-sm text-yellow-800 font-medium mb-2">Informasi:</p>
-                    <ul class="text-sm text-yellow-700 space-y-1 list-disc list-inside">
+                <div class="bg-yellow-900/30 rounded-lg p-4 mt-4">
+                    <p class="text-sm text-yellow-300 font-medium mb-2">Informasi:</p>
+                    <ul class="text-sm text-yellow-400 space-y-1 list-disc list-inside">
                         <li>Anda masih dapat menggunakan kamar hingga checkout disetujui</li>
                         <li>Admin akan menghubungi Anda untuk koordinasi lebih lanjut</li>
                         <li>Setelah disetujui, Anda akan diarahkan ke halaman pemilihan kamar baru</li>
@@ -58,23 +58,23 @@
         ======================================== --}}
     
     <!-- Alert Status Berhasil -->
-    <div class="mb-8 bg-green-50 border-l-4 border-green-500 p-6 rounded-lg shadow-sm">
+    <div class="mb-8 bg-green-900/30 border-l-4 border-green-500 p-6 rounded-lg shadow-none">
         <div class="flex items-start">
             <svg class="w-8 h-8 text-green-500 mr-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                       d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
             </svg>
             <div class="flex-1">
-                <h3 class="font-bold text-green-800 text-lg mb-2">
+                <h3 class="font-bold text-green-300 text-lg mb-2">
                     Checkout Berhasil Disetujui!
                 </h3>
-                <p class="text-green-700 mb-4">
+                <p class="text-green-400 mb-4">
                     Checkout untuk kamar <strong>{{ $rent->room->room_number ?? '-' }}</strong> telah disetujui oleh admin.
                     Terima kasih telah menggunakan layanan kami.
                 </p>
-                <div class="bg-green-100 rounded-lg p-4 mt-4">
-                    <p class="text-sm text-green-800 font-medium mb-2">Detail Checkout:</p>
-                    <ul class="text-sm text-green-700 space-y-1">
+                <div class="bg-green-900/40 rounded-lg p-4 mt-4">
+                    <p class="text-sm text-green-300 font-medium mb-2">Detail Checkout:</p>
+                    <ul class="text-sm text-green-400 space-y-1">
                         <li class="flex items-center">
                             <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
@@ -90,9 +90,9 @@
                     </ul>
                 </div>
                 
-                <div class="mt-4 p-4 bg-white rounded-lg border border-green-200">
-                    <p class="text-sm font-medium text-green-800 mb-2">Apa Selanjutnya?</p>
-                    <ul class="text-sm text-green-700 space-y-1 list-disc list-inside">
+                <div class="mt-4 p-4 bg-[#1e293b] rounded-lg border border-green-200">
+                    <p class="text-sm font-medium text-green-300 mb-2">Apa Selanjutnya?</p>
+                    <ul class="text-sm text-green-400 space-y-1 list-disc list-inside">
                         <li>Anda sudah dapat memilih kamar baru di halaman utama</li>
                         <li>Proses booking kamar baru dapat dilakukan segera</li>
                         <li>Silakan hubungi admin jika ada keperluan lebih lanjut</li>
@@ -115,30 +115,30 @@
         ======================================== --}}
     
     <!-- Alert Status Ditolak -->
-    <div class="mb-8 bg-red-50 border-l-4 border-red-500 p-6 rounded-lg shadow-sm">
+    <div class="mb-8 bg-red-900/30 border-l-4 border-red-500 p-6 rounded-lg shadow-none">
         <div class="flex items-start">
             <svg class="w-8 h-8 text-red-500 mr-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                       d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
             </svg>
             <div class="flex-1">
-                <h3 class="font-bold text-red-800 text-lg mb-2">
+                <h3 class="font-bold text-red-300 text-lg mb-2">
                     ✗ Permintaan Checkout Ditolak
                 </h3>
-                <p class="text-red-700 mb-4">
+                <p class="text-red-400 mb-4">
                     Maaf, permintaan checkout untuk kamar <strong>{{ $rent->room->room_number ?? '-' }}</strong> tidak dapat disetujui.
                     Silakan hubungi admin untuk informasi lebih lanjut.
                 </p>
-                <div class="bg-red-100 rounded-lg p-4 mt-4">
-                    <p class="text-sm text-red-800 font-medium mb-2">Detail:</p>
-                    <p class="text-sm text-red-700">
+                <div class="bg-red-900/40 rounded-lg p-4 mt-4">
+                    <p class="text-sm text-red-300 font-medium mb-2">Detail:</p>
+                    <p class="text-sm text-red-400">
                         Ditolak pada: <strong>{{ $rent->updated_at->format('d M Y, H:i') }} WIB</strong>
                     </p>
                 </div>
                 
-                <div class="mt-4 p-4 bg-white rounded-lg border border-red-200">
-                    <p class="text-sm font-medium text-red-800 mb-2">Informasi:</p>
-                    <ul class="text-sm text-red-700 space-y-1 list-disc list-inside">
+                <div class="mt-4 p-4 bg-[#1e293b] rounded-lg border border-red-200">
+                    <p class="text-sm font-medium text-red-300 mb-2">Informasi:</p>
+                    <ul class="text-sm text-red-400 space-y-1 list-disc list-inside">
                         <li>Anda masih dapat menggunakan kamar seperti biasa</li>
                         <li>Hubungi admin untuk mengetahui alasan penolakan</li>
                         <li>Anda dapat mengajukan checkout kembali setelah menyelesaikan masalah</li>
@@ -150,9 +150,9 @@
 @endif
 
 <!-- Informasi Kamar -->
-<div class="bg-white rounded-xl shadow-sm border border-gray-200 mb-6">
-    <div class="p-6 border-b border-gray-200">
-        <h2 class="text-lg font-bold text-gray-800 flex items-center">
+<div class="bg-[#1e293b] rounded-xl shadow-none border border-[#334155] mb-6">
+    <div class="p-6 border-b border-[#334155]">
+        <h2 class="text-lg font-bold text-gray-100 flex items-center">
             <svg class="w-5 h-5 mr-2 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                       d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
@@ -165,21 +165,21 @@
         <div class="space-y-4">
             <div class="flex justify-between items-center">
                 <span class="text-gray-600">Nomor Kamar</span>
-                <span class="font-bold text-gray-800">
+                <span class="font-bold text-gray-100">
                     {{ $rent->room->room_number ?? '-' }}
                 </span>
             </div>
 
             <div class="flex justify-between items-center">
                 <span class="text-gray-600">Lokasi / Lantai</span>
-                <span class="font-medium text-gray-800">
+                <span class="font-medium text-gray-100">
                     {{ $rent->room->floor ?? '-' }}
                 </span>
             </div>
 
             <div class="flex justify-between items-center">
                 <span class="text-gray-600">Tanggal Masuk</span>
-                <span class="font-medium text-gray-800">
+                <span class="font-medium text-gray-100">
                     {{ \Carbon\Carbon::parse($rent->start_date)->format('d M Y') }}
                 </span>
             </div>
@@ -187,7 +187,7 @@
             @if($rent->end_date)
             <div class="flex justify-between items-center">
                 <span class="text-gray-600">Tanggal Keluar</span>
-                <span class="font-medium text-gray-800">
+                <span class="font-medium text-gray-100">
                     {{ $rent->end_date->format('d M Y') }}
                 </span>
             </div>
@@ -218,7 +218,7 @@
                     $hours = intdiv($totalSeconds, 3600);
                 @endphp
 
-                <span class="font-medium text-gray-800">
+                <span class="font-medium text-gray-100">
                     @if($months > 0)
                         {{ $months }} Bulan
                     @endif
@@ -234,15 +234,15 @@
             <div class="flex justify-between items-center">
                 <span class="text-gray-600">Status</span>
                 @if($rent->status === 'checkout_requested')
-                    <span class="px-3 py-1.5 bg-yellow-100 text-yellow-700 text-sm font-bold rounded-lg border border-yellow-300">
+                    <span class="px-3 py-1.5 bg-yellow-900/30 text-yellow-400 text-sm font-bold rounded-lg border border-yellow-300">
                         Menunggu Checkout
                     </span>
                 @elseif($rent->status === 'completed')
-                    <span class="px-3 py-1.5 bg-green-100 text-green-700 text-sm font-bold rounded-lg border border-green-300">
+                    <span class="px-3 py-1.5 bg-green-900/40 text-green-400 text-sm font-bold rounded-lg border border-green-300">
                         ✓ Checkout Berhasil
                     </span>
                 @elseif($rent->status === 'checkout_rejected')
-                    <span class="px-3 py-1.5 bg-red-100 text-red-700 text-sm font-bold rounded-lg border border-red-300">
+                    <span class="px-3 py-1.5 bg-red-900/40 text-red-400 text-sm font-bold rounded-lg border border-red-300">
                         ✗ Checkout Ditolak
                     </span>
                 @endif
@@ -252,9 +252,9 @@
 </div>
 
 <!-- Timeline Proses -->
-<div class="bg-white rounded-xl shadow-sm border border-gray-200">
-    <div class="p-6 border-b border-gray-200">
-        <h2 class="text-lg font-bold text-gray-800 flex items-center">
+<div class="bg-[#1e293b] rounded-xl shadow-none border border-[#334155]">
+    <div class="p-6 border-b border-[#334155]">
+        <h2 class="text-lg font-bold text-gray-100 flex items-center">
             <svg class="w-5 h-5 mr-2 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                       d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2"></path>
@@ -267,61 +267,61 @@
 
         <!-- Step 1: Request Sent -->
         <div class="flex items-start">
-            <div class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
+            <div class="w-10 h-10 bg-green-900/40 rounded-full flex items-center justify-center">
                 <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
                 </svg>
             </div>
             <div class="ml-4">
-                <p class="font-semibold text-gray-800">Permintaan Checkout Dikirim</p>
+                <p class="font-semibold text-gray-100">Permintaan Checkout Dikirim</p>
                 <p class="text-sm text-gray-600">
                     {{ $rent->updated_at->format('d M Y, H:i') }} WIB
                 </p>
             </div>
         </div>
 
-        <div class="ml-5 border-l-2 border-gray-300 h-8"></div>
+        <div class="ml-5 border-l-2 border-[#334155] h-8"></div>
 
         <!-- Step 2: Admin Review -->
         @if($rent->status === 'checkout_requested')
             <!-- Pending -->
             <div class="flex items-start">
-                <div class="w-10 h-10 bg-yellow-100 rounded-full flex items-center justify-center animate-pulse">
+                <div class="w-10 h-10 bg-yellow-900/30 rounded-full flex items-center justify-center animate-pulse">
                     <svg class="w-5 h-5 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3"></path>
                     </svg>
                 </div>
                 <div class="ml-4">
-                    <p class="font-semibold text-gray-800">Menunggu Persetujuan Admin</p>
+                    <p class="font-semibold text-gray-100">Menunggu Persetujuan Admin</p>
                     <p class="text-sm text-gray-600">Sedang ditinjau...</p>
                 </div>
             </div>
 
-            <div class="ml-5 border-l-2 border-gray-300 h-8"></div>
+            <div class="ml-5 border-l-2 border-[#334155] h-8"></div>
 
             <!-- Step 3: Future -->
             <div class="flex items-start opacity-60">
-                <div class="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center">
-                    <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="w-10 h-10 bg-[#0f172a] rounded-full flex items-center justify-center">
+                    <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
                     </svg>
                 </div>
                 <div class="ml-4">
                     <p class="font-semibold text-gray-500">Checkout Disetujui</p>
-                    <p class="text-sm text-gray-400">Menunggu</p>
+                    <p class="text-sm text-gray-600">Menunggu</p>
                 </div>
             </div>
 
         @elseif($rent->status === 'completed')
             <!-- Approved -->
             <div class="flex items-start">
-                <div class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
+                <div class="w-10 h-10 bg-green-900/40 rounded-full flex items-center justify-center">
                     <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
                     </svg>
                 </div>
                 <div class="ml-4">
-                    <p class="font-semibold text-gray-800">Ditinjau oleh Admin</p>
+                    <p class="font-semibold text-gray-100">Ditinjau oleh Admin</p>
                     <p class="text-sm text-gray-600">Selesai</p>
                 </div>
             </div>
@@ -330,13 +330,13 @@
 
             <!-- Step 3: Completed -->
             <div class="flex items-start">
-                <div class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
+                <div class="w-10 h-10 bg-green-900/40 rounded-full flex items-center justify-center">
                     <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
                     </svg>
                 </div>
                 <div class="ml-4">
-                    <p class="font-semibold text-gray-800">✓ Checkout Disetujui</p>
+                    <p class="font-semibold text-gray-100">✓ Checkout Disetujui</p>
                     <p class="text-sm text-gray-600">
                         {{ $rent->end_date->format('d M Y, H:i') }} WIB
                     </p>
@@ -346,13 +346,13 @@
         @elseif($rent->status === 'checkout_rejected')
             <!-- Rejected -->
             <div class="flex items-start">
-                <div class="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center">
-                    <svg class="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="w-10 h-10 bg-red-900/40 rounded-full flex items-center justify-center">
+                    <svg class="w-5 h-5 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                     </svg>
                 </div>
                 <div class="ml-4">
-                    <p class="font-semibold text-gray-800">✗ Checkout Ditolak</p>
+                    <p class="font-semibold text-gray-100">✗ Checkout Ditolak</p>
                     <p class="text-sm text-gray-600">
                         {{ $rent->updated_at->format('d M Y, H:i') }} WIB
                     </p>

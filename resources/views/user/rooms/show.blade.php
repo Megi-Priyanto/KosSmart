@@ -6,14 +6,14 @@
 
 <!-- Alert Error (Kos Belum Aktif) -->
 @if(session('error'))
-<div class="mb-6 px-6 py-4 bg-red-50 border-l-4 border-red-400 rounded-r-lg animate-pulse">
+<div class="mb-6 px-6 py-4 bg-red-900/30 border-l-4 border-red-400 rounded-r-lg animate-pulse">
     <div class="flex items-start">
         <svg class="w-6 h-6 text-red-400 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
         </svg>
         <div>
-            <h3 class="text-lg font-semibold text-red-800 mb-1">Tidak Dapat Menampilkan Detail</h3>
-            <p class="text-sm text-red-700">
+            <h3 class="text-lg font-semibold text-red-300 mb-1">Tidak Dapat Menampilkan Detail</h3>
+            <p class="text-sm text-red-400">
                 {{ session('error') }}
             </p>
         </div>
@@ -23,12 +23,12 @@
 
 <!-- Alert Success -->
 @if(session('success'))
-<div class="mb-6 px-6 py-4 bg-green-50 border-l-4 border-green-400 rounded-r-lg">
+<div class="mb-6 px-6 py-4 bg-green-900/30 border-l-4 border-green-400 rounded-r-lg">
     <div class="flex items-start">
         <svg class="w-6 h-6 text-green-400 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
         </svg>
-        <p class="text-sm text-green-700">{{ session('success') }}</p>
+        <p class="text-sm text-green-400">{{ session('success') }}</p>
     </div>
 </div>
 @endif
@@ -47,7 +47,7 @@
             </li>
             <li aria-current="page">
                 <div class="flex items-center">
-                    <svg class="w-4 h-4 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                    <svg class="w-4 h-4 text-gray-600" fill="currentColor" viewBox="0 0 20 20">
                         <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
                     </svg>
                     <span class="ml-1 text-sm text-yellow-500 font-medium">Cari Kamar</span>
@@ -108,7 +108,7 @@
     <div class="lg:col-span-2 space-y-6">
         
         <!-- Image Gallery -->
-        <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+        <div class="bg-[#1e293b] rounded-xl shadow-none border border-[#334155] overflow-hidden">
             @php
                 $images = $room->images;
             @endphp
@@ -116,7 +116,7 @@
             @if(!empty($images))
                 <div x-data="imageGallery()" class="relative">
                     <!-- Main Image -->
-                    <div class="aspect-video bg-gray-200 relative group">
+                    <div class="aspect-video bg-[#1e293b] relative group">
                         <img :src="'{{ asset('storage') }}/' + images[currentIndex]" 
                              alt="Kamar {{ $room->room_number }}" 
                              class="w-full h-full object-cover">
@@ -153,12 +153,12 @@
                     </div>
                     
                     <!-- Thumbnails -->
-                    <div class="p-4 bg-gray-50">
+                    <div class="p-4 bg-[#0f172a]">
                         <div class="grid grid-cols-5 gap-2">
                             <template x-for="(image, index) in images" :key="index">
                                 <div @click="currentIndex = index" 
                                      class="aspect-square rounded-lg overflow-hidden cursor-pointer border-2 border-3 transition-all hover:scale-105"
-                                     :class="currentIndex === index ? 'border-purple-600 ring-2 ring-purple-300' : 'border-gray-300'">
+                                     :class="currentIndex === index ? 'border-purple-600 ring-2 ring-purple-300' : 'border-[#334155]'">
                                     <img :src="'{{ asset('storage') }}/' + image" 
                                          class="w-full h-full object-cover">
                                 </div>
@@ -195,10 +195,10 @@
         </div>
         
         <!-- Room Info -->
-        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+        <div class="bg-[#1e293b] rounded-xl shadow-none border border-[#334155] p-6">
             <div class="flex items-start justify-between mb-4">
                 <div>
-                    <h1 class="text-3xl font-bold text-gray-800 mb-2">Kamar {{ $room->room_number }}</h1>
+                    <h1 class="text-3xl font-bold text-gray-100 mb-2">Kamar {{ $room->room_number }}</h1>
                     <p class="text-gray-600">{{ $room->floor }} • {{ $room->size }} m²</p>
                 </div>
                 <div class="text-right">
@@ -208,15 +208,15 @@
             </div>
             
             <!-- Quick Info -->
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 py-4 border-t border-b border-gray-200 mb-6">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 py-4 border-t border-b border-[#334155] mb-6">
                 <div class="text-center">
-                    <div class="bg-yellow-100 w-12 h-12 rounded-lg flex items-center justify-center mx-auto mb-2">
+                    <div class="bg-yellow-900/30 w-12 h-12 rounded-lg flex items-center justify-center mx-auto mb-2">
                         <svg class="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
                         </svg>
                     </div>
                     <p class="text-sm text-gray-600">Kapasitas</p>
-                    <p class="font-semibold text-gray-800 text-sm sm:text-base">{{ $room->capacity }} Orang</p>
+                    <p class="font-semibold text-gray-100 text-sm sm:text-base">{{ $room->capacity }} Orang</p>
                 </div>
                 
                 <div class="text-center">
@@ -226,7 +226,7 @@
                         </svg>
                     </div>
                     <p class="text-sm text-gray-600">Tipe</p>
-                    <p class="font-semibold text-gray-800 text-sm sm:text-base">{{ ucfirst($room->type) }}</p>
+                    <p class="font-semibold text-gray-100 text-sm sm:text-base">{{ ucfirst($room->type) }}</p>
                 </div>
 
                 <div class="text-center">
@@ -236,25 +236,25 @@
                         </svg>
                     </div>
                     <p class="text-sm text-gray-600">Jenis Sewa</p>
-                    <p class="font-semibold text-gray-800 text-sm sm:text-base">{{ $room->jenis_sewa_label }}</p>
+                    <p class="font-semibold text-gray-100 text-sm sm:text-base">{{ $room->jenis_sewa_label }}</p>
                 </div>
                 
                 <div class="text-center">
-                    <div class="bg-green-100 w-12 h-12 rounded-lg flex items-center justify-center mx-auto mb-2">
+                    <div class="bg-green-900/40 w-12 h-12 rounded-lg flex items-center justify-center mx-auto mb-2">
                         <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
                         </svg>
                     </div>
                     <p class="text-sm text-gray-600">Jendela</p>
-                    <p class="font-semibold text-gray-800 text-sm sm:text-base">{{ $room->has_window ? 'Ada' : 'Tidak' }}</p>
+                    <p class="font-semibold text-gray-100 text-sm sm:text-base">{{ $room->has_window ? 'Ada' : 'Tidak' }}</p>
                 </div>
             </div>
             
             <!-- Description -->
             @if($room->description)
             <div class="mb-6">
-                <h3 class="text-lg font-bold text-gray-800 mb-2">Deskripsi</h3>
-                <p class="text-gray-700 leading-relaxed">{{ $room->description }}</p>
+                <h3 class="text-lg font-bold text-gray-100 mb-2">Deskripsi</h3>
+                <p class="text-gray-200 leading-relaxed">{{ $room->description }}</p>
             </div>
             @endif
             
@@ -267,10 +267,10 @@
 
             @if(!empty($facilities))
             <div>
-                <h3 class="text-lg font-bold text-gray-800 mb-3">Fasilitas Kamar</h3>
+                <h3 class="text-lg font-bold text-gray-100 mb-3">Fasilitas Kamar</h3>
                 <div class="grid grid-cols-2 gap-3">
                     @foreach($facilities as $facility)
-                    <div class="flex items-center space-x-2 text-gray-700">
+                    <div class="flex items-center space-x-2 text-gray-200">
                         <svg class="w-5 h-5 text-green-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                         </svg>
@@ -328,7 +328,7 @@
                         <p class="text-sm font-medium text-white mb-2">Fasilitas Umum:</p>
                         <div class="flex flex-wrap gap-2">
                             @foreach($generalFacilities as $facility)
-                                <span class="px-3 py-1 bg-white text-yellow-700 rounded-full text-sm">{{ $facility }}</span>
+                                <span class="px-3 py-1 bg-[#1e293b] text-yellow-400 rounded-full text-sm">{{ $facility }}</span>
                             @endforeach
                         </div>
                     </div>
@@ -368,20 +368,20 @@
         
         <!-- Rekomendasi Kamar Lain -->
         @if(isset($relatedRooms) && $relatedRooms->count() > 0)
-        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-            <h3 class="text-lg font-bold text-gray-800 mb-4">Kamar Lain yang Tersedia</h3>
+        <div class="bg-[#1e293b] rounded-xl shadow-none border border-[#334155] p-6">
+            <h3 class="text-lg font-bold text-gray-100 mb-4">Kamar Lain yang Tersedia</h3>
             
             <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                 @foreach($relatedRooms as $relatedRoom)
                 <a href="{{ route('user.rooms.show', $relatedRoom->id) }}" 
                    class="block group">
-                    <div class="bg-gray-50 rounded-lg overflow-hidden hover:shadow-lg transition-all p-2 sm:p-3">
+                    <div class="bg-[#0f172a] rounded-lg overflow-hidden hover:shadow-lg transition-all p-2 sm:p-3">
                         @php
                             $images = $room->images;
                         @endphp
 
                         @if(!empty($relatedImages))
-                        <div class="aspect-video bg-gray-200">
+                        <div class="aspect-video bg-[#1e293b]">
                             <img src="{{ asset('storage/' . $relatedImages[0]) }}" 
                                  alt="Kamar {{ $relatedRoom->room_number }}"
                                  class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300">
@@ -391,7 +391,7 @@
                         @endif
                         
                         <div class="p-3">
-                            <p class="font-semibold text-gray-800 group-hover:text-yellow-600">Kamar {{ $relatedRoom->room_number }}</p>
+                            <p class="font-semibold text-gray-100 group-hover:text-yellow-600">Kamar {{ $relatedRoom->room_number }}</p>
                             <p class="text-sm text-gray-600">{{ $relatedRoom->floor }}</p>
                             <p class="text-lg font-bold text-yellow-600 mt-2">Rp {{ number_format($relatedRoom->price, 0, ',', '.') }}</p>
                         </div>
@@ -408,7 +408,7 @@
     <div class="space-y-6">
         
         <!-- Booking Card -->
-        <div class="bg-white rounded-xl shadow-lg border-2 border-slate-200 p-6 sticky top-6">
+        <div class="bg-[#1e293b] rounded-xl shadow-lg border-2 border-slate-200 p-6 sticky top-6">
             <div class="mb-6">
                 <div class="flex items-center justify-between mb-2">
                     <span class="text-gray-600">Harga Sewa</span>
@@ -437,7 +437,7 @@
             </div>
             
             <!-- Info Tambahan -->
-            <div class="space-y-2 pt-4 border-t border-gray-200">
+            <div class="space-y-2 pt-4 border-t border-[#334155]">
                 <div class="flex items-center text-sm text-gray-600">
                     <svg class="w-5 h-5 mr-2 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
@@ -533,8 +533,8 @@
         @endif
                 
         <!-- Share & Save -->
-        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-            <h3 class="text-lg font-bold text-gray-800 mb-4">Bagikan Kamar Ini</h3>
+        <div class="bg-[#1e293b] rounded-xl shadow-none border border-[#334155] p-6">
+            <h3 class="text-lg font-bold text-gray-100 mb-4">Bagikan Kamar Ini</h3>
             
             <div class="flex space-x-2">
                 <!-- WhatsApp Share -->
@@ -549,7 +549,7 @@
                 
                 <!-- Copy Link -->
                 <button onclick="copyLink()" 
-                        class="flex-1 flex items-center justify-center space-x-2 bg-gray-100 text-gray-700 py-2 rounded-lg hover:bg-gray-200 transition-colors">
+                        class="flex-1 flex items-center justify-center space-x-2 bg-[#0f172a] text-gray-200 py-2 rounded-lg hover:bg-[#1e293b] transition-colors">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path>
                     </svg>
@@ -570,7 +570,7 @@
         </div>
         
         <!-- Tips -->
-        <div class="bg-yellow-50 rounded-xl border border-yellow-200 p-6">
+        <div class="bg-yellow-900/20 rounded-xl border border-yellow-200 p-6">
             <h3 class="text-lg font-bold text-yellow-900 mb-3 flex items-center">
                 <svg class="w-5 h-5 mr-2 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
@@ -578,21 +578,21 @@
                 Tips Booking
             </h3>
             
-            <ul class="space-y-2 text-sm text-yellow-800">
+            <ul class="space-y-2 text-sm text-yellow-300">
                 <li class="flex items-start">
-                    <span class="text-yellow-800 mr-2">1.</span>
+                    <span class="text-yellow-300 mr-2">1.</span>
                     <span>Pastikan Anda sudah melihat kondisi kamar secara langsung atau via video call</span>
                 </li>
                 <li class="flex items-start">
-                    <span class="text-yellow-800 mr-2">2.</span>
+                    <span class="text-yellow-300 mr-2">2.</span>
                     <span>Tanyakan detail pembayaran dan deposit yang diperlukan</span>
                 </li>
                 <li class="flex items-start">
-                    <span class="text-yellow-800 mr-2">3.</span>
+                    <span class="text-yellow-300 mr-2">3.</span>
                     <span>Baca peraturan kos dengan teliti sebelum booking</span>
                 </li>
                 <li class="flex items-start">
-                    <span class="text-yellow-800 mr-2">4.</span>
+                    <span class="text-yellow-300 mr-2">4.</span>
                     <span>Simpan bukti pembayaran dan perjanjian sewa</span>
                 </li>
             </ul>
