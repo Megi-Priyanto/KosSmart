@@ -6,7 +6,7 @@
     $isOverdue  = $billing->dynamic_status === 'overdue';
 @endphp
 
-<div class="bg-[#1e293b] rounded-xl shadow p-6 border
+<div class="bg-white rounded-xl shadow p-6 border border-gray-200
     {{ $isUnpaid ? 'border-red-400' : '' }}
     {{ $isPending ? 'border-yellow-400' : '' }}
     {{ $isPaid ? 'border-green-500' : '' }}
@@ -15,7 +15,7 @@
 
     <div class="flex justify-between items-center mb-4">
         <div>
-            <h3 class="font-semibold text-gray-100">
+            <h3 class="font-semibold text-gray-800">
                 Kamar {{ $billing->room->room_number ?? '-' }}
             </h3>
             <p class="text-sm text-gray-500">
@@ -25,25 +25,25 @@
 
         {{-- BADGE --}}
         @if($isUnpaid)
-            <span class="px-3 py-1 text-sm bg-red-900/40 text-red-400 rounded-full">
+            <span class="px-3 py-1 text-sm bg-[rgba(248,113,113,0.15)] text-red-400 rounded-full">
                 Belum Dibayar
             </span>
         @elseif($isPending)
-            <span class="px-3 py-1 text-sm bg-yellow-900/30 text-yellow-400 rounded-full">
+            <span class="px-3 py-1 text-sm bg-[rgba(245,158,11,0.15)] text-yellow-400 rounded-full">
                 Menunggu Verifikasi
             </span>
         @elseif($isRejected)
-            <span class="px-3 py-1 text-sm bg-red-900/50 text-red-300 rounded-full font-semibold">
+            <span class="px-3 py-1 text-sm bg-red-200 text-red-300 rounded-full font-semibold">
                 Pembayaran Ditolak
             </span>
         @elseif($isPaid)
-            <span class="px-3 py-1 text-sm bg-green-900/40 text-green-400 rounded-full">
+            <span class="px-3 py-1 text-sm bg-[rgba(52,211,153,0.15)] text-green-400 rounded-full">
                 Pembayaran Berhasil
             </span>
         @endif
     </div>
 
-    <div class="text-sm text-gray-600 mb-4">
+    <div class="text-sm text-gray-500 mb-4">
         Total: <strong>Rp {{ number_format($billing->total_amount, 0, ',', '.') }}</strong>
     </div>
 
@@ -53,10 +53,10 @@
                 'from' => 'status'
             ]) }}"
            class="px-4 py-2 rounded-lg text-sm font-medium
-                {{ $isUnpaid ? 'bg-red-900/40 text-red-400 hover:bg-red-900/50' : '' }}
-                {{ $isPending ? 'bg-yellow-900/30 text-yellow-400 hover:bg-yellow-200' : '' }}
-                {{ $isRejected ? 'bg-red-900/50 text-red-300 hover:bg-red-300' : '' }}
-                {{ $isPaid ? 'bg-green-900/40 text-green-400 hover:bg-green-200' : '' }}">
+                {{ $isUnpaid ? 'bg-[rgba(248,113,113,0.15)] text-red-400 hover:bg-[rgba(248,113,113,0.2)]' : '' }}
+                {{ $isPending ? 'bg-[rgba(245,158,11,0.15)] text-yellow-400 hover:bg-[rgba(245,158,11,0.2)]' : '' }}
+                {{ $isRejected ? 'bg-red-200 text-red-300 hover:bg-[rgba(248,113,113,0.25)]' : '' }}
+                {{ $isPaid ? 'bg-[rgba(52,211,153,0.15)] text-green-400 hover:bg-[rgba(52,211,153,0.2)]' : '' }}">
             Lihat Detail
         </a>
     </div>

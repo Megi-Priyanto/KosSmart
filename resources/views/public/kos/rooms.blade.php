@@ -7,47 +7,47 @@
 @endpush
 
 @push('page-styles')
-        .room-card{background:var(--card);border:1px solid var(--border);border-radius:16px;overflow:hidden;transition:all 0.25s;}
-        .room-card:hover{transform:translateY(-3px);border-color:rgba(245,158,11,0.25);box-shadow:0 16px 40px rgba(0,0,0,0.4);}
+        .room-card{background:var(--card);border:1px solid rgba(15,23,42,0.08);border-radius:16px;overflow:hidden;transition:all 0.25s;}
+        .room-card:hover{transform:translateY(-3px);border-color:rgba(245,158,11,0.25);box-shadow:0 16px 40px rgba(15,23,42,0.1);}
         .room-card.dimmed{opacity:0.6;}
         .room-thumb{height:140px;position:relative;overflow:hidden;}
         .room-thumb img{width:100%;height:100%;object-fit:cover;transition:transform 0.3s;}
         .room-card:hover .room-thumb img{transform:scale(1.05);}
         .pill{font-size:0.65rem;font-weight:700;padding:3px 8px;border-radius:100px;}
-        .pill-type{background:rgba(255,255,255,0.15);backdrop-filter:blur(6px);color:white;}
+        .pill-type{background:rgba(15,23,42,0.08);backdrop-filter:blur(6px);color:white;}
         .pill-avail{background:rgba(52,211,153,0.85);color:#064e3b;}
         .pill-occupied{background:rgba(96,165,250,0.85);color:#1e3a5f;}
         .pill-maint{background:rgba(251,146,60,0.85);color:#431407;}
 
         /* Filter */
-        .filter-box{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:1rem 1.25rem;}
+        .filter-box{background:var(--card);border:1px solid rgba(15,23,42,0.08);border-radius:14px;padding:1rem 1.25rem;}
         .filter-label{font-size:0.72rem;font-weight:700;color:var(--amber);margin-bottom:6px;display:block;}
-        .filter-btn{display:flex;align-items:center;justify-content:space-between;gap:8px;background:rgba(255,255,255,0.05);border:1px solid var(--border);border-radius:9px;padding:0.6rem 1rem;font-size:0.875rem;color:var(--text);cursor:pointer;font-family:inherit;width:100%;transition:border-color 0.2s;}
+        .filter-btn{display:flex;align-items:center;justify-content:space-between;gap:8px;background:rgba(15,23,42,0.04);border:1px solid rgba(15,23,42,0.08);border-radius:9px;padding:0.6rem 1rem;font-size:0.875rem;color:var(--text);cursor:pointer;font-family:inherit;width:100%;transition:border-color 0.2s;}
         .filter-btn:hover{border-color:rgba(245,158,11,0.4);}
-        .filter-dd{background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;box-shadow:0 12px 30px rgba(0,0,0,0.5);}
+        .filter-dd{background:#ffffff;border:1px solid rgba(15,23,42,0.08);border-radius:10px;overflow:hidden;box-shadow:0 12px 30px rgba(15,23,42,0.1);}
         .filter-dd-item{padding:0.5rem 0.85rem;font-size:0.82rem;color:var(--muted);cursor:pointer;transition:all 0.15s;}
-        .filter-dd-item:hover{background:rgba(255,255,255,0.06);color:var(--text);}
+        .filter-dd-item:hover{background:rgba(15,23,42,0.05);color:var(--text);}
         .filter-col{flex:1;min-width:140px;position:relative;}
         .filter-cari{flex:1;min-width:120px;}
 
         /* Kos header */
         .kos-header{background:linear-gradient(135deg,rgba(245,158,11,0.15),rgba(217,119,6,0.1));border:1px solid rgba(245,158,11,0.2);border-radius:18px;padding:1.5rem;}
-        .stat-box{text-align:center;padding:0.75rem;background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:12px;}
-        .cta-bar{background:rgba(31,41,55,0.6);border:1px solid var(--border);border-radius:16px;padding:1.75rem;text-align:center;margin-top:2rem;}
-        .dark-pagination nav span,.dark-pagination nav a{background:var(--card) !important;border-color:var(--border) !important;color:var(--muted) !important;}
-        .dark-pagination nav a:hover,.dark-pagination nav span[aria-current]{background:rgba(245,158,11,0.15) !important;color:var(--amber) !important;}
+        .stat-box{text-align:center;padding:0.75rem;background:rgba(15,23,42,0.03);border:1px solid rgba(15,23,42,0.08);border-radius:12px;}
+        .cta-bar{background:rgba(241,245,249,0.9);border:1px solid rgba(15,23,42,0.08);border-radius:16px;padding:1.75rem;text-align:center;margin-top:2rem;}
+        .dark-pagination nav span,.dark-pagination nav a{background:#ffffff !important;border-color:rgba(15,23,42,0.1) !important;color:#64748b !important;}
+        .dark-pagination nav a:hover,.dark-pagination nav span[aria-current]{background:rgba(217,119,6,0.08) !important;color:#d97706 !important;}
 
         /* Ulasan card */
-        .ulasan-card{background:rgba(31,41,55,0.7);border:1px solid var(--border);border-radius:14px;padding:1.1rem;transition:border-color 0.2s;display:flex;flex-direction:column;}
+        .ulasan-card{background:rgba(248,250,252,0.9);border:1px solid rgba(15,23,42,0.08);border-radius:14px;padding:1.1rem;transition:border-color 0.2s;display:flex;flex-direction:column;}
         .ulasan-card:hover{border-color:rgba(245,158,11,0.25);}
         .komentar-box{position:relative;overflow:hidden;max-height:62px;transition:max-height 0.4s ease;flex-shrink:0;}
         .komentar-box.is-open{max-height:600px;}
-        .komentar-fade-overlay{position:absolute;bottom:0;left:0;right:0;height:32px;background:linear-gradient(to bottom,transparent,#1e2a3a);pointer-events:none;transition:opacity 0.3s;}
+        .komentar-fade-overlay{position:absolute;bottom:0;left:0;right:0;height:32px;background:linear-gradient(to bottom,transparent,#ffffff);pointer-events:none;transition:opacity 0.3s;}
         .komentar-box.is-open .komentar-fade-overlay{opacity:0;}
-        .komentar-readmore{position:absolute;bottom:0;right:0;font-size:0.72rem;font-weight:700;color:var(--amber);cursor:pointer;background:#1e2a3a;padding:0 2px 1px 8px;}
+        .komentar-readmore{position:absolute;bottom:0;right:0;font-size:0.72rem;font-weight:700;color:var(--amber);cursor:pointer;background:#f1f5f9;padding:0 2px 1px 8px;}
         .komentar-box.is-open .komentar-readmore{display:none;}
         .ulasan-spacer{flex:1;min-height:0.5rem;}
-        .ulasan-footer{border-top:1px solid var(--border);padding-top:0.65rem;margin-top:0.6rem;display:flex;align-items:center;gap:0.6rem;flex-shrink:0;}
+        .ulasan-footer{border-top:1px solid rgba(15,23,42,0.08);padding-top:0.65rem;margin-top:0.6rem;display:flex;align-items:center;gap:0.6rem;flex-shrink:0;}
 @endpush
 
 @section('content')
@@ -82,7 +82,7 @@
                  style="width:64px;height:64px;border-radius:12px;object-fit:cover;border:2px solid rgba(245,158,11,0.3);">
             @endif
         </div>
-        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:0.75rem;border-top:1px solid var(--border);padding-top:1rem;">
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:0.75rem;border-top:1px solid rgba(15,23,42,0.08);padding-top:1rem;">
             <div class="stat-box"><div style="font-size:1.4rem;font-weight:800;color:var(--text);">{{ $totalRooms }}</div><div style="font-size:0.72rem;color:var(--muted);margin-top:2px;">Total Kamar</div></div>
             <div class="stat-box"><div style="font-size:1.4rem;font-weight:800;color:var(--green);">{{ $availableRooms }}</div><div style="font-size:0.72rem;color:var(--muted);margin-top:2px;">Tersedia</div></div>
             <div class="stat-box"><div style="font-size:1.4rem;font-weight:800;color:#60a5fa;">{{ $occupiedRooms }}</div><div style="font-size:0.72rem;color:var(--muted);margin-top:2px;">Terisi</div></div>
@@ -175,7 +175,7 @@
             @if(request()->hasAny(['type', 'floor', 'max_price']))
             <div style="align-self:flex-end;">
                 <a href="{{ route('public.kos.rooms', $tempatKos) }}"
-                   style="display:inline-flex;align-items:center;gap:6px;padding:0.6rem 1rem;border:1px solid var(--border);color:var(--muted);border-radius:9px;text-decoration:none;font-size:0.82rem;"
+                   style="display:inline-flex;align-items:center;gap:6px;padding:0.6rem 1rem;border:1px solid rgba(15,23,42,0.08);color:var(--muted);border-radius:9px;text-decoration:none;font-size:0.82rem;"
                    onmouseover="this.style.color='var(--text)'" onmouseout="this.style.color='var(--muted)'">
                     <svg width="13" height="13" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
@@ -198,13 +198,13 @@
     <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:1.25rem;margin-bottom:2rem;">
         @foreach($rooms as $room)
         <div class="room-card {{ $room->status !== 'available' ? 'dimmed' : '' }}">
-            <div class="room-thumb" style="background:linear-gradient(135deg,#1f2937,#374151);">
+            <div class="room-thumb" style="background:linear-gradient(135deg,#e2e8f0,#cbd5e1);">
                 @php $images = is_array($room->images) ? $room->images : json_decode($room->images, true); $firstImage = $images[0] ?? null; @endphp
                 @if($firstImage)
                     <img src="{{ asset('storage/' . $firstImage) }}" alt="Kamar {{ $room->room_number }}">
                 @else
                     <div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;">
-                        <span class="material-symbols-rounded" style="font-size:40px;color:rgba(255,255,255,0.2);">bed</span>
+                        <span class="material-symbols-rounded" style="font-size:40px;color:rgba(15,23,42,0.25);">bed</span>
                     </div>
                 @endif
                 <div style="position:absolute;top:8px;left:8px;"><span class="pill pill-type">{{ ucfirst($room->type) }}</span></div>
@@ -227,7 +227,7 @@
                        style="display:block;text-align:center;font-size:0.8rem;font-weight:700;color:#111;background:linear-gradient(135deg,var(--amber),#d97706);padding:0.5rem;border-radius:8px;text-decoration:none;"
                        onmouseover="this.style.boxShadow='0 4px 14px rgba(245,158,11,0.4)'" onmouseout="this.style.boxShadow='none'">Lihat Detail</a>
                 @elseif($room->status === 'occupied')
-                    <button disabled style="display:block;width:100%;text-align:center;font-size:0.8rem;font-weight:600;color:var(--muted);background:rgba(255,255,255,0.05);border:1px solid var(--border);padding:0.5rem;border-radius:8px;cursor:not-allowed;">Sudah Terisi</button>
+                    <button disabled style="display:block;width:100%;text-align:center;font-size:0.8rem;font-weight:600;color:var(--muted);background:rgba(15,23,42,0.04);border:1px solid rgba(15,23,42,0.08);padding:0.5rem;border-radius:8px;cursor:not-allowed;">Sudah Terisi</button>
                 @else
                     <button disabled style="display:block;width:100%;text-align:center;font-size:0.8rem;font-weight:600;color:#fb923c;background:rgba(251,146,60,0.1);border:1px solid rgba(251,146,60,0.2);padding:0.5rem;border-radius:8px;cursor:not-allowed;">Maintenance</button>
                 @endif
@@ -238,8 +238,8 @@
     <div class="dark-pagination">{{ $rooms->links() }}</div>
 
     @else
-    <div style="text-align:center;padding:4rem 2rem;background:var(--card);border:1px solid var(--border);border-radius:18px;">
-        <span class="material-symbols-rounded" style="font-size:56px;color:rgba(255,255,255,0.15);display:block;margin-bottom:1rem;">bed</span>
+    <div style="text-align:center;padding:4rem 2rem;background:var(--card);border:1px solid rgba(15,23,42,0.08);border-radius:18px;">
+        <span class="material-symbols-rounded" style="font-size:56px;color:rgba(15,23,42,0.2);display:block;margin-bottom:1rem;">bed</span>
         <p style="font-weight:600;margin-bottom:0.75rem;">Belum ada kamar yang tersedia</p>
         <a href="{{ route('public.kos.index') }}" style="font-size:0.84rem;color:var(--amber);text-decoration:none;font-weight:600;">Cari Tempat Kos Lain →</a>
     </div>
@@ -247,7 +247,7 @@
 
     {{-- Rating & Ulasan --}}
     @if($totalUlasan > 0)
-    <section style="margin-top:3.5rem;padding-top:3rem;border-top:1px solid var(--border);">
+    <section style="margin-top:3.5rem;padding-top:3rem;border-top:1px solid rgba(15,23,42,0.08);">
         <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:2rem;">
             <div style="width:38px;height:38px;background:rgba(245,158,11,0.12);border-radius:10px;display:flex;align-items:center;justify-content:center;">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="#f59e0b"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
@@ -259,12 +259,12 @@
         </div>
 
         {{-- Ringkasan --}}
-        <div style="display:grid;grid-template-columns:auto 1fr;gap:2.5rem;background:rgba(31,41,55,0.7);border:1px solid var(--border);border-radius:18px;padding:1.75rem;margin-bottom:2rem;">
+        <div style="display:grid;grid-template-columns:auto 1fr;gap:2.5rem;background:rgba(248,250,252,0.9);border:1px solid rgba(15,23,42,0.08);border-radius:18px;padding:1.75rem;margin-bottom:2rem;">
             <div style="text-align:center;min-width:130px;">
                 <div style="font-size:4rem;font-weight:900;color:var(--amber);line-height:1;">{{ number_format($avgRating, 1) }}</div>
                 <div style="display:flex;justify-content:center;gap:3px;margin:0.5rem 0;">
                     @for($i = 1; $i <= 5; $i++)
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="{{ $i <= round($avgRating) ? '#f59e0b' : 'rgba(255,255,255,0.15)' }}"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="{{ $i <= round($avgRating) ? '#f59e0b' : 'rgba(15,23,42,0.12)' }}"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
                     @endfor
                 </div>
                 <div style="font-size:0.78rem;color:var(--muted);">dari {{ $totalUlasan }} ulasan</div>
@@ -274,7 +274,7 @@
                 <div style="display:flex;align-items:center;gap:0.65rem;">
                     <span style="font-size:0.75rem;color:var(--muted);width:14px;text-align:right;flex-shrink:0;">{{ $i }}</span>
                     <svg width="12" height="12" viewBox="0 0 24 24" fill="#f59e0b" style="flex-shrink:0;"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-                    <div style="flex:1;height:8px;background:rgba(255,255,255,0.06);border-radius:100px;overflow:hidden;">
+                    <div style="flex:1;height:8px;background:rgba(15,23,42,0.05);border-radius:100px;overflow:hidden;">
                         <div style="height:100%;width:{{ $ratingDistribution[$i]['percent'] }}%;background:linear-gradient(90deg,#f59e0b,#d97706);border-radius:100px;"></div>
                     </div>
                     <span style="font-size:0.72rem;color:var(--muted);width:28px;text-align:right;flex-shrink:0;">{{ $ratingDistribution[$i]['count'] }}</span>
@@ -292,7 +292,7 @@
                  }" class="ulasan-card">
                 <div style="display:flex;align-items:center;gap:2px;margin-bottom:0.6rem;flex-shrink:0;">
                     @for($i = 1; $i <= 5; $i++)
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="{{ $i <= $ulasan->rating ? '#f59e0b' : 'rgba(255,255,255,0.12)' }}"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="{{ $i <= $ulasan->rating ? '#f59e0b' : 'rgba(15,23,42,0.12)' }}"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
                     @endfor
                     <span style="font-size:0.72rem;font-weight:700;color:var(--amber);margin-left:4px;">{{ number_format($ulasan->rating, 1) }}</span>
                 </div>
@@ -323,7 +323,7 @@
         @endif
     </section>
     @else
-    <section style="margin-top:3rem;padding:2rem;background:rgba(31,41,55,0.5);border:1px solid var(--border);border-radius:16px;text-align:center;">
+    <section style="margin-top:3rem;padding:2rem;background:rgba(241,245,249,0.8);border:1px solid rgba(15,23,42,0.08);border-radius:16px;text-align:center;">
         <svg width="44" height="44" viewBox="0 0 24 24" fill="rgba(255,255,255,0.1)" style="margin:0 auto 0.75rem;"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
         <p style="color:var(--muted);font-size:0.87rem;">Belum ada ulasan untuk kos ini.</p>
     </section>
@@ -335,7 +335,7 @@
         <p style="font-size:0.84rem;color:var(--muted);margin-bottom:1.25rem;">Login atau daftar untuk bisa langsung booking kamar secara online</p>
         <div style="display:flex;align-items:center;justify-content:center;gap:0.75rem;flex-wrap:wrap;">
             <a href="{{ route('register') }}" style="padding:0.65rem 1.5rem;background:linear-gradient(135deg,var(--amber),#d97706);color:#111;font-weight:800;border-radius:10px;text-decoration:none;font-size:0.86rem;box-shadow:0 4px 14px rgba(245,158,11,0.3);">Daftar Gratis</a>
-            <a href="{{ route('login') }}" style="padding:0.65rem 1.5rem;border:1px solid var(--border);color:var(--muted);font-weight:600;border-radius:10px;text-decoration:none;font-size:0.86rem;"
+            <a href="{{ route('login') }}" style="padding:0.65rem 1.5rem;border:1px solid rgba(15,23,42,0.08);color:var(--muted);font-weight:600;border-radius:10px;text-decoration:none;font-size:0.86rem;"
                onmouseover="this.style.color='var(--text)'" onmouseout="this.style.color='var(--muted)'">Sudah Punya Akun</a>
         </div>
     </div>

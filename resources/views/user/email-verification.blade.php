@@ -126,7 +126,7 @@
                 </svg>
             </div>
             <h1 class="text-3xl font-bold text-white mb-2">Verifikasi Email Baru</h1>
-            <p class="text-gray-600">Masukkan kode OTP yang telah dikirim</p>
+            <p class="text-slate-500">Masukkan kode OTP yang telah dikirim</p>
         </div>
         
         <!-- Card -->
@@ -136,10 +136,10 @@
             @if(session('success'))
             <div class="mb-6 p-4 bg-green-500 bg-opacity-10 border-l-4 border-green-500 rounded-lg">
                 <div class="flex items-start">
-                    <svg class="w-5 h-5 text-green-400 mt-0.5 mr-3" fill="currentColor" viewBox="0 0 20 20">
+                    <svg class="w-5 h-5 text-green-700 mt-0.5 mr-3" fill="currentColor" viewBox="0 0 20 20">
                         <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
                     </svg>
-                    <p class="text-green-400 text-sm">{{ session('success') }}</p>
+                    <p class="text-green-700 text-sm">{{ session('success') }}</p>
                 </div>
             </div>
             @endif
@@ -148,10 +148,10 @@
             @if(session('error'))
             <div class="mb-6 p-4 bg-red-500 bg-opacity-10 border-l-4 border-red-500 rounded-lg">
                 <div class="flex items-start">
-                    <svg class="w-5 h-5 text-red-400 mt-0.5 mr-3" fill="currentColor" viewBox="0 0 20 20">
+                    <svg class="w-5 h-5 text-red-600 mt-0.5 mr-3" fill="currentColor" viewBox="0 0 20 20">
                         <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
                     </svg>
-                    <p class="text-red-400 text-sm">{{ session('error') }}</p>
+                    <p class="text-red-600 text-sm">{{ session('error') }}</p>
                 </div>
             </div>
             @endif
@@ -159,9 +159,9 @@
             <!-- Email Info -->
             <div class="mb-6 space-y-3">
                 <!-- Old Email -->
-                <div class="p-4 bg-opacity-5 bg-[#1e293b] rounded-lg border border-gray-600">
-                    <p class="text-xs text-gray-600 mb-1">Email Lama</p>
-                    <p class="font-medium text-gray-600">{{ $oldEmail }}</p>
+                <div class="p-4 bg-opacity-5 bg-white rounded-lg border border-gray-600">
+                    <p class="text-xs text-slate-500 mb-1">Email Lama</p>
+                    <p class="font-medium text-slate-500">{{ $oldEmail }}</p>
                 </div>
                 
                 <!-- New Email (Highlight) -->
@@ -176,7 +176,7 @@
                 @csrf
                 
                 <div class="mb-6">
-                    <label class="block text-sm font-medium text-gray-600 mb-3 text-center">
+                    <label class="block text-sm font-medium text-slate-500 mb-3 text-center">
                         Masukkan Kode OTP (6 Digit)
                     </label>
                     
@@ -194,7 +194,7 @@
                     <input type="hidden" name="otp" id="otpValue">
                     
                     @error('otp')
-                    <p class="text-red-400 text-sm mt-2 text-center">{{ $message }}</p>
+                    <p class="text-red-600 text-sm mt-2 text-center">{{ $message }}</p>
                     @enderror
                 </div>
 
@@ -228,7 +228,7 @@
                 <button 
                     type="submit" 
                     id="resendBtn"
-                    class="btn-secondary w-full text-gray-600 font-semibold py-3 px-4 rounded-lg"
+                    class="btn-secondary w-full text-slate-500 font-semibold py-3 px-4 rounded-lg"
                     disabled
                 >
                     <span id="resendText">Kirim Ulang OTP</span>
@@ -240,7 +240,7 @@
             <div class="pt-4 border-t border-gray-700">
                 <button 
                     onclick="confirmCancel()" 
-                    class="w-full text-gray-600 hover:text-gray-600 font-medium py-2"
+                    class="w-full text-slate-500 hover:text-slate-500 font-medium py-2"
                 >
                     Batal & Logout
                 </button>
@@ -254,8 +254,8 @@
                     <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
                 </svg>
                 <div>
-                    <p class="text-gray-600 text-sm font-medium mb-1">Informasi Penting</p>
-                    <p class="text-gray-600 text-sm">
+                    <p class="text-slate-500 text-sm font-medium mb-1">Informasi Penting</p>
+                    <p class="text-slate-500 text-sm">
                         Jika Anda membatalkan proses ini, email akan tetap berubah menjadi email baru dalam status belum terverifikasi. Anda akan di-logout dan harus verifikasi saat login kembali.
                     </p>
                 </div>
@@ -268,15 +268,15 @@
                 <svg class="w-5 h-5 text-amber-500 mr-3 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                     <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
                 </svg>
-                <p class="text-gray-600 text-sm">
-                    <strong class="text-gray-600">Tips: </strong>Pastikan memeriksa folder spam jika email tidak masuk dalam beberapa menit.
+                <p class="text-slate-500 text-sm">
+                    <strong class="text-slate-500">Tips: </strong>Pastikan memeriksa folder spam jika email tidak masuk dalam beberapa menit.
                 </p>
             </div>
         </div>
         
         <!-- Copyright -->
         <div class="text-center mt-8">
-            <p class="text-gray-500 text-sm">
+            <p class="text-slate-400 text-sm">
                 © {{ date('Y') }} KosSmart. All rights reserved.
             </p>
         </div>
@@ -292,7 +292,7 @@
                     </svg>
                 </div>
                 <h3 class="text-xl font-semibold text-white mb-2">Batalkan Perubahan Email?</h3>
-                <p class="text-sm text-gray-600 mb-6">
+                <p class="text-sm text-slate-500 mb-6">
                     Jika Anda membatalkan, email akan tetap berubah menjadi <strong class="text-white">{{ $newEmail }}</strong> 
                     dalam status <strong class="text-amber-400">belum terverifikasi</strong>. Anda akan di-logout dan harus verifikasi saat login kembali.
                 </p>
@@ -300,7 +300,7 @@
                 <div class="flex gap-3">
                     <button 
                         onclick="closeCancelModal()" 
-                        class="flex-1 px-4 py-2 btn-secondary text-gray-600 rounded-lg hover:bg-opacity-80"
+                        class="flex-1 px-4 py-2 btn-secondary text-slate-500 rounded-lg hover:bg-opacity-80"
                     >
                         Lanjutkan Verifikasi
                     </button>
@@ -393,7 +393,7 @@
 
             if (timeLeft <= 0) {
                 clearInterval(countdown);
-                countdownElement.innerHTML = '<span class="text-red-400 font-semibold">Kode OTP telah kadaluarsa</span>';
+                countdownElement.innerHTML = '<span class="text-red-600 font-semibold">Kode OTP telah kadaluarsa</span>';
                 
                 resendBtn.disabled = false;
                 resendText.classList.remove('hidden');

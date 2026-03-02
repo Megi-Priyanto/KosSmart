@@ -7,7 +7,7 @@
 
     {{-- HEADER --}}
     <div class="flex items-center justify-between mb-6">
-        <h1 class="text-2xl font-bold text-gray-100">
+        <h1 class="text-2xl font-bold text-gray-800">
             Status Tagihan
         </h1>
 
@@ -18,23 +18,34 @@
         </a>
     </div>
 
-    {{-- EMPTY STATE --}}
+    {{-- =========================
+        EMPTY STATE
+    ========================= --}}
     @if($billings->isEmpty())
-        <div class="text-center py-16 rounded-xl" style="background:#1e293b; border:1px solid #334155;">
-            <p class="text-slate-500">Belum ada riwayat tagihan</p>
+        <div class="text-center py-16 bg-white rounded-xl shadow border border-gray-200">
+            <p class="text-gray-500">
+                Belum ada riwayat tagihan
+            </p>
         </div>
     @endif
 
-    {{-- LIST TAGIHAN --}}
+    {{-- =========================
+        LIST TAGIHAN
+    ========================= --}}
     @foreach($billings as $month => $items)
-        <h3 class="text-lg font-semibold mb-4 mt-10 text-gray-200">
+
+        <h3 class="text-lg font-semibold mb-4 mt-10 text-gray-600">
             Tagihan {{ $month }}
         </h3>
+
         <div class="space-y-4">
             @foreach($items as $billing)
-                @include('user.status.partials.billing-card', ['billing' => $billing])
+                @include('user.status.partials.billing-card', [
+                    'billing' => $billing
+                ])
             @endforeach
         </div>
+
     @endforeach
 
 </div>

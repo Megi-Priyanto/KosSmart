@@ -10,7 +10,7 @@
                class="flex items-center space-x-3">
                 <img src="{{ app_logo() }}"
                     class="w-9 h-9 rounded-full object-cover">
-                <span class="text-xl font-bold text-yellow-400">
+                <span class="text-xl font-bold text-white">
                     {{ app_name() }}
                 </span>
             </a>
