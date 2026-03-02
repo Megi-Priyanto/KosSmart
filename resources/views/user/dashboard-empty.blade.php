@@ -474,7 +474,7 @@
                 <li>Upload bukti transfer DP (50% dari harga sewa)</li>
                 <li>Tunggu konfirmasi dari admin (maksimal 1x24 jam)</li>
                 <li>Setelah disetujui, Anda dapat langsung menempati kamar</li>
-                <li>Berikan ulasan setelah pembayaran dikonfirmasi ⭐</li>
+                <li>Berikan ulasan setelah pembayaran dikonfirmasi</li>
             </ol>
         </div>
     </div>
