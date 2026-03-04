@@ -66,6 +66,15 @@ Route::prefix('kos')->name('public.kos.')->group(function () {
 });
 
 // ==============================
+// PENDAFTARAN ADMIN KOS (Publik)
+// ==============================
+Route::prefix('daftar-admin')->name('admin.registration.')->group(function () {
+    Route::get('/',       [\App\Http\Controllers\AdminRegistrationController::class, 'create'])->name('form');
+    Route::post('/',      [\App\Http\Controllers\AdminRegistrationController::class, 'store'])->name('store');
+    Route::get('/sukses', [\App\Http\Controllers\AdminRegistrationController::class, 'success'])->name('success');
+});
+
+// ==============================
 // GUEST ROUTES
 // ==============================
 Route::middleware('guest')->group(function () {
@@ -343,6 +352,14 @@ Route::middleware(['auth', 'verified', 'super.admin'])
             // POST /superadmin/refunds/{cancelBooking}/process - Proses refund
             Route::post('/{cancelBooking}/process', [\App\Http\Controllers\SuperAdmin\SuperAdminRefundController::class, 'processRefund'])
                 ->name('process');
+        });
+
+        // Pendaftaran Admin Kos - Review & Approval
+        Route::prefix('admin-registrations')->name('admin-registrations.')->group(function () {
+            Route::get('/',                              [\App\Http\Controllers\SuperAdmin\AdminRegistrationController::class, 'index'])->name('index');
+            Route::get('/{adminRegistration}',           [\App\Http\Controllers\SuperAdmin\AdminRegistrationController::class, 'show'])->name('show');
+            Route::post('/{adminRegistration}/approve',  [\App\Http\Controllers\SuperAdmin\AdminRegistrationController::class, 'approve'])->name('approve');
+            Route::post('/{adminRegistration}/reject',   [\App\Http\Controllers\SuperAdmin\AdminRegistrationController::class, 'reject'])->name('reject');
         });
     });
 
