@@ -271,7 +271,7 @@
             <h2>Kelola kos kamu jadi<br>lebih <em>profesional</em></h2>
             <p>Daftarkan kos kamu di KosSmart dan nikmati kemudahan manajemen kamar, tagihan, dan penghuni — semua dalam satu dashboard yang rapi.</p>
             <div class="admin-cta-actions">
-                <a href="mailto:admin@kossmart.id" class="btn-purple">Daftarkan Kos Saya</a>
+                <a href="{{ route('admin.registration.form') }}" class="btn-purple">Daftarkan Kos Saya</a>
                 <a href="{{ route('admin.login') }}" class="txt-link">Sudah terdaftar? Login Admin ↗</a>
             </div>
         </div>

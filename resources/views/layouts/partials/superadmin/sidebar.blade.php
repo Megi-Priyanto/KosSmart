@@ -50,6 +50,15 @@
             <span x-show="sidebarOpen">Dashboard</span>
         </a>
 
+                <!-- Kelola Pendaftaran -->
+        <a href="{{ route('superadmin.admin-registrations.index') }}" class="flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-700 transition-colors {{ request()->routeIs('superadmin.admin-registrations.*') ? 'bg-gray-700 text-yellow-400' : 'text-gray-300' }}">
+            <svg class="w-6 h-6 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M3 21h18M5 21V7a2 2 0 012-2h10a2 2 0 012 2v14M9 9h.01M9 12h.01M9 15h.01M12 9h.01M12 12h.01M12 15h.01M15 9h.01M15 12h.01M15 15h.01M9 21v-3h6v3M16 5l2 2 4-4"/>
+            </svg>
+            <span x-show="sidebarOpen">Kelola Pendaftaran</span>
+       </a>
+
         <!-- Kelola User -->
         <a href="{{ route('superadmin.users.index') }}" 
            class="flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-700 transition-colors 
