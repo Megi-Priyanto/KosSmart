@@ -241,12 +241,16 @@
     <p class="text-slate-500">{{ $rooms->total() }} kamar ditemukan</p>
 </div>
 
-<div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-8">
+{{-- ✅ PERBAIKAN: items-stretch agar semua card dalam satu baris sama tingginya --}}
+<div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-8 items-stretch">
     @foreach($rooms as $room)
-        <div class="bg-white rounded-lg shadow-none border border-[#e2e8f0] overflow-hidden hover:shadow-lg transition-all
+        {{-- ✅ PERBAIKAN: tambah flex flex-col h-full agar card bisa stretch penuh --}}
+        <div class="bg-white rounded-lg shadow-none border border-[#e2e8f0] overflow-hidden hover:shadow-lg transition-all flex flex-col h-full
                     {{ $room->status === 'occupied' ? 'opacity-75' : '' }}
                     {{ $room->status === 'maintenance' ? 'opacity-60' : '' }}">
-            <div class="h-36 sm:h-40 w-full relative overflow-hidden">
+
+            <!-- Gambar (fixed height) -->
+            <div class="h-36 sm:h-40 w-full relative overflow-hidden flex-shrink-0">
                 @php
                     $images = is_array($room->images) ? $room->images : json_decode($room->images, true);
                     $firstImage = $images[0] ?? null;
@@ -261,13 +265,14 @@
                     <div class="w-full h-full bg-gradient-to-br from-yellow-400 to-orange-500"></div>
                 @endif
             
+                <!-- Badge Tipe -->
                 <div class="absolute top-4 left-4">
                     <span class="bg-white px-3 py-1 rounded-full text-xs font-semibold">
                         {{ ucfirst($room->type) }}
                     </span>
                 </div>
             
-                <!-- BADGE STATUS DINAMIS -->
+                <!-- Badge Status -->
                 <div class="absolute top-4 right-4">
                     @if($room->status === 'available')
                         <span class="bg-green-500 text-white px-3 py-1 rounded-full text-xs font-semibold">
@@ -285,10 +290,13 @@
                 </div>
             </div>
         
-            <div class="p-3 sm:p-4">
+            {{-- ✅ PERBAIKAN: flex flex-col flex-1 agar konten bisa mendorong tombol ke bawah --}}
+            <div class="p-3 sm:p-4 flex flex-col flex-1">
+
                 <h3 class="text-sm sm:text-base font-semibold text-slate-800 mb-2">Kamar {{ $room->room_number }}</h3>
                 <p class="text-sm text-slate-500 mb-3">{{ $room->floor }} • {{ $room->size }} m²</p>
                 
+                <!-- Fasilitas -->
                 @if($room->facilities)
                 <div class="flex flex-wrap gap-2 mb-4">
                     @php
@@ -304,31 +312,35 @@
                     @endforeach
                 </div>
                 @endif
-                
-                <div class="flex items-center justify-between mb-4">
+
+                {{-- ✅ PERBAIKAN: flex-1 pada harga agar mendorong tombol ke bawah --}}
+                <div class="flex items-center justify-between mb-4 flex-1">
                     <div>
                         <p class="text-lg sm:text-xl font-bold text-amber-600">Rp {{ number_format($room->price, 0, ',', '.') }}</p>
                         <p class="text-xs text-slate-400">{{ $room->jenis_sewa === 'tahun' ? '/tahun' : '/bulan' }}</p>
                     </div>
                 </div>
                 
-                <!-- BUTTON DISESUAIKAN DENGAN STATUS -->
-                @if($room->status === 'available')
-                    <a href="{{ route('user.rooms.show', $room->id) }}" 
-                       class="block w-full text-center bg-gradient-to-r from-yellow-500 to-orange-600 text-white font-semibold py-1.5 rounded-md text-sm hover:from-yellow-600 hover:to-orange-700 transition shadow-md">
-                        Lihat Detail
-                    </a>
-                @elseif($room->status === 'occupied')
-                    <button disabled
-                       class="block w-full text-center bg-gray-300 text-slate-500 font-semibold py-1.5 rounded-md text-sm cursor-not-allowed">
-                        Sudah Terisi
-                    </button>
-                @elseif($room->status === 'maintenance')
-                    <button disabled
-                       class="block w-full text-center bg-orange-200 text-orange-600 font-semibold py-1.5 rounded-md text-sm cursor-not-allowed">
-                        Sedang Maintenance
-                    </button>
-                @endif
+                {{-- ✅ PERBAIKAN: mt-auto memastikan tombol selalu nempel di ujung bawah card --}}
+                <div class="mt-auto">
+                    @if($room->status === 'available')
+                        <a href="{{ route('user.rooms.show', $room->id) }}" 
+                           class="block w-full text-center bg-gradient-to-r from-yellow-500 to-orange-600 text-white font-semibold py-1.5 rounded-md text-sm hover:from-yellow-600 hover:to-orange-700 transition shadow-md">
+                            Lihat Detail
+                        </a>
+                    @elseif($room->status === 'occupied')
+                        <button disabled
+                           class="block w-full text-center bg-gray-300 text-slate-500 font-semibold py-1.5 rounded-md text-sm cursor-not-allowed">
+                            Sudah Terisi
+                        </button>
+                    @elseif($room->status === 'maintenance')
+                        <button disabled
+                           class="block w-full text-center bg-orange-200 text-orange-600 font-semibold py-1.5 rounded-md text-sm cursor-not-allowed">
+                            Sedang Maintenance
+                        </button>
+                    @endif
+                </div>
+
             </div>
         </div>
     @endforeach
@@ -351,7 +363,6 @@
         box-shadow: 0 4px 16px rgba(0,0,0,0.08);
     }
 
-    /* Batas teks 3 baris */
     .komentar-box {
         position: relative;
         overflow: hidden;
@@ -361,7 +372,6 @@
     }
     .komentar-box.is-open { max-height: 600px; }
 
-    /* Gradient fade ujung teks */
     .komentar-fade-overlay {
         position: absolute;
         bottom: 0; left: 0; right: 0;
@@ -372,7 +382,6 @@
     }
     .komentar-box.is-open .komentar-fade-overlay { opacity: 0; }
 
-    /* "...selengkapnya" pojok kanan bawah */
     .komentar-readmore {
         position: absolute;
         bottom: 0; right: 0;
@@ -385,10 +394,8 @@
     }
     .komentar-box.is-open .komentar-readmore { display: none; }
 
-    /* Spacer dorong user-info ke bawah */
     .ulasan-spacer { flex: 1; min-height: 0.5rem; }
 
-    /* User info selalu di paling bawah */
     .ulasan-footer {
         border-top: 1px solid #f3f4f6;
         padding-top: 0.65rem;
@@ -399,7 +406,6 @@
         flex-shrink: 0;
     }
 
-    /* Rating bar */
     .rating-bar-track {
         flex: 1;
         height: 8px;
@@ -497,7 +503,7 @@
                 </span>
             </div>
 
-            {{-- Komentar: fixed 3 baris + fade + expand --}}
+            {{-- Komentar --}}
             <div class="komentar-box" :class="{ 'is-open': open }">
                 <p x-ref="teks"
                    class="text-sm text-slate-500"
@@ -524,7 +530,7 @@
             {{-- Spacer --}}
             <div class="ulasan-spacer"></div>
 
-            {{-- User info — SELALU di paling bawah --}}
+            {{-- User info --}}
             <div class="ulasan-footer">
                 <div class="w-7 h-7 rounded-full bg-gradient-to-br from-yellow-400 to-orange-400 flex items-center justify-center text-white text-xs font-bold flex-shrink-0">
                     {{ strtoupper(substr($ulasan->user?->name ?? 'U', 0, 1)) }}
