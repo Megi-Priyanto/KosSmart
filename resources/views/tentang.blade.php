@@ -113,7 +113,7 @@
                     <span class="material-symbols-rounded" style="color:#fff;">visibility</span>
                 </div>
                 <span style="font-size:0.69rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--amber);display:block;margin-bottom:0.5rem;">Visi</span>
-                <h3>Platform kos terpercaya<br>untuk generasi muda Indonesia</h3>
+                <h3>Platform kos terpercaya<br>untuk masyarakat Indonesia</h3>
                 <p style="margin-top:0.7rem;">Menjadi platform inovatif yang mampu memberikan pengalaman terbaik bagi penghuni kos melalui layanan yang transparan, akurat, dan terpercaya berbasis komunikasi dua arah.</p>
             </div>
             <div class="vm-card" style="background:linear-gradient(135deg,rgba(5,150,105,0.06),rgba(5,150,105,0.02));border:1px solid rgba(5,150,105,0.15);">
