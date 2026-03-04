@@ -55,6 +55,10 @@ Route::prefix('kos')->name('public.kos.')->group(function () {
     // Detail satu kamar
     Route::get('/kamar/{room}', [\App\Http\Controllers\PublicKosController::class, 'roomDetail'])
         ->name('room-detail');
+
+    // AI Chat API Route
+    Route::post('/chat', [\App\Http\Controllers\AIChatController::class, 'chat'])
+        ->name('chat');
 });
 
 // ==============================
