@@ -1,6 +1,7 @@
 {{-- resources/views/layouts/public.blade.php --}}
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -13,15 +14,24 @@
     <style>
         :root {
             /* Light palette */
-            --bg:#f8fafc;
-            --surface:#ffffff;
-            --card:#f1f5f9;
-            --amber:#d97706; --amber2:#f59e0b;
-            --green:#059669; --purple:#7c3aed;
-            --text:#0f172a; --muted:#64748b;
-            --border:rgba(15,23,42,0.08);
+            --bg: #f8fafc;
+            --surface: #ffffff;
+            --card: #f1f5f9;
+            --amber: #d97706;
+            --amber2: #f59e0b;
+            --green: #059669;
+            --purple: #7c3aed;
+            --text: #0f172a;
+            --muted: #64748b;
+            --border: rgba(15, 23, 42, 0.08);
         }
-        * { margin:0; padding:0; box-sizing:border-box; }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
             background: var(--bg);
@@ -31,27 +41,72 @@
             flex-direction: column;
             min-height: 100vh;
         }
-        main { flex: 1; }
+
+        main {
+            flex: 1;
+        }
 
         .material-symbols-rounded {
-            font-variation-settings: 'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 24;
+            font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
             vertical-align: middle;
             line-height: 1;
         }
 
         /* ── SHARED SECTION HELPERS ── */
-        .max-w { max-width: 1100px; margin: 0 auto; }
-        .sec-lbl { font-size:0.74rem; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; color:var(--amber); display:block; margin-bottom:0.55rem; }
-        .sec-ttl { font-size:clamp(1.8rem,3.5vw,2.65rem); font-weight:800; line-height:1.2; margin-bottom:0.85rem; color:var(--text); }
-        .sec-ttl em { font-family:'Fraunces',serif; font-style:italic; color:var(--amber); }
-        .blob { position:absolute; border-radius:50%; filter:blur(100px); opacity:0.06; pointer-events:none; }
+        .max-w {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
 
-        @keyframes fadeUp { from { opacity:0; transform:translateY(22px) } to { opacity:1; transform:translateY(0) } }
+        .sec-lbl {
+            font-size: 0.74rem;
+            font-weight: 700;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--amber);
+            display: block;
+            margin-bottom: 0.55rem;
+        }
+
+        .sec-ttl {
+            font-size: clamp(1.8rem, 3.5vw, 2.65rem);
+            font-weight: 800;
+            line-height: 1.2;
+            margin-bottom: 0.85rem;
+            color: var(--text);
+        }
+
+        .sec-ttl em {
+            font-family: 'Fraunces', serif;
+            font-style: italic;
+            color: var(--amber);
+        }
+
+        .blob {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(100px);
+            opacity: 0.06;
+            pointer-events: none;
+        }
+
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(22px)
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0)
+            }
+        }
 
         @stack('page-styles')
     </style>
     @stack('head')
 </head>
+
 <body>
 
     {{-- ══ NAVBAR ══ --}}
@@ -62,9 +117,13 @@
         @yield('content')
     </main>
 
+    {{-- AI Chat Widget --}}
+    <x-ai-chat />
+
     {{-- ══ FOOTER ══ --}}
     @include('layouts.partials.public.footer')
 
     @stack('scripts')
 </body>
+
 </html>
