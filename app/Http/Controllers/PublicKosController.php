@@ -29,8 +29,8 @@ class PublicKosController extends Controller
         if ($request->filled('search')) {
             $query->where(function ($q) use ($request) {
                 $q->where('nama_kos', 'like', '%' . $request->search . '%')
-                  ->orWhere('kota', 'like', '%' . $request->search . '%')
-                  ->orWhere('alamat', 'like', '%' . $request->search . '%');
+                    ->orWhere('kota', 'like', '%' . $request->search . '%')
+                    ->orWhere('alamat', 'like', '%' . $request->search . '%');
             });
         }
 
@@ -55,6 +55,27 @@ class PublicKosController extends Controller
             ->pluck('kota');
 
         return view('public.kos.index', compact('tempatKosList', 'kotaList'));
+    }
+
+    /**
+     * Peta Interaktif Kos (publik)
+     */
+    public function map()
+    {
+        $tempatKosList = TempatKos::where('status', 'active')
+            ->whereNotNull('latitude')
+            ->whereNotNull('longitude')
+            ->with([
+                'kosInfos' => function ($q) {
+                    $q->where('is_active', true);
+                },
+                'rooms' => function ($query) {
+                    $query->orderBy('price', 'asc');
+                }
+            ])
+            ->get();
+
+        return view('public.kos.map', compact('tempatKosList'));
     }
 
     /**
@@ -86,16 +107,16 @@ class PublicKosController extends Controller
         }
 
         $query->orderByRaw("FIELD(status, 'available', 'occupied', 'maintenance')")
-              ->orderBy('room_number', 'asc');
+            ->orderBy('room_number', 'asc');
 
         $rooms = $query->paginate(9)->withQueryString();
 
         $types  = Room::whereHas('kosInfo', fn($q) => $q->where('tempat_kos_id', $tempatKos->id))
-                      ->distinct()->pluck('type');
+            ->distinct()->pluck('type');
 
         // ── PERUBAHAN 2: tambah variabel $floors ──────────────────
         $floors = Room::whereHas('kosInfo', fn($q) => $q->where('tempat_kos_id', $tempatKos->id))
-                      ->distinct()->orderBy('floor')->pluck('floor');
+            ->distinct()->orderBy('floor')->pluck('floor');
         // ──────────────────────────────────────────────────────────
 
         $totalRooms       = Room::whereHas('kosInfo', fn($q) => $q->where('tempat_kos_id', $tempatKos->id))->count();
@@ -124,10 +145,18 @@ class PublicKosController extends Controller
         }
 
         return view('public.kos.rooms', compact(
-            'tempatKos', 'rooms', 'types',
+            'tempatKos',
+            'rooms',
+            'types',
             'floors', // ── PERUBAHAN 3: tambah 'floors' ke compact ──
-            'totalRooms', 'availableRooms', 'occupiedRooms', 'maintenanceRooms',
-            'ulasanList', 'avgRating', 'totalUlasan', 'ratingDistribution'
+            'totalRooms',
+            'availableRooms',
+            'occupiedRooms',
+            'maintenanceRooms',
+            'ulasanList',
+            'avgRating',
+            'totalUlasan',
+            'ratingDistribution'
         ));
     }
 
@@ -155,7 +184,10 @@ class PublicKosController extends Controller
             ->get();
 
         return view('public.kos.room-detail', compact(
-            'room', 'kosInfo', 'tempatKos', 'relatedRooms'
+            'room',
+            'kosInfo',
+            'tempatKos',
+            'relatedRooms'
         ));
     }
 }

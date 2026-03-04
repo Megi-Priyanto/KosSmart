@@ -29,6 +29,8 @@ class UpdateKosInfoRequest extends FormRequest
             'checkin_time' => 'required|date_format:H:i',
             'checkout_time' => 'required|date_format:H:i',
             'is_active' => 'boolean',
+            'latitude' => 'nullable|numeric',
+            'longitude' => 'nullable|numeric',
         ];
     }
 

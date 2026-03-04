@@ -4,18 +4,29 @@
 @section('page-title', 'Tambah Informasi Kos')
 @section('page-description', 'Tambahkan data kos baru dengan informasi lengkap')
 
+@push('styles')
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+<style>
+    /* Fix for Leaflet controls ignoring container border radius */
+    .leaflet-container {
+        border-radius: 0.75rem;
+        z-index: 10;
+    }
+</style>
+@endpush
+
 @section('content')
 
 <div class="w-full mx-auto">
 
     {{-- Alert --}}
     @if(session('error'))
-        <div class="mb-6 bg-red-900/50 border border-red-500 rounded-xl p-4 flex items-center">
-            <svg class="w-5 h-5 text-red-400 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-            </svg>
-            <p class="text-red-300 font-medium">{{ session('error') }}</p>
-        </div>
+    <div class="mb-6 bg-red-900/50 border border-red-500 rounded-xl p-4 flex items-center">
+        <svg class="w-5 h-5 text-red-400 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+        </svg>
+        <p class="text-red-300 font-medium">{{ session('error') }}</p>
+    </div>
     @endif
 
     {{-- Form --}}
@@ -23,7 +34,7 @@
         @csrf
 
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                
+
             <!-- Informasi Umum -->
             <div class="bg-slate-800/90 backdrop-blur rounded-xl border-2 border-slate-700/50 p-6 shadow-2xl">
                 <div class="text-xl font-bold text-white mb-6 flex items-center pb-3 border-b-2 border-slate-700/50">
@@ -43,10 +54,10 @@
                             Nama Kos <span class="text-red-400"></span>
                         </label>
                         <input type="text" name="name" value="{{ old('name') }}" required
-                               class="w-full bg-slate-700/50 border border-slate-600 rounded-xl px-4 py-3 text-white placeholder-slate-400 focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all"
-                               placeholder="Contoh: KosSmart Residence">
+                            class="w-full bg-slate-700/50 border border-slate-600 rounded-xl px-4 py-3 text-white placeholder-slate-400 focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all"
+                            placeholder="Contoh: KosSmart Residence">
                         @error('name')
-                            <p class="text-red-400 text-sm mt-1">{{ $message }}</p>
+                        <p class="text-red-400 text-sm mt-1">{{ $message }}</p>
                         @enderror
                     </div>
                     <div>
@@ -54,10 +65,10 @@
                             Deskripsi Kos
                         </label>
                         <textarea name="description" rows="4"
-                                  class="w-full bg-slate-700/50 border border-slate-600 rounded-xl px-4 py-3 text-white placeholder-slate-400 focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all"
-                                  placeholder="Deskripsikan kos Anda, lokasi strategis, fasilitas yang tersedia...">{{ old('description') }}</textarea>
+                            class="w-full bg-slate-700/50 border border-slate-600 rounded-xl px-4 py-3 text-white placeholder-slate-400 focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all"
+                            placeholder="Deskripsikan kos Anda, lokasi strategis, fasilitas yang tersedia...">{{ old('description') }}</textarea>
                         @error('description')
-                            <p class="text-red-400 text-sm mt-1">{{ $message }}</p>
+                        <p class="text-red-400 text-sm mt-1">{{ $message }}</p>
                         @enderror
                     </div>
                 </div>
@@ -83,11 +94,11 @@
                         <label class="block text-sm font-medium text-slate-300 mb-2">
                             Alamat Lengkap <span class="text-red-400"></span>
                         </label>
-                        <textarea name="address" rows="4" required
-                                  class="w-full bg-slate-700/50 border border-slate-600 rounded-xl px-4 py-3 text-white placeholder-slate-400 focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all"
-                                  placeholder="Jl. Contoh No. 123, Kelurahan...">{{ old('address') }}</textarea>
+                        <textarea name="address" id="address_input" rows="4" required
+                            class="w-full bg-slate-700/50 border border-slate-600 rounded-xl px-4 py-3 text-white placeholder-slate-400 focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all"
+                            placeholder="Jl. Contoh No. 123, Kelurahan...">{{ old('address') }}</textarea>
                         @error('address')
-                            <p class="text-red-400 text-sm mt-1">{{ $message }}</p>
+                        <p class="text-red-400 text-sm mt-1">{{ $message }}</p>
                         @enderror
                     </div>
                     <div class="grid grid-cols-3 gap-3">
@@ -95,35 +106,66 @@
                             <label class="block text-sm font-medium text-slate-300 mb-2">
                                 Kota <span class="text-red-400"></span>
                             </label>
-                            <input type="text" name="city" value="{{ old('city') }}" required
-                                   class="w-full bg-slate-700/50 border border-slate-600 rounded-xl px-4 py-3 text-white placeholder-slate-400 focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all"
-                                   placeholder="Bandung">
+                            <input type="text" name="city" id="city_input" value="{{ old('city') }}" required
+                                class="w-full bg-slate-700/50 border border-slate-600 rounded-xl px-4 py-3 text-white placeholder-slate-400 focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all"
+                                placeholder="Bandung">
                             @error('city')
-                                <p class="text-red-400 text-sm mt-1">{{ $message }}</p>
+                            <p class="text-red-400 text-sm mt-1">{{ $message }}</p>
                             @enderror
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-slate-300 mb-2">
                                 Provinsi <span class="text-red-400"></span>
                             </label>
-                            <input type="text" name="province" value="{{ old('province') }}" required
-                                   class="w-full bg-slate-700/50 border border-slate-600 rounded-xl px-4 py-3 text-white placeholder-slate-400 focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all"
-                                   placeholder="Jawa Barat">
+                            <input type="text" name="province" id="province_input" value="{{ old('province') }}" required
+                                class="w-full bg-slate-700/50 border border-slate-600 rounded-xl px-4 py-3 text-white placeholder-slate-400 focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all"
+                                placeholder="Jawa Barat">
                             @error('province')
-                                <p class="text-red-400 text-sm mt-1">{{ $message }}</p>
+                            <p class="text-red-400 text-sm mt-1">{{ $message }}</p>
                             @enderror
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-slate-300 mb-2">
                                 Kode Pos
                             </label>
-                            <input type="text" name="postal_code" value="{{ old('postal_code') }}"
-                                   class="w-full bg-slate-700/50 border border-slate-600 rounded-xl px-4 py-3 text-white placeholder-slate-400 focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all"
-                                   placeholder="40123">
+                            <input type="text" name="postal_code" id="postal_code_input" value="{{ old('postal_code') }}"
+                                class="w-full bg-slate-700/50 border border-slate-600 rounded-xl px-4 py-3 text-white placeholder-slate-400 focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all"
+                                placeholder="40123">
                             @error('postal_code')
-                                <p class="text-red-400 text-sm mt-1">{{ $message }}</p>
+                            <p class="text-red-400 text-sm mt-1">{{ $message }}</p>
                             @enderror
                         </div>
+                    </div>
+
+                    <!-- Peta Lokasi -->
+                    <div class="mt-4">
+                        <div class="flex items-center justify-between mb-2">
+                            <label class="block text-sm font-medium text-slate-300">
+                                Titik Lokasi Peta (Opsional tapi disarankan)
+                            </label>
+                            <button type="button" id="btn_search_map" class="text-xs bg-slate-600 hover:bg-slate-500 text-white px-3 py-1.5 rounded-lg transition-colors flex items-center gap-1">
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                                </svg>
+                                Cari dari Alamat
+                            </button>
+                        </div>
+                        <p class="text-xs text-slate-400 mb-3">Geser penanda biru (marker) atau klik pada peta untuk menentukan lokasi akurat kos Anda. Anda juga bisa mengklik tombol "Cari dari Alamat" untuk otomatis menggeser peta.</p>
+                        <div id="map" class="w-full h-80 rounded-xl border-2 border-slate-600 relative">
+                            <!-- Loading Overlay for Map -->
+                            <div id="map_loading" class="hidden absolute inset-0 bg-slate-800/50 z-[400] flex items-center justify-center backdrop-blur-sm">
+                                <span class="text-white font-medium flex items-center gap-2">
+                                    <svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                    </svg>
+                                    Memuat...
+                                </span>
+                            </div>
+                        </div>
+                        <!-- Nilai default diarahkan ke kota Bandung -->
+                        <input type="hidden" name="latitude" id="latitude" value="{{ old('latitude', '-6.914744') }}">
+                        <input type="hidden" name="longitude" id="longitude" value="{{ old('longitude', '107.609810') }}">
                     </div>
                 </div>
             </div>
@@ -149,10 +191,10 @@
                                 Telepon <span class="text-red-400"></span>
                             </label>
                             <input type="text" name="phone" value="{{ old('phone') }}" required
-                                   class="w-full bg-slate-700/50 border border-slate-600 rounded-xl px-4 py-3 text-white placeholder-slate-400 focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all"
-                                   placeholder="022-1234567">
+                                class="w-full bg-slate-700/50 border border-slate-600 rounded-xl px-4 py-3 text-white placeholder-slate-400 focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all"
+                                placeholder="022-1234567">
                             @error('phone')
-                                <p class="text-red-400 text-sm mt-1">{{ $message }}</p>
+                            <p class="text-red-400 text-sm mt-1">{{ $message }}</p>
                             @enderror
                         </div>
                         <div>
@@ -160,10 +202,10 @@
                                 WhatsApp
                             </label>
                             <input type="text" name="whatsapp" value="{{ old('whatsapp') }}"
-                                   class="w-full bg-slate-700/50 border border-slate-600 rounded-xl px-4 py-3 text-white placeholder-slate-400 focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all"
-                                   placeholder="081234567890">
+                                class="w-full bg-slate-700/50 border border-slate-600 rounded-xl px-4 py-3 text-white placeholder-slate-400 focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all"
+                                placeholder="081234567890">
                             @error('whatsapp')
-                                <p class="text-red-400 text-sm mt-1">{{ $message }}</p>
+                            <p class="text-red-400 text-sm mt-1">{{ $message }}</p>
                             @enderror
                         </div>
                         <div>
@@ -171,10 +213,10 @@
                                 Email
                             </label>
                             <input type="email" name="email" value="{{ old('email') }}"
-                                   class="w-full bg-slate-700/50 border border-slate-600 rounded-xl px-4 py-3 text-white placeholder-slate-400 focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all"
-                                   placeholder="info@kos.com">
+                                class="w-full bg-slate-700/50 border border-slate-600 rounded-xl px-4 py-3 text-white placeholder-slate-400 focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all"
+                                placeholder="info@kos.com">
                             @error('email')
-                                <p class="text-red-400 text-sm mt-1">{{ $message }}</p>
+                            <p class="text-red-400 text-sm mt-1">{{ $message }}</p>
                             @enderror
                         </div>
                     </div>
@@ -209,7 +251,7 @@
                     </div>
                     <div id="imagePreview" class="grid grid-cols-3 gap-3 mt-4"></div>
                     @error('images.*')
-                        <p class="text-red-400 text-sm mt-2">{{ $message }}</p>
+                    <p class="text-red-400 text-sm mt-2">{{ $message }}</p>
                     @enderror
                 </div>
             </div>
@@ -236,9 +278,9 @@
                         <div id="facilities-wrapper" class="space-y-2">
                             <div class="flex items-center space-x-2">
                                 <input type="text" name="general_facilities[]"
-                                       class="flex-1 bg-slate-700/50 border border-slate-600 rounded-lg px-3 py-2 text-white placeholder-slate-400 text-sm focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all"
-                                       placeholder="Contoh: WiFi 100 Mbps">
-                                <button type="button" onclick="addFacility()" 
+                                    class="flex-1 bg-slate-700/50 border border-slate-600 rounded-lg px-3 py-2 text-white placeholder-slate-400 text-sm focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all"
+                                    placeholder="Contoh: WiFi 100 Mbps">
+                                <button type="button" onclick="addFacility()"
                                     class="inline-flex items-center gap-2
                                         bg-gradient-to-r from-yellow-500 to-orange-600
                                         text-white font-semibold
@@ -261,9 +303,9 @@
                         <div id="rules-wrapper" class="space-y-2">
                             <div class="flex items-center space-x-2">
                                 <input type="text" name="rules[]"
-                                       class="flex-1 bg-slate-700/50 border border-slate-600 rounded-lg px-3 py-2 text-white placeholder-slate-400 text-sm focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all"
-                                       placeholder="Contoh: Jam malam maksimal pukul 22.00 WIB">
-                                <button type="button" onclick="addRule()" 
+                                    class="flex-1 bg-slate-700/50 border border-slate-600 rounded-lg px-3 py-2 text-white placeholder-slate-400 text-sm focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all"
+                                    placeholder="Contoh: Jam malam maksimal pukul 22.00 WIB">
+                                <button type="button" onclick="addRule()"
                                     class="inline-flex items-center gap-2
                                         bg-gradient-to-r from-yellow-500 to-orange-600
                                         text-white font-semibold
@@ -300,9 +342,9 @@
                             Waktu Check-in <span class="text-red-400"></span>
                         </label>
                         <input type="time" name="checkin_time" required
-                               class="w-full bg-slate-900 text-slate-100 border border-slate-700 rounded-xl px-4 py-2 focus:ring-2 focus:ring-violet-500 focus:border-transparent transition-all [color-scheme:dark]">
+                            class="w-full bg-slate-900 text-slate-100 border border-slate-700 rounded-xl px-4 py-2 focus:ring-2 focus:ring-violet-500 focus:border-transparent transition-all [color-scheme:dark]">
                         @error('checkin_time')
-                            <p class="text-red-400 text-sm mt-1">{{ $message }}</p>
+                        <p class="text-red-400 text-sm mt-1">{{ $message }}</p>
                         @enderror
                     </div>
                     <div>
@@ -310,9 +352,9 @@
                             Waktu Check-out <span class="text-red-400"></span>
                         </label>
                         <input type="time" name="checkout_time" required
-                               class="w-full bg-slate-900 text-slate-100 border border-slate-700 rounded-xl px-4 py-2 focus:ring-2 focus:ring-violet-500 focus:border-transparent transition-all [color-scheme:dark]">
+                            class="w-full bg-slate-900 text-slate-100 border border-slate-700 rounded-xl px-4 py-2 focus:ring-2 focus:ring-violet-500 focus:border-transparent transition-all [color-scheme:dark]">
                         @error('checkout_time')
-                            <p class="text-red-400 text-sm mt-1">{{ $message }}</p>
+                        <p class="text-red-400 text-sm mt-1">{{ $message }}</p>
                         @enderror
                     </div>
                 </div>
@@ -348,8 +390,8 @@
 
         <!-- Action Buttons -->
         <div class="flex justify-end space-x-4 mt-6">
-            <a href="{{ route('admin.kos.index') }}" 
-               class="px-6 py-3 bg-slate-700 text-white rounded-xl hover:bg-slate-600 transition-colors font-medium">
+            <a href="{{ route('admin.kos.index') }}"
+                class="px-6 py-3 bg-slate-700 text-white rounded-xl hover:bg-slate-600 transition-colors font-medium">
                 Batal
             </a>
             <button type="submit"
@@ -372,26 +414,156 @@
 @endsection
 
 @push('scripts')
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 <script>
-function previewImages(event) {
-    const preview = document.getElementById('imagePreview');
-    preview.innerHTML = '';
-    const files = event.target.files;
-    
-    if (files.length > 6) {
-        alert('Maksimal 6 foto');
-        event.target.value = '';
-        return;
-    }
-    
-    for (let i = 0; i < files.length; i++) {
-        const file = files[i];
-        const reader = new FileReader();
-        
-        reader.onload = function(e) {
-            const div = document.createElement('div');
-            div.className = 'relative group';
-            div.innerHTML = `
+    // Leaflet Map Initialization & Geocoding
+    document.addEventListener('DOMContentLoaded', function() {
+        let lat = document.getElementById('latitude').value || -6.914744;
+        let lng = document.getElementById('longitude').value || 107.609810;
+
+        const map = L.map('map').setView([lat, lng], 14);
+        const mapLoading = document.getElementById('map_loading');
+
+        // DOM Elements for inputs
+        const addressInput = document.getElementById('address_input');
+        const cityInput = document.getElementById('city_input');
+        const provinceInput = document.getElementById('province_input');
+        const postalCodeInput = document.getElementById('postal_code_input');
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; OpenStreetMap contributors'
+        }).addTo(map);
+
+        let marker = L.marker([lat, lng], {
+            draggable: true
+        }).addTo(map);
+
+        // Reverse Geocoding: Dari Lat, Lng ke Alamat
+        async function reverseGeocode(lat, lng) {
+            mapLoading.classList.remove('hidden');
+            try {
+                const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&addressdetails=1`, {
+                    headers: {
+                        'Accept-Language': 'id'
+                    }
+                });
+                const data = await response.json();
+
+                if (data && data.address) {
+                    const addr = data.address;
+
+                    // Mencoba mendapatkan jalan / nama area
+                    let street = addr.road || addr.pedestrian || addr.path || addr.suburb || addr.village || addr.neighbourhood || '';
+                    let houseNumber = addr.house_number ? `No. ${addr.house_number}` : '';
+                    let fullAddress = street ? `${street} ${houseNumber}`.trim() : data.display_name.split(',')[0];
+
+                    // Mencoba mendapatkan Kota / Kabupaten
+                    let city = addr.city || addr.town || addr.municipality || addr.county || '';
+                    if (city.toLowerCase().startsWith('kota ')) {
+                        city = city.substring(5);
+                    } // Hapus awalan 'Kota ' agar lebih rapi
+
+                    let province = addr.state || addr.province || '';
+                    let postcode = addr.postcode || '';
+
+                    // Hanya timpa isi form jika kosong ATAU kita secara eksplisit ingin menimpanya
+                    // Di fungsi dragend ini, lebih baik di-set agar interaktif dan user tahu apa yg terdeteksi
+                    if (fullAddress) addressInput.value = fullAddress + (addr.suburb ? `, ${addr.suburb}` : '');
+                    if (city) cityInput.value = city;
+                    if (province) provinceInput.value = province;
+                    if (postcode) postalCodeInput.value = postcode;
+                }
+            } catch (error) {
+                console.error("Gagal reverse geocode:", error);
+            } finally {
+                mapLoading.classList.add('hidden');
+            }
+        }
+
+        // Geocoding: Dari Alamat ke Lat, Lng
+        async function geocodeAddress() {
+            const queryParts = [addressInput.value, cityInput.value, provinceInput.value].filter(val => val.trim() !== '');
+            if (queryParts.length === 0) return;
+
+            let query = queryParts.join(', ') + ', Indonesia'; // Tambahkan Indonesia agar spesifik
+
+            mapLoading.classList.remove('hidden');
+            try {
+                const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=1`, {
+                    headers: {
+                        'Accept-Language': 'id'
+                    }
+                });
+                const data = await response.json();
+
+                if (data && data.length > 0) {
+                    const resultLat = parseFloat(data[0].lat);
+                    const resultLon = parseFloat(data[0].lon);
+
+                    // Pindah Peta
+                    map.setView([resultLat, resultLon], 16);
+                    marker.setLatLng([resultLat, resultLon]);
+
+                    // Update Hidden Inputs
+                    document.getElementById('latitude').value = resultLat;
+                    document.getElementById('longitude').value = resultLon;
+                } else {
+                    alert('Lokasi dari alamat yang dimasukkan tidak dapat ditemukan di peta. Coba perjelas alamat atau kota.');
+                }
+            } catch (error) {
+                console.error("Gagal geocode:", error);
+            } finally {
+                mapLoading.classList.add('hidden');
+            }
+        }
+
+        // Event Listener untuk Tombol Pencarian
+        document.getElementById('btn_search_map').addEventListener('click', geocodeAddress);
+
+        // Update form inputs when marker is dragged
+        marker.on('dragend', function(e) {
+            const position = marker.getLatLng();
+            document.getElementById('latitude').value = position.lat;
+            document.getElementById('longitude').value = position.lng;
+
+            // Panggil Reverse Geocoding
+            reverseGeocode(position.lat, position.lng);
+        });
+
+        // Update form inputs & marker position when map is clicked
+        map.on('click', function(e) {
+            marker.setLatLng(e.latlng);
+            document.getElementById('latitude').value = e.latlng.lat;
+            document.getElementById('longitude').value = e.latlng.lng;
+
+            // Pindah Map View agar lebih nyaman
+            map.flyTo(e.latlng, map.getZoom());
+
+            // Panggil Reverse Geocoding
+            reverseGeocode(e.latlng.lat, e.latlng.lng);
+        });
+    });
+</script>
+<script>
+    function previewImages(event) {
+        const preview = document.getElementById('imagePreview');
+        preview.innerHTML = '';
+        const files = event.target.files;
+
+        if (files.length > 6) {
+            alert('Maksimal 6 foto');
+            event.target.value = '';
+            return;
+        }
+
+        for (let i = 0; i < files.length; i++) {
+            const file = files[i];
+            const reader = new FileReader();
+
+            reader.onload = function(e) {
+                const div = document.createElement('div');
+                div.className = 'relative group';
+                div.innerHTML = `
                 <img src="${e.target.result}" class="w-full h-32 object-cover rounded-lg border-2 border-gray-200 shadow-sm">
                 <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-all rounded-lg flex items-center justify-center">
                     <div class="absolute top-2 right-2 bg-green-500 text-white rounded-full p-1 shadow-lg">
@@ -401,19 +573,19 @@ function previewImages(event) {
                     </div>
                 </div>
             `;
-            preview.appendChild(div);
-        };
-        
-        reader.readAsDataURL(file);
+                preview.appendChild(div);
+            };
+
+            reader.readAsDataURL(file);
+        }
     }
-}
 
-function addFacility() {
-    const container = document.getElementById('facilities-wrapper');
-    const div = document.createElement('div');
-    div.className = 'flex items-center space-x-2';
+    function addFacility() {
+        const container = document.getElementById('facilities-wrapper');
+        const div = document.createElement('div');
+        div.className = 'flex items-center space-x-2';
 
-    div.innerHTML = `
+        div.innerHTML = `
         <input type="text" name="general_facilities[]"
             class="flex-1 bg-slate-700/50 border border-slate-600 rounded-lg
                    px-3 py-2 text-white placeholder-slate-400 text-sm
@@ -435,16 +607,16 @@ function addFacility() {
             </svg>
         </button>
     `;
-    container.appendChild(div);
-}
+        container.appendChild(div);
+    }
 
-function addRule() {
-    const container = document.getElementById('rules-wrapper');
+    function addRule() {
+        const container = document.getElementById('rules-wrapper');
 
-    const div = document.createElement('div');
-    div.className = 'flex items-center gap-2';
+        const div = document.createElement('div');
+        div.className = 'flex items-center gap-2';
 
-    div.innerHTML = `
+        div.innerHTML = `
         <input type="text" name="rules[]"
             class="flex-1 bg-slate-700/50 border border-slate-600 rounded-lg
                    px-3 py-2 text-white placeholder-slate-400 text-sm
@@ -467,8 +639,7 @@ function addRule() {
         </button>
     `;
 
-    container.appendChild(div);
-}
-
+        container.appendChild(div);
+    }
 </script>
 @endpush
