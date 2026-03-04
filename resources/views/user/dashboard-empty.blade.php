@@ -200,7 +200,7 @@
                         </div>
                     @endif
                     <div class="absolute top-3 right-3">
-                        <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-[rgba(52,211,153,0.08)]0 text-white shadow-lg">
+                        <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-green-500 text-white shadow-lg">
                             <span class="w-2 h-2 bg-white rounded-full mr-1.5 animate-pulse"></span>Aktif
                         </span>
                     </div>
