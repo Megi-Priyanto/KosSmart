@@ -41,6 +41,12 @@
                               {{ request()->routeIs('user.profile') ? 'text-amber-600' : 'text-slate-500 hover:text-slate-800' }}">
                         Profile
                     </a>
+
+                     <a href="{{ route('public.kos.map') }}"
+                        class="text-sm font-medium transition-colors
+                              {{ request()->routeIs('public.kos.map') ? 'text-amber-600' : 'text-slate-500 hover:text-slate-800' }}">
+                        Peta Kos
+                    </a>
                 </div>
             </div>
 

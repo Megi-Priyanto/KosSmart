@@ -110,7 +110,11 @@
 <body>
 
     {{-- ══ NAVBAR ══ --}}
+    @if(Auth::check() && Auth::user()->role === 'user')
+    @include('layouts.partials.user.navbar')
+    @else
     @include('layouts.partials.public.navbar')
+    @endif
 
     {{-- ══ CONTENT ══ --}}
     <main>

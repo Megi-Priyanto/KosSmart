@@ -34,7 +34,7 @@ class KosInfoController extends Controller
             $activeKos = KosInfo::withoutTempatKosScope()
                 ->where('is_active', true)
                 ->first();
-        } 
+        }
         // Admin: Hanya lihat kos miliknya (otomatis filtered oleh Global Scope)
         else {
             $kosInfos = KosInfo::latest()->get();
@@ -74,7 +74,15 @@ class KosInfoController extends Controller
         }
 
         // tempat_kos_id otomatis terisi oleh trait
-        KosInfo::create($data);
+        $newKosInfo = KosInfo::create($data);
+
+        // Update coordinate di tabel tempat_kos
+        if ($request->filled('latitude') && $request->filled('longitude')) {
+            $newKosInfo->tempatKos()->update([
+                'latitude' => $request->latitude,
+                'longitude' => $request->longitude,
+            ]);
+        }
 
         return redirect()
             ->route('admin.kos.index')
@@ -112,7 +120,7 @@ class KosInfoController extends Controller
     public function update(UpdateKosInfoRequest $request, KosInfo $kos)
     {
         // Model binding sudah terfilter, tidak perlu cek manual
-        
+
         $data = $request->validated();
 
         // Handle image upload
@@ -151,6 +159,14 @@ class KosInfoController extends Controller
         }
 
         $kos->update($data);
+
+        // Update coordinate di tabel tempat_kos
+        if ($request->filled('latitude') && $request->filled('longitude')) {
+            $kos->tempatKos()->update([
+                'latitude' => $request->latitude,
+                'longitude' => $request->longitude,
+            ]);
+        }
 
         return redirect()->route('admin.kos.index')
             ->with('success', 'Informasi kos berhasil diperbarui');

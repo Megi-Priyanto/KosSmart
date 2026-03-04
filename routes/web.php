@@ -48,6 +48,10 @@ Route::prefix('kos')->name('public.kos.')->group(function () {
     Route::get('/', [\App\Http\Controllers\PublicKosController::class, 'index'])
         ->name('index');
 
+    // Peta Interaktif Kos
+    Route::get('/peta', [\App\Http\Controllers\PublicKosController::class, 'map'])
+        ->name('map');
+
     // Daftar kamar dalam satu tempat kos
     Route::get('/{tempatKos}/kamar', [\App\Http\Controllers\PublicKosController::class, 'rooms'])
         ->name('rooms');

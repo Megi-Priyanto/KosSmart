@@ -26,6 +26,8 @@ class TempatKos extends Model
         'email',
         'status',
         'logo',
+        'latitude',
+        'longitude',
     ];
 
     protected $casts = [
