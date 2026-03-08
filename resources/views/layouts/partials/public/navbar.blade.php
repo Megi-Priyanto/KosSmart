@@ -7,7 +7,7 @@
             {{-- Logo + Menu --}}
             <div class="flex items-center gap-8">
                 <a href="{{ route('home') }}" class="flex items-center gap-2.5 flex-shrink-0">
-                    <img src="{{ app_logo() }}" alt="{{ app_name() }}" class="w-9 h-9 rounded-lg object-cover">
+                    <img src="{{ app_logo() }}" alt="{{ app_name() }}" class="w-9 h-9 rounded-full object-cover">
                     <span class="text-lg font-bold text-slate-800">{{ app_name() }}</span>
                 </a>
                 <div class="hidden md:flex items-center gap-6">
@@ -26,11 +26,6 @@
                               {{ request()->routeIs('public.kos.index') || request()->routeIs('public.kos.rooms') ? 'text-amber-600' : 'text-slate-500 hover:text-slate-800' }}">
                         Cari Kos
                     </a>
-                    <!-- <a href="{{ route('public.kos.map') }}"
-                        class="text-sm font-medium transition-colors
-                              {{ request()->routeIs('public.kos.map') ? 'text-amber-600' : 'text-slate-500 hover:text-slate-800' }}">
-                        Peta Kos
-                    </a> -->
                 </div>
             </div>
 

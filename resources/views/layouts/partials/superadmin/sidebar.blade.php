@@ -1,15 +1,27 @@
 <!-- Sidebar Super Admin -->
-<aside 
+<aside
     :class="sidebarOpen ? 'w-64' : 'w-20'"
+    x-data="{
+        openMenu: '{{ 
+            request()->routeIs('superadmin.users.*') ||
+            request()->routeIs('superadmin.admin-registrations.*') ? "user" :
+            (request()->routeIs('superadmin.tempat-kos.*') ||
+            request()->routeIs('superadmin.disbursements.*') ||
+            request()->routeIs('superadmin.refunds.*') ||
+            request()->routeIs('superadmin.billing-report.*') ? "kos" :
+            (request()->routeIs('superadmin.settings.*') ||
+            request()->routeIs('superadmin.notifications.*') ? "sistem" : ""))
+        }}'
+    }"
     class="bg-gradient-to-b from-gray-900 to-gray-800 text-gray-100 transition-all duration-300 flex-shrink-0 flex flex-col">
-    
+
     <!-- Logo -->
     <div class="p-4 flex items-center justify-between border-b border-gray-700">
         <div class="flex items-center space-x-3" x-show="sidebarOpen">
             <a href="{{ route('superadmin.dashboard') }}"
                class="flex items-center space-x-3">
                 <img src="{{ app_logo() }}"
-                    class="w-9 h-9 rounded-full object-cover">
+                     class="w-9 h-9 rounded-full object-cover">
                 <span class="text-xl font-bold text-white">
                     {{ app_name() }}
                 </span>
@@ -17,118 +29,178 @@
         </div>
         <button @click="sidebarOpen = !sidebarOpen" class="p-2 rounded hover:bg-gray-700">
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M4 6h16M4 12h16M4 18h16"/>
             </svg>
         </button>
     </div>
-    
+
     <!-- Info Role -->
     <div class="p-4 border-b border-gray-700" x-show="sidebarOpen">
         <div class="bg-gray-800 rounded-lg p-3">
             <p class="text-xs text-gray-400 mb-1">Role:</p>
             <p class="text-sm font-bold text-yellow-400 flex items-center">
                 <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                           d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"/>
                 </svg>
                 Super Administrator
             </p>
         </div>
     </div>
-    
+
     <!-- Menu Navigation -->
-    <nav class="p-4 space-y-2 flex-1 overflow-y-auto">
-        
+    <nav class="p-4 space-y-1 flex-1 overflow-y-auto">
+
         <!-- Dashboard -->
-        <a href="{{ route('superadmin.dashboard') }}" 
-           class="flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-700 transition-colors 
+        <a href="{{ route('superadmin.dashboard') }}"
+           class="flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-700 transition-colors
                   {{ request()->routeIs('superadmin.dashboard') ? 'bg-gray-700 text-yellow-400' : 'text-gray-300' }}">
             <svg class="w-6 h-6 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-                      d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
             </svg>
             <span x-show="sidebarOpen">Dashboard</span>
         </a>
 
-                <!-- Kelola Pendaftaran -->
-        <a href="{{ route('superadmin.admin-registrations.index') }}" class="flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-700 transition-colors {{ request()->routeIs('superadmin.admin-registrations.*') ? 'bg-gray-700 text-yellow-400' : 'text-gray-300' }}">
-            <svg class="w-6 h-6 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                      d="M3 21h18M5 21V7a2 2 0 012-2h10a2 2 0 012 2v14M9 9h.01M9 12h.01M9 15h.01M12 9h.01M12 12h.01M12 15h.01M15 9h.01M15 12h.01M15 15h.01M9 21v-3h6v3M16 5l2 2 4-4"/>
-            </svg>
-            <span x-show="sidebarOpen">Kelola Pendaftaran</span>
-       </a>
+        {{-- ── DROPDOWN: KELOLA USER ── --}}
+        <div>
+            <button @click="openMenu = openMenu === 'user' ? '' : 'user'"
+                    class="w-full flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-700 transition-colors
+                           {{ request()->routeIs('superadmin.users.*') || request()->routeIs('superadmin.admin-registrations.*')
+                              ? 'bg-gray-700 text-yellow-400' : 'text-gray-300' }}">
+                <svg class="w-6 h-6 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/>
+                </svg>
+                <span x-show="sidebarOpen" class="flex-1 text-left">Kelola User</span>
+                <svg x-show="sidebarOpen"
+                     :class="openMenu === 'user' ? 'rotate-180' : ''"
+                     class="w-4 h-4 flex-shrink-0 transition-transform duration-200"
+                     fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                </svg>
+            </button>
 
-        <!-- Kelola User -->
-        <a href="{{ route('superadmin.users.index') }}" 
-           class="flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-700 transition-colors 
-                  {{ request()->routeIs('superadmin.users.*') ? 'bg-gray-700 text-yellow-400' : 'text-gray-300' }}">
-            <svg class="w-6 h-6 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-                      d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
-            </svg>
-            <span x-show="sidebarOpen">Kelola User</span>
-        </a>
-        
-        <!-- Kelola Tempat Kos -->
-        <a href="{{ route('superadmin.tempat-kos.index') }}" 
-           class="flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-700 transition-colors 
-                  {{ request()->routeIs('superadmin.tempat-kos.*') ? 'bg-gray-700 text-yellow-400' : 'text-gray-300' }}">
-            <svg class="w-6 h-6 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-                      d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
-            </svg>
-            <span x-show="sidebarOpen">Kelola Tempat Kos</span>
-        </a>
+            <div x-show="openMenu === 'user' && sidebarOpen"
+                 x-transition:enter="transition ease-out duration-200"
+                 x-transition:enter-start="opacity-0 -translate-y-1"
+                 x-transition:enter-end="opacity-100 translate-y-0"
+                 x-transition:leave="transition ease-in duration-150"
+                 x-transition:leave-start="opacity-100 translate-y-0"
+                 x-transition:leave-end="opacity-0 -translate-y-1"
+                 class="mt-1 ml-3 pl-4 border-l border-gray-700 space-y-1">
 
-        <!-- Kelola Pencairan Dana -->
-        <a href="{{ route('superadmin.disbursements.index') }}" 
-           class="flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-700 transition-colors 
-                  {{ request()->routeIs('superadmin.disbursements.*') ? 'bg-gray-700 text-yellow-400' : 'text-gray-300' }}">
-            <svg class="w-6 h-6 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                      d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-            </svg>
-            <span x-show="sidebarOpen">Kelola Pencairan Dana</span>
-        </a>
+                <a href="{{ route('superadmin.admin-registrations.index') }}"
+                   class="flex items-center space-x-3 px-3 py-2 rounded-lg hover:bg-gray-700 transition-colors text-sm
+                          {{ request()->routeIs('superadmin.admin-registrations.*') ? 'bg-gray-700 text-yellow-400' : 'text-gray-400' }}">
+                    <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/>
+                    </svg>
+                    <span>Kelola Pendaftaran</span>
+                </a>
 
-        <!-- Kelola Refund Cancel Booking -->
-        {{-- PERBAIKAN: Hapus badge angka dari menu sidebar.
-             Notifikasi refund seharusnya muncul di icon bell di header, bukan di sini. --}}
-        <a href="{{ route('superadmin.refunds.index') }}" 
-           class="flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-700 transition-colors 
-                  {{ request()->routeIs('superadmin.refunds.*') ? 'bg-gray-700 text-yellow-400' : 'text-gray-300' }}">
-            <svg class="w-6 h-6 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                      d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"/>
-            </svg>
-            <span x-show="sidebarOpen">Kelola Refund</span>
-        </a>
+                <a href="{{ route('superadmin.users.index') }}"
+                   class="flex items-center space-x-3 px-3 py-2 rounded-lg hover:bg-gray-700 transition-colors text-sm
+                          {{ request()->routeIs('superadmin.users.*') ? 'bg-gray-700 text-yellow-400' : 'text-gray-400' }}">
+                    <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/>
+                    </svg>
+                    <span>Kelola User</span>
+                </a>
 
-        <!-- Laporan Fee Pencairan -->
-        <a href="{{ route('superadmin.billing-report.index') }}" 
-           class="flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-700 transition-colors 
-                  {{ request()->routeIs('superadmin.billing-report.*') ? 'bg-gray-700 text-yellow-400' : 'text-gray-300' }}">
-            <svg class="w-6 h-6 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                      d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
-            </svg>
-            <span x-show="sidebarOpen">Kelola Laporan Fee</span>
-        </a>
-        
-        <!-- Pengaturan Sistem -->
-        <a href="{{ route('superadmin.settings.index') }}" 
-           class="flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-700 transition-colors 
+            </div>
+        </div>
+
+        {{-- ── DROPDOWN: KELOLA KOS ── --}}
+        <div>
+            <button @click="openMenu = openMenu === 'kos' ? '' : 'kos'"
+                    class="w-full flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-700 transition-colors
+                           {{ request()->routeIs('superadmin.tempat-kos.*') ||
+                              request()->routeIs('superadmin.disbursements.*') ||
+                              request()->routeIs('superadmin.refunds.*') ||
+                              request()->routeIs('superadmin.billing-report.*')
+                              ? 'bg-gray-700 text-yellow-400' : 'text-gray-300' }}">
+                <svg class="w-6 h-6 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+                </svg>
+                <span x-show="sidebarOpen" class="flex-1 text-left">Kelola Kos</span>
+                <svg x-show="sidebarOpen"
+                     :class="openMenu === 'kos' ? 'rotate-180' : ''"
+                     class="w-4 h-4 flex-shrink-0 transition-transform duration-200"
+                     fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                </svg>
+            </button>
+
+            <div x-show="openMenu === 'kos' && sidebarOpen"
+                 x-transition:enter="transition ease-out duration-200"
+                 x-transition:enter-start="opacity-0 -translate-y-1"
+                 x-transition:enter-end="opacity-100 translate-y-0"
+                 x-transition:leave="transition ease-in duration-150"
+                 x-transition:leave-start="opacity-100 translate-y-0"
+                 x-transition:leave-end="opacity-0 -translate-y-1"
+                 class="mt-1 ml-3 pl-4 border-l border-gray-700 space-y-1">
+
+                <a href="{{ route('superadmin.tempat-kos.index') }}"
+                   class="flex items-center space-x-3 px-3 py-2 rounded-lg hover:bg-gray-700 transition-colors text-sm
+                          {{ request()->routeIs('superadmin.tempat-kos.*') ? 'bg-gray-700 text-yellow-400' : 'text-gray-400' }}">
+                    <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+                    </svg>
+                    <span>Kelola Tempat Kos</span>
+                </a>
+
+                <a href="{{ route('superadmin.disbursements.index') }}"
+                   class="flex items-center space-x-3 px-3 py-2 rounded-lg hover:bg-gray-700 transition-colors text-sm
+                          {{ request()->routeIs('superadmin.disbursements.*') ? 'bg-gray-700 text-yellow-400' : 'text-gray-400' }}">
+                    <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                    <span>Kelola Pencairan Dana</span>
+                </a>
+
+                <a href="{{ route('superadmin.refunds.index') }}"
+                   class="flex items-center space-x-3 px-3 py-2 rounded-lg hover:bg-gray-700 transition-colors text-sm
+                          {{ request()->routeIs('superadmin.refunds.*') ? 'bg-gray-700 text-yellow-400' : 'text-gray-400' }}">
+                    <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"/>
+                    </svg>
+                    <span>Kelola Refund</span>
+                </a>
+
+                <a href="{{ route('superadmin.billing-report.index') }}"
+                   class="flex items-center space-x-3 px-3 py-2 rounded-lg hover:bg-gray-700 transition-colors text-sm
+                          {{ request()->routeIs('superadmin.billing-report.*') ? 'bg-gray-700 text-yellow-400' : 'text-gray-400' }}">
+                    <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                    </svg>
+                    <span>Kelola Laporan Fee</span>
+                </a>
+
+            </div>
+        </div>
+
+        {{-- Pengaturan (link langsung, tanpa dropdown) --}}
+        <a href="{{ route('superadmin.settings.index') }}"
+           class="flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-700 transition-colors
                   {{ request()->routeIs('superadmin.settings.*') ? 'bg-gray-700 text-yellow-400' : 'text-gray-300' }}">
             <svg class="w-6 h-6 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-                      d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-                      d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
             </svg>
             <span x-show="sidebarOpen">Kelola Pengaturan</span>
         </a>
-        
+
     </nav>
-    
+
 </aside>

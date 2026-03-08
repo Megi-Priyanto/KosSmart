@@ -15,7 +15,7 @@ class AdminRegistrationController extends Controller
 {
     public function create()
     {
-        return view('admin-registration.form');
+        return view('public.pendaftaran.form');
     }
 
     public function store(Request $request)
@@ -56,7 +56,6 @@ class AdminRegistrationController extends Controller
             'bukti_kepemilikan.max' => 'Ukuran file bukti kepemilikan maksimal 10MB',
         ]);
 
-        // Upload dokumen ke folder terpisah per pengajuan (sementara pakai timestamp)
         $folder = 'admin-registrations/' . time() . '-' . Str::slug($validated['nama_lengkap']);
 
         $validated['ktp_foto']          = $request->file('ktp_foto')->store($folder, 'public');
@@ -71,11 +70,10 @@ class AdminRegistrationController extends Controller
 
         $registration = AdminRegistration::create($validated);
 
-        // Kirim email konfirmasi ke calon admin
         try {
             Mail::to($registration->email)->send(new AdminRegistrationReceived($registration));
         } catch (\Exception $e) {
-            // Gagal kirim email tidak menghentikan proses
+            //
         }
 
         return redirect()->route('admin.registration.success')
@@ -84,6 +82,6 @@ class AdminRegistrationController extends Controller
 
     public function success()
     {
-        return view('admin-registration.success');
+        return view('public.pendaftaran.success');
     }
 }

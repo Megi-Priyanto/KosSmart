@@ -34,7 +34,7 @@
         .full{background:rgba(220,38,38,0.1);color:#dc2626;}
         .float-badge{position:absolute;background:#ffffff;border:1px solid rgba(15,23,42,0.1);border-radius:12px;padding:0.6rem 0.9rem;display:flex;align-items:center;gap:0.6rem;font-size:0.78rem;font-weight:600;box-shadow:0 8px 24px rgba(15,23,42,0.1);white-space:nowrap;}
         .float-badge .material-symbols-rounded{font-size:18px!important;}
-        .fb-l{left:-52px;top:28%;animation:floatY 4s ease-in-out infinite;}
+        .fb-l{left:-80px;top:18%;animation:floatY 4s ease-in-out infinite;}
         .fb-r{right:-52px;top:60%;animation:floatY 4s 2s ease-in-out infinite;}
         @keyframes floatY{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
 
@@ -59,16 +59,17 @@
         .step-card p{font-size:0.82rem;color:var(--muted);line-height:1.65;}
 
         /* ── ADMIN CTA ── */
-        .admin-cta-wrap{background:linear-gradient(135deg,rgba(124,58,237,0.05),rgba(5,150,105,0.03));border-top:1px solid rgba(15,23,42,0.08);border-bottom:1px solid rgba(15,23,42,0.08);}
+        .admin-cta-wrap{background:linear-gradient(135deg,rgba(245,158,11,0.05),rgba(5,150,105,0.03));border-top:1px solid rgba(15,23,42,0.08);border-bottom:1px solid rgba(15,23,42,0.08);}
         .admin-cta-inner{display:grid;grid-template-columns:1fr auto;gap:3rem;align-items:center;max-width:1100px;margin:0 auto;padding:4.5rem 1.5rem;}
         .admin-cta-inner h2{font-size:clamp(1.6rem,3vw,2.2rem);font-weight:800;margin-bottom:0.7rem;color:var(--text);}
-        .admin-cta-inner h2 em{font-family:'Fraunces',serif;font-style:italic;color:var(--purple);}
+        .admin-cta-inner h2 em{font-family:'Fraunces',serif;font-style:italic;color:var(--amber);}
         .admin-cta-inner p{color:var(--muted);line-height:1.75;max-width:490px;}
         .admin-cta-actions{display:flex;gap:1rem;margin-top:1.6rem;flex-wrap:wrap;align-items:center;}
-        .btn-purple{display:inline-block;padding:0.85rem 1.85rem;white-space:nowrap;background:linear-gradient(135deg,var(--purple),#6d28d9);color:#fff;font-weight:700;font-size:0.93rem;border-radius:12px;text-decoration:none;box-shadow:0 8px 24px rgba(124,58,237,0.2);transition:all 0.25s;}
-        .btn-purple:hover{transform:translateY(-2px);box-shadow:0 12px 32px rgba(124,58,237,0.35);}
-        .txt-link{color:var(--muted);font-size:0.86rem;font-weight:600;text-decoration:none;transition:color 0.2s;}
-        .txt-link:hover{color:var(--text);}
+        .btn-amber{display:inline-block;padding:0.85rem 1.85rem;white-space:nowrap;background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff;font-weight:700;font-size:0.93rem;border-radius:12px;text-decoration:none;box-shadow:0 8px 24px rgba(217,119,6,0.25);transition:all 0.25s;}
+        .btn-amber:hover{transform:translateY(-2px);box-shadow:0 12px 32px rgba(217,119,6,0.4);}
+
+        /* Revenue card highlight row */
+        .rev-row-highlight{background:rgba(217,119,6,0.06);border:1px solid rgba(217,119,6,0.18);border-radius:8px;padding:0.5rem 0.8rem;}
 
         @media(max-width:960px){.features-grid{grid-template-columns:1fr 1fr;}.steps-grid{grid-template-columns:1fr 1fr;}.admin-cta-inner{grid-template-columns:1fr;}.admin-cta-inner p{max-width:100%;}.admin-cta-actions{justify-content:flex-start;}}
         @media(max-width:768px){.fb-l,.fb-r{display:none;}.room-grid{grid-template-columns:1fr 1fr;}}
@@ -84,7 +85,7 @@
 
     <div style="position:relative;z-index:1;width:100%;">
         <div class="hero-badge">
-            <span class="badge-dot"></span>
+            <span class="material-symbols-rounded" style="font-size:14px!important;color:var(--amber);">auto_awesome</span>
             Platform manajemen kos untuk mahasiswa Indonesia
         </div>
 
@@ -97,12 +98,7 @@
             tanpa ribet, langsung dari HP kamu.
         </p>
 
-        <div class="hero-cta">
-            <a href="{{ route('register') }}" class="btn-cta-p">
-                Mulai Gratis Sekarang
-            </a>
-            <a href="{{ route('login') }}" class="btn-cta-s">Sudah punya akun?</a>
-        </div>
+
 
         <!-- Mockup -->
         <div class="hero-mockup-wrap">
@@ -128,6 +124,39 @@
                     <span style="margin-left:0.5rem;font-size:0.7rem;color:var(--muted)">KosSmart · Pilih Kamarmu</span>
                 </div>
                 <div class="room-grid">
+                    @php
+                        $bgColors = [
+                            ['background:linear-gradient(135deg,#f0f9ff,#e0f2fe)'],
+                            ['background:linear-gradient(135deg,#fefce8,#fef9c3)'],
+                            ['background:linear-gradient(135deg,#f0fdf4,#dcfce7)'],
+                        ];
+                    @endphp
+
+                    @forelse($heroRooms as $i => $room)
+                    <div class="room-card">
+                        <div class="room-img" style="{{ $bgColors[$i % 3][0] }}">
+                            @if(is_array($room->images) && count($room->images) > 0)
+                                <img src="{{ asset('storage/' . $room->images[0]) }}"
+                                     alt="Kamar {{ $room->room_number }}"
+                                     style="width:100%;height:100%;object-fit:cover;border-radius:0;">
+                            @else
+                                <span class="material-symbols-rounded">bed</span>
+                            @endif
+                        </div>
+                        <div class="room-info">
+                            <div class="room-name">Kamar {{ $room->room_number }}</div>
+                            <div class="room-price">Rp {{ number_format($room->price, 0, ',', '.') }}/bln</div>
+                            @if($room->status === 'available')
+                                <span class="room-status avail">● Tersedia</span>
+                            @elseif($room->status === 'occupied')
+                                <span class="room-status full">● Terisi</span>
+                            @else
+                                <span class="room-status" style="background:rgba(245,158,11,0.1);color:#d97706;">● Maintenance</span>
+                            @endif
+                        </div>
+                    </div>
+                    @empty
+                    {{-- Fallback jika belum ada kamar di database --}}
                     <div class="room-card">
                         <div class="room-img" style="background:linear-gradient(135deg,#f0f9ff,#e0f2fe)">
                             <span class="material-symbols-rounded">bed</span>
@@ -158,6 +187,7 @@
                             <span class="room-status full">● Penuh</span>
                         </div>
                     </div>
+                    @endforelse
                 </div>
             </div>
         </div>
@@ -271,27 +301,43 @@
             <h2>Kelola kos kamu jadi<br>lebih <em>profesional</em></h2>
             <p>Daftarkan kos kamu di KosSmart dan nikmati kemudahan manajemen kamar, tagihan, dan penghuni — semua dalam satu dashboard yang rapi.</p>
             <div class="admin-cta-actions">
-                <a href="{{ route('admin.registration.form') }}" class="btn-purple">Daftarkan Kos Saya</a>
-                <a href="{{ route('admin.login') }}" class="txt-link">Sudah terdaftar? Login Admin ↗</a>
+                <a href="{{ route('admin.registration.form') }}" class="btn-amber">Daftarkan Kos Saya</a>
             </div>
         </div>
         <div style="flex-shrink:0;">
-            <div style="background:#ffffff;border:1px solid rgba(124,58,237,0.15);border-radius:18px;padding:1.6rem;min-width:220px;box-shadow:0 20px 50px rgba(15,23,42,0.08);">
-                <div style="display:flex;align-items:center;justify-content:center;margin-bottom:1.1rem;">
-                    <span class="material-symbols-rounded" style="font-size:40px!important;color:var(--purple);font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 40;">dashboard</span>
+            <div style="background:#ffffff;border:1px solid rgba(217,119,6,0.15);border-radius:18px;padding:1.6rem;min-width:248px;box-shadow:0 20px 50px rgba(15,23,42,0.08);">
+                <div style="display:flex;align-items:center;gap:0.6rem;margin-bottom:1.1rem;">
+                    <span class="material-symbols-rounded" style="font-size:28px!important;color:var(--amber);font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 28;">payments</span>
+                    <div>
+                        <div style="font-size:0.82rem;font-weight:700;color:var(--text);">Model Bagi Hasil</div>
+                        <div style="font-size:0.7rem;color:var(--muted);">Transparan & adil</div>
+                    </div>
                 </div>
-                <div style="display:flex;flex-direction:column;gap:0.55rem;">
+                <div style="display:flex;flex-direction:column;gap:0.5rem;">
+                    {{-- Komisi platform --}}
                     <div style="display:flex;justify-content:space-between;align-items:center;background:var(--card);border-radius:8px;padding:0.5rem 0.8rem;">
-                        <span style="font-size:0.78rem;color:var(--muted);">Kamar terisi</span>
-                        <span style="font-size:0.78rem;font-weight:700;color:var(--green);">8/10</span>
+                        <span style="font-size:0.78rem;color:var(--muted);">Komisi platform</span>
+                        <span style="font-size:0.78rem;font-weight:700;color:#dc2626;">10% / transaksi</span>
                     </div>
-                    <div style="display:flex;justify-content:space-between;align-items:center;background:var(--card);border-radius:8px;padding:0.5rem 0.8rem;">
-                        <span style="font-size:0.78rem;color:var(--muted);">Tagihan bulan ini</span>
-                        <span style="font-size:0.78rem;font-weight:700;color:var(--amber);">Rp 7,6jt</span>
+                    {{-- Pendapatan bersih --}}
+                    <div style="display:flex;justify-content:space-between;align-items:center;background:rgba(5,150,105,0.06);border-radius:8px;padding:0.5rem 0.8rem;border:1px solid rgba(5,150,105,0.15);">
+                        <span style="font-size:0.78rem;color:var(--muted);">Pendapatan bersihmu</span>
+                        <span style="font-size:0.78rem;font-weight:700;color:var(--green);">90% untukmu</span>
                     </div>
+                    {{-- Pencairan --}}
                     <div style="display:flex;justify-content:space-between;align-items:center;background:var(--card);border-radius:8px;padding:0.5rem 0.8rem;">
-                        <span style="font-size:0.78rem;color:var(--muted);">Booking pending</span>
-                        <span style="font-size:0.78rem;font-weight:700;color:var(--purple);">2 baru</span>
+                        <span style="font-size:0.78rem;color:var(--muted);">Pencairan otomatis</span>
+                        <span style="font-size:0.78rem;font-weight:700;color:var(--text);">Tiap transaksi masuk</span>
+                    </div>
+                    {{-- No biaya langganan --}}
+                    <div style="display:flex;justify-content:space-between;align-items:center;background:var(--card);border-radius:8px;padding:0.5rem 0.8rem;">
+                        <span style="font-size:0.78rem;color:var(--muted);">Biaya langganan</span>
+                        <span style="font-size:0.78rem;font-weight:700;color:var(--text);">Tidak ada</span>
+                    </div>
+                    {{-- Daftar gratis highlight --}}
+                    <div class="rev-row-highlight" style="display:flex;justify-content:space-between;align-items:center;">
+                        <span style="font-size:0.78rem;color:var(--muted);">Pendaftaran kos</span>
+                        <span style="font-size:0.78rem;font-weight:800;color:var(--amber);">✓ Gratis!</span>
                     </div>
                 </div>
             </div>

@@ -209,7 +209,7 @@
                             </a>
                             @else
                             <a href="{{ route('superadmin.refunds.show', $cancel) }}"
-                               class="inline-flex items-center justify-center w-9 h-9 rounded-xl
+                               class="inline-flex items-center justify-center w-9 h-9 rounded-lg
                                       bg-blue-600/20 text-blue-400 hover:bg-blue-600/30 hover:-translate-y-0.5
                                       transition-all duration-200">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

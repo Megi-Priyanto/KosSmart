@@ -6,6 +6,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
+
+    @php
+        $favicon = \App\Models\AppSetting::get('app_favicon', 'images/favicon.png');
+        $faviconUrl = str_starts_with($favicon, 'settings/') ? asset('storage/'.$favicon) : asset($favicon);
+    @endphp
+    <link rel="icon" type="image/png" href="{{ $faviconUrl }}">
+    <link rel="shortcut icon" href="{{ $faviconUrl }}">
+    
     <title>@yield('title', 'Dashboard') - {{ app_name() }}</title>
 
     <script src="https://cdn.tailwindcss.com"></script>

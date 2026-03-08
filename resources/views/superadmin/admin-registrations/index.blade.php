@@ -8,43 +8,62 @@
 <div class="space-y-6">
 
     {{-- Stats --}}
-    <div class="grid grid-cols-3 gap-4">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+    
         <a href="{{ route('superadmin.admin-registrations.index', ['status' => 'pending']) }}"
-           class="bg-slate-800 border {{ request('status') === 'pending' ? 'border-yellow-500/50' : 'border-slate-700' }} rounded-xl p-5 hover:border-yellow-500/40 transition">
-            <div class="flex items-center justify-between mb-2">
-                <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Menunggu Review</span>
-                <div class="w-8 h-8 bg-yellow-500/15 rounded-lg flex items-center justify-center">
-                    <svg class="w-4 h-4 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+           class="bg-slate-800 p-6 rounded-lg border {{ request('status') === 'pending' ? 'border-yellow-500/50' : 'border-slate-700' }}
+                  transition-all duration-300 ease-out hover:-translate-y-1 hover:shadow-lg hover:border-yellow-600 hover:bg-slate-700">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-gray-300 text-sm font-medium">Menunggu Review</p>
+                    <h3 class="text-3xl font-bold text-white mt-2">{{ $counts['pending'] }}</h3>
+                    <p class="text-sm text-gray-400 mt-1">Pengajuan pending</p>
+                </div>
+                <div class="bg-yellow-500/20 p-3 rounded-lg">
+                    <svg class="w-8 h-8 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
                     </svg>
                 </div>
             </div>
-            <div class="text-3xl font-bold text-yellow-400">{{ $counts['pending'] }}</div>
         </a>
+    
         <a href="{{ route('superadmin.admin-registrations.index', ['status' => 'approved']) }}"
-           class="bg-slate-800 border {{ request('status') === 'approved' ? 'border-green-500/50' : 'border-slate-700' }} rounded-xl p-5 hover:border-green-500/40 transition">
-            <div class="flex items-center justify-between mb-2">
-                <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Disetujui</span>
-                <div class="w-8 h-8 bg-green-500/15 rounded-lg flex items-center justify-center">
-                    <svg class="w-4 h-4 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+           class="bg-slate-800 p-6 rounded-lg border {{ request('status') === 'approved' ? 'border-green-500/50' : 'border-slate-700' }}
+                  transition-all duration-300 ease-out hover:-translate-y-1 hover:shadow-lg hover:border-green-600 hover:bg-slate-700">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-gray-300 text-sm font-medium">Disetujui</p>
+                    <h3 class="text-3xl font-bold text-white mt-2">{{ $counts['approved'] }}</h3>
+                    <p class="text-sm text-gray-400 mt-1">Akun admin aktif</p>
+                </div>
+                <div class="bg-green-500/20 p-3 rounded-lg">
+                    <svg class="w-8 h-8 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                     </svg>
                 </div>
             </div>
-            <div class="text-3xl font-bold text-green-400">{{ $counts['approved'] }}</div>
         </a>
+    
         <a href="{{ route('superadmin.admin-registrations.index', ['status' => 'rejected']) }}"
-           class="bg-slate-800 border {{ request('status') === 'rejected' ? 'border-red-500/50' : 'border-slate-700' }} rounded-xl p-5 hover:border-red-500/40 transition">
-            <div class="flex items-center justify-between mb-2">
-                <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Ditolak</span>
-                <div class="w-8 h-8 bg-red-500/15 rounded-lg flex items-center justify-center">
-                    <svg class="w-4 h-4 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+           class="bg-slate-800 p-6 rounded-lg border {{ request('status') === 'rejected' ? 'border-red-500/50' : 'border-slate-700' }}
+                  transition-all duration-300 ease-out hover:-translate-y-1 hover:shadow-lg hover:border-red-600 hover:bg-slate-700">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-gray-300 text-sm font-medium">Ditolak</p>
+                    <h3 class="text-3xl font-bold text-white mt-2">{{ $counts['rejected'] }}</h3>
+                    <p class="text-sm text-gray-400 mt-1">Pengajuan ditolak</p>
+                </div>
+                <div class="bg-red-500/20 p-3 rounded-lg">
+                    <svg class="w-8 h-8 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                     </svg>
                 </div>
             </div>
-            <div class="text-3xl font-bold text-red-400">{{ $counts['rejected'] }}</div>
         </a>
+    
     </div>
 
     {{-- Filter & Search --}}
@@ -128,16 +147,20 @@
                             <div class="text-sm text-slate-300">{{ $reg->created_at->format('d M Y') }}</div>
                             <div class="text-xs text-slate-500">{{ $reg->created_at->format('H:i') }}</div>
                         </td>
+
                         <td class="px-5 py-4 text-center">
                             <a href="{{ route('superadmin.admin-registrations.show', $reg) }}"
-                               class="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-blue-500/15 hover:bg-blue-500/25 text-blue-400 rounded-lg text-xs font-semibold transition">
-                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                class="inline-flex items-center justify-center w-9 h-9 rounded-lg
+                                    bg-blue-600/20 text-blue-400 hover:bg-blue-500/30 hover:-translate-y-0.5
+                                    transition-all duration-200"
+                               title="Detail">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
                                 </svg>
-                                Review
                             </a>
                         </td>
+                        
                     </tr>
                     @empty
                     <tr>

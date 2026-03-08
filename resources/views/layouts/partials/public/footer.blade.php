@@ -10,7 +10,7 @@
                 <div class="max-w-xs">
                     <div class="flex items-center gap-2.5 mb-3">
                         <img src="{{ app_logo() }}" alt="{{ app_name() }}"
-                             class="w-8 h-8 rounded-lg object-cover">
+                             class="w-8 h-8 rounded-full object-cover">
                         <span class="text-base font-bold text-slate-800">{{ app_name() }}</span>
                     </div>
                     <p class="text-sm text-slate-500 leading-relaxed">

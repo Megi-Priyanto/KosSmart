@@ -7,17 +7,8 @@
 @section('content')
 <div class="space-y-6">
 
-    {{-- Back --}}
+    {{-- Status Badge --}}
     <div class="flex items-center justify-between">
-        <a href="{{ route('superadmin.admin-registrations.index') }}"
-           class="flex items-center gap-2 text-slate-400 hover:text-slate-200 text-sm font-medium transition">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
-            </svg>
-            Kembali ke Daftar
-        </a>
-
-        {{-- Status badge --}}
         @if($adminRegistration->status === 'pending')
             <span class="inline-flex items-center px-3 py-1.5 rounded-full text-sm font-semibold bg-yellow-500/15 text-yellow-400 border border-yellow-500/25">
                 <span class="w-2 h-2 bg-yellow-400 rounded-full mr-2 animate-pulse"></span>
@@ -43,9 +34,10 @@
 
             {{-- Data Diri --}}
             <div class="bg-slate-800 rounded-xl border border-slate-700 p-6">
-                <h3 class="text-sm font-bold text-yellow-400 uppercase tracking-wider mb-4 flex items-center gap-2">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                <h3 class="text-lg font-semibold text-slate-100 mb-4 flex items-center">
+                    <svg class="w-5 h-5 mr-2 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
                     </svg>
                     Data Diri
                 </h3>
@@ -71,9 +63,10 @@
 
             {{-- Data Kos --}}
             <div class="bg-slate-800 rounded-xl border border-slate-700 p-6">
-                <h3 class="text-sm font-bold text-yellow-400 uppercase tracking-wider mb-4 flex items-center gap-2">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+                <h3 class="text-lg font-semibold text-slate-100 mb-4 flex items-center">
+                    <svg class="w-5 h-5 mr-2 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
                     </svg>
                     Data Kos
                 </h3>
@@ -107,27 +100,30 @@
 
             {{-- Dokumen --}}
             <div class="bg-slate-800 rounded-xl border border-slate-700 p-6">
-                <h3 class="text-sm font-bold text-yellow-400 uppercase tracking-wider mb-4 flex items-center gap-2">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                <h3 class="text-lg font-semibold text-slate-100 mb-4 flex items-center">
+                    <svg class="w-5 h-5 mr-2 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
                     </svg>
                     Dokumen
                 </h3>
-
                 <div class="grid grid-cols-2 gap-4">
+
                     {{-- KTP --}}
                     <div>
                         <div class="text-xs text-slate-500 mb-2">Foto KTP</div>
                         @php $ext = pathinfo($adminRegistration->ktp_foto, PATHINFO_EXTENSION); @endphp
                         @if(in_array(strtolower($ext), ['jpg','jpeg','png']))
                             <a href="{{ Storage::url($adminRegistration->ktp_foto) }}" target="_blank">
-                                <img src="{{ Storage::url($adminRegistration->ktp_foto) }}" class="w-full h-32 object-cover rounded-lg border border-slate-600 hover:border-yellow-500 transition cursor-pointer">
+                                <img src="{{ Storage::url($adminRegistration->ktp_foto) }}"
+                                     class="w-full h-32 object-cover rounded-lg border border-slate-600 hover:border-yellow-500 transition cursor-pointer">
                             </a>
                         @else
                             <a href="{{ Storage::url($adminRegistration->ktp_foto) }}" target="_blank"
                                class="flex items-center gap-2 p-3 bg-slate-700 rounded-lg border border-slate-600 hover:border-yellow-500 transition text-sm text-slate-300">
                                 <svg class="w-5 h-5 text-red-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                          d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
                                 </svg>
                                 Lihat PDF KTP
                             </a>
@@ -138,7 +134,8 @@
                     <div>
                         <div class="text-xs text-slate-500 mb-2">Selfie + KTP</div>
                         <a href="{{ Storage::url($adminRegistration->selfie_ktp) }}" target="_blank">
-                            <img src="{{ Storage::url($adminRegistration->selfie_ktp) }}" class="w-full h-32 object-cover rounded-lg border border-slate-600 hover:border-yellow-500 transition cursor-pointer">
+                            <img src="{{ Storage::url($adminRegistration->selfie_ktp) }}"
+                                 class="w-full h-32 object-cover rounded-lg border border-slate-600 hover:border-yellow-500 transition cursor-pointer">
                         </a>
                     </div>
 
@@ -150,13 +147,15 @@
                         @php $extB = pathinfo($adminRegistration->bukti_kepemilikan, PATHINFO_EXTENSION); @endphp
                         @if(in_array(strtolower($extB), ['jpg','jpeg','png']))
                             <a href="{{ Storage::url($adminRegistration->bukti_kepemilikan) }}" target="_blank">
-                                <img src="{{ Storage::url($adminRegistration->bukti_kepemilikan) }}" class="w-full h-32 object-cover rounded-lg border border-slate-600 hover:border-yellow-500 transition cursor-pointer">
+                                <img src="{{ Storage::url($adminRegistration->bukti_kepemilikan) }}"
+                                     class="w-full h-32 object-cover rounded-lg border border-slate-600 hover:border-yellow-500 transition cursor-pointer">
                             </a>
                         @else
                             <a href="{{ Storage::url($adminRegistration->bukti_kepemilikan) }}" target="_blank"
                                class="flex items-center gap-2 p-3 bg-slate-700 rounded-lg border border-slate-600 hover:border-yellow-500 transition text-sm text-slate-300">
                                 <svg class="w-5 h-5 text-red-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                          d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
                                 </svg>
                                 Lihat Dokumen
                             </a>
@@ -170,13 +169,15 @@
                             @php $extN = pathinfo($adminRegistration->npwp, PATHINFO_EXTENSION); @endphp
                             @if(in_array(strtolower($extN), ['jpg','jpeg','png']))
                                 <a href="{{ Storage::url($adminRegistration->npwp) }}" target="_blank">
-                                    <img src="{{ Storage::url($adminRegistration->npwp) }}" class="w-full h-32 object-cover rounded-lg border border-slate-600 hover:border-yellow-500 transition cursor-pointer">
+                                    <img src="{{ Storage::url($adminRegistration->npwp) }}"
+                                         class="w-full h-32 object-cover rounded-lg border border-slate-600 hover:border-yellow-500 transition cursor-pointer">
                                 </a>
                             @else
                                 <a href="{{ Storage::url($adminRegistration->npwp) }}" target="_blank"
                                    class="flex items-center gap-2 p-3 bg-slate-700 rounded-lg border border-slate-600 hover:border-yellow-500 transition text-sm text-slate-300">
                                     <svg class="w-5 h-5 text-red-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                              d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
                                     </svg>
                                     Lihat NPWP
                                 </a>
@@ -222,7 +223,7 @@
                 <p class="text-xs text-slate-400 leading-relaxed mb-4">
                     Sistem akan otomatis membuat akun admin dan data kos berdasarkan informasi pendaftaran ini.
                 </p>
-                <button onclick="document.getElementById('approveModal').classList.remove('hidden')"
+                <button onclick="openApproveModal()"
                         class="w-full py-2.5 bg-gradient-to-r from-green-600 to-emerald-700 hover:from-green-700 hover:to-emerald-800 text-white font-bold rounded-lg transition text-sm">
                     Setujui Pengajuan
                 </button>
@@ -241,7 +242,7 @@
                 <p class="text-xs text-slate-400 leading-relaxed mb-4">
                     Calon admin akan mendapat email notifikasi beserta alasan penolakan yang Anda tulis.
                 </p>
-                <button onclick="document.getElementById('rejectModal').classList.remove('hidden')"
+                <button onclick="openRejectModal()"
                         class="w-full py-2.5 bg-gradient-to-r from-red-600 to-rose-700 hover:from-red-700 hover:to-rose-800 text-white font-bold rounded-lg transition text-sm">
                     Tolak Pengajuan
                 </button>
@@ -298,83 +299,61 @@
 
 </div>
 
-{{-- APPROVE MODAL --}}
-<div id="approveModal" class="hidden fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4" onclick="if(event.target===this)this.classList.add('hidden')">
-    <div class="bg-slate-800 rounded-2xl w-full max-w-md border border-slate-700 shadow-2xl">
+{{-- =====================================================
+     MODAL REJECT — menggunakan input textarea sendiri
+     (Alpine store modal tidak support input field,
+     jadi kita buat mini modal khusus reject saja)
+===================================================== --}}
+<div id="rejectModalCustom"
+     class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-[9999] flex items-center justify-center p-4"
+     onclick="if(event.target===this) closeRejectModal()">
+    <div class="bg-slate-800 rounded-2xl w-full max-w-md border border-slate-700 shadow-2xl"
+         x-transition>
         <div class="p-6">
-            <div class="flex items-center gap-3 mb-4">
-                <div class="w-10 h-10 bg-green-500/15 rounded-xl flex items-center justify-center">
-                    <svg class="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-                    </svg>
-                </div>
-                <div>
-                    <h3 class="font-bold text-slate-100">Setujui Pengajuan?</h3>
-                    <p class="text-xs text-slate-400">{{ $adminRegistration->nama_lengkap }} — {{ $adminRegistration->nama_kos }}</p>
-                </div>
-            </div>
-
-            <div class="bg-slate-700/50 rounded-xl p-4 mb-4 text-xs text-slate-300 leading-relaxed space-y-1">
-                <p>✓ Akun admin baru akan dibuat dengan email <strong class="text-slate-100">{{ $adminRegistration->email }}</strong></p>
-                <p>✓ Data kos <strong class="text-slate-100">{{ $adminRegistration->nama_kos }}</strong> akan ditambahkan ke sistem</p>
-                <p>✓ Email notifikasi persetujuan akan dikirim</p>
-            </div>
-
-            <form action="{{ route('superadmin.admin-registrations.approve', $adminRegistration) }}" method="POST">
-                @csrf
-                <div class="mb-4">
-                    <label class="block text-xs font-semibold text-slate-400 mb-1.5">Catatan (Opsional)</label>
-                    <textarea name="catatan" rows="3" placeholder="Pesan tambahan untuk admin baru..."
-                              class="w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded-lg text-slate-100 text-sm placeholder-slate-500 focus:outline-none focus:border-green-500 resize-none"></textarea>
-                </div>
-                <div class="flex gap-3">
-                    <button type="button" onclick="document.getElementById('approveModal').classList.add('hidden')"
-                            class="flex-1 py-2.5 bg-slate-700 hover:bg-slate-600 text-slate-200 font-semibold rounded-lg transition text-sm">
-                        Batal
-                    </button>
-                    <button type="submit"
-                            class="flex-1 py-2.5 bg-gradient-to-r from-green-600 to-emerald-700 hover:from-green-700 hover:to-emerald-800 text-white font-bold rounded-lg transition text-sm">
-                        Ya, Setujui
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
-
-{{-- REJECT MODAL --}}
-<div id="rejectModal" class="hidden fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4" onclick="if(event.target===this)this.classList.add('hidden')">
-    <div class="bg-slate-800 rounded-2xl w-full max-w-md border border-slate-700 shadow-2xl">
-        <div class="p-6">
-            <div class="flex items-center gap-3 mb-4">
-                <div class="w-10 h-10 bg-red-500/15 rounded-xl flex items-center justify-center">
+            {{-- Header --}}
+            <div class="flex items-center gap-3 mb-5">
+                <div class="w-10 h-10 bg-red-500/15 rounded-xl flex items-center justify-center flex-shrink-0">
                     <svg class="w-5 h-5 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
                     </svg>
                 </div>
                 <div>
                     <h3 class="font-bold text-slate-100">Tolak Pengajuan?</h3>
-                    <p class="text-xs text-slate-400">{{ $adminRegistration->nama_lengkap }} — {{ $adminRegistration->nama_kos }}</p>
+                    <p class="text-xs text-slate-400 mt-0.5">
+                        {{ $adminRegistration->nama_lengkap }} — {{ $adminRegistration->nama_kos }}
+                    </p>
                 </div>
             </div>
 
-            <form action="{{ route('superadmin.admin-registrations.reject', $adminRegistration) }}" method="POST">
+            {{-- Form --}}
+            <form id="rejectForm"
+                  action="{{ route('superadmin.admin-registrations.reject', $adminRegistration) }}"
+                  method="POST">
                 @csrf
-                <div class="mb-4">
-                    <label class="block text-xs font-semibold text-slate-400 mb-1.5">
+                <div class="mb-5">
+                    <label class="block text-xs font-semibold text-slate-400 mb-2">
                         Alasan Penolakan <span class="text-red-400">*</span>
                     </label>
-                    <textarea name="catatan" rows="4" required
+                    <textarea id="rejectCatatan"
+                              name="catatan"
+                              rows="4"
+                              required
                               placeholder="Jelaskan alasan penolakan agar calon admin dapat memperbaiki pengajuannya..."
-                              class="w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded-lg text-slate-100 text-sm placeholder-slate-500 focus:outline-none focus:border-red-500 resize-none"></textarea>
-                    @error('catatan')<p class="text-red-400 text-xs mt-1">{{ $message }}</p>@enderror
+                              class="w-full px-3 py-2.5 bg-slate-700 border border-slate-600 rounded-lg
+                                     text-slate-100 text-sm placeholder-slate-500
+                                     focus:outline-none focus:border-red-500 resize-none transition"></textarea>
+                    <p id="rejectError" class="hidden mt-1 text-xs text-red-400">
+                        Alasan penolakan wajib diisi.
+                    </p>
                 </div>
                 <div class="flex gap-3">
-                    <button type="button" onclick="document.getElementById('rejectModal').classList.add('hidden')"
+                    <button type="button"
+                            onclick="closeRejectModal()"
                             class="flex-1 py-2.5 bg-slate-700 hover:bg-slate-600 text-slate-200 font-semibold rounded-lg transition text-sm">
                         Batal
                     </button>
-                    <button type="submit"
+                    <button type="button"
+                            onclick="submitReject()"
                             class="flex-1 py-2.5 bg-gradient-to-r from-red-600 to-rose-700 hover:from-red-700 hover:to-rose-800 text-white font-bold rounded-lg transition text-sm">
                         Ya, Tolak
                     </button>
@@ -383,5 +362,65 @@
         </div>
     </div>
 </div>
+
+{{-- Hidden approve form --}}
+<form id="approveForm"
+      action="{{ route('superadmin.admin-registrations.approve', $adminRegistration) }}"
+      method="POST"
+      class="hidden">
+    @csrf
+    <input type="hidden" name="catatan" id="approveCatatan" value="">
+</form>
+
+@push('scripts')
+<script>
+// ── APPROVE ──────────────────────────────────────────
+function openApproveModal() {
+    Alpine.store('modal').open({
+        type: 'success',
+        title: 'Setujui Pengajuan?',
+        message: 'Akun admin untuk "{{ addslashes($adminRegistration->nama_lengkap) }}" dan data kos "{{ addslashes($adminRegistration->nama_kos) }}" akan otomatis dibuat. Email persetujuan akan dikirim.',
+        confirmText: 'Ya, Setujui',
+        showCancel: true,
+        onConfirm: () => {
+            document.getElementById('approveForm').submit();
+        }
+    });
+}
+
+// ── REJECT ───────────────────────────────────────────
+function openRejectModal() {
+    document.getElementById('rejectCatatan').value = '';
+    document.getElementById('rejectError').classList.add('hidden');
+    document.getElementById('rejectModalCustom').classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+    // Focus textarea
+    setTimeout(() => document.getElementById('rejectCatatan').focus(), 100);
+}
+
+function closeRejectModal() {
+    document.getElementById('rejectModalCustom').classList.add('hidden');
+    document.body.style.overflow = '';
+}
+
+function submitReject() {
+    const catatan = document.getElementById('rejectCatatan').value.trim();
+    if (!catatan) {
+        document.getElementById('rejectError').classList.remove('hidden');
+        document.getElementById('rejectCatatan').focus();
+        return;
+    }
+    document.getElementById('rejectError').classList.add('hidden');
+    document.getElementById('rejectForm').submit();
+}
+
+// Tutup reject modal dengan tombol Escape
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+        closeRejectModal();
+    }
+});
+</script>
+@endpush
 
 @endsection
