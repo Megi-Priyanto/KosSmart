@@ -23,14 +23,16 @@
                     ->where('status', 'admin_approved')
                     ->count();
 
-                // Notifikasi payment tetap dari tabel notifications
                 $paymentNotifCount = \App\Models\Notification::where('user_id', auth()->id())
                     ->where('type', 'payment')
                     ->where('status', 'unread')
                     ->count();
 
+                // ✅ Pendaftaran admin baru pending
+                $pendingRegCount = \App\Models\AdminRegistration::where('status', 'pending')->count();
+
                 // Total badge gabungan
-                $totalNotifCount = $refundPendingCount + $paymentNotifCount;
+                $totalNotifCount = $refundPendingCount + $paymentNotifCount + $pendingRegCount;
             @endphp
 
             <!-- Bell Notification -->
@@ -81,11 +83,10 @@
                         @endif
                     </div>
 
-                    <div class="max-h-[28rem] overflow-y-auto">
+                    <div class="max-h-[32rem] overflow-y-auto">
 
                         {{-- ===========================
                              BAGIAN 1: REFUND CANCEL BOOKING
-                             Langsung query CancelBooking, pasti akurat
                         =========================== --}}
                         @php
                             $refundItems = \App\Models\CancelBooking::withoutTempatKosScope()
@@ -100,7 +101,8 @@
                         <div class="px-4 py-2 bg-orange-500/10 border-b border-slate-700">
                             <p class="text-xs font-bold text-orange-400 uppercase tracking-wide flex items-center gap-1.5">
                                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                          d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
                                 </svg>
                                 Refund Menunggu Diproses ({{ $refundPendingCount }})
                             </p>
@@ -147,7 +149,68 @@
                         @endif
 
                         {{-- ===========================
-                             BAGIAN 2: NOTIFIKASI DANA MASUK (PAYMENT)
+                             BAGIAN 2: PENDAFTARAN ADMIN BARU
+                        =========================== --}}
+                        @php
+                            $regItems = \App\Models\AdminRegistration::where('status', 'pending')
+                                ->latest()
+                                ->take(5)
+                                ->get();
+                        @endphp
+
+                        @if($regItems->count() > 0)
+                        <div class="px-4 py-2 bg-purple-500/10 border-b border-slate-700">
+                            <p class="text-xs font-bold text-purple-400 uppercase tracking-wide flex items-center gap-1.5">
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                          d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/>
+                                </svg>
+                                Pendaftaran Admin Baru ({{ $pendingRegCount }})
+                            </p>
+                        </div>
+                        @foreach($regItems as $reg)
+                        <a href="{{ route('superadmin.admin-registrations.show', $reg) }}"
+                           class="block p-4 border-b border-slate-700 bg-purple-500/5 hover:bg-purple-500/10 transition">
+                            <div class="flex items-start gap-3">
+                                <div class="w-9 h-9 flex-shrink-0 rounded-full bg-purple-500/20
+                                            flex items-center justify-center">
+                                    <span class="text-sm font-bold text-purple-300">
+                                        {{ strtoupper(substr($reg->nama_lengkap, 0, 1)) }}
+                                    </span>
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <p class="text-sm font-semibold text-white">
+                                        {{ $reg->nama_lengkap }}
+                                    </p>
+                                    <p class="text-xs text-slate-400 mt-0.5">
+                                        {{ $reg->nama_kos }} · {{ $reg->kota }}, {{ $reg->provinsi }}
+                                    </p>
+                                    <div class="flex items-center gap-2 mt-1.5">
+                                        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs
+                                                     bg-purple-500/15 text-purple-400 border border-purple-500/30">
+                                            <span class="w-1.5 h-1.5 bg-purple-400 rounded-full mr-1 animate-pulse"></span>
+                                            Menunggu Review
+                                        </span>
+                                        <span class="text-xs text-slate-500">
+                                            {{ $reg->created_at->diffForHumans() }}
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="w-2 h-2 bg-purple-400 rounded-full flex-shrink-0 mt-1"></div>
+                            </div>
+                        </a>
+                        @endforeach
+                        @if($pendingRegCount > 5)
+                        <a href="{{ route('superadmin.admin-registrations.index') }}"
+                           class="block px-4 py-2.5 text-center text-xs text-purple-400 hover:text-purple-300
+                                  bg-purple-500/5 border-b border-slate-700 transition">
+                            Lihat {{ $pendingRegCount - 5 }} pendaftaran lainnya →
+                        </a>
+                        @endif
+                        @endif
+
+                        {{-- ===========================
+                             BAGIAN 3: NOTIFIKASI DANA MASUK (PAYMENT)
                         =========================== --}}
                         @php
                             $paymentNotifs = \App\Models\Notification::where('user_id', auth()->id())
@@ -219,12 +282,12 @@
                                             @if($isDisbursed)
                                                 <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs
                                                              bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
-                                                    ✓ Sudah Dicairkan
+                                                    Sudah Dicairkan
                                                 </span>
                                             @else
                                                 <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs
                                                              bg-amber-500/15 text-amber-400 border border-amber-500/30">
-                                                    ⏳ Menunggu Pencairan
+                                                    Menunggu Pencairan
                                                 </span>
                                             @endif
                                             <span class="text-xs text-slate-500">{{ $notif->created_at->diffForHumans() }}</span>
@@ -236,7 +299,7 @@
                                 </div>
                             </a>
                         @empty
-                            @if($refundItems->count() === 0)
+                            @if($refundItems->count() === 0 && $regItems->count() === 0)
                             <div class="p-8 text-center">
                                 <svg class="w-12 h-12 mx-auto text-slate-600 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -249,15 +312,9 @@
                             </div>
                             @endif
                         @endforelse
-                    </div>
 
-                    <!-- Footer -->
-                    <div class="p-3 border-t border-slate-700 text-center">
-                        <a href="{{ route('superadmin.notifications.index') }}"
-                           class="text-sm text-yellow-400 hover:text-yellow-300 font-medium transition">
-                            Lihat Semua Notifikasi →
-                        </a>
                     </div>
+                    
                 </div>
             </div>
 
@@ -291,15 +348,18 @@
                         <a href="{{ route('superadmin.profile') }}"
                            class="flex items-center gap-3 px-4 py-2.5 text-slate-300 hover:bg-slate-700 hover:text-white transition text-sm">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                      d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
                             </svg>
                             Profil Saya
                         </a>
                         <a href="{{ route('superadmin.settings.index') }}"
                            class="flex items-center gap-3 px-4 py-2.5 text-slate-300 hover:bg-slate-700 hover:text-white transition text-sm">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                      d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                      d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
                             </svg>
                             Pengaturan
                         </a>
@@ -310,7 +370,8 @@
                             <button type="submit"
                                     class="flex items-center gap-3 w-full px-4 py-2.5 text-red-400 hover:bg-slate-700 hover:text-red-300 transition text-sm">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                          d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
                                 </svg>
                                 Keluar
                             </button>

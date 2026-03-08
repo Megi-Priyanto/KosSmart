@@ -21,51 +21,21 @@
         .btn-search { padding: 0.65rem 1.5rem; background: linear-gradient(135deg, #f59e0b, #d97706); color: #ffffff; font-weight: 800; font-size: 0.87rem; border-radius: 10px; border: none; cursor: pointer; display: flex; align-items: center; gap: 0.5rem; font-family: inherit; transition: all 0.2s; white-space: nowrap; }
         .btn-search:hover { transform: translateY(-1px); box-shadow: 0 8px 20px rgba(245,158,11,0.4); }
 
-        /* ── KOS CARD — sama persis dengan user dashboard ── */
-        .kos-card {
-            background: #ffffff;
-            border: 1px solid #e5e7eb;
-            border-radius: 14px;
-            overflow: hidden;
-            transition: all 0.25s;
-            /* ✅ flex column + h-full agar card sama tinggi dalam satu baris */
-            display: flex;
-            flex-direction: column;
-            height: 100%;
-        }
-        .kos-card:hover {
-            transform: translateY(-3px);
-            border-color: rgba(245,158,11,0.35);
-            box-shadow: 0 16px 40px rgba(15,23,42,0.1);
-        }
-
-        /* Thumbnail fixed height — sama dengan user (h-36 sm:h-40) */
-        .card-thumb {
-            height: 144px;
-            position: relative;
-            overflow: hidden;
-            background: linear-gradient(135deg, #e2e8f0, #cbd5e1);
-            flex-shrink: 0;
-        }
+        /* ── KOS CARD ── */
+        .kos-card { background: #ffffff; border: 1px solid #e5e7eb; border-radius: 14px; overflow: hidden; transition: all 0.25s; display: flex; flex-direction: column; height: 100%; }
+        .kos-card:hover { transform: translateY(-3px); border-color: rgba(245,158,11,0.35); box-shadow: 0 16px 40px rgba(15,23,42,0.1); }
+        .card-thumb { height: 144px; position: relative; overflow: hidden; background: linear-gradient(135deg, #e2e8f0, #cbd5e1); flex-shrink: 0; }
         .card-thumb img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s; }
         .kos-card:hover .card-thumb img { transform: scale(1.05); }
-
-        /* Pill badges */
         .badge-aktif { background: #22c55e; color: #ffffff; font-size: 0.68rem; font-weight: 700; padding: 4px 10px; border-radius: 100px; display: inline-flex; align-items: center; gap: 5px; box-shadow: 0 2px 6px rgba(34,197,94,0.35); }
         .badge-tersedia-img { background: rgba(15,23,42,0.55); backdrop-filter: blur(4px); color: #ffffff; font-size: 0.65rem; font-weight: 700; padding: 3px 9px; border-radius: 100px; }
         .badge-avail { background: rgba(52,211,153,0.12); color: #16a34a; font-size: 0.68rem; font-weight: 700; padding: 3px 9px; border-radius: 100px; }
         .badge-penuh { background: rgba(239,68,68,0.1); color: #ef4444; font-size: 0.68rem; font-weight: 700; padding: 3px 9px; border-radius: 100px; }
-
-        /* ✅ card-body flex-col flex-1 agar tombol bisa di-push ke bawah */
         .card-body { padding: 0.85rem 1rem; flex: 1; display: flex; flex-direction: column; }
-
         .card-title { font-size: 0.92rem; font-weight: 700; color: #1e293b; margin-bottom: 0.2rem; transition: color 0.2s; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .kos-card:hover .card-title { color: #d97706; }
-
         .card-loc { font-size: 0.75rem; color: #64748b; display: flex; align-items: flex-start; gap: 4px; margin-bottom: 0.6rem; min-height: 2.4rem; }
         .card-meta { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem; font-size: 0.78rem; color: #64748b; padding-top: 0.6rem; border-top: 1px solid #f1f5f9; }
-
-        /* ✅ mt-auto: tombol selalu nempel di bawah card */
         .btn-lihat { display: flex; align-items: center; justify-content: center; gap: 6px; background: linear-gradient(135deg, #f59e0b, #d97706); color: #ffffff; font-weight: 700; font-size: 0.84rem; padding: 0.55rem; border-radius: 8px; text-decoration: none; transition: all 0.2s; margin-top: auto; }
         .btn-lihat:hover { transform: translateY(-1px); box-shadow: 0 6px 16px rgba(245,158,11,0.35); }
 
@@ -81,8 +51,8 @@
         .ulasan-spacer { flex: 1; min-height: 0.5rem; }
         .ulasan-footer { border-top: 1px solid #f3f4f6; padding-top: 0.65rem; margin-top: 0.6rem; display: flex; align-items: center; gap: 0.6rem; flex-shrink: 0; }
 
-        /* ── CTA ── */
-        .cta-section { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 20px; padding: 2.5rem; text-align: center; margin-top: 4rem; }
+        /* ── Hero badge ── */
+        .hero-badge-kos { display: inline-flex; align-items: center; gap: 0.45rem; background: rgba(217,119,6,0.08); border: 1px solid rgba(217,119,6,0.22); color: #d97706; font-size: 0.78rem; font-weight: 700; padding: 0.32rem 0.9rem; border-radius: 100px; margin-bottom: 0.75rem; }
 
         @keyframes fadeUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
         .fade-up { animation: fadeUp 0.5s ease both; }
@@ -101,7 +71,15 @@
     <div class="blob" style="width:500px;height:500px;background:#f59e0b;top:-180px;left:-160px;"></div>
     <div class="blob" style="width:380px;height:380px;background:#22c55e;bottom:-100px;right:-120px;"></div>
     <div style="position:relative;z-index:1;">
-        <p class="fade-up" style="font-size:0.78rem;font-weight:700;color:#d97706;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:0.75rem;">Temukan Hunian Terbaikmu</p>
+
+        {{-- Badge dengan icon sparkle --}}
+        <div class="fade-up">
+            <span class="hero-badge-kos">
+                <span class="material-symbols-rounded" style="font-size:14px!important;color:#d97706;">auto_awesome</span>
+                Temukan Hunian Terbaikmu
+            </span>
+        </div>
+
         <h1 class="fade-up" style="font-size:clamp(2rem,4.5vw,3.25rem);font-weight:800;line-height:1.15;color:#1e293b;margin-bottom:0.75rem;animation-delay:0.06s;">
             Cari Tempat <em style="font-style:italic;color:#d97706;">Kos Terbaik</em>
         </h1>
@@ -152,10 +130,8 @@
 
     @if($tempatKosList->count() > 0)
 
-    {{-- ✅ Grid sama dengan user dashboard: 2 kolom mobile, 3 tablet, 4 desktop --}}
     <div class="kos-grid">
         @foreach($tempatKosList as $kos)
-        {{-- ✅ height:100% agar card stretch penuh dalam baris --}}
         <div style="height:100%;">
         <a href="{{ route('public.kos.rooms', $kos) }}" class="kos-card" style="text-decoration:none;">
 
@@ -170,16 +146,12 @@
                         </svg>
                     </div>
                 @endif
-
-                {{-- Badge Aktif — pojok kanan atas, tanpa badge Tersedia --}}
                 <div style="position:absolute;top:10px;right:10px;">
                     <span class="badge-aktif">
                         <span style="width:5px;height:5px;background:#ffffff;border-radius:50%;display:inline-block;animation:pulse 2s infinite;"></span>
                         Aktif
                     </span>
                 </div>
-
-                {{-- Rating pojok kiri bawah --}}
                 @if($kos->avg_rating)
                 <div style="position:absolute;bottom:10px;left:10px;">
                     <span style="display:inline-flex;align-items:center;gap:4px;background:rgba(0,0,0,0.6);backdrop-filter:blur(4px);color:#ffffff;font-size:0.68rem;font-weight:700;padding:3px 8px;border-radius:8px;">
@@ -196,7 +168,6 @@
             <div class="card-body">
                 <h3 class="card-title">{{ $kos->nama_kos }}</h3>
 
-                {{-- Rating bintang --}}
                 @if($kos->avg_rating)
                 <div style="display:flex;align-items:center;gap:3px;margin-bottom:0.35rem;">
                     @for($i = 1; $i <= 5; $i++)
@@ -210,7 +181,6 @@
                 <div style="font-size:0.68rem;color:#94a3b8;margin-bottom:0.35rem;">Belum ada ulasan</div>
                 @endif
 
-                {{-- Lokasi --}}
                 <div class="card-loc">
                     <svg width="13" height="13" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="flex-shrink:0;margin-top:1px;">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
@@ -221,7 +191,6 @@
                     </span>
                 </div>
 
-                {{-- Meta: total kamar & status --}}
                 <div class="card-meta">
                     <span style="display:flex;align-items:center;gap:4px;">
                         <svg width="13" height="13" fill="none" stroke="#f59e0b" stroke-width="2" viewBox="0 0 24 24">
@@ -236,7 +205,6 @@
                     @endif
                 </div>
 
-                {{-- ✅ mt-auto: tombol selalu di bawah --}}
                 <div class="btn-lihat">
                     Lihat Kamar
                     <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
@@ -283,12 +251,10 @@
                     init() { this.$nextTick(() => { const el = this.$refs.teks; if (el) this.overflow = el.scrollHeight > 64; }); }
                  }" class="ulasan-card">
 
-                {{-- Badge nama kos --}}
                 <div style="font-size:0.68rem;font-weight:700;color:#d97706;background:rgba(245,158,11,0.08);display:inline-block;padding:3px 10px;border-radius:100px;margin-bottom:0.65rem;flex-shrink:0;">
                     {{ $ulasan->kos_nama ?? $ulasan->tempatKos?->nama_kos ?? '-' }}
                 </div>
 
-                {{-- Bintang --}}
                 <div style="display:flex;align-items:center;gap:2px;margin-bottom:0.6rem;flex-shrink:0;">
                     @for($i = 1; $i <= 5; $i++)
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="{{ $i <= $ulasan->rating ? '#f59e0b' : '#e5e7eb' }}">
@@ -298,7 +264,6 @@
                     <span style="font-size:0.72rem;font-weight:700;color:#d97706;margin-left:4px;">{{ number_format($ulasan->rating, 1) }}</span>
                 </div>
 
-                {{-- Komentar --}}
                 <div class="komentar-box" :class="{ 'is-open': open }">
                     <p x-ref="teks" style="font-size:0.82rem;color:#64748b;line-height:1.6;font-style:italic;">
                         "{{ $ulasan->komentar ?: 'Tidak ada komentar.' }}"
@@ -342,23 +307,6 @@
         </p>
     </div>
     @endif
-
-    <!-- CTA -->
-    <div class="cta-section">
-        <h3 style="font-size:1.25rem;font-weight:800;color:#1e293b;margin-bottom:0.5rem;">Suka dengan pilihan yang ada?</h3>
-        <p style="color:#64748b;font-size:0.87rem;margin-bottom:1.75rem;">Daftar atau masuk untuk bisa melakukan booking kamar secara online</p>
-        <div style="display:flex;align-items:center;justify-content:center;gap:0.75rem;flex-wrap:wrap;">
-            <a href="{{ route('register') }}"
-               style="padding:0.75rem 1.75rem;background:linear-gradient(135deg,#f59e0b,#d97706);color:#ffffff;font-weight:800;border-radius:12px;text-decoration:none;font-size:0.9rem;box-shadow:0 6px 20px rgba(245,158,11,0.3);">
-                Daftar Gratis Sekarang
-            </a>
-            <a href="{{ route('login') }}"
-               style="padding:0.75rem 1.75rem;border:1px solid #e2e8f0;color:#64748b;font-weight:600;border-radius:12px;text-decoration:none;font-size:0.9rem;"
-               onmouseover="this.style.color='#1e293b'" onmouseout="this.style.color='#64748b'">
-                Sudah Punya Akun
-            </a>
-        </div>
-    </div>
 
 </div>
 

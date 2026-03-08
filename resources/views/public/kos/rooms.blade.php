@@ -111,8 +111,6 @@
         .rating-bar-track { flex: 1; height: 8px; background: #f3f4f6; border-radius: 100px; overflow: hidden; }
         .rating-bar-fill { height: 100%; background: linear-gradient(90deg, #f59e0b, #d97706); border-radius: 100px; }
 
-        /* ── CTA Bar ── */
-        .cta-bar { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 16px; padding: 1.75rem; text-align: center; margin-top: 2rem; }
 @endpush
 
 @section('content')
@@ -306,7 +304,7 @@
         </style>
 
         @foreach($rooms as $room)
-        {{-- ✅ flex flex-col h-full: card stretch sesuai tinggi baris --}}
+        {{-- flex flex-col h-full: card stretch sesuai tinggi baris --}}
         <div class="room-card {{ $room->status !== 'available' ? 'dimmed' : '' }}">
 
             {{-- Thumbnail --}}
@@ -369,7 +367,7 @@
                     </span>
                 </div>
 
-                {{-- ✅ mt-auto: tombol selalu nempel di bawah --}}
+                {{-- mt-auto: tombol selalu nempel di bawah --}}
                 <div style="margin-top:auto;">
                     @if($room->status === 'available')
                         <a href="{{ route('public.kos.room-detail', $room) }}"
@@ -537,23 +535,6 @@
     </section>
     @endif
     @endif
-
-    {{-- CTA --}}
-    <div class="cta-bar">
-        <p style="font-weight:700;color:#1e293b;margin-bottom:0.35rem;">Tertarik dengan kamar di sini?</p>
-        <p style="font-size:0.84rem;color:#64748b;margin-bottom:1.25rem;">Login atau daftar untuk bisa langsung booking kamar secara online</p>
-        <div style="display:flex;align-items:center;justify-content:center;gap:0.75rem;flex-wrap:wrap;">
-            <a href="{{ route('register') }}"
-               style="padding:0.65rem 1.5rem;background:linear-gradient(135deg,#f59e0b,#d97706);color:#ffffff;font-weight:800;border-radius:10px;text-decoration:none;font-size:0.86rem;box-shadow:0 4px 14px rgba(245,158,11,0.3);">
-                Daftar Gratis
-            </a>
-            <a href="{{ route('login') }}"
-               style="padding:0.65rem 1.5rem;border:1px solid #e2e8f0;color:#64748b;font-weight:600;border-radius:10px;text-decoration:none;font-size:0.86rem;"
-               onmouseover="this.style.color='#1e293b'" onmouseout="this.style.color='#64748b'">
-                Sudah Punya Akun
-            </a>
-        </div>
-    </div>
 
 </div>
 

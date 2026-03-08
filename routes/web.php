@@ -32,9 +32,7 @@ use Illuminate\Support\Facades\Route;
 // ==============================
 // [DIUBAH] Root → Landing Page Publik
 // ==============================
-Route::get('/', function () {
-    return view('welcome');
-})->name('home');
+Route::get('/', [\App\Http\Controllers\WelcomeController::class, 'index'])->name('home');
 
 Route::get('/tentang', function () {
     return view('tentang');
@@ -285,17 +283,6 @@ Route::middleware(['auth', 'verified', 'super.admin'])
             Route::get('/export-excel', [\App\Http\Controllers\SuperAdmin\SuperAdminBillingReportController::class, 'exportExcel'])
                 ->name('export-excel');
         });
-
-        // Notifications
-        Route::get('notifications', [\App\Http\Controllers\SuperAdmin\SuperAdminNotificationController::class, 'index'])->name('notifications.index');
-        Route::post('notifications/mark-all-read', [\App\Http\Controllers\SuperAdmin\SuperAdminNotificationController::class, 'markAllRead'])->name('notifications.mark-all-read');
-
-        Route::post('notifications/{notification}/mark-read', function (\App\Models\Notification $notification) {
-            if ($notification->user_id === auth()->id()) {
-                $notification->markAsRead();
-            }
-            return response()->json(['success' => true]);
-        })->name('notifications.mark-read');
 
         // System Settings
         Route::prefix('settings')->name('settings.')->group(function () {

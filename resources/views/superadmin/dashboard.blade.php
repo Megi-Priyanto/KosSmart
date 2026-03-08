@@ -188,6 +188,79 @@
     @endif
 
     {{-- ============================================================
+         CARD NOTIFIKASI 3: PENDAFTARAN ADMIN KOS BARU (PENDING)
+    ============================================================ --}}
+    @php
+        $pendingRegistrations = \App\Models\AdminRegistration::where('status', 'pending')
+            ->latest()
+            ->take(5)
+            ->get();
+
+        $pendingRegCount = \App\Models\AdminRegistration::where('status', 'pending')->count();
+    @endphp
+
+    @if($pendingRegCount > 0)
+    <div class="px-6 py-5 bg-slate-800 border border-purple-500/40 rounded-xl shadow-sm">
+        <div class="flex items-start gap-4">
+            <!-- Icon -->
+            <div class="p-2 bg-purple-500/20 rounded-lg flex-shrink-0">
+                <svg class="w-6 h-6 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/>
+                </svg>
+            </div>
+
+            <div class="flex-1">
+                <h3 class="font-semibold text-purple-300 mb-1">
+                    {{ $pendingRegCount }} Pendaftaran Admin Kos Menunggu Review
+                </h3>
+                <p class="text-sm text-slate-300 mb-4">
+                    Calon admin kos baru telah mengajukan pendaftaran. Silakan review dan verifikasi dokumen mereka.
+                </p>
+
+                <!-- List item pendaftaran -->
+                <div class="space-y-2 mb-4">
+                    @foreach($pendingRegistrations as $reg)
+                    <div class="flex items-center justify-between px-3 py-2.5 bg-slate-900 border border-slate-700 rounded-lg hover:border-purple-400/50 transition">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 bg-purple-500/20 rounded-full flex items-center justify-center flex-shrink-0">
+                                <span class="text-sm font-bold text-purple-300">
+                                    {{ strtoupper(substr($reg->nama_lengkap, 0, 1)) }}
+                                </span>
+                            </div>
+                            <div>
+                                <p class="text-sm font-medium text-white">
+                                    {{ $reg->nama_lengkap }}
+                                    <span class="text-xs text-slate-400 ml-1">• {{ $reg->nama_kos }}</span>
+                                </p>
+                                <p class="text-xs text-slate-400">
+                                    {{ $reg->email }}
+                                    • {{ $reg->kota }}, {{ $reg->provinsi }}
+                                    • <span class="text-purple-400">{{ $reg->created_at->diffForHumans() }}</span>
+                                </p>
+                            </div>
+                        </div>
+                        <a href="{{ route('superadmin.admin-registrations.show', $reg) }}"
+                           class="flex-shrink-0 text-sm font-medium text-purple-400 hover:text-purple-300 transition">
+                            Proses →
+                        </a>
+                    </div>
+                    @endforeach
+                </div>
+
+                <a href="{{ route('superadmin.admin-registrations.index') }}"
+                   class="inline-flex items-center text-sm font-medium text-purple-400 hover:text-purple-300 transition">
+                    Lihat Semua Pendaftaran Pending
+                    <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                    </svg>
+                </a>
+            </div>
+        </div>
+    </div>
+    @endif
+
+    {{-- ============================================================
          STATISTIK CARDS
     ============================================================ --}}
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -396,7 +469,7 @@
                         </td>
                         <td class="px-6 py-4 text-center">
                             <a href="{{ route('superadmin.tempat-kos.show', $kos) }}"
-                               class="inline-flex items-center justify-center w-9 h-9 rounded-xl
+                               class="inline-flex items-center justify-center w-9 h-9 rounded-lg
                                       bg-blue-600/20 text-blue-400 hover:bg-blue-600/30 hover:-translate-y-0.5
                                       transition-all duration-200">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
