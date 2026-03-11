@@ -18,6 +18,7 @@ use App\Http\Controllers\User\RentCheckoutController as UserRentCheckoutControll
 use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Admin\AdminProfileController;
 use App\Http\Controllers\Admin\BookingManagementController;
+use App\Http\Controllers\User\TicketController;
 use App\Http\Controllers\User\UserProfileController;
 use App\Http\Controllers\Admin\NotificationController;
 use App\Http\Controllers\SuperAdmin\DisbursementController;
@@ -180,6 +181,12 @@ Route::middleware(['auth', 'verified', 'role:user'])->group(function () {
         Route::get('/tagihan', [StatusController::class, 'billing'])->name('billing');
         Route::get('/checkout', [StatusController::class, 'checkout'])->name('checkout');
     });
+
+    // Komplain/Tickets (Penghuni)
+    Route::resource('user/tickets', TicketController::class)
+        ->names('user.tickets')
+        ->only(['index', 'create', 'store', 'show'])
+        ->middleware('has.room');
 
     // User Cancel Booking Routes
     Route::post('/booking/{rent}/cancel', [\App\Http\Controllers\User\UserCancelBookingController::class, 'store'])
@@ -441,6 +448,14 @@ Route::middleware(['auth', 'verified', 'admin.kos'])
             Route::post('/bookings/{booking}/approve', 'approve')->name('bookings.approve');
             Route::post('/bookings/{booking}/reject', 'reject')->name('bookings.reject');
         });
+
+        // Komplain/Tickets (Admin Kos)
+        Route::get('/tickets', [\App\Http\Controllers\Admin\TicketController::class, 'index'])
+            ->name('tickets.index');
+        Route::get('/tickets/{ticket}', [\App\Http\Controllers\Admin\TicketController::class, 'show'])
+            ->name('tickets.show');
+        Route::put('/tickets/{ticket}/status', [\App\Http\Controllers\Admin\TicketController::class, 'updateStatus'])
+            ->name('tickets.status.update');
 
         // Billing Management
         Route::controller(\App\Http\Controllers\Admin\BillingController::class)->group(function () {
