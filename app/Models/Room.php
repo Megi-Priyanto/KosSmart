@@ -277,7 +277,7 @@ class Room extends Model
         if (!$this->last_maintenance) {
             return true;
         }
-        
+
         return $this->last_maintenance->addMonths(6)->isPast();
     }
 
@@ -289,9 +289,9 @@ class Room extends Model
         if (!$this->last_maintenance) {
             return 'Belum pernah maintenance';
         }
-        
+
         $monthsSince = now()->diffInMonths($this->last_maintenance);
-        
+
         if ($monthsSince >= 6) {
             return 'Perlu maintenance';
         } elseif ($monthsSince >= 4) {
@@ -299,5 +299,10 @@ class Room extends Model
         } else {
             return 'Maintenance baik';
         }
+    }
+
+    public function tickets()
+    {
+        return $this->hasMany(Ticket::class, 'room_id');
     }
 }
