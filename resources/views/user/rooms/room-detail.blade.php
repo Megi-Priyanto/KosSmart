@@ -10,43 +10,43 @@
         <h1 class="text-2xl font-bold text-gray-800">Detail Kamar {{ $room->room_number }}</h1>
         <p class="text-sm text-gray-600 mt-1">Informasi lengkap tentang kamar yang Anda tempati</p>
     </div>
-    <a href="{{ route('user.dashboard') }}" 
-       class="px-4 py-2 bg-gradient-to-r from-yellow-500 to-orange-600 text-white font-semibold rounded-lg hover:from-yellow-600 hover:to-orange-700 transition-all shadow-lg flex items-center justify-center">
+    <a href="{{ route('user.dashboard') }}"
+        class="px-4 py-2 bg-gradient-to-r from-yellow-500 to-orange-600 text-white font-semibold rounded-lg hover:from-yellow-600 hover:to-orange-700 transition-all shadow-lg flex items-center justify-center">
         Kembali ke Dashboard
     </a>
 </div>
 
 <!-- Main Content Grid -->
 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-    
+
     <!-- Left Column - Main Info -->
     <div class="lg:col-span-2 space-y-6">
-        
+
         <!-- Galeri Foto -->
         @if(!empty($room->images) && is_array($room->images) && count($room->images) > 0)
         <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden" x-data="imageGallery()">
 
             <div class="aspect-video bg-gray-100 relative">
-                <img :src="'{{ asset('storage') }}/' + images[currentIndex]" 
-                     alt="Kamar {{ $room->room_number }}" 
-                     class="w-full h-full object-cover">
-                
+                <img :src="'{{ asset('storage') }}/' + images[currentIndex]"
+                    alt="Kamar {{ $room->room_number }}"
+                    class="w-full h-full object-cover">
+
                 <!-- Navigation -->
                 <template x-if="images.length > 1">
                     <div>
-                        <button @click="prev" 
-                                class="absolute left-4 top-1/2 -translate-y-1/2 bg-white/90 backdrop-blur-sm text-gray-800 p-3 rounded-full hover:bg-white transition-all shadow-lg">
+                        <button @click="prev"
+                            class="absolute left-4 top-1/2 -translate-y-1/2 bg-white/90 backdrop-blur-sm text-gray-800 p-3 rounded-full hover:bg-white transition-all shadow-lg">
                             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
                             </svg>
                         </button>
-                        <button @click="next" 
-                                class="absolute right-4 top-1/2 -translate-y-1/2 bg-white/90 backdrop-blur-sm text-gray-800 p-3 rounded-full hover:bg-white transition-all shadow-lg">
+                        <button @click="next"
+                            class="absolute right-4 top-1/2 -translate-y-1/2 bg-white/90 backdrop-blur-sm text-gray-800 p-3 rounded-full hover:bg-white transition-all shadow-lg">
                             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
                             </svg>
                         </button>
-                        
+
                         <!-- Counter -->
                         <div class="absolute bottom-4 right-4 bg-gray-900/80 backdrop-blur-sm text-white px-4 py-2 rounded-lg text-sm font-semibold shadow-lg">
                             <span x-text="currentIndex + 1"></span> / <span x-text="images.length"></span>
@@ -54,7 +54,7 @@
                     </div>
                 </template>
             </div>
-            
+
             <!-- Thumbnails -->
             <div class="p-4 bg-gray-50 grid grid-cols-6 gap-2">
                 <template x-for="(image, index) in images" :key="index">
@@ -64,20 +64,20 @@
                 </template>
             </div>
         </div>
-        
+
         <script>
-        function imageGallery() {
-            return {
-                images: @json($room->images),
-                currentIndex: 0,
-                next() {
-                    this.currentIndex = (this.currentIndex + 1) % this.images.length;
-                },
-                prev() {
-                    this.currentIndex = (this.currentIndex - 1 + this.images.length) % this.images.length;
+            function imageGallery() {
+                return {
+                    images: @json($room -> images),
+                    currentIndex: 0,
+                    next() {
+                        this.currentIndex = (this.currentIndex + 1) % this.images.length;
+                    },
+                    prev() {
+                        this.currentIndex = (this.currentIndex - 1 + this.images.length) % this.images.length;
+                    }
                 }
             }
-        }
         </script>
         @else
         <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-16 text-center">
@@ -87,7 +87,7 @@
             <p class="text-gray-500 text-lg">Belum ada foto untuk kamar ini</p>
         </div>
         @endif
-        
+
         <!-- Info Detail Kamar -->
         <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
             <h3 class="text-xl font-bold text-gray-800 mb-6 flex items-center pb-4 border-b border-gray-200">
@@ -98,7 +98,7 @@
                 </div>
                 Informasi Kamar
             </h3>
-            
+
             <div class="grid grid-cols-2 md:grid-cols-3 gap-6">
                 <div>
                     <label class="text-sm text-gray-600 flex items-center mb-2">
@@ -106,14 +106,14 @@
                     </label>
                     <p class="font-bold text-xl text-gray-800">{{ $room->room_number }}</p>
                 </div>
-                
+
                 <div>
                     <label class="text-sm text-gray-600 flex items-center mb-2">
                         Lantai
                     </label>
                     <p class="font-semibold text-gray-800">{{ $room->floor }}</p>
                 </div>
-                
+
                 <div>
                     <label class="text-sm text-gray-600 flex items-center mb-2">
                         Tipe
@@ -124,28 +124,28 @@
                         @else bg-purple-100 text-purple-700 border border-purple-300
                         @endif">{{ ucfirst($room->type) }}</span></p>
                 </div>
-                
+
                 <div>
                     <label class="text-sm text-gray-600 flex items-center mb-2">
                         Kapasitas
                     </label>
                     <p class="font-semibold text-gray-800">{{ $room->capacity }} orang</p>
                 </div>
-                
+
                 <div>
                     <label class="text-sm text-gray-600 flex items-center mb-2">
                         Ukuran
                     </label>
                     <p class="font-semibold text-gray-800">{{ $room->size }} m²</p>
                 </div>
-                
+
                 <div>
                     <label class="text-sm text-gray-600 flex items-center mb-2">
                         Harga Sewa
                     </label>
                     <p class="font-bold text-xl text-yellow-600">{{ $room->formatted_price }}</p>
                 </div>
-                
+
                 <div>
                     <label class="text-sm text-gray-600 flex items-center mb-2">
                         Jenis Sewa
@@ -156,14 +156,14 @@
                         </span>
                     </p>
                 </div>
-                
+
                 <div>
                     <label class="text-sm text-gray-600 flex items-center mb-2">
                         Jendela
                     </label>
                     <p class="font-semibold text-gray-800">{{ $room->has_window ? '✓ Ada' : '✗ Tidak Ada' }}</p>
                 </div>
-                
+
                 <div>
                     <label class="text-sm text-gray-600 flex items-center mb-2">
                         Status
@@ -175,7 +175,7 @@
                         @endif">{{ $room->status_label }}</span></p>
                 </div>
             </div>
-            
+
             @if($room->description)
             <div class="mt-6 pt-6 border-t border-gray-200">
                 <label class="text-sm text-gray-600 font-semibold mb-2 block">Deskripsi</label>
@@ -183,14 +183,14 @@
             </div>
             @endif
         </div>
-        
+
         <!-- Fasilitas -->
-        @php 
-            $facilities = is_array($room->facilities) 
-                ? $room->facilities 
-                : json_decode($room->facilities ?? '[]', true); 
+        @php
+        $facilities = is_array($room->facilities)
+        ? $room->facilities
+        : json_decode($room->facilities ?? '[]', true);
         @endphp
-            
+
         @if(!empty($facilities))
         <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
             <h3 class="text-xl font-bold text-gray-800 mb-6 flex items-center pb-4 border-b border-gray-200">
@@ -213,12 +213,12 @@
             </div>
         </div>
         @endif
-        
+
     </div>
-    
+
     <!-- Right Column - Info Sewa & Stats -->
     <div class="space-y-6">
-        
+
         @if($activeRent && in_array($activeRent->status, ['active', 'checkout_requested']))
         <!-- Info Sewa Aktif -->
         <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
@@ -230,14 +230,14 @@
                 </div>
                 Informasi Sewa
             </h3>
-            
+
             <div class="space-y-4">
                 <div>
                     <label class="text-xs text-gray-500 font-semibold uppercase tracking-wide">Tanggal Masuk</label>
                     <p class="font-bold text-gray-800 mt-1 text-lg">{{ $activeRent->start_date->format('d M Y') }}</p>
                     <p class="text-xs text-gray-500 mt-1">{{ $activeRent->start_date->diffForHumans() }}</p>
                 </div>
-                
+
                 @if($activeRent->end_date)
                 <div>
                     <label class="text-xs text-gray-500 font-semibold uppercase tracking-wide">Tanggal Keluar</label>
@@ -251,7 +251,7 @@
                         {{ $activeRent->duration_accurate }}
                     </p>
                 </div>
-                
+
                 <div class="pt-4 border-t border-gray-200">
                     <label class="text-xs text-gray-500 font-semibold uppercase tracking-wide">Harga Sewa Bulanan</label>
                     <p class="font-bold text-2xl text-yellow-600 mt-1">
@@ -262,92 +262,99 @@
                 <div class="pt-4 border-t border-gray-200">
                     <div class="flex items-center justify-between">
                         <span class="text-sm text-gray-600 font-semibold">Status Sewa</span>
-                                        
+
                         @if($activeRent->status === 'active')
-                            <span class="px-3 py-1.5 bg-green-100 text-green-700 text-sm font-bold rounded-lg border border-green-300">
-                                Aktif
-                            </span>
+                        <span class="px-3 py-1.5 bg-green-100 text-green-700 text-sm font-bold rounded-lg border border-green-300">
+                            Aktif
+                        </span>
                         @elseif($activeRent->status === 'checkout_requested')
-                            <span class="px-3 py-1.5 bg-yellow-100 text-yellow-700 text-sm font-bold rounded-lg border border-yellow-300">
-                                Menunggu Checkout
-                            </span>
+                        <span class="px-3 py-1.5 bg-yellow-100 text-yellow-700 text-sm font-bold rounded-lg border border-yellow-300">
+                            Menunggu Checkout
+                        </span>
                         @endif
                     </div>
                 </div>
 
                 @if($activeRent->status === 'checkout_requested')
-                    <div class="pt-4">
-                        <div class="flex items-center justify-center px-4 py-3
+                <div class="pt-4">
+                    <div class="flex items-center justify-center px-4 py-3
                                     bg-yellow-100 text-yellow-800
                                     rounded-xl font-semibold border border-yellow-300">
-                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                      d="M12 8v4l3 3"/>
-                            </svg>
-                            Menunggu persetujuan admin
-                        </div>
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 8v4l3 3" />
+                        </svg>
+                        Menunggu persetujuan admin
                     </div>
+                </div>
                 @endif
 
                 @php
-                    $hasUnpaidBill = $activeRent->billings
-                        ->where('status', '!=', 'paid')
-                        ->count() > 0;
+                $hasUnpaidBill = $activeRent->billings
+                ->where('status', '!=', 'paid')
+                ->count() > 0;
                 @endphp
 
                 @if($hasUnpaidBill)
-                    <div class="pt-4 border-t border-gray-200">
-                        <div class="flex items-center gap-2 px-3 py-2
+                <div class="pt-4 border-t border-gray-200">
+                    <div class="flex items-center gap-2 px-3 py-2
                                     bg-red-100 text-red-800
                                     rounded-lg text-sm font-medium
                                     border border-red-300">
-                    
-                            <svg class="w-5 h-5 flex-shrink-0 text-red-700"
-                                 fill="none"
-                                 stroke="currentColor"
-                                 stroke-width="2.2"
-                                 viewBox="0 0 24 24">
-                                <path stroke-linecap="round"
-                                      stroke-linejoin="round"
-                                      d="M12 9v2m0 4h.01m-6.938 4h13.856
+
+                        <svg class="w-5 h-5 flex-shrink-0 text-red-700"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2.2"
+                            viewBox="0 0 24 24">
+                            <path stroke-linecap="round"
+                                stroke-linejoin="round"
+                                d="M12 9v2m0 4h.01m-6.938 4h13.856
                                          c1.54 0 2.502-1.667 1.732-3
                                          L13.732 4c-.77-1.333-2.694-1.333-3.464 0
-                                         L3.34 16c-.77 1.333.192 3 1.732 3z"/>
-                            </svg>
-                        
-                            <span>
-                                Anda harus melunasi seluruh tagihan sebelum checkout
-                            </span>
-                        </div>
+                                         L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                        </svg>
+
+                        <span>
+                            Anda harus melunasi seluruh tagihan sebelum checkout
+                        </span>
                     </div>
+                </div>
                 @endif
-                
-                {{-- Tombol Checkout --}}
-                @if(!$hasUnpaidBill && $activeRent->status === 'active')
-                    <div class="pt-6 border-t border-gray-200">
-                        <form id="checkout-request-form" 
-                              action="{{ route('user.checkout.request', $activeRent) }}"
-                              method="POST"
-                              style="display: none;">
-                            @csrf
-                        </form>
-                        
-                        <button type="button"
-                                onclick="handleCheckout()"
-                                class="inline-flex items-center gap-2 w-full px-6 py-3 bg-orange-600 hover:bg-orange-700 text-white rounded-lg font-semibold transition justify-center shadow-lg">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-                                      d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
-                            </svg>
-                            Ajukan Checkout
-                        </button>
-                    
-                        <p class="text-xs text-gray-500 mt-3 text-center">
-                            Checkout hanya bisa dilakukan setelah semua tagihan lunas
-                        </p>
-                    </div>
-                    
-                    <script>
+
+                {{-- Tombol Aksi (Komplain & Checkout) --}}
+                <div class="pt-6 border-t border-gray-200 mt-2 space-y-3">
+                    <a href="{{ route('user.tickets.index') }}"
+                        class="inline-flex items-center gap-2 w-full px-6 py-3 bg-yellow-500 hover:bg-yellow-600 text-white rounded-lg font-semibold transition justify-center shadow-lg">
+                        <i class="fa-solid fa-screwdriver-wrench text-lg"></i>
+                        Ajukan Komplain
+                    </a>
+
+                    @if(!$hasUnpaidBill && $activeRent->status === 'active')
+                    <form id="checkout-request-form"
+                        action="{{ route('user.checkout.request', $activeRent) }}"
+                        method="POST"
+                        style="display: none;">
+                        @csrf
+                    </form>
+
+                    <button type="button"
+                        onclick="handleCheckout()"
+                        class="inline-flex items-center gap-2 w-full px-6 py-3 bg-orange-600 hover:bg-orange-700 text-white rounded-lg font-semibold transition justify-center shadow-lg">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                        </svg>
+                        Ajukan Checkout
+                    </button>
+
+                    <p class="text-xs text-gray-500 mt-2 text-center">
+                        Checkout hanya bisa dilakukan setelah semua tagihan lunas
+                    </p>
+                    @endif
+                </div>
+
+                <script>
                     function handleCheckout() {
                         // Cek apakah Alpine.js store tersedia
                         if (window.Alpine && window.Alpine.store('modal')) {
@@ -367,13 +374,11 @@
                             }
                         }
                     }
-                    </script>
-                @endif
-
+                </script>
             </div>
         </div>
         @endif
-        
+
         <!-- Statistik Kamar -->
         <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
             <h3 class="text-xl font-bold text-gray-800 mb-6 flex items-center pb-4 border-b border-gray-200">
@@ -384,7 +389,7 @@
                 </div>
                 Informasi Tambahan
             </h3>
-            
+
             <div class="space-y-4">
                 <div class="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
                     <div class="flex items-center">
@@ -396,7 +401,7 @@
                     </div>
                     <span class="font-bold text-lg text-gray-800">{{ $room->view_count }}</span>
                 </div>
-                
+
                 <div class="pt-4 border-t border-gray-200">
                     <div class="flex items-center mb-2">
                         <svg class="w-5 h-5 mr-2 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -422,16 +427,16 @@
                 </div>
                 <h3 class="text-lg font-bold text-gray-800">Maintenance Terakhir</h3>
             </div>
-            
+
             <div>
                 <p class="font-bold text-gray-800 text-lg">{{ $room->last_maintenance->format('d M Y') }}</p>
                 <p class="text-sm text-gray-500 mt-1">{{ $room->last_maintenance->diffForHumans() }}</p>
             </div>
         </div>
         @endif
-        
+
     </div>
-    
+
 </div>
 
 @endsection

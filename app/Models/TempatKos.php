@@ -184,4 +184,9 @@ class TempatKos extends Model
     {
         return $this->ulasan()->where('is_visible', true)->count();
     }
+
+    public function tickets()
+    {
+        return $this->hasMany(Ticket::class, 'tempat_kos_id');
+    }
 }
